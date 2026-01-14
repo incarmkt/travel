@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>2025 ISC 대만 여행</title>
+  <script>
+    const isMobile = /Mobi|Android/i.test(navigator.userAgent);
+    const cssFile = isMobile ? 'css/mobile.css' : 'css/desktop.css';
+    document.write(`<link rel="stylesheet" href="${cssFile}">`);
+  </script>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <img src="assets/images/logo.png" alt="회사 로고" class="logo">
+      <h1>2025 ISC 대만 여행</h1>
+      <p class="subtitle">참가자 전용 포털</p>
+    </header>
+
+    <section id="loginSection">
+      <p>사번을 입력하세요:</p>
+      <input type="text" id="employeeId" placeholder="예: 1612156">
+      <button onclick="login()">로그인</button>
+      <p id="loginError" class="error"></p>
+    </section>
+
+    <section id="mainMenu" style="display:none;">
+      <p><strong id="employeeName"></strong> 님, 환영합니다!</p>
+      <div class="menu">
+        <button onclick="showSection('travelSchedule')">🗓 여행 일정 안내</button>
+        <button onclick="showSection('flightInfo')">✈️ 항공편 정보</button>
+        <button onclick="showSection('eventSchedule')">🎉 행사 일정</button>
+        <button onclick="showSection('countryInfo')">🇹🇼 대만 소개</button>
+        <button onclick="showSection('roomDrop')">🎁 룸드랍 물품</button>
+        <button onclick="showSection('request')">✏️ 요청 사항</button>
+        <button onclick="showSection('emergency')">📞 긴급 연락망</button>
+      </div>
+
+      <div id="travelSchedule" class="section">
+        <h2>🗓 여행 일정 안내</h2>
+        <p>1일차: 타오위안 공항 도착 / 환영식<br>2일차: 타이베이 투어<br>3일차: 자유 시간 / 야시장 방문</p>
+      </div>
+
+      <div id="flightInfo" class="section">
+        <h2>✈️ 개인 항공편 정보</h2>
+        <p id="flightData">항공편 정보를 불러오는 중...</p>
+      </div>
+
+      <div id="eventSchedule" class="section">
+        <h2>🎉 행사 일정</h2>
+        <p>2일차 저녁: 환영 만찬<br>3일차 밤: 문화 공연 참가</p>
+      </div>
+
+      <div id="countryInfo" class="section">
+        <h2>🇹🇼 대만 소개</h2>
+        <p>국가명: 대만 (Taiwan)<br>환율: 1 TWD ≈ 43 KRW<br>GDP: 약 8,900억 USD</p>
+      </div>
+
+      <div id="roomDrop" class="section">
+        <h2>🎁 룸드랍 물품 설명</h2>
+        <p>룸드랍 공개 시 활성화됩니다.</p>
+      </div>
+
+      <div id="request" class="section">
+        <h2>✏️ 요청 사항</h2>
+        <textarea id="requestText" placeholder="예: 기내식, 룸쉐어 요청 등"></textarea><br>
+        <button onclick="submitRequest()">제출</button>
+        <p id="submitMessage" class="success"></p>
+      </div>
+
+      <div id="emergency" class="section">
+        <h2>📞 긴급 연락망</h2>
+        <p>현지 담당자: 김지현 / +886 912 345 678<br>한국 담당자: 이성민 / 010-1234-5678</p>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    let employeeData = [];
+    let currentUser = null;
+
+    fetch(`people/employees.json?ts=${Date.now()}`)
+      .then(res => res.json())
+      .then(data => { employeeData = data; });
+
+    function login() {
+      const id = document.getElementById("employeeId").value.trim();
+      const matched = employeeData.find(emp => emp.id === id);
+      if (matched) {
+        currentUser = matched;
+        document.getElementById("employeeName").textContent = matched.name;
+        document.getElementById("loginSection").style.display = "none";
+        document.getElementById("mainMenu").style.display = "block";
+      } else {
+        document.getElementById("loginError").textContent = "등록되지 않은 사번입니다.";
+      }
+    }
+
+    function showSection(id) {
+      document.querySelectorAll('.section').forEach(s => s.style.display = 'none');
+      document.getElementById(id).style.display = 'block';
+      if (id === "flightInfo" && currentUser) {
+        document.getElementById("flightData").textContent = currentUser.flight || "등록된 항공편 정보가 없습니다.";
+      }
+    }
+
+    function submitRequest() {
+      if (!currentUser) return;
+      const request = document.getElementById("requestText").value.trim();
+      if (!request) return alert("요청사항을 입력해주세요.");
+
+      const endpoint = "https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec";
+      fetch(endpoint, {
+        method: "POST",
+        mode: "no-cors",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id: currentUser.id, name: currentUser.name, request })
+      });
+
+      document.getElementById("submitMessage").textContent = "요청사항이 제출되었습니다. 감사합니다!";
+      document.getElementById("requestText").value = "";
+    }
+  </script>
+</body>
+</html>
