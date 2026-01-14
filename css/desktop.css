@@ -2,13 +2,4 @@
   grid-template-columns: repeat(3, 1fr);
   max-width: 1000px;
   margin: 0 auto 70px;
-  padding: 0 18px;
-}
-
-.header {
-  justify-content: flex-start;
-}
-
-.day-card {
-  padding: 28px;
 }
