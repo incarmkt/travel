@@ -1,36 +1,66 @@
-/* LOGIN SCREEN - FINAL / DO NOT TOUCH */
-.login-hero {
-  height: 100vh;
-  background: url("../assets/images/taiwan.jpg") center / cover no-repeat;
-}
-.hero-overlay {
-  height: 100%;
-  background: rgba(0,0,0,.55);
-  display:flex;
-  align-items:center;
-  justify-content:center;
-}
-.login-box {
-  background:#fff;
-  padding:36px;
-  border-radius:18px;
-  width:360px;
-  text-align:center;
-}
-.hero-logo { width:120px; margin-bottom:14px; }
+.logo { width:80px; height:auto; }
 
-body { margin:0; font-family:sans-serif; background:#f4f7fb; }
-.header { display:flex; gap:16px; padding:18px 32px; background:#fff; }
-.logo { width:110px; }
-.menu { display:grid; gap:16px; padding:20px; }
-.menu button { padding:18px; border-radius:16px; background:#1e63c6; color:#fff; border:none; }
-.detail { max-width:900px; margin:40px auto; padding:0 16px; }
+/* 배경 고정 */
+.main-bg {
+  position: relative;
+  min-height: calc(100vh - 90px);
+  overflow: hidden;
+}
 
-.day-card { background:#fff; padding:24px; border-radius:18px; margin-bottom:32px; }
-.timeline { margin-top:20px; }
-.schedule-item { display:flex; gap:14px; margin-bottom:18px; }
-.timeline-dot { width:12px; height:12px; background:#1e63c6; border-radius:50%; margin-top:10px; }
-.schedule-card { background:#f8fafc; border-radius:14px; padding:14px 18px; flex:1; }
-.schedule-time { font-weight:bold; color:#1e63c6; }
-.schedule-title { font-weight:600; }
-.schedule-desc { font-size:13px; color:#667085; }
+.bg-image {
+  position: absolute;
+  inset: 0;
+  background: url("../assets/images/main-bg.jpg") center / cover no-repeat;
+  z-index: 0;
+}
+
+.bg-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(255,255,255,0.75);
+  z-index: 1;
+}
+
+/* 콘텐츠 */
+.content, .detail {
+  position: relative;
+  z-index: 2;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 30px 16px;
+}
+
+/* 슬라이드 애니메이션 */
+.slide-in {
+  animation: slideIn .3s ease forwards;
+}
+.slide-out {
+  animation: slideOut .3s ease forwards;
+}
+.slide-hidden {
+  display: none;
+}
+
+@keyframes slideIn {
+  from { transform: translateX(100%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+@keyframes slideOut {
+  from { transform: translateX(0); opacity: 1; }
+  to { transform: translateX(-100%); opacity: 0; }
+}
+
+/* 메뉴 1열 */
+.menu {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+  max-width: 420px;
+  margin: 40px auto;
+}
+
+.welcome {
+  text-align: center;
+  font-size: 18px;
+  margin-top: 20px;
+}
