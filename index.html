@@ -3,137 +3,162 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>2025 ISC 대만 여행</title>
-  <script>
-    const isMobile = /Mobi|Android/i.test(navigator.userAgent);
-    const cssFile = isMobile ? 'css/mobile.css' : 'css/desktop.css';
-    document.write(`<link rel="stylesheet" href="${cssFile}">`);
-  </script>
+  <title>해외 골프 & 여행 행사 신청</title>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
+                   Pretendard, Malgun Gothic, sans-serif;
+      background: #f7f7f7;
+      color: #222;
+    }
+
+    header {
+      background: #ffffff;
+      border-bottom: 1px solid #e5e5e5;
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+    }
+
+    header img {
+      height: 40px;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 40px auto;
+      padding: 0 20px;
+    }
+
+    h1 {
+      font-size: 26px;
+      margin-bottom: 12px;
+    }
+
+    .desc {
+      color: #555;
+      margin-bottom: 32px;
+    }
+
+    .section {
+      background: #ffffff;
+      border-radius: 10px;
+      padding: 24px;
+      margin-bottom: 24px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.04);
+    }
+
+    .section h2 {
+      font-size: 20px;
+      margin-bottom: 16px;
+    }
+
+    .schedule ul {
+      padding-left: 18px;
+    }
+
+    .schedule li {
+      margin-bottom: 8px;
+      line-height: 1.6;
+    }
+
+    label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 6px;
+      margin-top: 16px;
+    }
+
+    input, textarea {
+      width: 100%;
+      padding: 12px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      font-size: 14px;
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 100px;
+    }
+
+    button {
+      margin-top: 24px;
+      width: 100%;
+      padding: 14px;
+      font-size: 16px;
+      font-weight: 600;
+      border: none;
+      border-radius: 8px;
+      background: #27398C;
+      color: #ffffff;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #1f2f73;
+    }
+
+    .notice {
+      margin-top: 12px;
+      font-size: 13px;
+      color: #666;
+    }
+  </style>
 </head>
+
 <body>
+
+  <!-- 상단 로고 -->
+  <header>
+    <img src="assets/images/logo.png" alt="회사 로고">
+  </header>
+
   <div class="container">
-    <header>
-      <img src="./assets/images/logo.png" alt="회사 로고" class="logo" />
-      <h1>2025 ISC 대만 여행</h1>
-      <p class="subtitle">2026.03.11 ~ 03.14 · 인카금융서비스</p>
-    </header>
+    <h1>해외 골프 & 여행 행사 안내</h1>
+    <p class="desc">
+      본 페이지는 행사 참가 희망자 및 요청사항 접수를 위한 페이지입니다.
+      신청 내용은 내부 확인 후 개별 안내드립니다.
+    </p>
 
-    <section id="loginSection">
-      <p>사번을 입력하세요:</p>
-      <input type="text" id="employeeId" placeholder="예: 1612156">
-      <button onclick="login()">로그인</button>
-      <p id="loginError" class="error"></p>
-    </section>
+    <!-- 일정 섹션 -->
+    <div class="section schedule">
+      <h2>📌 주요 일정</h2>
+      <ul>
+        <li><strong>Day 1</strong> – 출국 / 현지 도착 / 자유 일정</li>
+        <li><strong>Day 2</strong> – 골프 라운드 18홀 / 자유 시간</li>
+        <li><strong>Day 3</strong> – 골프 또는 선택 관광</li>
+        <li><strong>Day 4</strong> – 귀국</li>
+      </ul>
+    </div>
 
-    <section id="mainMenu" style="display:none;">
-      <p><strong id="employeeName"></strong> 님, 환영합니다!</p>
-      <div class="menu">
-        <button onclick="showSection('schedule')">🗓 여행 일정</button>
-        <button onclick="showSection('flight')">✈️ 항공편 정보</button>
-        <button onclick="showSection('highlights')">📍 주요 관광지</button>
-        <button onclick="showSection('optionalTour')">🛀 선택 관광</button>
-        <button onclick="showSection('dinner')">🍽 만찬 안내</button>
-        <button onclick="showSection('request')">✏️ 요청사항</button>
-        <button onclick="showSection('emergency')">📞 긴급 연락망</button>
-      </div>
+    <!-- 신청 폼 -->
+    <div class="section">
+      <h2>📝 참가 신청 / 요청사항</h2>
 
-      <div id="schedule" class="section">
-        <h2>🗓 전체 여행 일정</h2>
-        <p><strong>3박 4일 일정</strong> · 2026년 3월 11일(수) ~ 3월 14일(토)</p>
-        <ul style="text-align: left;">
-          <li>📍 1일차: 중정기념당, 고궁박물관, 타이베이 101 전망대, 야시장</li>
-          <li>📍 2일차: 선택관광(온천/단수이) & 인카 만찬</li>
-          <li>📍 3일차: 야류 해안공원, 스펀 천등, 지우펀</li>
-          <li>📍 4일차: 귀국 (오전 체크아웃 후 공항 이동)</li>
-        </ul>
-      </div>
+      <form
+        method="post"
+        action="https://script.google.com/macros/s/AKfycbzyu7FDCPWeEsb4dOa3MhJx8hFMONXfjl-CfUpOOIPWTXXdzHZK1eAAUxS7vz0Khq2G0A/exec"
+      >
+        <label for="name">이름</label>
+        <input type="text" id="name" name="name" required>
 
-      <div id="flight" class="section">
-        <h2>✈️ 항공편 정보</h2>
-        <p>아시아나항공 OZ711 / OZ712<br>대한항공 KE2021 / KE2022</p>
-      </div>
+        <label for="phone">연락처</label>
+        <input type="text" id="phone" name="phone" required>
 
-      <div id="highlights" class="section">
-        <h2>📍 주요 관광지</h2>
-        <ul style="text-align: left;">
-          <li>타이베이 101</li>
-          <li>고궁박물관 (세계 4대 박물관)</li>
-          <li>중정기념당</li>
-          <li>야류 해상공원</li>
-          <li>지우펀 올드 스트리트</li>
-          <li>스펀 천등 날리기</li>
-        </ul>
-      </div>
+        <label for="request">요청사항</label>
+        <textarea id="request" name="request" placeholder="동반 인원, 일정 문의, 기타 요청사항을 입력해주세요."></textarea>
 
-      <div id="optionalTour" class="section">
-        <h2>🛀 선택 관광</h2>
-        <p>🎯 사전예약 필수</p>
-        <p><strong>1안</strong>: 티엔라이 온천욕 (오리구이 포함)</p>
-        <p><strong>2안</strong>: 단수이 투어 (홍마오청, 진리대학 등) + 자유식</p>
-      </div>
+        <button type="submit">신청 내용 전달하기</button>
+      </form>
 
-      <div id="dinner" class="section">
-        <h2>🍽 인카 만찬 안내</h2>
-        <p>📍 2일차 오후 6시 · 필수 참석</p>
-        <p>서문정 자유시간 후 호텔 복귀</p>
-      </div>
-
-      <div id="request" class="section">
-        <h2>✏️ 요청 사항</h2>
-        <textarea id="requestText" placeholder="예: 기내식, 객실 요청 등"></textarea><br>
-        <button onclick="submitRequest()">제출</button>
-        <p id="submitMessage" class="success"></p>
-      </div>
-
-      <div id="emergency" class="section">
-        <h2>📞 긴급 연락망</h2>
-        <p>현지 가이드: +886 912 345 678<br>한국 담당자: 010-1234-5678</p>
-      </div>
-    </section>
+      <p class="notice">
+        * 입력하신 내용은 행사 운영 목적 외에는 사용되지 않습니다.
+      </p>
+    </div>
   </div>
 
-  <script>
-    let employeeData = [];
-    let currentUser = null;
-
-    fetch(`people/employees.json?ts=${Date.now()}`)
-      .then(res => res.json())
-      .then(data => { employeeData = data; });
-
-    function login() {
-      const id = document.getElementById("employeeId").value.trim();
-      const matched = employeeData.find(emp => emp.id === id);
-      if (matched) {
-        currentUser = matched;
-        document.getElementById("employeeName").textContent = matched.name;
-        document.getElementById("loginSection").style.display = "none";
-        document.getElementById("mainMenu").style.display = "block";
-      } else {
-        document.getElementById("loginError").textContent = "등록되지 않은 사번입니다.";
-      }
-    }
-
-    function showSection(id) {
-      document.querySelectorAll('.section').forEach(s => s.style.display = 'none');
-      document.getElementById(id).style.display = 'block';
-    }
-
-    function submitRequest() {
-      if (!currentUser) return;
-      const request = document.getElementById("requestText").value.trim();
-      if (!request) return alert("요청사항을 입력해주세요.");
-
-      const endpoint = "https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec";
-      fetch(endpoint, {
-        method: "POST",
-        mode: "no-cors",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ id: currentUser.id, name: currentUser.name, request })
-      });
-
-      document.getElementById("submitMessage").textContent = "요청사항이 제출되었습니다. 감사합니다!";
-      document.getElementById("requestText").value = "";
-    }
-  </script>
 </body>
 </html>
