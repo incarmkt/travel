@@ -1,141 +1,152 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>2025 ISC 대만 여행</title>
-  <script>
-    const isMobile = /Mobi|Android/i.test(navigator.userAgent);
-    const cssFile = isMobile ? 'css/mobile.css' : 'css/desktop.css';
-    document.write(`<link rel="stylesheet" href="${cssFile}">`);
-  </script>
+
+  <!-- 반응형 CSS -->
+  <link rel="stylesheet" href="css/desktop.css" media="(min-width: 768px)">
+  <link rel="stylesheet" href="css/mobile.css" media="(max-width: 767px)">
 </head>
 <body>
-  <div class="container">
-    <header>
-      <img src="./assets/images/logo.png" alt="회사 로고" class="logo" />
+
+  <!-- ===== HEADER ===== -->
+  <header class="header">
+    <img src="assets/images/logo.png" class="logo" alt="INCAR 로고">
+    <div class="header-text">
       <h1>2025 ISC 대만 여행</h1>
-      <p class="subtitle">2026.03.11 ~ 03.14 · 인카금융서비스</p>
-    </header>
+      <p class="sub">2026.03.11 ~ 03.14 | 인카금융서비스</p>
+    </div>
+  </header>
 
-    <section id="loginSection">
-      <p>사번을 입력하세요:</p>
-      <input type="text" id="employeeId" placeholder="예: 1612156">
-      <button onclick="login()">로그인</button>
-      <p id="loginError" class="error"></p>
-    </section>
+  <!-- ===== LOGIN ===== -->
+  <section id="loginSection" class="login">
+    <h2>사번 로그인</h2>
+    <input type="text" id="employeeId" placeholder="사번 입력">
+    <button onclick="login()">로그인</button>
+    <p id="loginError" class="error"></p>
+  </section>
 
-    <section id="mainMenu" style="display:none;">
-      <p><strong id="employeeName"></strong> 님, 환영합니다!</p>
-      <div class="menu">
-        <button onclick="showSection('schedule')">🗓 여행 일정</button>
-        <button onclick="showSection('flight')">✈️ 항공편 정보</button>
-        <button onclick="showSection('highlights')">📍 주요 관광지</button>
-        <button onclick="showSection('optionalTour')">🛀 선택 관광</button>
-        <button onclick="showSection('dinner')">🍽 만찬 안내</button>
-        <button onclick="showSection('request')">✏️ 요청사항</button>
-        <button onclick="showSection('emergency')">📞 긴급 연락망</button>
-      </div>
+  <!-- ===== MAIN ===== -->
+  <main id="mainSection" style="display:none;">
+    <p class="welcome"><strong id="employeeName"></strong> 님, 환영합니다</p>
 
-      <div id="schedule" class="section">
-        <h2>🗓 전체 여행 일정</h2>
-        <ul style="text-align: left;">
-          <li>📍 1일차: 중정기념당, 고궁박물관, 타이베이 101 전망대, 야시장</li>
-          <li>📍 2일차: 선택관광 & 인카 만찬</li>
-          <li>📍 3일차: 야류 해안공원, 스펀 천등, 지우펀</li>
-          <li>📍 4일차: 귀국 (오전 체크아웃 후 공항 이동)</li>
-        </ul>
-      </div>
+    <!-- 메뉴 버튼 -->
+    <div class="menu">
+      <button onclick="openPage('schedule')">🗓 여행 일정</button>
+      <button onclick="openPage('flight')">✈️ 항공편 정보</button>
+      <button onclick="openPage('tour')">📍 주요 관광지</button>
+      <button onclick="openPage('option')">🍷 선택 관광</button>
+      <button onclick="openPage('dinner')">🍽 만찬 안내</button>
+      <button onclick="openPage('request')">📝 요청사항</button>
+      <button onclick="openPage('contact')">📞 긴급 연락망</button>
+    </div>
+  </main>
 
-      <div id="flight" class="section">
-        <h2>✈️ 항공편 정보</h2>
-        <p id="flightInfo">항공편 정보를 불러오는 중...</p>
-      </div>
+  <!-- ===== DETAIL PAGE (레이어 방식) ===== -->
+  <section id="detailPage" class="detail" style="display:none;">
+    <h2 id="detailTitle"></h2>
+    <div id="detailContent"></div>
 
-      <div id="highlights" class="section">
-        <h2>📍 주요 관광지</h2>
-        <ul style="text-align: left;">
-          <li>타이베이 101</li>
-          <li>고궁박물관</li>
-          <li>중정기념당</li>
-          <li>야류 해상공원</li>
-          <li>지우펀</li>
-          <li>스펀 천등 날리기</li>
-        </ul>
-      </div>
+    <div class="nav-buttons">
+      <button onclick="goHome()">홈으로</button>
+      <button onclick="goBack()">뒤로가기</button>
+    </div>
+  </section>
 
-      <div id="optionalTour" class="section">
-        <h2>🛀 선택 관광</h2>
-        <p><strong>1안</strong>: 티엔라이 온천욕<br><strong>2안</strong>: 단수이 투어</p>
-      </div>
-
-      <div id="dinner" class="section">
-        <h2>🍽 인카 만찬 안내</h2>
-        <p>2일차 오후 6시 · 필수 참석</p>
-      </div>
-
-      <div id="request" class="section">
-        <h2>✏️ 요청 사항</h2>
-        <textarea id="requestText" placeholder="예: 기내식, 객실 요청 등"></textarea><br>
-        <button onclick="submitRequest()">제출</button>
-        <p id="submitMessage" class="success"></p>
-      </div>
-
-      <div id="emergency" class="section">
-        <h2>📞 긴급 연락망</h2>
-        <p>현지 가이드: +886 912 345 678<br>한국 담당자: 010-1234-5678</p>
-      </div>
-    </section>
-  </div>
-
+  <!-- ===== SCRIPT ===== -->
   <script>
-    let employeeData = [];
+    let employees = [];
     let currentUser = null;
+    let pageStack = [];
 
-    // JSON 파일 로딩
+    /* 직원 데이터 로드 */
     fetch("people/employees.json?ts=" + Date.now())
       .then(res => res.json())
-      .then(data => { employeeData = data; });
+      .then(data => employees = data);
 
+    /* 로그인 */
     function login() {
       const id = document.getElementById("employeeId").value.trim();
-      const matched = employeeData.find(emp => emp.id === id);
-      if (matched) {
-        currentUser = matched;
-        document.getElementById("employeeName").textContent = matched.name;
-        document.getElementById("loginSection").style.display = "none";
-        document.getElementById("mainMenu").style.display = "block";
-      } else {
+      const user = employees.find(e => e.id === id);
+
+      if (!user) {
         document.getElementById("loginError").textContent = "등록되지 않은 사번입니다.";
+        return;
+      }
+
+      currentUser = user;
+      document.getElementById("employeeName").textContent = user.name;
+      document.getElementById("loginSection").style.display = "none";
+      document.getElementById("mainSection").style.display = "block";
+    }
+
+    /* 페이지 열기 */
+    function openPage(type) {
+      pageStack.push(type);
+      document.getElementById("mainSection").style.display = "none";
+      document.getElementById("detailPage").style.display = "block";
+
+      const title = document.getElementById("detailTitle");
+      const content = document.getElementById("detailContent");
+
+      if (type === "flight") {
+        title.textContent = "✈️ 항공편 정보";
+        content.innerHTML = `<p>${currentUser.flight || "항공편 정보 없음"}</p>`;
+      }
+
+      if (type === "request") {
+        title.textContent = "📝 요청사항";
+        content.innerHTML = `
+          <textarea id="requestText" placeholder="요청사항을 입력하세요"></textarea>
+          <button onclick="submitRequest()">제출</button>
+          <p id="submitMessage"></p>
+        `;
+      }
+
+      if (type === "schedule") {
+        title.textContent = "🗓 여행 일정";
+        content.innerHTML = `<p>대만 3박 4일 공식 일정 (상세 추후 공개)</p>`;
+      }
+
+      if (type === "contact") {
+        title.textContent = "📞 긴급 연락망";
+        content.innerHTML = `<p>현지 담당자 / 한국 담당자 연락처</p>`;
       }
     }
 
-    function showSection(id) {
-      document.querySelectorAll('.section').forEach(s => s.style.display = 'none');
-      document.getElementById(id).style.display = 'block';
-
-      // 항공편 정보 출력
-      if (id === 'flight' && currentUser && currentUser.flight) {
-        document.getElementById("flightInfo").textContent = currentUser.flight;
-      }
-    }
-
+    /* 요청사항 전송 */
     function submitRequest() {
-      if (!currentUser) return;
-      const request = document.getElementById("requestText").value.trim();
-      if (!request) return alert("요청사항을 입력해주세요.");
+      const text = document.getElementById("requestText").value.trim();
+      if (!text) return alert("요청사항을 입력해주세요.");
 
-      const endpoint = "https://script.google.com/macros/s/AKfycbzyu7FDCPWeEsb4dOa3MhJx8hFMONXfjl-CfUpOOIPWTXXdzHZK1eAAUxS7vz0Khq2G0A/exec"; // 여기에 본인 URL
-      fetch(endpoint, {
+      fetch("https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec", {
         method: "POST",
         mode: "no-cors",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ id: currentUser.id, name: currentUser.name, request })
+        body: JSON.stringify({
+          id: currentUser.id,
+          name: currentUser.name,
+          request: text
+        })
       });
 
-      document.getElementById("submitMessage").textContent = "요청사항이 제출되었습니다. 감사합니다!";
+      document.getElementById("submitMessage").textContent = "제출 완료되었습니다.";
       document.getElementById("requestText").value = "";
     }
+
+    function goHome() {
+      pageStack = [];
+      document.getElementById("detailPage").style.display = "none";
+      document.getElementById("mainSection").style.display = "block";
+    }
+
+    function goBack() {
+      pageStack.pop();
+      if (pageStack.length === 0) goHome();
+    }
   </script>
+
 </body>
 </html>
