@@ -15,7 +15,7 @@
     <header>
       <img src="./assets/images/logo.png" alt="회사 로고" class="logo" />
       <h1>2025 ISC 대만 여행</h1>
-      <p class="subtitle">참가자 전용 포털</p>
+      <p class="subtitle">2026.03.11 ~ 03.14 · 인카금융서비스</p>
     </header>
 
     <section id="loginSection">
@@ -28,50 +28,66 @@
     <section id="mainMenu" style="display:none;">
       <p><strong id="employeeName"></strong> 님, 환영합니다!</p>
       <div class="menu">
-        <button onclick="showSection('travelSchedule')">🗓 여행 일정 안내</button>
-        <button onclick="showSection('flightInfo')">✈️ 항공편 정보</button>
-        <button onclick="showSection('eventSchedule')">🎉 행사 일정</button>
-        <button onclick="showSection('countryInfo')">🇹🇼 대만 소개</button>
-        <button onclick="showSection('roomDrop')">🎁 룸드랍 물품</button>
-        <button onclick="showSection('request')">✏️ 요청 사항</button>
+        <button onclick="showSection('schedule')">🗓 여행 일정</button>
+        <button onclick="showSection('flight')">✈️ 항공편 정보</button>
+        <button onclick="showSection('highlights')">📍 주요 관광지</button>
+        <button onclick="showSection('optionalTour')">🛀 선택 관광</button>
+        <button onclick="showSection('dinner')">🍽 만찬 안내</button>
+        <button onclick="showSection('request')">✏️ 요청사항</button>
         <button onclick="showSection('emergency')">📞 긴급 연락망</button>
       </div>
 
-      <div id="travelSchedule" class="section">
-        <h2>🗓 여행 일정 안내</h2>
-        <p>1일차: 타오위안 공항 도착 / 환영식<br>2일차: 타이베이 투어<br>3일차: 자유 시간 / 야시장 방문</p>
+      <div id="schedule" class="section">
+        <h2>🗓 전체 여행 일정</h2>
+        <p><strong>3박 4일 일정</strong> · 2026년 3월 11일(수) ~ 3월 14일(토)</p>
+        <ul style="text-align: left;">
+          <li>📍 1일차: 중정기념당, 고궁박물관, 타이베이 101 전망대, 야시장</li>
+          <li>📍 2일차: 선택관광(온천/단수이) & 인카 만찬</li>
+          <li>📍 3일차: 야류 해안공원, 스펀 천등, 지우펀</li>
+          <li>📍 4일차: 귀국 (오전 체크아웃 후 공항 이동)</li>
+        </ul>
       </div>
 
-      <div id="flightInfo" class="section">
-        <h2>✈️ 개인 항공편 정보</h2>
-        <p id="flightData">항공편 정보를 불러오는 중...</p>
+      <div id="flight" class="section">
+        <h2>✈️ 항공편 정보</h2>
+        <p>아시아나항공 OZ711 / OZ712<br>대한항공 KE2021 / KE2022</p>
       </div>
 
-      <div id="eventSchedule" class="section">
-        <h2>🎉 행사 일정</h2>
-        <p>2일차 저녁: 환영 만찬<br>3일차 밤: 문화 공연 참가</p>
+      <div id="highlights" class="section">
+        <h2>📍 주요 관광지</h2>
+        <ul style="text-align: left;">
+          <li>타이베이 101</li>
+          <li>고궁박물관 (세계 4대 박물관)</li>
+          <li>중정기념당</li>
+          <li>야류 해상공원</li>
+          <li>지우펀 올드 스트리트</li>
+          <li>스펀 천등 날리기</li>
+        </ul>
       </div>
 
-      <div id="countryInfo" class="section">
-        <h2>🇹🇼 대만 소개</h2>
-        <p>국가명: 대만 (Taiwan)<br>환율: 1 TWD ≈ 43 KRW<br>GDP: 약 8,900억 USD</p>
+      <div id="optionalTour" class="section">
+        <h2>🛀 선택 관광</h2>
+        <p>🎯 사전예약 필수</p>
+        <p><strong>1안</strong>: 티엔라이 온천욕 (오리구이 포함)</p>
+        <p><strong>2안</strong>: 단수이 투어 (홍마오청, 진리대학 등) + 자유식</p>
       </div>
 
-      <div id="roomDrop" class="section">
-        <h2>🎁 룸드랍 물품 설명</h2>
-        <p>룸드랍 공개 시 활성화됩니다.</p>
+      <div id="dinner" class="section">
+        <h2>🍽 인카 만찬 안내</h2>
+        <p>📍 2일차 오후 6시 · 필수 참석</p>
+        <p>서문정 자유시간 후 호텔 복귀</p>
       </div>
 
       <div id="request" class="section">
         <h2>✏️ 요청 사항</h2>
-        <textarea id="requestText" placeholder="예: 기내식, 룸쉐어 요청 등"></textarea><br>
+        <textarea id="requestText" placeholder="예: 기내식, 객실 요청 등"></textarea><br>
         <button onclick="submitRequest()">제출</button>
         <p id="submitMessage" class="success"></p>
       </div>
 
       <div id="emergency" class="section">
         <h2>📞 긴급 연락망</h2>
-        <p>현지 담당자: 김지현 / +886 912 345 678<br>한국 담당자: 이성민 / 010-1234-5678</p>
+        <p>현지 가이드: +886 912 345 678<br>한국 담당자: 010-1234-5678</p>
       </div>
     </section>
   </div>
@@ -100,9 +116,6 @@
     function showSection(id) {
       document.querySelectorAll('.section').forEach(s => s.style.display = 'none');
       document.getElementById(id).style.display = 'block';
-      if (id === "flightInfo" && currentUser) {
-        document.getElementById("flightData").textContent = currentUser.flight || "등록된 항공편 정보가 없습니다.";
-      }
     }
 
     function submitRequest() {
