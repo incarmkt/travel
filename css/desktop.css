@@ -1,94 +1,152 @@
-body {
-  font-family: 'Noto Sans KR', sans-serif;
-  background: linear-gradient(to right, #f0f2f5, #d9e4f5);
-  margin: 0;
-  padding: 0;
-  text-align: center;
-}
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>2025 ISC 대만 여행</title>
 
-header {
-  padding: 20px;
-  background-color: #ffffff;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-  position: relative;
-}
+  <!-- 반응형 CSS -->
+  <link rel="stylesheet" href="css/desktop.css" media="(min-width: 768px)">
+  <link rel="stylesheet" href="css/mobile.css" media="(max-width: 767px)">
+</head>
+<body>
 
-.logo {
-  position: absolute;
-  top: 15px;
-  left: 30px;
-  width: 120px;
-}
+  <!-- ===== HEADER ===== -->
+  <header class="header">
+    <img src="assets/images/logo.png" class="logo" alt="INCAR 로고">
+    <div class="header-text">
+      <h1>2025 ISC 대만 여행</h1>
+      <p class="sub">2026.03.11 ~ 03.14 | 인카금융서비스</p>
+    </div>
+  </header>
 
-h1 {
-  font-size: 2em;
-  margin-bottom: 5px;
-  color: #003366;
-}
+  <!-- ===== LOGIN ===== -->
+  <section id="loginSection" class="login">
+    <h2>사번 로그인</h2>
+    <input type="text" id="employeeId" placeholder="사번 입력">
+    <button onclick="login()">로그인</button>
+    <p id="loginError" class="error"></p>
+  </section>
 
-.sub {
-  font-size: 0.9em;
-  color: #666;
-  margin-top: 0;
-}
+  <!-- ===== MAIN ===== -->
+  <main id="mainSection" style="display:none;">
+    <p class="welcome"><strong id="employeeName"></strong> 님, 환영합니다</p>
 
-.welcome {
-  font-size: 1.1em;
-  font-weight: bold;
-  color: #333;
-}
+    <!-- 메뉴 버튼 -->
+    <div class="menu">
+      <button onclick="openPage('schedule')">🗓 여행 일정</button>
+      <button onclick="openPage('flight')">✈️ 항공편 정보</button>
+      <button onclick="openPage('tour')">📍 주요 관광지</button>
+      <button onclick="openPage('option')">🍷 선택 관광</button>
+      <button onclick="openPage('dinner')">🍽 만찬 안내</button>
+      <button onclick="openPage('request')">📝 요청사항</button>
+      <button onclick="openPage('contact')">📞 긴급 연락망</button>
+    </div>
+  </main>
 
-.button-group {
-  margin: 40px auto;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 15px;
-}
+  <!-- ===== DETAIL PAGE (레이어 방식) ===== -->
+  <section id="detailPage" class="detail" style="display:none;">
+    <h2 id="detailTitle"></h2>
+    <div id="detailContent"></div>
 
-.button-group button {
-  width: 300px;
-  padding: 15px;
-  font-size: 1em;
-  background-color: #004b99;
-  color: #fff;
-  border: none;
-  border-radius: 10px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
+    <div class="nav-buttons">
+      <button onclick="goHome()">홈으로</button>
+      <button onclick="goBack()">뒤로가기</button>
+    </div>
+  </section>
 
-.button-group button:hover {
-  background-color: #0073e6;
-}
+  <!-- ===== SCRIPT ===== -->
+  <script>
+    let employees = [];
+    let currentUser = null;
+    let pageStack = [];
 
-section {
-  margin: 30px auto;
-  max-width: 600px;
-}
+    /* 직원 데이터 로드 */
+    fetch("people/employees.json?ts=" + Date.now())
+      .then(res => res.json())
+      .then(data => employees = data);
 
-textarea {
-  width: 100%;
-  height: 100px;
-  padding: 15px;
-  font-size: 1em;
-  border-radius: 8px;
-  border: 1px solid #ccc;
-  resize: vertical;
-}
+    /* 로그인 */
+    function login() {
+      const id = document.getElementById("employeeId").value.trim();
+      const user = employees.find(e => e.id === id);
 
-button {
-  margin-top: 15px;
-  padding: 12px 25px;
-  font-size: 1em;
-  background-color: #004b99;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-}
+      if (!user) {
+        document.getElementById("loginError").textContent = "등록되지 않은 사번입니다.";
+        return;
+      }
 
-footer {
-  margin-top: 50px;
-  padding: 20px;
-}
+      currentUser = user;
+      document.getElementById("employeeName").textContent = user.name;
+      document.getElementById("loginSection").style.display = "none";
+      document.getElementById("mainSection").style.display = "block";
+    }
+
+    /* 페이지 열기 */
+    function openPage(type) {
+      pageStack.push(type);
+      document.getElementById("mainSection").style.display = "none";
+      document.getElementById("detailPage").style.display = "block";
+
+      const title = document.getElementById("detailTitle");
+      const content = document.getElementById("detailContent");
+
+      if (type === "flight") {
+        title.textContent = "✈️ 항공편 정보";
+        content.innerHTML = `<p>${currentUser.flight || "항공편 정보 없음"}</p>`;
+      }
+
+      if (type === "request") {
+        title.textContent = "📝 요청사항";
+        content.innerHTML = `
+          <textarea id="requestText" placeholder="요청사항을 입력하세요"></textarea>
+          <button onclick="submitRequest()">제출</button>
+          <p id="submitMessage"></p>
+        `;
+      }
+
+      if (type === "schedule") {
+        title.textContent = "🗓 여행 일정";
+        content.innerHTML = `<p>대만 3박 4일 공식 일정 (상세 추후 공개)</p>`;
+      }
+
+      if (type === "contact") {
+        title.textContent = "📞 긴급 연락망";
+        content.innerHTML = `<p>현지 담당자 / 한국 담당자 연락처</p>`;
+      }
+    }
+
+    /* 요청사항 전송 */
+    function submitRequest() {
+      const text = document.getElementById("requestText").value.trim();
+      if (!text) return alert("요청사항을 입력해주세요.");
+
+      fetch("https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec", {
+        method: "POST",
+        mode: "no-cors",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          id: currentUser.id,
+          name: currentUser.name,
+          request: text
+        })
+      });
+
+      document.getElementById("submitMessage").textContent = "제출 완료되었습니다.";
+      document.getElementById("requestText").value = "";
+    }
+
+    function goHome() {
+      pageStack = [];
+      document.getElementById("detailPage").style.display = "none";
+      document.getElementById("mainSection").style.display = "block";
+    }
+
+    function goBack() {
+      pageStack.pop();
+      if (pageStack.length === 0) goHome();
+    }
+  </script>
+
+</body>
+</html>
