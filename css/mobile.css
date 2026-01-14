@@ -1,19 +1,8 @@
+.menu {
+  grid-template-columns: 1fr;
+}
+
 .header {
   flex-direction: column;
   text-align: center;
-  gap: 10px;
-  padding: 14px;
-}
-
-.logo {
-  width: 95px;
-}
-
-.menu {
-  grid-template-columns: 1fr;
-  margin: 0 14px 40px;
-}
-
-.day-card {
-  padding: 20px;
 }
