@@ -1,27 +1,19 @@
-/* 모바일: 헤더 세로 정렬 */
 .header {
   flex-direction: column;
   text-align: center;
   gap: 10px;
-  padding: 14px 14px;
+  padding: 14px;
 }
 
 .logo {
   width: 95px;
 }
 
-/* 모바일: 메뉴 1열 */
 .menu {
   grid-template-columns: 1fr;
   margin: 0 14px 40px;
 }
 
-/* 상세: 여백 축소 */
-.detail .card {
-  padding: 18px;
-}
-
-/* 모바일: 2열 그리드를 1열로 */
-.grid2 {
-  grid-template-columns: 1fr;
+.day-card {
+  padding: 20px;
 }
