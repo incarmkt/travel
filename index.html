@@ -5,285 +5,184 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>2025 ISC 대만 여행</title>
 
-  <!-- 공통 + 디바이스별 -->
   <link rel="stylesheet" href="css/base.css">
   <link rel="stylesheet" href="css/desktop.css" media="(min-width: 768px)">
   <link rel="stylesheet" href="css/mobile.css" media="(max-width: 767px)">
 </head>
 <body>
 
-  <!-- ===== HEADER (로그인 후에만 보여줌) ===== -->
-  <header class="header" id="topHeader" style="display:none;">
-    <img src="assets/images/logo.png" class="logo" alt="INCAR 로고">
-    <div class="header-text">
-      <h1>2025 ISC 대만 여행</h1>
-      <p class="sub">2026.03.11 ~ 03.14 | 인카금융서비스</p>
+<header class="header" id="topHeader" style="display:none;">
+  <img src="assets/images/logo.png" class="logo">
+  <div class="header-text">
+    <h1>2025 ISC 대만 여행</h1>
+    <p class="sub">2026.03.11 ~ 03.14 | 인카금융서비스</p>
+  </div>
+</header>
+
+<!-- 로그인 -->
+<section id="loginSection" class="login-hero">
+  <div class="hero-overlay">
+    <div class="login-box">
+      <img src="assets/images/logo.png" class="hero-logo">
+      <h2>2025 ISC Taiwan</h2>
+      <p class="hero-desc">사번으로 로그인하세요</p>
+      <input type="text" id="employeeId" placeholder="사번 입력">
+      <button class="primary-btn" onclick="login()">로그인</button>
+      <p id="loginError" class="error"></p>
     </div>
-  </header>
+  </div>
+</section>
 
-  <!-- ===== LOGIN HERO ===== -->
-  <section id="loginSection" class="login-hero">
-    <div class="hero-overlay">
-      <div class="login-box">
-        <img src="assets/images/logo.png" class="hero-logo" alt="INCAR 로고">
-        <h2 class="hero-title">2025 ISC Taiwan</h2>
-        <p class="hero-desc">참가자 전용 포털 · 사번으로 로그인하세요</p>
+<!-- 메인 -->
+<main id="mainSection" style="display:none;">
+  <p class="welcome"><strong id="employeeName"></strong> 님, 환영합니다</p>
 
-        <input type="text" id="employeeId" placeholder="사번 입력">
-        <button class="primary-btn" onclick="login()">로그인</button>
-        <p id="loginError" class="error"></p>
+  <div class="menu">
+    <button onclick="openPage('schedule')">🗓 여행 일정</button>
+    <button onclick="openPage('flight')">✈️ 항공편 정보</button>
+    <button onclick="openPage('taiwan')">🇹🇼 대만의 모든 것</button>
+    <button onclick="openPage('myTour')">🎒 나의 선택 관광</button>
+    <button onclick="openPage('dinner')">🍽 만찬 안내</button>
+    <button onclick="openPage('request')">📝 요청사항</button>
+    <button onclick="openPage('contact')">📞 긴급 연락망</button>
+  </div>
+</main>
 
-        <p class="hero-footnote">※ 문제가 있으면 운영담당자에게 문의해주세요.</p>
+<!-- 상세 -->
+<section id="detailPage" class="detail" style="display:none;">
+  <h2 id="detailTitle"></h2>
+  <div id="detailContent"></div>
+
+  <div class="nav-buttons">
+    <button class="ghost-btn" onclick="goHome()">홈으로</button>
+    <button class="ghost-btn" onclick="goBack()">뒤로가기</button>
+  </div>
+</section>
+
+<script>
+let employees = [];
+let currentUser = null;
+let pageStack = [];
+
+fetch("people/employees.json?ts=" + Date.now())
+  .then(res => res.json())
+  .then(data => employees = data);
+
+function login() {
+  const id = document.getElementById("employeeId").value.trim();
+  const user = employees.find(e => e.id === id);
+  if (!user) {
+    document.getElementById("loginError").textContent = "등록되지 않은 사번입니다.";
+    return;
+  }
+  currentUser = user;
+  document.getElementById("loginSection").style.display = "none";
+  document.getElementById("topHeader").style.display = "flex";
+  document.getElementById("mainSection").style.display = "block";
+  document.getElementById("employeeName").textContent = user.name;
+}
+
+function openPage(type) {
+  pageStack.push(type);
+  document.getElementById("mainSection").style.display = "none";
+  const detail = document.getElementById("detailPage");
+  detail.style.display = "block";
+  detail.classList.remove("animate-in");
+  void detail.offsetWidth;
+  detail.classList.add("animate-in");
+
+  const t = document.getElementById("detailTitle");
+  const c = document.getElementById("detailContent");
+
+  if (type === "taiwan") {
+    t.textContent = "🇹🇼 대만의 모든 것";
+    c.innerHTML = `
+      <div class="card">
+        <h3>기본 정보</h3>
+        <ul class="list">
+          <li><strong>수도:</strong> 타이베이</li>
+          <li><strong>언어:</strong> 중국어(번체), 타이완어</li>
+          <li><strong>화폐:</strong> 신 타이완 달러 (TWD)</li>
+          <li><strong>시차:</strong> 한국보다 1시간 느림</li>
+        </ul>
+
+        <h3>한국과 비교</h3>
+        <ul class="list">
+          <li>전압: 대만 110V / 한국 220V</li>
+          <li>콘센트: A형 (변환 어댑터 필요)</li>
+          <li>비행시간: 약 2시간 30분</li>
+        </ul>
+
+        <h3>여행 팁</h3>
+        <p class="muted">
+          치안이 비교적 안정적이며, 대중교통이 매우 발달해 있습니다.
+          음식은 대체로 한국인 입맛에 잘 맞습니다.
+        </p>
       </div>
-    </div>
-  </section>
+    `;
+  }
 
-  <!-- ===== MAIN (로그인 후) ===== -->
-  <main id="mainSection" style="display:none;">
-    <p class="welcome"><strong id="employeeName"></strong> 님, 환영합니다</p>
+  if (type === "flight") {
+    t.textContent = "✈️ 항공편 정보";
+    c.innerHTML = `<div class="card"><p>${currentUser.flight}</p></div>`;
+  }
 
-    <div class="menu">
-      <button onclick="openPage('schedule')">🗓 여행 일정</button>
-      <button onclick="openPage('flight')">✈️ 항공편 정보</button>
-      <button onclick="openPage('tour')">📍 관광지 설명</button>
-      <button onclick="openPage('myTour')">🎒 나의 선택 관광</button>
-      <button onclick="openPage('dinner')">🍽 만찬 안내</button>
-      <button onclick="openPage('request')">📝 요청사항</button>
-      <button onclick="openPage('contact')">📞 긴급 연락망</button>
-    </div>
-  </main>
-
-  <!-- ===== DETAIL PAGE (슬라이드업 레이어) ===== -->
-  <section id="detailPage" class="detail" style="display:none;">
-    <h2 id="detailTitle"></h2>
-    <div id="detailContent"></div>
-
-    <div class="nav-buttons">
-      <button class="ghost-btn" onclick="goHome()">홈으로</button>
-      <button class="ghost-btn" onclick="goBack()">뒤로가기</button>
-    </div>
-  </section>
-
-  <script>
-    // ====== 상태 ======
-    let employees = [];
-    let currentUser = null;
-    let pageStack = [];
-
-    // ====== 직원 데이터 로드 (캐시 방지) ======
-    fetch("people/employees.json?ts=" + Date.now())
-      .then(res => res.json())
-      .then(data => { employees = data; })
-      .catch(() => {
-        const err = document.getElementById("loginError");
-        if (err) err.textContent = "직원 데이터를 불러오지 못했습니다(people/employees.json 확인).";
-      });
-
-    // ====== 로그인 ======
-    function login() {
-      const id = document.getElementById("employeeId").value.trim();
-      const user = employees.find(e => e.id === id);
-
-      if (!user) {
-        document.getElementById("loginError").textContent = "등록되지 않은 사번입니다.";
-        return;
-      }
-
-      currentUser = user;
-
-      // 화면 전환
-      document.getElementById("loginSection").style.display = "none";
-      document.getElementById("topHeader").style.display = "flex";
-      document.getElementById("mainSection").style.display = "block";
-
-      document.getElementById("employeeName").textContent = user.name;
-      document.getElementById("loginError").textContent = "";
+  if (type === "myTour") {
+    t.textContent = "🎒 나의 선택 관광";
+    if (!currentUser.myTour || currentUser.myTour.length === 0) {
+      c.innerHTML = "<div class='card'><p>선택한 관광이 없습니다.</p></div>";
+    } else {
+      c.innerHTML = `
+        <div class="card">
+          <ul class="mytour-list">
+            ${currentUser.myTour.map(t => `<li>${t}</li>`).join("")}
+          </ul>
+        </div>
+      `;
     }
+  }
 
-    // ====== 상세 페이지 열기 ======
-    function openPage(type) {
-      pageStack.push(type);
+  if (type === "schedule") {
+    t.textContent = "🗓 여행 일정";
+    c.innerHTML = "<div class='card'><p>공식 일정표 기준으로 업데이트 예정</p></div>";
+  }
 
-      document.getElementById("mainSection").style.display = "none";
-      const detail = document.getElementById("detailPage");
-      detail.style.display = "block";
+  if (type === "dinner") {
+    t.textContent = "🍽 만찬 안내";
+    c.innerHTML = "<div class='card'><p>필수 참석 행사입니다.</p></div>";
+  }
 
-      // 애니메이션 재트리거 (연속 클릭시에도 올라오게)
-      detail.classList.remove("animate-in");
-      void detail.offsetWidth;
-      detail.classList.add("animate-in");
+  if (type === "request") {
+    t.textContent = "📝 요청사항";
+    c.innerHTML = `
+      <div class="card">
+        <textarea id="requestText" placeholder="요청사항 입력"></textarea>
+        <button class="primary-btn" onclick="submitRequest()">제출</button>
+        <p id="submitMessage"></p>
+      </div>
+    `;
+  }
 
-      const title = document.getElementById("detailTitle");
-      const content = document.getElementById("detailContent");
+  if (type === "contact") {
+    t.textContent = "📞 긴급 연락망";
+    c.innerHTML = "<div class='card'><p>현지 담당자 정보 추후 제공</p></div>";
+  }
+}
 
-      // 공통 초기화
-      title.textContent = "";
-      content.innerHTML = "";
+function submitRequest() {
+  document.getElementById("submitMessage").textContent = "요청이 접수되었습니다.";
+}
 
-      if (type === "schedule") {
-        title.textContent = "🗓 여행 일정";
-        content.innerHTML = `
-          <div class="card">
-            <p class="muted">※ 상세 일정표 기준으로 업데이트됩니다.</p>
-            <ul class="list">
-              <li>1일차: 입국 / 시내 주요 일정</li>
-              <li>2일차: 선택 일정 + 만찬</li>
-              <li>3일차: 근교 투어</li>
-              <li>4일차: 귀국</li>
-            </ul>
-          </div>
-        `;
-      }
+function goHome() {
+  pageStack = [];
+  document.getElementById("detailPage").style.display = "none";
+  document.getElementById("mainSection").style.display = "block";
+}
 
-      if (type === "flight") {
-        title.textContent = "✈️ 항공편 정보";
-        const txt = (currentUser && currentUser.flight) ? currentUser.flight : "항공편 정보가 없습니다.";
-        content.innerHTML = `
-          <div class="card">
-            <p>${escapeHtml(txt)}</p>
-            <p class="muted">※ 항공편 정보는 people/employees.json 수정 시 자동 반영됩니다.</p>
-          </div>
-        `;
-      }
-
-      if (type === "tour") {
-        title.textContent = "📍 관광지 설명";
-        content.innerHTML = `
-          <div class="card">
-            <p class="muted">예시 문구입니다. 실제 일정표 기준으로 텍스트를 계속 업데이트하면 됩니다.</p>
-            <div class="grid2">
-              <div class="mini-card">
-                <h3>중정기념당</h3>
-                <p>대만 현대사의 상징적인 랜드마크.</p>
-              </div>
-              <div class="mini-card">
-                <h3>고궁박물원</h3>
-                <p>중화 문화권 최대 규모급 컬렉션.</p>
-              </div>
-              <div class="mini-card">
-                <h3>야시장</h3>
-                <p>현지 먹거리와 쇼핑을 즐길 수 있는 필수 코스.</p>
-              </div>
-              <div class="mini-card">
-                <h3>도심 명소</h3>
-                <p>행사 동선에 맞춘 핵심 포인트 중심으로 안내.</p>
-              </div>
-            </div>
-          </div>
-        `;
-      }
-
-      if (type === "myTour") {
-        title.textContent = "🎒 나의 선택 관광";
-        const tours = (currentUser && Array.isArray(currentUser.myTour)) ? currentUser.myTour : [];
-        if (tours.length === 0) {
-          content.innerHTML = `
-            <div class="card">
-              <p>선택한 관광이 없습니다.</p>
-              <p class="muted">people/employees.json에 myTour를 추가하면 자동으로 표시됩니다.</p>
-            </div>
-          `;
-        } else {
-          content.innerHTML = `
-            <div class="card">
-              <p class="muted">아래 내용은 본인 선택 항목입니다.</p>
-              <ul class="mytour-list">
-                ${tours.map(t => `<li>${escapeHtml(String(t))}</li>`).join("")}
-              </ul>
-              <p class="muted">※ 변경은 people/employees.json에서 myTour만 수정하면 됩니다.</p>
-            </div>
-          `;
-        }
-      }
-
-      if (type === "dinner") {
-        title.textContent = "🍽 만찬 안내";
-        content.innerHTML = `
-          <div class="card">
-            <p><strong>필수 참석</strong> 일정입니다.</p>
-            <ul class="list">
-              <li>집합 시간/장소: 행사 운영 공지에 따라 업데이트</li>
-              <li>드레스코드: 추후 공지</li>
-              <li>좌석/팀: 현장 안내</li>
-            </ul>
-          </div>
-        `;
-      }
-
-      if (type === "request") {
-        title.textContent = "📝 요청사항";
-        content.innerHTML = `
-          <div class="card">
-            <p class="muted">예: 기내식, 룸 타입, 동행 요청, 알레르기 등</p>
-            <textarea id="requestText" placeholder="요청사항을 입력하세요"></textarea>
-            <button class="primary-btn" onclick="submitRequest()">제출</button>
-            <p id="submitMessage" class="success"></p>
-          </div>
-        `;
-      }
-
-      if (type === "contact") {
-        title.textContent = "📞 긴급 연락망";
-        content.innerHTML = `
-          <div class="card">
-            <ul class="list">
-              <li>현지 담당: (추후 입력)</li>
-              <li>한국 담당: (추후 입력)</li>
-              <li>여행사 담당: (추후 입력)</li>
-            </ul>
-          </div>
-        `;
-      }
-    }
-
-    // ====== 요청사항 전송 ======
-    function submitRequest() {
-      if (!currentUser) return;
-
-      const text = document.getElementById("requestText").value.trim();
-      if (!text) return alert("요청사항을 입력해주세요.");
-
-      // ⚠️ 여기를 반드시 네 Apps Script 웹앱 URL로 교체
-      const endpoint = "https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec";
-
-      fetch(endpoint, {
-        method: "POST",
-        mode: "no-cors",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          id: currentUser.id,
-          name: currentUser.name,
-          request: text
-        })
-      });
-
-      document.getElementById("submitMessage").textContent = "제출 완료되었습니다.";
-      document.getElementById("requestText").value = "";
-    }
-
-    // ====== 네비게이션 ======
-    function goHome() {
-      pageStack = [];
-      document.getElementById("detailPage").style.display = "none";
-      document.getElementById("mainSection").style.display = "block";
-    }
-
-    function goBack() {
-      pageStack.pop();
-      if (pageStack.length === 0) goHome();
-      // 뒤로가기는 메인으로만 (요구대로 홈/뒤로 제공)
-    }
-
-    // ====== XSS 방지용 간단 이스케이프 ======
-    function escapeHtml(str) {
-      return String(str)
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll("\"", "&quot;")
-        .replaceAll("'", "&#039;");
-    }
-  </script>
+function goBack() {
+  goHome();
+}
+</script>
 
 </body>
 </html>
