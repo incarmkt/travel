@@ -6,8 +6,8 @@
   <title>2025 ISC 대만 여행</title>
 
   <link rel="stylesheet" href="css/base.css">
-  <link rel="stylesheet" href="css/desktop.css">
-  <link rel="stylesheet" href="css/mobile.css">
+  <link rel="stylesheet" href="css/desktop.css" media="(min-width: 768px)">
+  <link rel="stylesheet" href="css/mobile.css" media="(max-width: 767px)">
 </head>
 <body>
 
@@ -20,7 +20,7 @@
   </div>
 </header>
 
-<!-- ================= LOGIN ================= -->
+<!-- ================= LOGIN (FINAL / DO NOT TOUCH) ================= -->
 <section id="loginSection" class="login-hero">
   <div class="hero-overlay">
     <div class="login-box">
@@ -35,15 +35,14 @@
   </div>
 </section>
 
-<!-- ================= MAIN (IMAGE BG 고정) ================= -->
-<main id="mainSection" class="main-bg" style="display:none;">
-  <div class="bg-image"></div>
-  <div class="bg-overlay"></div>
+<!-- ================= APP WRAPPER ================= -->
+<div id="appWrap" style="display:none;">
+  <div class="app-bg"></div>
+  <div class="app-overlay"></div>
 
-  <div class="content slide-in" id="homeContent">
-    <p class="welcome">
-      <strong id="employeeName"></strong> 님, 환영합니다
-    </p>
+  <!-- ================= MAIN ================= -->
+  <main id="mainSection" class="page page-home">
+    <p class="welcome"><strong id="employeeName"></strong> 님, 환영합니다</p>
 
     <div class="menu">
       <button onclick="openPage('schedule')">🗓 여행 일정</button>
@@ -54,20 +53,21 @@
       <button onclick="openPage('request')">📝 요청사항</button>
       <button onclick="openPage('contact')">📞 긴급 연락망</button>
     </div>
-  </div>
-</main>
+  </main>
 
-<!-- ================= DETAIL (슬라이드) ================= -->
-<section id="detailPage" class="detail slide-hidden">
-  <h2 id="detailTitle"></h2>
-  <div id="detailContent"></div>
+  <!-- ================= DETAIL ================= -->
+  <section id="detailPage" class="page page-detail">
+    <h2 id="detailTitle"></h2>
+    <div id="detailContent"></div>
 
-  <div class="nav-buttons">
-    <button class="ghost-btn" onclick="goHome()">홈으로</button>
-  </div>
-</section>
+    <div class="nav-buttons">
+      <button class="ghost-btn" onclick="goHome()">홈으로</button>
+    </div>
+  </section>
+</div>
 
 <script>
+/* ================= 공통 ================= */
 let employees = [];
 let currentUser = null;
 
@@ -85,24 +85,61 @@ function login() {
   currentUser = user;
   document.getElementById("loginSection").style.display = "none";
   document.getElementById("topHeader").style.display = "flex";
-  document.getElementById("mainSection").style.display = "block";
+  document.getElementById("appWrap").style.display = "block";
   document.getElementById("employeeName").textContent = user.name;
 }
 
-const travelSchedule = [ /* 기존 그대로 */ ];
+/* ================= 여행 일정 (원본 그대로) ================= */
+const travelSchedule = [
+  {
+    day: "DAY 1",
+    date: "2026.03.11 (수)",
+    title: "인천 → 타이베이 / 시내 하이라이트",
+    items: [
+      { time:"08:00", icon:"✈️", title:"인천 국제공항 출발", desc:"OZ 711 / KE 2021" },
+      { time:"12:30", icon:"🍜", title:"중식 | 우육면", desc:"현지 인기 중식당" },
+      { time:"14:00", icon:"🏛️", title:"중정기념당", desc:"장개석 총통 기념관" },
+      { time:"15:30", icon:"🏺", title:"국립고궁박물관", desc:"세계 4대 박물관" },
+      { time:"18:30", icon:"🍽️", title:"석식 | 타카오 샤브샤브", desc:"현지식" },
+      { time:"20:00", icon:"🌃", title:"타이베이 101 전망대", desc:"야경 관람" }
+    ]
+  },
+  {
+    day: "DAY 2",
+    date: "2026.03.12 (목)",
+    title: "선택 관광 / 만찬",
+    items: [
+      { time:"09:00", icon:"🚌", title:"선택 관광", desc:"개인 선택 일정" },
+      { time:"18:00", icon:"🎉", title:"ISC 만찬", desc:"필수 참석" }
+    ]
+  },
+  {
+    day: "DAY 3",
+    date: "2026.03.13 (금)",
+    title: "근교 관광",
+    items: [
+      { time:"10:00", icon:"🌊", title:"야류 해상공원", desc:"기암괴석 관광" },
+      { time:"14:00", icon:"🏮", title:"지우펀", desc:"홍등 마을" }
+    ]
+  },
+  {
+    day: "DAY 4",
+    date: "2026.03.14 (토)",
+    title: "귀국",
+    items: [
+      { time:"07:00", icon:"🏨", title:"호텔 체크아웃", desc:"" },
+      { time:"11:40", icon:"✈️", title:"타이베이 출발", desc:"OZ 712 / KE 2022" },
+      { time:"15:25", icon:"🇰🇷", title:"인천 도착", desc:"" }
+    ]
+  }
+];
 
 function openPage(type) {
-  const home = document.getElementById("homeContent");
-  const detail = document.getElementById("detailPage");
-
-  home.classList.remove("slide-in");
-  home.classList.add("slide-out");
-
+  document.getElementById("mainSection").classList.add("slide-up-out");
   setTimeout(() => {
     document.getElementById("mainSection").style.display = "none";
-    detail.style.display = "block";
-    detail.classList.remove("slide-hidden");
-    detail.classList.add("slide-in");
+    document.getElementById("detailPage").style.display = "block";
+    document.getElementById("detailPage").classList.add("slide-up-in");
 
     const t = document.getElementById("detailTitle");
     const c = document.getElementById("detailContent");
@@ -113,6 +150,18 @@ function openPage(type) {
         <div class="day-card">
           <h3>${day.day} <span>${day.date}</span></h3>
           <p class="day-title">${day.title}</p>
+          <div class="timeline">
+            ${day.items.map(i => `
+              <div class="schedule-item">
+                <div class="timeline-dot"></div>
+                <div class="schedule-card">
+                  <div class="schedule-time">${i.time}</div>
+                  <div class="schedule-title">${i.icon} ${i.title}</div>
+                  ${i.desc ? `<div class="schedule-desc">${i.desc}</div>` : ""}
+                </div>
+              </div>
+            `).join("")}
+          </div>
         </div>
       `).join("");
     }
@@ -151,23 +200,19 @@ function openPage(type) {
       t.textContent = "📞 긴급 연락망";
       c.innerHTML = `<div class="card">현지 담당자 안내</div>`;
     }
-  }, 300);
+  }, 250);
 }
 
 function goHome() {
-  const home = document.getElementById("homeContent");
   const detail = document.getElementById("detailPage");
-
-  detail.classList.remove("slide-in");
-  detail.classList.add("slide-out");
+  detail.classList.remove("slide-up-in");
+  detail.classList.add("slide-down-out");
 
   setTimeout(() => {
     detail.style.display = "none";
     document.getElementById("mainSection").style.display = "block";
-
-    home.classList.remove("slide-out");
-    home.classList.add("slide-in");
-  }, 300);
+    document.getElementById("mainSection").classList.remove("slide-up-out");
+  }, 250);
 }
 </script>
 
