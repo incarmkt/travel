@@ -1,4 +1,3 @@
-/* 데스크탑: 메뉴를 3열로, 화면에 꽉 차게 */
 .menu {
   grid-template-columns: repeat(3, 1fr);
   max-width: 1000px;
@@ -6,17 +5,10 @@
   padding: 0 18px;
 }
 
-/* 상세 화면: 2열 그리드 카드 */
-.grid2 {
-  grid-template-columns: repeat(2, 1fr);
-}
-
-/* 헤더 레이아웃 */
 .header {
   justify-content: flex-start;
 }
 
-/* 로고는 좌측에 자연스럽게 고정된 느낌 */
-.logo {
-  width: 120px;
+.day-card {
+  padding: 28px;
 }
