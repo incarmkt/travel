@@ -11,6 +11,7 @@
 </head>
 <body>
 
+<!-- ================= HEADER ================= -->
 <header class="header" id="topHeader" style="display:none;">
   <img src="assets/images/logo.png" class="logo">
   <div>
@@ -19,12 +20,14 @@
   </div>
 </header>
 
+<!-- ================= LOGIN (FINAL / DO NOT TOUCH) ================= -->
 <section id="loginSection" class="login-hero">
   <div class="hero-overlay">
     <div class="login-box">
       <img src="assets/images/logo.png" class="hero-logo">
       <h2>2025 ISC Taiwan</h2>
       <p class="hero-desc">사번으로 로그인하세요</p>
+
       <input type="text" id="employeeId" placeholder="사번 입력">
       <button class="primary-btn" onclick="login()">로그인</button>
       <p id="loginError" class="error"></p>
@@ -32,6 +35,7 @@
   </div>
 </section>
 
+<!-- ================= MAIN ================= -->
 <main id="mainSection" style="display:none;">
   <p class="welcome"><strong id="employeeName"></strong> 님, 환영합니다</p>
 
@@ -46,6 +50,7 @@
   </div>
 </main>
 
+<!-- ================= DETAIL ================= -->
 <section id="detailPage" class="detail" style="display:none;">
   <h2 id="detailTitle"></h2>
   <div id="detailContent"></div>
@@ -57,7 +62,7 @@
 </section>
 
 <script>
-/* ================= 공통 데이터 ================= */
+/* ================= 공통 ================= */
 let employees = [];
 let currentUser = null;
 
@@ -79,7 +84,7 @@ function login() {
   document.getElementById("employeeName").textContent = user.name;
 }
 
-/* ================= 여행 일정 데이터 (문구 그대로) ================= */
+/* ================= 여행 일정 ================= */
 const travelSchedule = [
   {
     day: "DAY 1",
@@ -87,11 +92,11 @@ const travelSchedule = [
     title: "인천 → 타이베이 / 시내 하이라이트",
     items: [
       { time:"08:00", icon:"✈️", title:"인천 국제공항 출발", desc:"OZ 711 / KE 2021" },
-      { time:"12:30", icon:"🍜", title:"중식 | 우육면", desc:"현지 인기 중식" },
+      { time:"12:30", icon:"🍜", title:"중식 | 우육면", desc:"현지 인기 중식당" },
       { time:"14:00", icon:"🏛️", title:"중정기념당", desc:"장개석 총통 기념관" },
       { time:"15:30", icon:"🏺", title:"국립고궁박물관", desc:"세계 4대 박물관" },
       { time:"18:30", icon:"🍽️", title:"석식 | 타카오 샤브샤브", desc:"현지식" },
-      { time:"20:00", icon:"🌃", title:"타이베이 101 전망대", desc:"타이베이 야경" }
+      { time:"20:00", icon:"🌃", title:"타이베이 101 전망대", desc:"야경 관람" }
     ]
   },
   {
@@ -99,8 +104,8 @@ const travelSchedule = [
     date: "2026.03.12 (목)",
     title: "선택 관광 / 만찬",
     items: [
-      { time:"09:00", icon:"🚌", title:"선택 관광", desc:"세부 일정 별도 안내" },
-      { time:"18:00", icon:"🎉", title:"ISC 만찬 행사", desc:"필수 참석" }
+      { time:"09:00", icon:"🚌", title:"선택 관광", desc:"개인 선택 일정" },
+      { time:"18:00", icon:"🎉", title:"ISC 만찬", desc:"필수 참석" }
     ]
   },
   {
@@ -117,7 +122,7 @@ const travelSchedule = [
     date: "2026.03.14 (토)",
     title: "귀국",
     items: [
-      { time:"07:00", icon:"🏨", title:"호텔 조식 및 체크아웃", desc:"" },
+      { time:"07:00", icon:"🏨", title:"호텔 체크아웃", desc:"" },
       { time:"11:40", icon:"✈️", title:"타이베이 출발", desc:"OZ 712 / KE 2022" },
       { time:"15:25", icon:"🇰🇷", title:"인천 도착", desc:"" }
     ]
@@ -155,13 +160,48 @@ function openPage(type) {
       </div>
     `).join("");
   }
+
+  if (type === "flight") {
+    t.textContent = "✈️ 항공편 정보";
+    c.innerHTML = `<div class="card">${currentUser.flight}</div>`;
+  }
+
+  if (type === "myTour") {
+    t.textContent = "🎒 나의 선택 관광";
+    c.innerHTML = `<div class="card"><ul class="mytour-list">
+      ${(currentUser.myTour || []).map(t => `<li>${t}</li>`).join("")}
+    </ul></div>`;
+  }
+
+  if (type === "taiwan") {
+    t.textContent = "🇹🇼 대만의 모든 것";
+    c.innerHTML = `<div class="card">대만 기본 정보 안내</div>`;
+  }
+
+  if (type === "dinner") {
+    t.textContent = "🍽 만찬 안내";
+    c.innerHTML = `<div class="card">ISC 공식 만찬</div>`;
+  }
+
+  if (type === "request") {
+    t.textContent = "📝 요청사항";
+    c.innerHTML = `<div class="card">
+      <textarea placeholder="요청사항 입력"></textarea>
+      <button class="primary-btn">제출</button>
+    </div>`;
+  }
+
+  if (type === "contact") {
+    t.textContent = "📞 긴급 연락망";
+    c.innerHTML = `<div class="card">현지 담당자 안내</div>`;
+  }
 }
 
 function goHome() {
   document.getElementById("detailPage").style.display = "none";
   document.getElementById("mainSection").style.display = "block";
 }
-function goBack() { goHome(); }
+function goBack(){ goHome(); }
 </script>
 
 </body>
