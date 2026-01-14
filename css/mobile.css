@@ -1,7 +1,6 @@
 .menu {
   grid-template-columns: 1fr;
 }
-
 .header {
   flex-direction: column;
   text-align: center;
