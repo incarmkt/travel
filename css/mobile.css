@@ -1,50 +1,53 @@
 body {
-  font-family: sans-serif;
+  font-family: 'Noto Sans KR', sans-serif;
+  background-color: #ffffff;
+  margin: 0;
+  padding: 0;
+  text-align: center;
+}
+
+.container {
   padding: 20px;
-  background-color: #f9f9f9;
 }
 
 .logo {
-  width: 150px;
-  display: block;
-  margin: 0 auto 15px;
+  width: 140px;
+  margin-bottom: 15px;
 }
 
 h1 {
-  font-size: 22px;
-  text-align: center;
+  font-size: 1.5rem;
+  margin: 5px 0;
 }
 
 .subtitle {
-  text-align: center;
-  font-size: 14px;
-  color: #888;
+  color: #777;
   margin-bottom: 20px;
 }
 
 input, textarea, button {
-  width: 100%;
-  padding: 12px;
-  margin: 10px 0;
-  font-size: 16px;
+  padding: 8px;
+  margin: 8px;
+  width: 90%;
+  font-size: 1rem;
 }
 
 .menu button {
-  width: 100%;
-  margin: 5px 0;
-  background-color: #0078ff;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  font-size: 16px;
+  display: block;
+  margin: 10px auto;
+  width: 90%;
+  font-size: 1rem;
 }
 
 .section {
-  background: white;
-  padding: 15px;
-  border-radius: 10px;
   margin-top: 20px;
+  display: none;
 }
 
-.success { color: green; }
-.error { color: red; }
+.success {
+  color: green;
+}
+
+.error {
+  color: red;
+}
