@@ -1,6 +1,4 @@
-* {
-  box-sizing: border-box;
-}
+* { box-sizing: border-box; }
 
 body {
   margin: 0;
@@ -9,11 +7,16 @@ body {
   color: #222;
 }
 
-/* HEADER */
+.error { color: #ff4d4f; font-size: 14px; margin: 10px 0 0; }
+.success { color: #1f8a3b; margin: 12px 0 0; }
+
+.muted { color: #6b7280; font-size: 13px; }
+
+/* ===== HEADER ===== */
 .header {
   display: flex;
   align-items: center;
-  gap: 20px;
+  gap: 18px;
   padding: 18px 32px;
   background: #ffffff;
   box-shadow: 0 2px 10px rgba(0,0,0,0.08);
@@ -21,94 +24,236 @@ body {
 
 .logo {
   width: 110px;
+  height: auto;
 }
 
-/* TITLE */
 .header-text h1 {
   margin: 0;
-  font-size: 22px;
+  font-size: 20px;
   color: #0b3c7a;
 }
 
 .sub {
-  font-size: 14px;
-  color: #666;
+  margin: 4px 0 0;
+  font-size: 13px;
+  color: #667085;
 }
 
-/* LOGIN */
-.login {
-  max-width: 420px;
-  margin: 80px auto;
-  padding: 40px;
-  background: white;
-  border-radius: 14px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.12);
+/* ===== HERO LOGIN ===== */
+/* ⚠️ 대만 배경 이미지 파일을 아래 경로로 넣어주세요:
+   assets/images/taiwan.jpg
+*/
+.login-hero {
+  height: 100vh;
+  background: url("../assets/images/taiwan.jpg") center / cover no-repeat;
+}
+
+.hero-overlay {
+  height: 100%;
+  background: rgba(0,0,0,0.50);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 18px;
+}
+
+.login-box {
+  width: 380px;
+  max-width: 92vw;
+  background: rgba(255,255,255,0.96);
+  border-radius: 18px;
+  padding: 34px 28px;
   text-align: center;
+  box-shadow: 0 18px 50px rgba(0,0,0,0.25);
+  animation: fadeUp 0.8s ease;
 }
 
-.login input {
-  width: 100%;
-  padding: 14px;
-  font-size: 16px;
-  border-radius: 8px;
-  border: 1px solid #ccc;
+.hero-logo {
+  width: 120px;
+  height: auto;
+  margin-bottom: 14px;
 }
 
-.login button {
+.hero-title {
+  margin: 6px 0 6px;
+  font-size: 22px;
+  color: #0b3c7a;
+}
+
+.hero-desc {
+  margin: 0 0 18px;
+  color: #475467;
+  font-size: 14px;
+}
+
+.hero-footnote {
+  margin: 18px 0 0;
+  color: #667085;
+  font-size: 12px;
+}
+
+.login-box input {
   width: 100%;
-  margin-top: 12px;
-  padding: 14px;
-  font-size: 16px;
-  background: #1e63c6;
-  color: #fff;
+  padding: 14px 12px;
+  font-size: 15px;
+  border-radius: 10px;
+  border: 1px solid #d0d5dd;
+  outline: none;
+  margin-bottom: 12px;
+}
+
+/* ===== BUTTONS ===== */
+.primary-btn {
+  width: 100%;
+  padding: 14px 14px;
+  font-size: 15px;
   border: none;
-  border-radius: 8px;
+  border-radius: 12px;
+  cursor: pointer;
+  color: #fff;
+  background: linear-gradient(135deg, #1e63c6, #3f7be0);
+  box-shadow: 0 10px 20px rgba(30,99,198,0.25);
 }
 
-/* MAIN */
+.primary-btn:hover {
+  filter: brightness(0.98);
+}
+
+.ghost-btn {
+  padding: 12px 14px;
+  border-radius: 12px;
+  border: 1px solid #d0d5dd;
+  background: #ffffff;
+  cursor: pointer;
+}
+
+/* ===== MAIN ===== */
 .welcome {
   text-align: center;
+  margin: 34px 0 16px;
   font-size: 18px;
-  margin: 40px 0 20px;
 }
 
-/* MENU CARD (공통 디자인) */
 .menu {
   display: grid;
-  gap: 16px;
+  gap: 14px;
 }
 
 .menu button {
-  padding: 18px;
+  padding: 18px 16px;
   font-size: 16px;
-  border-radius: 14px;
   border: none;
-  background: linear-gradient(135deg, #1e63c6, #3f7be0);
-  color: #fff;
+  border-radius: 16px;
   cursor: pointer;
-  box-shadow: 0 6px 16px rgba(30,99,198,0.3);
+  color: #fff;
+  background: linear-gradient(135deg, #1e63c6, #3f7be0);
+  box-shadow: 0 10px 24px rgba(30,99,198,0.22);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  text-align: left;
 }
 
-/* DETAIL */
+.menu button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 30px rgba(30,99,198,0.28);
+}
+
+/* ===== DETAIL (슬라이드업) ===== */
 .detail {
-  max-width: 760px;
-  margin: 60px auto;
-  padding: 40px;
-  background: white;
-  border-radius: 16px;
-  box-shadow: 0 12px 40px rgba(0,0,0,0.15);
+  max-width: 900px;
+  margin: 40px auto;
+  padding: 0 16px 50px;
+}
+
+.detail h2 {
+  margin: 0 0 14px;
+  padding: 0 6px;
+  color: #0b3c7a;
+}
+
+.detail .card {
+  background: #ffffff;
+  border-radius: 18px;
+  padding: 22px;
+  box-shadow: 0 18px 45px rgba(0,0,0,0.10);
 }
 
 .detail textarea {
   width: 100%;
-  min-height: 120px;
+  min-height: 130px;
+  border: 1px solid #d0d5dd;
+  border-radius: 14px;
   padding: 14px;
-  border-radius: 8px;
-  border: 1px solid #ccc;
+  font-size: 15px;
+  margin-top: 10px;
+  outline: none;
 }
 
+/* 애니메이션 트리거 클래스 */
+.animate-in {
+  animation: slideUp 0.55s ease;
+}
+
+/* ===== lists/cards ===== */
+.list {
+  margin: 10px 0 0;
+  padding-left: 18px;
+}
+
+.grid2 {
+  margin-top: 14px;
+  display: grid;
+  gap: 12px;
+}
+
+.mini-card {
+  border: 1px solid #eef2f6;
+  border-radius: 14px;
+  padding: 14px;
+  background: #fbfcff;
+}
+
+.mini-card h3 {
+  margin: 0 0 6px;
+  font-size: 15px;
+  color: #0b3c7a;
+}
+
+.mini-card p {
+  margin: 0;
+  color: #475467;
+  font-size: 13px;
+}
+
+/* myTour */
+.mytour-list {
+  list-style: none;
+  padding: 0;
+  margin: 12px 0 0;
+  display: grid;
+  gap: 10px;
+}
+
+.mytour-list li {
+  padding: 14px;
+  border-radius: 14px;
+  background: #f4f7fb;
+  border: 1px solid #e8eef7;
+}
+
+/* nav buttons */
 .nav-buttons {
+  margin-top: 14px;
   display: flex;
   gap: 12px;
-  margin-top: 30px;
+  justify-content: space-between;
+}
+
+/* ===== Animations ===== */
+@keyframes slideUp {
+  from { transform: translateY(60px); opacity: 0; }
+  to   { transform: translateY(0); opacity: 1; }
+}
+@keyframes fadeUp {
+  from { transform: translateY(30px); opacity: 0; }
+  to   { transform: translateY(0); opacity: 1; }
 }
