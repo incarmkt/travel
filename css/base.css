@@ -1,0 +1,114 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: "Noto Sans KR", sans-serif;
+  background: #f4f7fb;
+  color: #222;
+}
+
+/* HEADER */
+.header {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 18px 32px;
+  background: #ffffff;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+}
+
+.logo {
+  width: 110px;
+}
+
+/* TITLE */
+.header-text h1 {
+  margin: 0;
+  font-size: 22px;
+  color: #0b3c7a;
+}
+
+.sub {
+  font-size: 14px;
+  color: #666;
+}
+
+/* LOGIN */
+.login {
+  max-width: 420px;
+  margin: 80px auto;
+  padding: 40px;
+  background: white;
+  border-radius: 14px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.12);
+  text-align: center;
+}
+
+.login input {
+  width: 100%;
+  padding: 14px;
+  font-size: 16px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+}
+
+.login button {
+  width: 100%;
+  margin-top: 12px;
+  padding: 14px;
+  font-size: 16px;
+  background: #1e63c6;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+}
+
+/* MAIN */
+.welcome {
+  text-align: center;
+  font-size: 18px;
+  margin: 40px 0 20px;
+}
+
+/* MENU CARD (공통 디자인) */
+.menu {
+  display: grid;
+  gap: 16px;
+}
+
+.menu button {
+  padding: 18px;
+  font-size: 16px;
+  border-radius: 14px;
+  border: none;
+  background: linear-gradient(135deg, #1e63c6, #3f7be0);
+  color: #fff;
+  cursor: pointer;
+  box-shadow: 0 6px 16px rgba(30,99,198,0.3);
+}
+
+/* DETAIL */
+.detail {
+  max-width: 760px;
+  margin: 60px auto;
+  padding: 40px;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 12px 40px rgba(0,0,0,0.15);
+}
+
+.detail textarea {
+  width: 100%;
+  min-height: 120px;
+  padding: 14px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+}
+
+.nav-buttons {
+  display: flex;
+  gap: 12px;
+  margin-top: 30px;
+}
