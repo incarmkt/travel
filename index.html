@@ -39,10 +39,9 @@
 
       <div id="schedule" class="section">
         <h2>🗓 전체 여행 일정</h2>
-        <p><strong>3박 4일 일정</strong> · 2026년 3월 11일(수) ~ 3월 14일(토)</p>
         <ul style="text-align: left;">
           <li>📍 1일차: 중정기념당, 고궁박물관, 타이베이 101 전망대, 야시장</li>
-          <li>📍 2일차: 선택관광(온천/단수이) & 인카 만찬</li>
+          <li>📍 2일차: 선택관광 & 인카 만찬</li>
           <li>📍 3일차: 야류 해안공원, 스펀 천등, 지우펀</li>
           <li>📍 4일차: 귀국 (오전 체크아웃 후 공항 이동)</li>
         </ul>
@@ -50,32 +49,29 @@
 
       <div id="flight" class="section">
         <h2>✈️ 항공편 정보</h2>
-        <p>아시아나항공 OZ711 / OZ712<br>대한항공 KE2021 / KE2022</p>
+        <p id="flightInfo">항공편 정보를 불러오는 중...</p>
       </div>
 
       <div id="highlights" class="section">
         <h2>📍 주요 관광지</h2>
         <ul style="text-align: left;">
           <li>타이베이 101</li>
-          <li>고궁박물관 (세계 4대 박물관)</li>
+          <li>고궁박물관</li>
           <li>중정기념당</li>
           <li>야류 해상공원</li>
-          <li>지우펀 올드 스트리트</li>
+          <li>지우펀</li>
           <li>스펀 천등 날리기</li>
         </ul>
       </div>
 
       <div id="optionalTour" class="section">
         <h2>🛀 선택 관광</h2>
-        <p>🎯 사전예약 필수</p>
-        <p><strong>1안</strong>: 티엔라이 온천욕 (오리구이 포함)</p>
-        <p><strong>2안</strong>: 단수이 투어 (홍마오청, 진리대학 등) + 자유식</p>
+        <p><strong>1안</strong>: 티엔라이 온천욕<br><strong>2안</strong>: 단수이 투어</p>
       </div>
 
       <div id="dinner" class="section">
         <h2>🍽 인카 만찬 안내</h2>
-        <p>📍 2일차 오후 6시 · 필수 참석</p>
-        <p>서문정 자유시간 후 호텔 복귀</p>
+        <p>2일차 오후 6시 · 필수 참석</p>
       </div>
 
       <div id="request" class="section">
@@ -96,7 +92,8 @@
     let employeeData = [];
     let currentUser = null;
 
-    fetch(`people/employees.json?ts=${Date.now()}`)
+    // JSON 파일 로딩
+    fetch("people/employees.json?ts=" + Date.now())
       .then(res => res.json())
       .then(data => { employeeData = data; });
 
@@ -116,6 +113,11 @@
     function showSection(id) {
       document.querySelectorAll('.section').forEach(s => s.style.display = 'none');
       document.getElementById(id).style.display = 'block';
+
+      // 항공편 정보 출력
+      if (id === 'flight' && currentUser && currentUser.flight) {
+        document.getElementById("flightInfo").textContent = currentUser.flight;
+      }
     }
 
     function submitRequest() {
@@ -123,7 +125,7 @@
       const request = document.getElementById("requestText").value.trim();
       if (!request) return alert("요청사항을 입력해주세요.");
 
-      const endpoint = "https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec";
+      const endpoint = "https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec"; // 여기에 본인 URL
       fetch(endpoint, {
         method: "POST",
         mode: "no-cors",
