@@ -93,10 +93,8 @@
     <img src="assets/images/iscposter.jpg" alt="Fixed Poster">
   </aside>
 
-</section>
-
-
-<script>
+  </div>
+</main>
 /* ================= 공통 ================= */
 let employees = [];
 let currentUser = null;
@@ -187,11 +185,14 @@ const travelSchedule = [
 
 /* ================= 페이지 열기 ================= */
 function openPage(type) {
-  // 🔴 홈 화면 숨기고
-  document.getElementById("homeArea").style.display = "none";
+  const isMobile = window.innerWidth <= 767;
 
-  // 🔴 상세 페이지 표시
-  document.getElementById("detailPage").style.display = "block";
+document.getElementById("homeArea").style.display = "none";
+document.getElementById("detailPage").style.display = "block";
+
+if (isMobile) {
+  document.querySelector(".side-menu").style.display = "none";
+}
 
   const t = document.getElementById("detailTitle");
   const c = document.getElementById("detailContent");
@@ -339,15 +340,15 @@ if (type === "flight") {
 
 /* ================= 홈으로 ================= */
 function goHome() {
-  // 🔴 상세 페이지 숨기고
+  const isMobile = window.innerWidth <= 767;
+
   document.getElementById("detailPage").style.display = "none";
 
-  // 🔴 홈 화면 복귀
-  document.getElementById("homeArea").style.display = "block";
-}
-
-function goBack(){ 
-  goHome(); 
+  if (isMobile) {
+    document.querySelector(".side-menu").style.display = "block";
+  } else {
+    document.getElementById("homeArea").style.display = "block";
+  }
 }
   /* ================= 요청사항 전송 (여기에 추가) ================= */
 function submitRequest() {
