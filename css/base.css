@@ -52,56 +52,8 @@ body {
   height: 64px;
 }
 
-.header-left {
-  display: flex;
-  gap: 16px;
-  align-items: center;
-}
-
 .logo {
   width: 90px;
-}
-
-.header h1 {
-  margin: 0;
-  font-size: 20px;
-}
-
-.header .sub {
-  margin: 2px 0 0;
-  font-size: 13px;
-  color: #667085;
-}
-
-.header-right {
-  text-align: right;
-}
-
-.header-right .congrats {
-  margin: 0;
-  font-size: 13px;
-  color: #1e63c6;
-  font-weight: 600;
-}
-
-.header-right .welcome-text {
-  margin: 2px 0 0;
-  font-size: 14px;
-  color: #344054;
-}
-
-/* ================= VISIBILITY ================= */
-#topHeader,
-#mainSection {
-  display: none;
-}
-
-body.logged-in #topHeader {
-  display: flex;
-}
-
-body.logged-in #mainSection {
-  display: block;
 }
 
 /* ================= MAIN ================= */
@@ -116,17 +68,10 @@ body.logged-in #mainSection {
   position: relative;
 }
 
-/* welcome 문구 구조 유지 */
-#mainSection > .welcome {
-  display: none;
-}
-
-/* ================= SIDE MENU ================= */
+/* ================= SIDE MENU (DESKTOP 기준) ================= */
 .side-menu {
   position: fixed;
-
-  /* 화면 기준 여백 (약 1cm) */
-  top: 84px;      /* 헤더 64 + 여백 */
+  top: 84px;      /* 헤더 + 여백 */
   left: 20px;
   bottom: 20px;
 
@@ -154,10 +99,6 @@ body.logged-in #mainSection {
   cursor: pointer;
 }
 
-.side-menu button:hover {
-  background: #174ea6;
-}
-
 /* ================= CONTENT AREA ================= */
 .content-area {
   margin-left: 300px; /* side-menu + 여백 */
@@ -167,63 +108,24 @@ body.logged-in #mainSection {
   padding: 24px 32px;
 }
 
-/* ================= DETAIL / CARD ================= */
+/* ================= DETAIL ================= */
 .detail {
   background: rgba(255,255,255,.92);
   border-radius: 18px;
   padding: 32px;
-
-  min-height: 520px; /* ⭐ 정보 영역 크기 고정 */
+  min-height: 520px; /* 정보 카드 크기 고정 */
 }
 
-.detail h2 {
-  margin-top: 0;
-  margin-bottom: 16px;
-}
-
+/* ================= ETC ================= */
 .card {
   background: #f8fafc;
   padding: 18px;
   border-radius: 14px;
 }
 
-/* ================= SCHEDULE ================= */
 .day-card {
   background: #fff;
   padding: 20px;
   border-radius: 16px;
   margin-bottom: 20px;
-}
-
-.day-title {
-  font-size: 14px;
-  color: #475467;
-}
-
-/* ================= BUTTONS ================= */
-.primary-btn {
-  margin-top: 12px;
-  padding: 12px;
-  border-radius: 12px;
-  border: none;
-  background: #1e63c6;
-  color: #fff;
-  cursor: pointer;
-}
-
-.ghost-btn {
-  padding: 10px 16px;
-  border-radius: 12px;
-  border: 1px solid #d0d5dd;
-  background: #fff;
-  cursor: pointer;
-}
-
-textarea {
-  width: 100%;
-  min-height: 120px;
-  padding: 12px;
-  border-radius: 12px;
-  border: 1px solid #d0d5dd;
-  resize: vertical;
 }
