@@ -3,8 +3,13 @@
   box-sizing: border-box;
 }
 
-body {
+html, body {
   margin: 0;
+  height: 100%;
+  overflow: hidden; /* ✅ 전체 화면 스크롤 완전 차단 */
+}
+
+body {
   font-family: system-ui, -apple-system, Pretendard, "Malgun Gothic", sans-serif;
   color: #1d2939;
 }
@@ -117,13 +122,13 @@ body.logged-in #mainSection {
 /* ================= MAIN (LOGIN AFTER) ================= */
 #mainSection {
   height: calc(100vh - 64px); /* 헤더 높이 제외 */
-  overflow: hidden;
+  overflow: hidden;          /* ✅ 메인 영역도 스크롤 차단 */
 }
 
 /* 로그인 이후 전체 배경 */
 .main-bg {
   background: url("../assets/images/main-bg.jpg") center / cover no-repeat fixed;
-  padding: 24px 32px;
+  padding: 24px 32px 24px 0; /* ✅ 좌측 패딩 제거 */
 }
 
 /* 기존 welcome 문구는 구조 유지 + 화면 비표시 */
@@ -131,11 +136,15 @@ body.logged-in #mainSection {
   display: none;
 }
 
-/* ================= LAYOUT ================= */
+/* ================= LAYOUT (FULL WIDTH FIX) ================= */
 .layout {
   display: flex;
   height: 100%;
   gap: 32px;
+
+  width: 100vw;   /* ✅ 브라우저 0px 기준 */
+  margin: 0;
+  padding: 0;
 }
 
 /* ================= SIDE MENU (LEFT FIXED) ================= */
@@ -144,7 +153,8 @@ body.logged-in #mainSection {
   flex-shrink: 0;
   padding: 20px 16px;
   background: rgba(255,255,255,0.85);
-  border-radius: 18px;
+
+  border-radius: 0 18px 18px 0; /* ✅ 좌측 딱 붙는 느낌 */
   display: flex;
   flex-direction: column;
   gap: 14px;
@@ -165,11 +175,12 @@ body.logged-in #mainSection {
   background: #174ea6;
 }
 
-/* ================= CONTENT AREA (SCROLL ONLY HERE) ================= */
+/* ================= CONTENT AREA (ONLY SCROLL HERE) ================= */
 .content-area {
   flex: 1;
   height: 100%;
-  overflow-y: auto;
+  overflow-y: auto;     /* ✅ 여기만 스크롤 */
+  overflow-x: hidden;
   padding-right: 12px;
 }
 
