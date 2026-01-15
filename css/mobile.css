@@ -137,3 +137,54 @@ body.logged-in .header {
   max-height: 80%;
   object-fit: contain;
 }
+/* =========================
+   모바일 전용 상세 화면 (Screen ③)
+========================= */
+.mobile-detail {
+  position: fixed;
+  inset: 0;
+  background: #f6f7fb;
+  z-index: 999;
+  display: none;
+  flex-direction: column;
+}
+
+/* 위에서 아래로 등장하는 느낌 */
+.mobile-detail.show {
+  display: flex;
+  animation: slideUp 0.35s ease;
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+/* 상단 바 */
+.mobile-detail-header {
+  height: 56px;
+  background: #ffffff;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 16px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.mobile-detail-header button {
+  background: none;
+  border: none;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+/* 내용 영역 (여기만 스크롤됨) */
+.mobile-detail-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px;
+}
