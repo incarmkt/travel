@@ -222,12 +222,12 @@ function openPage(type) {
   }
 
   if (type === "request") {
-    t.textContent = "📝 요청사항";
-    c.innerHTML = `<div class="card">
-      <textarea placeholder="요청사항 입력"></textarea>
-      <button class="primary-btn">제출</button>
-    </div>`;
-  }
+  t.textContent = "📝 요청사항";
+  c.innerHTML = `<div class="card">
+    <textarea id="requestInput" placeholder="요청사항 입력"></textarea>
+    <button class="primary-btn" onclick="submitRequest()">제출</button>
+  </div>`;
+}
 
   if (type === "contact") {
     t.textContent = "📞 긴급 연락망";
@@ -246,6 +246,41 @@ function goHome() {
 
 function goBack(){ 
   goHome(); 
+}
+  /* ================= 요청사항 전송 (여기에 추가) ================= */
+function submitRequest() {
+  const requestText = document.getElementById("requestInput").value.trim();
+
+  if (!requestText) {
+    alert("요청사항을 입력해주세요.");
+    return;
+  }
+
+  if (!currentUser) {
+    alert("로그인 정보가 없습니다.");
+    return;
+  }
+
+  fetch("https://script.google.com/macros/s/AKfycbzyu7FDCPWeEsb4dOa3MhJx8hFMONXfjl-CfUpOOIPWTXXdzHZK1eAAUxS7vz0Khq2G0A/exec", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      id: currentUser.id,
+      name: currentUser.name,
+      request: requestText
+    })
+  })
+  .then(res => res.text())
+  .then(() => {
+    alert("요청사항이 정상적으로 전송되었습니다.");
+    document.getElementById("requestInput").value = "";
+  })
+  .catch(err => {
+    console.error(err);
+    alert("전송 중 오류가 발생했습니다.");
+  });
 }
 </script>
 
