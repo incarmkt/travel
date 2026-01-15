@@ -3,23 +3,23 @@
     "id": "1612156",
     "name": "박상현",
     "flight": {
-    "departure": {
-      "date": "2026.03.11",
-      "time": "08:00",
-      "from": "인천",
-      "to": "타이베이",
-      "airline": "아시아나항공",
-      "flightNo": "OZ 711"
+      "departure": {
+        "date": "2026.03.11",
+        "time": "08:00",
+        "from": "인천",
+        "to": "타이베이",
+        "airline": "아시아나항공",
+        "flightNo": "OZ 711"
+      },
+      "return": {
+        "date": "2026.03.14",
+        "time": "11:40",
+        "from": "타이베이",
+        "to": "인천",
+        "airline": "아시아나항공",
+        "flightNo": "OZ 712"
+      }
     },
-    "return": {
-      "date": "2026.03.14",
-      "time": "11:40",
-      "from": "타이베이",
-      "to": "인천",
-      "airline": "아시아나항공",
-      "flightNo": "OZ 712"
-    }
-  },
     "myTour": [
       "예스진지 투어",
       "야시장 자유시간"
@@ -28,97 +28,102 @@
   {
     "id": "1612157",
     "name": "박성현",
-   "flight": {
-    "departure": {
-      "date": "2026.03.11",
-      "time": "08:00",
-      "from": "인천",
-      "to": "타이베이",
-      "airline": "아시아나항공",
-      "flightNo": "OZ 711"
+    "flight": {
+      "departure": {
+        "date": "2026.03.11",
+        "time": "08:00",
+        "from": "인천",
+        "to": "타이베이",
+        "airline": "아시아나항공",
+        "flightNo": "OZ 711"
+      },
+      "return": {
+        "date": "2026.03.14",
+        "time": "11:40",
+        "from": "타이베이",
+        "to": "인천",
+        "airline": "아시아나항공",
+        "flightNo": "OZ 712"
+      }
     },
-    "return": {
-      "date": "2026.03.14",
-      "time": "11:40",
-      "from": "타이베이",
-      "to": "인천",
-      "airline": "아시아나항공",
-      "flightNo": "OZ 712"
-    }
+    "myTour": [
+      "예스진지 투어",
+      "야시장 자유시간"
+    ]
   },
   {
     "id": "1612001",
     "name": "김해빛나",
     "flight": {
-    "departure": {
-      "date": "2026.03.11",
-      "time": "08:00",
-      "from": "인천",
-      "to": "타이베이",
-      "airline": "아시아나항공",
-      "flightNo": "OZ 711"
+      "departure": {
+        "date": "2026.03.11",
+        "time": "08:00",
+        "from": "인천",
+        "to": "타이베이",
+        "airline": "아시아나항공",
+        "flightNo": "OZ 711"
+      },
+      "return": {
+        "date": "2026.03.14",
+        "time": "11:40",
+        "from": "타이베이",
+        "to": "인천",
+        "airline": "아시아나항공",
+        "flightNo": "OZ 712"
+      }
     },
-    "return": {
-      "date": "2026.03.14",
-      "time": "11:40",
-      "from": "타이베이",
-      "to": "인천",
-      "airline": "아시아나항공",
-      "flightNo": "OZ 712"
-    }
-  },
     "myTour": [
       "예스진지 투어",
       "야시장 자유시간"
     ]
-  }, 
+  },
   {
     "id": "1612163",
     "name": "이은지",
     "flight": {
-    "departure": {
-      "date": "2026.03.11",
-      "time": "08:00",
-      "from": "인천",
-      "to": "타이베이",
-      "airline": "아시아나항공",
-      "flightNo": "OZ 711"
+      "departure": {
+        "date": "2026.03.11",
+        "time": "08:00",
+        "from": "인천",
+        "to": "타이베이",
+        "airline": "아시아나항공",
+        "flightNo": "OZ 711"
+      },
+      "return": {
+        "date": "2026.03.14",
+        "time": "11:40",
+        "from": "타이베이",
+        "to": "인천",
+        "airline": "아시아나항공",
+        "flightNo": "OZ 712"
+      }
     },
-    "return": {
-      "date": "2026.03.14",
-      "time": "11:40",
-      "from": "타이베이",
-      "to": "인천",
-      "airline": "아시아나항공",
-      "flightNo": "OZ 712"
-    }
-  },
     "myTour": [
       "예스진지 투어",
       "야시장 자유시간"
     ]
   },
- {
+  {
     "id": "1611391",
     "name": "남욱현",
     "flight": {
-    "departure": {
-      "date": "2026.03.11",
-      "time": "08:00",
-      "from": "인천",
-      "to": "타이베이",
-      "airline": "아시아나항공",
-      "flightNo": "OZ 711"
+      "departure": {
+        "date": "2026.03.11",
+        "time": "08:00",
+        "from": "인천",
+        "to": "타이베이",
+        "airline": "아시아나항공",
+        "flightNo": "OZ 711"
+      },
+      "return": {
+        "date": "2026.03.14",
+        "time": "11:40",
+        "from": "타이베이",
+        "to": "인천",
+        "airline": "아시아나항공",
+        "flightNo": "OZ 712"
+      }
     },
-    "return": {
-      "date": "2026.03.14",
-      "time": "11:40",
-      "from": "타이베이",
-      "to": "인천",
-      "airline": "아시아나항공",
-      "flightNo": "OZ 712"
-    }
-  },
     "myTour": [
       "예스진지 투어",
       "야시장 자유시간"
@@ -128,23 +133,23 @@
     "id": "1611499",
     "name": "최진우",
     "flight": {
-    "departure": {
-      "date": "2026.03.11",
-      "time": "08:00",
-      "from": "인천",
-      "to": "타이베이",
-      "airline": "아시아나항공",
-      "flightNo": "OZ 711"
+      "departure": {
+        "date": "2026.03.11",
+        "time": "08:00",
+        "from": "인천",
+        "to": "타이베이",
+        "airline": "아시아나항공",
+        "flightNo": "OZ 711"
+      },
+      "return": {
+        "date": "2026.03.14",
+        "time": "11:40",
+        "from": "타이베이",
+        "to": "인천",
+        "airline": "아시아나항공",
+        "flightNo": "OZ 712"
+      }
     },
-    "return": {
-      "date": "2026.03.14",
-      "time": "11:40",
-      "from": "타이베이",
-      "to": "인천",
-      "airline": "아시아나항공",
-      "flightNo": "OZ 712"
-    }
-  },
     "myTour": [
       "예스진지 투어",
       "야시장 자유시간"
@@ -153,24 +158,24 @@
   {
     "id": "1611836",
     "name": "신현하",
-   "flight": {
-    "departure": {
-      "date": "2026.03.11",
-      "time": "08:00",
-      "from": "인천",
-      "to": "타이베이",
-      "airline": "아시아나항공",
-      "flightNo": "OZ 711"
+    "flight": {
+      "departure": {
+        "date": "2026.03.11",
+        "time": "08:00",
+        "from": "인천",
+        "to": "타이베이",
+        "airline": "아시아나항공",
+        "flightNo": "OZ 711"
+      },
+      "return": {
+        "date": "2026.03.14",
+        "time": "11:40",
+        "from": "타이베이",
+        "to": "인천",
+        "airline": "아시아나항공",
+        "flightNo": "OZ 712"
+      }
     },
-    "return": {
-      "date": "2026.03.14",
-      "time": "11:40",
-      "from": "타이베이",
-      "to": "인천",
-      "airline": "아시아나항공",
-      "flightNo": "OZ 712"
-    }
-  },
     "myTour": [
       "예스진지 투어",
       "야시장 자유시간"
@@ -179,50 +184,50 @@
   {
     "id": "1612022",
     "name": "현보라",
-  "flight": {
-    "departure": {
-      "date": "2026.03.11",
-      "time": "08:00",
-      "from": "인천",
-      "to": "타이베이",
-      "airline": "아시아나항공",
-      "flightNo": "OZ 711"
+    "flight": {
+      "departure": {
+        "date": "2026.03.11",
+        "time": "08:00",
+        "from": "인천",
+        "to": "타이베이",
+        "airline": "아시아나항공",
+        "flightNo": "OZ 711"
+      },
+      "return": {
+        "date": "2026.03.14",
+        "time": "11:40",
+        "from": "타이베이",
+        "to": "인천",
+        "airline": "아시아나항공",
+        "flightNo": "OZ 712"
+      }
     },
-    "return": {
-      "date": "2026.03.14",
-      "time": "11:40",
-      "from": "타이베이",
-      "to": "인천",
-      "airline": "아시아나항공",
-      "flightNo": "OZ 712"
-    }
-  },
     "myTour": [
       "예스진지 투어",
       "야시장 자유시간"
     ]
   },
-    {
+  {
     "id": "001106",
     "name": "임나경",
-  "flight": {
-    "departure": {
-      "date": "2026.03.11",
-      "time": "08:00",
-      "from": "인천",
-      "to": "타이베이",
-      "airline": "아시아나항공",
-      "flightNo": "OZ 711"
+    "flight": {
+      "departure": {
+        "date": "2026.03.11",
+        "time": "08:00",
+        "from": "인천",
+        "to": "타이베이",
+        "airline": "아시아나항공",
+        "flightNo": "OZ 711"
+      },
+      "return": {
+        "date": "2026.03.14",
+        "time": "11:40",
+        "from": "타이베이",
+        "to": "인천",
+        "airline": "아시아나항공",
+        "flightNo": "OZ 712"
+      }
     },
-    "return": {
-      "date": "2026.03.14",
-      "time": "11:40",
-      "from": "타이베이",
-      "to": "인천",
-      "airline": "아시아나항공",
-      "flightNo": "OZ 712"
-    }
-  },
     "myTour": [
       "서울에서 재미나게 놀기",
       "나랑 지옥의 다이어트하기"
