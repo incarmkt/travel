@@ -170,6 +170,9 @@ const travelSchedule = [
 
 /* ================= 페이지 열기 ================= */
 function openPage(type) {
+   // ✅ [추가] 홈 이미지 숨김 (RED 영역 정리)
+  document.getElementById("homeArea").style.display = "none";
+
   document.getElementById("posterArea").style.display = "none";
   document.getElementById("detailPage").style.display = "block";
 
@@ -240,6 +243,9 @@ function openPage(type) {
 function goHome() {
   document.getElementById("detailPage").style.display = "none";
   document.getElementById("posterArea").style.display = "block";
+
+  // ✅ 홈 화면 복귀
+  document.getElementById("homeArea").style.display = "block";
 }
 function goBack(){ goHome(); }
 </script>
