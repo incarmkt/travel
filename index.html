@@ -199,10 +199,42 @@ function openPage(type) {
     `).join("");
   }
 
-  if (type === "flight") {
-    t.textContent = "✈️ 항공편 정보";
-    c.innerHTML = `<div class="card">${currentUser.flight}</div>`;
-  }
+if (type === "flight") {
+  const dep = currentUser.flight.departure;
+  const ret = currentUser.flight.return;
+
+  t.textContent = "✈️ 항공편 정보";
+  c.innerHTML = `
+    <div class="day-card">
+      <h3>출국편</h3>
+      <div class="schedule-item">
+        <div class="schedule-card">
+          <div class="schedule-time">${dep.time}</div>
+          <div class="schedule-body">
+            <div class="schedule-title">✈️ ${dep.from} → ${dep.to}</div>
+            <div class="schedule-desc">${dep.airline} ${dep.flightNo}</div>
+            <div class="schedule-desc">${dep.date}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="day-card">
+      <h3>귀국편</h3>
+      <div class="schedule-item">
+        <div class="schedule-card">
+          <div class="schedule-time">${ret.time}</div>
+          <div class="schedule-body">
+            <div class="schedule-title">🏠 ${ret.from} → ${ret.to}</div>
+            <div class="schedule-desc">${ret.airline} ${ret.flightNo}</div>
+            <div class="schedule-desc">${ret.date}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
 
   if (type === "myTour") {
     t.textContent = "🎒 나의 선택 관광";
