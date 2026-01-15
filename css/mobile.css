@@ -1,58 +1,46 @@
-/* ================= MOBILE ONLY (절대 데스크탑 침범 금지) ================= */
 @media (max-width: 767px) {
 
-  html, body {
-    height: auto;
-    overflow: auto;
-  }
-
+  /* HEADER */
   .header {
-    flex-direction: column;
-    align-items: flex-start;
-    height: auto;
+    flex-direction:column;
+    align-items:center;
+    height:auto;
+    padding:12px;
+    text-align:center;
   }
 
   .header-right {
-    width: 100%;
-    text-align: left;
-    margin-top: 6px;
+    margin-top:6px;
+    text-align:center;
   }
 
-  /* 모바일에선 fixed 사이드메뉴 해제 */
-  .side-menu {
-    position: static;
-    width: calc(100% - 24px);
-    margin: 12px;
-    padding: 14px 12px;
-    border-radius: 16px;
-  }
-
-  .side-menu button {
-    font-size: 14px;
-    padding: 14px 14px;
-  }
-
-  /* 모바일에선 콘텐츠 영역 자연 흐름 */
+  /* MAIN */
   #mainSection {
-    height: auto;
-    overflow: visible;
+    height:auto;
+    overflow:auto;
   }
 
   .main-bg {
     background-attachment: scroll;
-    height: auto;
-    min-height: calc(100vh - 64px);
   }
 
+  /* SIDE MENU */
+  .side-menu {
+    position: static;
+    width: auto;
+    margin: 16px;
+    border-radius:16px;
+  }
+
+  /* CONTENT */
   .content-area {
     margin-left: 0;
-    height: auto;
-    overflow: visible;
     padding: 16px;
+    height: auto;
   }
 
   .detail {
     min-height: auto;
-    padding: 18px;
+    padding: 20px;
   }
 }
