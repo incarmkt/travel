@@ -35,36 +35,31 @@
   </div>
 </section>
 
-<!-- ================= APP WRAPPER ================= -->
-<div id="appWrap" style="display:none;">
-  <div class="app-bg"></div>
-  <div class="app-overlay"></div>
+<!-- ================= MAIN ================= -->
+<main id="mainSection" style="display:none;">
+  <p class="welcome"><strong id="employeeName"></strong> 님, 환영합니다</p>
 
-  <!-- ================= MAIN ================= -->
-  <main id="mainSection" class="page page-home">
-    <p class="welcome"><strong id="employeeName"></strong> 님, 환영합니다</p>
+  <div class="menu">
+    <button onclick="openPage('schedule')">🗓 여행 일정</button>
+    <button onclick="openPage('flight')">✈️ 항공편 정보</button>
+    <button onclick="openPage('taiwan')">🇹🇼 대만의 모든 것</button>
+    <button onclick="openPage('myTour')">🎒 나의 선택 관광</button>
+    <button onclick="openPage('dinner')">🍽 만찬 안내</button>
+    <button onclick="openPage('request')">📝 요청사항</button>
+    <button onclick="openPage('contact')">📞 긴급 연락망</button>
+  </div>
+</main>
 
-    <div class="menu">
-      <button onclick="openPage('schedule')">🗓 여행 일정</button>
-      <button onclick="openPage('flight')">✈️ 항공편 정보</button>
-      <button onclick="openPage('taiwan')">🇹🇼 대만의 모든 것</button>
-      <button onclick="openPage('myTour')">🎒 나의 선택 관광</button>
-      <button onclick="openPage('dinner')">🍽 만찬 안내</button>
-      <button onclick="openPage('request')">📝 요청사항</button>
-      <button onclick="openPage('contact')">📞 긴급 연락망</button>
-    </div>
-  </main>
+<!-- ================= DETAIL ================= -->
+<section id="detailPage" class="detail" style="display:none;">
+  <h2 id="detailTitle"></h2>
+  <div id="detailContent"></div>
 
-  <!-- ================= DETAIL ================= -->
-  <section id="detailPage" class="page page-detail">
-    <h2 id="detailTitle"></h2>
-    <div id="detailContent"></div>
-
-    <div class="nav-buttons">
-      <button class="ghost-btn" onclick="goHome()">홈으로</button>
-    </div>
-  </section>
-</div>
+  <div class="nav-buttons">
+    <button class="ghost-btn" onclick="goHome()">홈으로</button>
+    <button class="ghost-btn" onclick="goBack()">뒤로가기</button>
+  </div>
+</section>
 
 <script>
 /* ================= 공통 ================= */
@@ -85,11 +80,11 @@ function login() {
   currentUser = user;
   document.getElementById("loginSection").style.display = "none";
   document.getElementById("topHeader").style.display = "flex";
-  document.getElementById("appWrap").style.display = "block";
+  document.getElementById("mainSection").style.display = "block";
   document.getElementById("employeeName").textContent = user.name;
 }
 
-/* ================= 여행 일정 (원본 그대로) ================= */
+/* ================= 여행 일정 ================= */
 const travelSchedule = [
   {
     day: "DAY 1",
@@ -135,85 +130,78 @@ const travelSchedule = [
 ];
 
 function openPage(type) {
-  document.getElementById("mainSection").classList.add("slide-up-out");
-  setTimeout(() => {
-    document.getElementById("mainSection").style.display = "none";
-    document.getElementById("detailPage").style.display = "block";
-    document.getElementById("detailPage").classList.add("slide-up-in");
+  document.getElementById("mainSection").style.display = "none";
+  document.getElementById("detailPage").style.display = "block";
 
-    const t = document.getElementById("detailTitle");
-    const c = document.getElementById("detailContent");
+  const t = document.getElementById("detailTitle");
+  const c = document.getElementById("detailContent");
 
-    if (type === "schedule") {
-      t.textContent = "🗓 여행 일정";
-      c.innerHTML = travelSchedule.map(day => `
-        <div class="day-card">
-          <h3>${day.day} <span>${day.date}</span></h3>
-          <p class="day-title">${day.title}</p>
-          <div class="timeline">
-            ${day.items.map(i => `
-              <div class="schedule-item">
-                <div class="timeline-dot"></div>
-                <div class="schedule-card">
-                  <div class="schedule-time">${i.time}</div>
+  if (type === "schedule") {
+    t.textContent = "🗓 여행 일정";
+    c.innerHTML = travelSchedule.map(day => `
+      <div class="day-card">
+        <h3>${day.day} <span>${day.date}</span></h3>
+        <p class="day-title">${day.title}</p>
+
+        <div class="timeline">
+          ${day.items.map(i => `
+            <div class="schedule-item">
+              <div class="timeline-dot"></div>
+              <div class="schedule-card">
+                <div class="schedule-time">${i.time}</div>
+                <div class="schedule-body">
                   <div class="schedule-title">${i.icon} ${i.title}</div>
                   ${i.desc ? `<div class="schedule-desc">${i.desc}</div>` : ""}
                 </div>
               </div>
-            `).join("")}
-          </div>
+            </div>
+          `).join("")}
         </div>
-      `).join("");
-    }
+      </div>
+    `).join("");
+  }
 
-    if (type === "flight") {
-      t.textContent = "✈️ 항공편 정보";
-      c.innerHTML = `<div class="card">${currentUser.flight}</div>`;
-    }
+  if (type === "flight") {
+    t.textContent = "✈️ 항공편 정보";
+    c.innerHTML = `<div class="card">${currentUser.flight}</div>`;
+  }
 
-    if (type === "myTour") {
-      t.textContent = "🎒 나의 선택 관광";
-      c.innerHTML = `<div class="card"><ul>
-        ${(currentUser.myTour || []).map(t => `<li>${t}</li>`).join("")}
-      </ul></div>`;
-    }
+  if (type === "myTour") {
+    t.textContent = "🎒 나의 선택 관광";
+    c.innerHTML = `<div class="card"><ul class="mytour-list">
+      ${(currentUser.myTour || []).map(t => `<li>${t}</li>`).join("")}
+    </ul></div>`;
+  }
 
-    if (type === "taiwan") {
-      t.textContent = "🇹🇼 대만의 모든 것";
-      c.innerHTML = `<div class="card">대만 기본 정보 안내</div>`;
-    }
+  if (type === "taiwan") {
+    t.textContent = "🇹🇼 대만의 모든 것";
+    c.innerHTML = `<div class="card">대만 기본 정보 안내</div>`;
+  }
 
-    if (type === "dinner") {
-      t.textContent = "🍽 만찬 안내";
-      c.innerHTML = `<div class="card">ISC 공식 만찬</div>`;
-    }
+  if (type === "dinner") {
+    t.textContent = "🍽 만찬 안내";
+    c.innerHTML = `<div class="card">ISC 공식 만찬</div>`;
+  }
 
-    if (type === "request") {
-      t.textContent = "📝 요청사항";
-      c.innerHTML = `<div class="card">
-        <textarea placeholder="요청사항 입력"></textarea>
-        <button class="primary-btn">제출</button>
-      </div>`;
-    }
+  if (type === "request") {
+    t.textContent = "📝 요청사항";
+    c.innerHTML = `<div class="card">
+      <textarea placeholder="요청사항 입력"></textarea>
+      <button class="primary-btn">제출</button>
+    </div>`;
+  }
 
-    if (type === "contact") {
-      t.textContent = "📞 긴급 연락망";
-      c.innerHTML = `<div class="card">현지 담당자 안내</div>`;
-    }
-  }, 250);
+  if (type === "contact") {
+    t.textContent = "📞 긴급 연락망";
+    c.innerHTML = `<div class="card">현지 담당자 안내</div>`;
+  }
 }
 
 function goHome() {
-  const detail = document.getElementById("detailPage");
-  detail.classList.remove("slide-up-in");
-  detail.classList.add("slide-down-out");
-
-  setTimeout(() => {
-    detail.style.display = "none";
-    document.getElementById("mainSection").style.display = "block";
-    document.getElementById("mainSection").classList.remove("slide-up-out");
-  }, 250);
+  document.getElementById("detailPage").style.display = "none";
+  document.getElementById("mainSection").style.display = "block";
 }
+function goBack(){ goHome(); }
 </script>
 
 </body>
