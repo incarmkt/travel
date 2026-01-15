@@ -261,11 +261,59 @@ if (type === "flight") {
   </div>`;
 }
 
-  if (type === "contact") {
-    t.textContent = "📞 긴급 연락망";
-    c.innerHTML = `<div class="card">현지 담당자 안내</div>`;
-  }
+ if (type === "contact") {
+  t.textContent = "📞 긴급 연락망";
+
+  c.innerHTML = `
+    <div class="day-card">
+      <h3>비상 연락망</h3>
+
+      <div class="timeline">
+
+        <!-- 인카블루투어 -->
+        <div class="schedule-item">
+          <div class="timeline-dot"></div>
+          <div class="schedule-card">
+            <div class="schedule-body">
+              <div class="schedule-title">📞 인카블루투어</div>
+              <div class="schedule-desc">
+                담당자 홍길동 | 010-0000-0000
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 인카 마케팅부 -->
+        <div class="schedule-item">
+          <div class="timeline-dot"></div>
+          <div class="schedule-card">
+            <div class="schedule-body">
+              <div class="schedule-title">📞 인카 마케팅부</div>
+              <div class="schedule-desc">
+                담당자 현보라과장 | 02-6214-0000
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 현지 가이드 -->
+        <div class="schedule-item">
+          <div class="timeline-dot"></div>
+          <div class="schedule-card">
+            <div class="schedule-body">
+              <div class="schedule-title">📞 현지 가이드</div>
+              <div class="schedule-desc">
+                담당자 Jason | +886-900-222-222
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  `;
 }
+
 
 /* ================= 홈으로 ================= */
 function goHome() {
