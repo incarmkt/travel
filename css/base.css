@@ -6,7 +6,7 @@
 html, body {
   margin: 0;
   height: 100%;
-  overflow: hidden; /* ✅ 전체 화면 스크롤 완전 차단 */
+  overflow: hidden; /* 전체 화면 스크롤 차단 */
 }
 
 body {
@@ -41,26 +41,11 @@ body {
   margin-bottom: 14px;
 }
 
-.login-box h2 {
-  margin: 10px 0 6px;
-}
-
-.login-box input {
-  width: 100%;
-  padding: 10px;
-  margin-top: 10px;
-}
-
-.login-box button {
-  margin-top: 12px;
-}
-
 /* ================= HEADER ================= */
 .header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 16px;
   padding: 10px 24px;
   background: #fff;
   border-bottom: 1px solid #e5e7eb;
@@ -87,7 +72,6 @@ body {
   color: #667085;
 }
 
-/* 헤더 우측 환영 영역 */
 .header-right {
   text-align: right;
 }
@@ -121,47 +105,53 @@ body.logged-in #mainSection {
 
 /* ================= MAIN (LOGIN AFTER) ================= */
 #mainSection {
-  height: calc(100vh - 64px); /* 헤더 높이 제외 */
-  overflow: hidden;          /* ✅ 메인 영역도 스크롤 차단 */
+  height: calc(100vh - 64px);
+  overflow: hidden;
 }
 
-/* 로그인 이후 전체 배경 */
+/* 🔴 배경 컨테이너를 기준점으로 설정 */
 .main-bg {
+  position: relative; /* ★ 핵심 1 */
   background: url("../assets/images/main-bg.jpg") center / cover no-repeat fixed;
-  padding: 24px 32px 24px 0; /* ✅ 좌측 패딩 제거 */
+  padding: 24px 32px 24px 0; /* 좌측 padding 제거 */
 }
 
-/* 기존 welcome 문구는 구조 유지 + 화면 비표시 */
+/* 기존 welcome 문구 숨김 */
 #mainSection > .welcome {
   display: none;
 }
 
-/* ================= LAYOUT (FULL WIDTH FIX) ================= */
+/* ================= LAYOUT (좌측 0px 기준 강제) ================= */
 .layout {
+  position: absolute; /* ★ 핵심 2 */
+  left: 0;            /* ★ 핵심 3 */
+  top: 0;
+
   display: flex;
   height: 100%;
+  width: 100vw;
   gap: 32px;
 
-  width: 100vw;   /* ✅ 브라우저 0px 기준 */
   margin: 0;
   padding: 0;
 }
 
-/* ================= SIDE MENU (LEFT FIXED) ================= */
+/* ================= SIDE MENU (진짜 좌측 고정) ================= */
 .side-menu {
   width: 260px;
   flex-shrink: 0;
+
   padding: 20px 16px;
   background: rgba(255,255,255,0.85);
 
-  border-radius: 0 18px 18px 0; /* ✅ 좌측 딱 붙는 느낌 */
+  border-radius: 0 18px 18px 0; /* 좌측 각지게 */
   display: flex;
   flex-direction: column;
   gap: 14px;
 }
 
 .side-menu button {
-  padding: 18px 18px;
+  padding: 18px;
   border-radius: 16px;
   border: none;
   background: #1e63c6;
@@ -175,11 +165,11 @@ body.logged-in #mainSection {
   background: #174ea6;
 }
 
-/* ================= CONTENT AREA (ONLY SCROLL HERE) ================= */
+/* ================= CONTENT AREA (이 영역만 스크롤) ================= */
 .content-area {
   flex: 1;
   height: 100%;
-  overflow-y: auto;     /* ✅ 여기만 스크롤 */
+  overflow-y: auto;
   overflow-x: hidden;
   padding-right: 12px;
 }
@@ -209,14 +199,13 @@ body.logged-in #mainSection {
   margin-bottom: 16px;
 }
 
-/* ================= CARDS ================= */
+/* ================= ETC ================= */
 .card {
   background: #f8fafc;
   padding: 18px;
   border-radius: 14px;
 }
 
-/* ================= SCHEDULE ================= */
 .day-card {
   background: #fff;
   padding: 20px;
@@ -229,7 +218,6 @@ body.logged-in #mainSection {
   color: #475467;
 }
 
-/* ================= BUTTONS ================= */
 .primary-btn {
   margin-top: 12px;
   padding: 12px;
@@ -248,7 +236,6 @@ body.logged-in #mainSection {
   cursor: pointer;
 }
 
-/* ================= FORM ================= */
 textarea {
   width: 100%;
   min-height: 120px;
