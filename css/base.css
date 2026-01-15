@@ -14,7 +14,7 @@ body {
   color: #1d2939;
 }
 
-/* ================= LOGIN SCREEN (FINAL / DO NOT TOUCH) ================= */
+/* ================= LOGIN SCREEN ================= */
 .login-hero {
   height: 100vh;
   background: url("../assets/images/taiwan.jpg") center / cover no-repeat;
@@ -50,82 +50,4 @@ body {
   background: #fff;
   border-bottom: 1px solid #e5e7eb;
   height: 64px;
-}
-
-.logo {
-  width: 90px;
-}
-
-/* ================= MAIN ================= */
-#mainSection {
-  height: calc(100vh - 64px);
-  overflow: hidden;
-}
-
-.main-bg {
-  background: url("../assets/images/main-bg.jpg") center / cover no-repeat fixed;
-  height: 100%;
-  position: relative;
-}
-
-/* ================= SIDE MENU (DESKTOP 기준) ================= */
-.side-menu {
-  position: fixed;
-  top: 84px;      /* 헤더 + 여백 */
-  left: 20px;
-  bottom: 20px;
-
-  width: 260px;
-  padding: 20px 16px;
-
-  background: rgba(255,255,255,0.85);
-  border-radius: 18px;
-
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-
-  z-index: 20;
-}
-
-.side-menu button {
-  padding: 18px;
-  border-radius: 16px;
-  border: none;
-  background: #1e63c6;
-  color: #fff;
-  font-size: 15px;
-  text-align: left;
-  cursor: pointer;
-}
-
-/* ================= CONTENT AREA ================= */
-.content-area {
-  margin-left: 300px; /* side-menu + 여백 */
-  height: 100%;
-  overflow-y: auto;
-  overflow-x: hidden;
-  padding: 24px 32px;
-}
-
-/* ================= DETAIL ================= */
-.detail {
-  background: rgba(255,255,255,.92);
-  border-radius: 18px;
-  padding: 32px;
-  min-height: 520px; /* 정보 카드 크기 고정 */
-}
-
-/* ================= ETC ================= */
-.card {
-  background: #f8fafc;
-  padding: 18px;
-  border-radius: 14px;
-}
-
-.day-card {
-  background: #fff;
-  padding: 20px;
-  border-radius: 16px;
-  margin-bottom: 20px;
 }
