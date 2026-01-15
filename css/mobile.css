@@ -1,6 +1,8 @@
-/* =========================
-   MOBILE RESET
-========================= */
+/* =================================================
+   MOBILE ONLY (max-width: 767px)
+================================================= */
+
+/* 기본 */
 body {
   margin: 0;
   background: #f6f7fb;
@@ -8,20 +10,51 @@ body {
                Roboto, "Noto Sans KR", sans-serif;
 }
 
-.logged-in {
-  overflow-y: auto;
-}
-
-/* =========================
-   HEADER (모바일에서는 숨김)
-========================= */
+/* =================================================
+   HEADER (모바일에서도 유지)
+================================================= */
 .header {
-  display: none !important;
+  display: flex !important;
+  flex-direction: column;
+  align-items: center;
+  padding: 12px 16px;
 }
 
-/* =========================
-   LOGIN SCREEN
-========================= */
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.header img.logo {
+  width: 72px;
+}
+
+.header h1 {
+  font-size: 16px;
+  margin: 0;
+}
+
+.header .sub {
+  font-size: 12px;
+}
+
+.header-right {
+  margin-top: 6px;
+  text-align: center;
+}
+
+.header-right .congrats {
+  font-size: 12px;
+}
+
+.header-right .welcome-text {
+  font-size: 13px;
+}
+
+/* =================================================
+   LOGIN
+================================================= */
 .login-hero {
   height: 100vh;
 }
@@ -32,20 +65,23 @@ body {
   border-radius: 20px;
 }
 
-/* =========================
+/* =================================================
    MAIN LAYOUT RESET
-========================= */
+================================================= */
 .layout {
   display: block;
-  padding: 0;
 }
 
-/* =========================
-   SIDE MENU = Screen ②
-========================= */
+.content-area {
+  padding: 16px;
+}
+
+/* =================================================
+   Screen ② : 카테고리 화면
+================================================= */
 .side-menu {
   display: block;
-  padding: 20px;
+  padding: 16px;
 }
 
 .side-menu button {
@@ -57,49 +93,45 @@ body {
   font-weight: 600;
 }
 
-/* =========================
-   CONTENT AREA
-========================= */
-.content-area {
-  padding: 0;
-}
-
-/* =========================
-   MAIN PANEL
-========================= */
-.main-panel {
-  padding: 16px;
-  background: transparent;
-  box-shadow: none;
-}
-
-/* 홈 이미지 (모바일에서는 제거)
-   → 로그인 후 바로 카테고리 화면처럼 보이게 */
-.home-view {
-  display: none !important;
-}
-
-/* =========================
-   DETAIL PAGE = Screen ③
-========================= */
+/* =================================================
+   Screen ③ : 상세 화면
+================================================= */
 .detail {
   display: none;
   padding: 16px;
 }
 
-/* JS에서 detailPage가 display:block 되면
-   모바일에서는 자연스럽게 전체 화면처럼 보임 */
+/* 🔥 핵심 로직
+   - 상세 화면이 열리면
+   - 카테고리 화면을 완전히 숨김
+*/
+#detailPage[style*="display: block"] {
+  display: block;
+}
 
-/* =========================
-   FIXED POSTER 제거
-========================= */
+#detailPage[style*="display: block"] ~ * {
+  display: none;
+}
+
+/* =================================================
+   HOME IMAGE / POSTER 제거 (모바일)
+================================================= */
+.home-view {
+  display: none !important;
+}
+
 .fixed-poster {
   display: none !important;
 }
 
-/* =========================
-   CARD / SCHEDULE STYLE
-========================= */
+/* =================================================
+   DETAIL CONTENT STYLE
+================================================= */
+.detail h2 {
+  font-size: 20px;
+  margin-bottom: 16px;
+}
+
 .day-card {
   background: #ffffff;
   border-radius: 16px;
@@ -109,18 +141,18 @@ body {
 
 .day-card h3 {
   font-size: 16px;
-  margin-bottom: 8px;
+  margin-bottom: 6px;
 }
 
 .day-title {
   font-size: 14px;
   color: #6b7280;
-  margin-bottom: 12px;
+  margin-bottom: 10px;
 }
 
-/* =========================
+/* =================================================
    TIMELINE
-========================= */
+================================================= */
 .timeline {
   margin-top: 12px;
 }
@@ -162,9 +194,9 @@ body {
   color: #6b7280;
 }
 
-/* =========================
-   REQUEST FORM
-========================= */
+/* =================================================
+   FORM / BUTTON
+================================================= */
 textarea {
   width: 100%;
   min-height: 120px;
@@ -174,18 +206,10 @@ textarea {
   font-size: 14px;
 }
 
-/* =========================
-   BUTTONS
-========================= */
 .primary-btn {
   width: 100%;
   margin-top: 12px;
   padding: 14px;
   border-radius: 12px;
   font-size: 16px;
-}
-
-.ghost-btn {
-  width: 100%;
-  margin-top: 8px;
 }
