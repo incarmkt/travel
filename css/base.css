@@ -6,7 +6,7 @@
 html, body {
   margin: 0;
   height: 100%;
-  overflow: hidden; /* 전체 화면 스크롤 차단 */
+  overflow: hidden; /* 전체 화면 스크롤 완전 차단 */
 }
 
 body {
@@ -49,6 +49,7 @@ body {
   padding: 10px 24px;
   background: #fff;
   border-bottom: 1px solid #e5e7eb;
+  height: 64px;
 }
 
 .header-left {
@@ -105,49 +106,41 @@ body.logged-in #mainSection {
 
 /* ================= MAIN (LOGIN AFTER) ================= */
 #mainSection {
-  height: calc(100vh - 64px);
+  height: calc(100vh - 64px); /* 헤더 제외 */
   overflow: hidden;
 }
 
-/* 🔴 배경 컨테이너를 기준점으로 설정 */
+/* 로그인 이후 전체 배경 */
 .main-bg {
-  position: relative; /* ★ 핵심 1 */
   background: url("../assets/images/main-bg.jpg") center / cover no-repeat fixed;
-  padding: 24px 32px 24px 0; /* 좌측 padding 제거 */
+  height: 100%;
+  position: relative;
 }
 
-/* 기존 welcome 문구 숨김 */
+/* 기존 welcome 문구 숨김 (구조 유지) */
 #mainSection > .welcome {
   display: none;
 }
 
-/* ================= LAYOUT (좌측 0px 기준 강제) ================= */
-.layout {
-  position: absolute; /* ★ 핵심 2 */
-  left: 0;            /* ★ 핵심 3 */
-  top: 0;
-
-  display: flex;
-  height: 100%;
-  width: 100vw;
-  gap: 32px;
-
-  margin: 0;
-  padding: 0;
-}
-
-/* ================= SIDE MENU (진짜 좌측 고정) ================= */
+/* ================= SIDE MENU (★★ 최종 해결 핵심 ★★) ================= */
+/* → viewport 기준으로 완전 분리 */
 .side-menu {
+  position: fixed;      /* ★ 기준을 layout에서 완전히 분리 */
+  top: 64px;            /* 헤더 바로 아래 */
+  left: 0;
+  bottom: 0;
+
   width: 260px;
-  flex-shrink: 0;
-
   padding: 20px 16px;
-  background: rgba(255,255,255,0.85);
 
-  border-radius: 0 18px 18px 0; /* 좌측 각지게 */
+  background: rgba(255,255,255,0.85);
+  border-radius: 0 18px 18px 0;
+
   display: flex;
   flex-direction: column;
   gap: 14px;
+
+  z-index: 20;
 }
 
 .side-menu button {
@@ -165,13 +158,14 @@ body.logged-in #mainSection {
   background: #174ea6;
 }
 
-/* ================= CONTENT AREA (이 영역만 스크롤) ================= */
+/* ================= CONTENT AREA ================= */
+/* side-menu 폭만큼 밀어서 겹침 방지 */
 .content-area {
-  flex: 1;
+  margin-left: 260px;      /* ★ side-menu 폭 */
   height: 100%;
-  overflow-y: auto;
+  overflow-y: auto;        /* 이 영역만 스크롤 */
   overflow-x: hidden;
-  padding-right: 12px;
+  padding: 24px 32px;
 }
 
 /* ================= POSTER ================= */
