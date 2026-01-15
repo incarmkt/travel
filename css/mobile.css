@@ -1,34 +1,58 @@
-/* ================= MOBILE ONLY ================= */
+/* ================= MOBILE ONLY (절대 데스크탑 침범 금지) ================= */
 @media (max-width: 767px) {
 
   html, body {
+    height: auto;
     overflow: auto;
   }
 
-  /* 헤더 세로 정렬 */
   .header {
     flex-direction: column;
     align-items: flex-start;
     height: auto;
   }
 
-  /* 사이드 메뉴 고정 해제 (모바일) */
+  .header-right {
+    width: 100%;
+    text-align: left;
+    margin-top: 6px;
+  }
+
+  /* 모바일에선 fixed 사이드메뉴 해제 */
   .side-menu {
     position: static;
     width: calc(100% - 24px);
     margin: 12px;
+    padding: 14px 12px;
     border-radius: 16px;
   }
 
-  /* 콘텐츠 영역 정상 흐름 */
-  .content-area {
-    margin-left: 0;
-    padding: 16px;
+  .side-menu button {
+    font-size: 14px;
+    padding: 14px 14px;
+  }
+
+  /* 모바일에선 콘텐츠 영역 자연 흐름 */
+  #mainSection {
     height: auto;
     overflow: visible;
   }
 
+  .main-bg {
+    background-attachment: scroll;
+    height: auto;
+    min-height: calc(100vh - 64px);
+  }
+
+  .content-area {
+    margin-left: 0;
+    height: auto;
+    overflow: visible;
+    padding: 16px;
+  }
+
   .detail {
     min-height: auto;
+    padding: 18px;
   }
 }
