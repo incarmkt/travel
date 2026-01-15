@@ -1,240 +1,163 @@
-/* ================= RESET & COMMON ================= */
-* {
-  box-sizing: border-box;
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>2025 ISC 대만 여행</title>
+
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/desktop.css" media="(min-width: 768px)">
+  <link rel="stylesheet" href="css/mobile.css" media="(max-width: 767px)">
+</head>
+<body>
+
+<!-- ================= HEADER ================= -->
+<header class="header compact" id="topHeader">
+  <div class="header-left">
+    <img src="assets/images/logo.png" class="logo">
+    <div>
+      <h1>2025 ISC 대만 여행</h1>
+      <p class="sub">2026.03.11 ~ 03.14 | 인카금융서비스</p>
+    </div>
+  </div>
+
+  <div class="header-right">
+    <p class="congrats">ISC 달성을 축하드립니다.</p>
+    <p class="welcome-text"><strong id="employeeName"></strong> 님, 환영합니다</p>
+  </div>
+</header>
+
+<!-- ================= LOGIN ================= -->
+<section id="loginSection" class="login-hero">
+  <div class="hero-overlay">
+    <div class="login-box">
+      <img src="assets/images/logo.png" class="hero-logo">
+      <h2>2025 ISC Taiwan</h2>
+      <p class="hero-desc">사번으로 로그인하세요</p>
+
+      <input type="text" id="employeeId" placeholder="사번 입력">
+      <button class="primary-btn" onclick="login()">로그인</button>
+      <p id="loginError" class="error"></p>
+    </div>
+  </div>
+</section>
+
+<!-- ================= MAIN ================= -->
+<main id="mainSection" class="main-bg" style="display:none;">
+
+  <p class="welcome"><strong id="employeeName"></strong> 님, 환영합니다</p>
+
+  <div class="layout">
+
+    <!-- ===== LEFT MENU ===== -->
+    <aside class="side-menu">
+      <button onclick="openPage('schedule')">🗓 여행 일정</button>
+      <button onclick="openPage('flight')">✈️ 항공편 정보</button>
+      <button onclick="openPage('taiwan')">🇹🇼 대만의 모든 것</button>
+      <button onclick="openPage('myTour')">🎒 나의 선택 관광</button>
+      <button onclick="openPage('dinner')">🍽 만찬 안내</button>
+      <button onclick="openPage('request')">📝 요청사항</button>
+      <button onclick="openPage('contact')">📞 긴급 연락망</button>
+    </aside>
+
+    <!-- ===== RIGHT CONTENT ===== -->
+    <section class="content-area">
+
+      <div id="posterArea" class="poster">
+        <img src="assets/images/iscposter.jpg" alt="ISC Poster">
+      </div>
+
+      <section id="detailPage" class="detail" style="display:none;">
+        <h2 id="detailTitle"></h2>
+        <div id="detailContent"></div>
+
+        <div class="nav-buttons">
+          <button class="ghost-btn" onclick="goHome()">홈으로</button>
+          <button class="ghost-btn" onclick="goBack()">뒤로가기</button>
+        </div>
+      </section>
+
+    </section>
+
+  </div>
+</main>
+
+<script>
+/* ================= 공통 ================= */
+let employees = [];
+let currentUser = null;
+
+fetch("people/employees.json?ts=" + Date.now())
+  .then(res => res.json())
+  .then(data => employees = data);
+
+function login() {
+  const id = document.getElementById("employeeId").value.trim();
+  const user = employees.find(e => e.id === id);
+
+  if (!user) {
+    document.getElementById("loginError").textContent = "등록되지 않은 사번입니다.";
+    return;
+  }
+
+  currentUser = user;
+
+  document.getElementById("loginSection").style.display = "none";
+  document.getElementById("topHeader").style.display = "flex";
+  document.getElementById("mainSection").style.display = "block";
+  document.getElementById("employeeName").textContent = user.name;
+
+  document.body.classList.add("logged-in");
 }
 
-html, body {
-  margin: 0;
-  height: 100%;
-  overflow: hidden; /* 전체 화면 스크롤 완전 차단 */
+/* ================= 여행 일정 ================= */
+const travelSchedule = [
+  {
+    day: "DAY 1",
+    date: "2026.03.11 (수)",
+    title: "인천 → 타이베이 / 시내 하이라이트",
+    items: [
+      { time:"08:00", icon:"✈️", title:"인천 국제공항 출발", desc:"OZ 711 / KE 2021" },
+      { time:"12:30", icon:"🍜", title:"중식 | 우육면", desc:"현지 인기 중식당" },
+      { time:"14:00", icon:"🏛️", title:"중정기념당", desc:"장개석 총통 기념관" },
+      { time:"15:30", icon:"🏺", title:"국립고궁박물관", desc:"세계 4대 박물관" },
+      { time:"18:30", icon:"🍽️", title:"석식 | 타카오 샤브샤브", desc:"현지식" },
+      { time:"20:00", icon:"🌃", title:"타이베이 101 전망대", desc:"야경 관람" }
+    ]
+  }
+];
+
+/* ================= 페이지 열기 ================= */
+function openPage(type) {
+  document.getElementById("posterArea").style.display = "none";
+  document.getElementById("detailPage").style.display = "block";
+
+  const t = document.getElementById("detailTitle");
+  const c = document.getElementById("detailContent");
+
+  if (type === "schedule") {
+    t.textContent = "🗓 여행 일정";
+    c.innerHTML = travelSchedule.map(day => `
+      <div class="day-card">
+        <h3>${day.day} <span>${day.date}</span></h3>
+        <p class="day-title">${day.title}</p>
+      </div>
+    `).join("");
+  }
+
+  if (type === "contact") {
+    t.textContent = "📞 긴급 연락망";
+    c.innerHTML = `<div class="card">현지 담당자 안내</div>`;
+  }
 }
 
-body {
-  font-family: system-ui, -apple-system, Pretendard, "Malgun Gothic", sans-serif;
-  color: #1d2939;
+function goHome() {
+  document.getElementById("detailPage").style.display = "none";
+  document.getElementById("posterArea").style.display = "block";
 }
 
-/* ================= LOGIN SCREEN (FINAL / DO NOT TOUCH) ================= */
-.login-hero {
-  height: 100vh;
-  background: url("../assets/images/taiwan.jpg") center / cover no-repeat;
-}
+function goBack(){ goHome(); }
+</script>
 
-.hero-overlay {
-  height: 100%;
-  background: rgba(0,0,0,.55);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.login-box {
-  background: #fff;
-  padding: 36px;
-  border-radius: 18px;
-  width: 360px;
-  text-align: center;
-}
-
-.hero-logo {
-  width: 120px;
-  margin-bottom: 14px;
-}
-
-/* ================= HEADER ================= */
-.header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 10px 24px;
-  background: #fff;
-  border-bottom: 1px solid #e5e7eb;
-  height: 64px;
-}
-
-.header-left {
-  display: flex;
-  gap: 16px;
-  align-items: center;
-}
-
-.logo {
-  width: 90px;
-}
-
-.header h1 {
-  margin: 0;
-  font-size: 20px;
-}
-
-.header .sub {
-  margin: 2px 0 0;
-  font-size: 13px;
-  color: #667085;
-}
-
-.header-right {
-  text-align: right;
-}
-
-.header-right .congrats {
-  margin: 0;
-  font-size: 13px;
-  color: #1e63c6;
-  font-weight: 600;
-}
-
-.header-right .welcome-text {
-  margin: 2px 0 0;
-  font-size: 14px;
-  color: #344054;
-}
-
-/* ================= LOGIN / MAIN VISIBILITY ================= */
-#topHeader,
-#mainSection {
-  display: none;
-}
-
-body.logged-in #topHeader {
-  display: flex;
-}
-
-body.logged-in #mainSection {
-  display: block;
-}
-
-/* ================= MAIN (LOGIN AFTER) ================= */
-#mainSection {
-  height: calc(100vh - 64px); /* 헤더 제외 */
-  overflow: hidden;
-}
-
-/* 로그인 이후 전체 배경 */
-.main-bg {
-  background: url("../assets/images/main-bg.jpg") center / cover no-repeat fixed;
-  height: 100%;
-  position: relative;
-}
-
-/* 기존 welcome 문구 숨김 (구조 유지) */
-#mainSection > .welcome {
-  display: none;
-}
-
-/* ================= SIDE MENU (★★ 최종 해결 핵심 ★★) ================= */
-/* → viewport 기준으로 완전 분리 */
-.side-menu {
-  position: fixed;      /* ★ 기준을 layout에서 완전히 분리 */
-  top: 64px;            /* 헤더 바로 아래 */
-  left: 0;
-  bottom: 0;
-
-  width: 260px;
-  padding: 20px 16px;
-
-  background: rgba(255,255,255,0.85);
-  border-radius: 0 18px 18px 0;
-
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-
-  z-index: 20;
-}
-
-.side-menu button {
-  padding: 18px;
-  border-radius: 16px;
-  border: none;
-  background: #1e63c6;
-  color: #fff;
-  font-size: 15px;
-  text-align: left;
-  cursor: pointer;
-}
-
-.side-menu button:hover {
-  background: #174ea6;
-}
-
-/* ================= CONTENT AREA ================= */
-/* side-menu 폭만큼 밀어서 겹침 방지 */
-.content-area {
-  margin-left: 260px;      /* ★ side-menu 폭 */
-  height: 100%;
-  overflow-y: auto;        /* 이 영역만 스크롤 */
-  overflow-x: hidden;
-  padding: 24px 32px;
-}
-
-/* ================= POSTER ================= */
-.poster {
-  background: rgba(255,255,255,.85);
-  border-radius: 18px;
-  padding: 20px;
-}
-
-.poster img {
-  width: 100%;
-  border-radius: 14px;
-  display: block;
-}
-
-/* ================= DETAIL PAGE ================= */
-.detail {
-  background: rgba(255,255,255,.92);
-  border-radius: 18px;
-  padding: 24px;
-}
-
-.detail h2 {
-  margin-top: 0;
-  margin-bottom: 16px;
-}
-
-/* ================= ETC ================= */
-.card {
-  background: #f8fafc;
-  padding: 18px;
-  border-radius: 14px;
-}
-
-.day-card {
-  background: #fff;
-  padding: 20px;
-  border-radius: 16px;
-  margin-bottom: 20px;
-}
-
-.day-title {
-  font-size: 14px;
-  color: #475467;
-}
-
-.primary-btn {
-  margin-top: 12px;
-  padding: 12px;
-  border-radius: 12px;
-  border: none;
-  background: #1e63c6;
-  color: #fff;
-  cursor: pointer;
-}
-
-.ghost-btn {
-  padding: 10px 16px;
-  border-radius: 12px;
-  border: 1px solid #d0d5dd;
-  background: #fff;
-  cursor: pointer;
-}
-
-textarea {
-  width: 100%;
-  min-height: 120px;
-  padding: 12px;
-  border-radius: 12px;
-  border: 1px solid #d0d5dd;
-  resize: vertical;
-}
+</body>
+</html>
