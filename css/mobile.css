@@ -1,7 +1,38 @@
-.menu {
-  grid-template-columns: 1fr;
-}
-.header {
-  flex-direction: column;
-  text-align: center;
+/* ================= MOBILE ONLY ================= */
+@media (max-width: 767px) {
+
+  .header {
+    flex-direction:column;
+    text-align:center;
+  }
+
+  .main-bg {
+    padding:16px;
+  }
+
+  .layout {
+    flex-direction:column;
+    gap:20px;
+  }
+
+  .side-menu {
+    width:100%;
+    flex-direction:row;
+    overflow-x:auto;
+    gap:10px;
+    padding-bottom:6px;
+  }
+
+  .side-menu button {
+    flex:0 0 auto;
+    white-space:nowrap;
+    font-size:13px;
+    padding:12px 14px;
+  }
+
+  .poster,
+  .detail {
+    padding:16px;
+  }
+
 }
