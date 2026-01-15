@@ -6,7 +6,7 @@
 html, body {
   margin: 0;
   height: 100%;
-  overflow: hidden; /* 전체 화면 스크롤 완전 차단 */
+  overflow: hidden;
 }
 
 body {
@@ -90,7 +90,7 @@ body {
   color: #344054;
 }
 
-/* ================= LOGIN / MAIN VISIBILITY ================= */
+/* ================= VISIBILITY ================= */
 #topHeader,
 #mainSection {
   display: none;
@@ -104,37 +104,37 @@ body.logged-in #mainSection {
   display: block;
 }
 
-/* ================= MAIN (LOGIN AFTER) ================= */
+/* ================= MAIN ================= */
 #mainSection {
-  height: calc(100vh - 64px); /* 헤더 제외 */
+  height: calc(100vh - 64px);
   overflow: hidden;
 }
 
-/* 로그인 이후 전체 배경 */
 .main-bg {
   background: url("../assets/images/main-bg.jpg") center / cover no-repeat fixed;
   height: 100%;
   position: relative;
 }
 
-/* 기존 welcome 문구 숨김 (구조 유지) */
+/* welcome 문구 구조 유지 */
 #mainSection > .welcome {
   display: none;
 }
 
-/* ================= SIDE MENU (★★ 최종 해결 핵심 ★★) ================= */
-/* → viewport 기준으로 완전 분리 */
+/* ================= SIDE MENU ================= */
 .side-menu {
-  position: fixed;      /* ★ 기준을 layout에서 완전히 분리 */
-  top: 64px;            /* 헤더 바로 아래 */
-  left: 0;
-  bottom: 0;
+  position: fixed;
+
+  /* 화면 기준 여백 (약 1cm) */
+  top: 84px;      /* 헤더 64 + 여백 */
+  left: 20px;
+  bottom: 20px;
 
   width: 260px;
   padding: 20px 16px;
 
   background: rgba(255,255,255,0.85);
-  border-radius: 0 18px 18px 0;
+  border-radius: 18px;
 
   display: flex;
   flex-direction: column;
@@ -159,33 +159,21 @@ body.logged-in #mainSection {
 }
 
 /* ================= CONTENT AREA ================= */
-/* side-menu 폭만큼 밀어서 겹침 방지 */
 .content-area {
-  margin-left: 260px;      /* ★ side-menu 폭 */
+  margin-left: 300px; /* side-menu + 여백 */
   height: 100%;
-  overflow-y: auto;        /* 이 영역만 스크롤 */
+  overflow-y: auto;
   overflow-x: hidden;
   padding: 24px 32px;
 }
 
-/* ================= POSTER ================= */
-.poster {
-  background: rgba(255,255,255,.85);
-  border-radius: 18px;
-  padding: 20px;
-}
-
-.poster img {
-  width: 100%;
-  border-radius: 14px;
-  display: block;
-}
-
-/* ================= DETAIL PAGE ================= */
+/* ================= DETAIL / CARD ================= */
 .detail {
   background: rgba(255,255,255,.92);
   border-radius: 18px;
-  padding: 24px;
+  padding: 32px;
+
+  min-height: 520px; /* ⭐ 정보 영역 크기 고정 */
 }
 
 .detail h2 {
@@ -193,13 +181,13 @@ body.logged-in #mainSection {
   margin-bottom: 16px;
 }
 
-/* ================= ETC ================= */
 .card {
   background: #f8fafc;
   padding: 18px;
   border-radius: 14px;
 }
 
+/* ================= SCHEDULE ================= */
 .day-card {
   background: #fff;
   padding: 20px;
@@ -212,6 +200,7 @@ body.logged-in #mainSection {
   color: #475467;
 }
 
+/* ================= BUTTONS ================= */
 .primary-btn {
   margin-top: 12px;
   padding: 12px;
