@@ -10,7 +10,12 @@
   <link rel="stylesheet" href="css/mobile.css" media="(max-width: 767px)">
 </head>
 <body>
-
+  
+<!-- ✅ 여기, body 시작하자마자 -->
+<div id="mobileSplash" class="mobile-splash" style="display:none;">
+  <img src="assets/images/iscposter.jpg" alt="ISC Poster">
+</div>
+  
 <!-- ================= HEADER ================= -->
 <header class="header compact" id="topHeader" style="display:none;">
   <div class="header-left">
@@ -111,11 +116,27 @@ function login() {
 
   currentUser = user;
 
+  // 로그인 화면 제거
   document.getElementById("loginSection").style.display = "none";
-  document.getElementById("topHeader").style.display = "flex";
-  document.getElementById("mainSection").style.display = "block";
-  document.getElementById("employeeName").textContent = user.name;
 
+  // 📱 모바일: 스플래시 2초
+  if (window.innerWidth <= 767) {
+    const splash = document.getElementById("mobileSplash");
+    splash.style.display = "flex";
+
+    setTimeout(() => {
+      splash.style.display = "none";
+      document.getElementById("topHeader").style.display = "flex";
+      document.getElementById("mainSection").style.display = "block";
+    }, 2000);
+  } 
+  // 🖥 데스크탑: 즉시 진입
+  else {
+    document.getElementById("topHeader").style.display = "flex";
+    document.getElementById("mainSection").style.display = "block";
+  }
+
+  document.getElementById("employeeName").textContent = user.name;
   document.body.classList.add("logged-in");
 }
 
