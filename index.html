@@ -12,7 +12,7 @@
 <body>
 
 <!-- ================= HEADER ================= -->
-<header class="header compact" id="topHeader">
+<header class="header compact" id="topHeader" style="display:none;">
   <div class="header-left">
     <img src="assets/images/logo.png" class="logo">
     <div>
@@ -27,7 +27,7 @@
   </div>
 </header>
 
-<!-- ================= LOGIN ================= -->
+<!-- ================= LOGIN (FINAL / DO NOT TOUCH) ================= -->
 <section id="loginSection" class="login-hero">
   <div class="hero-overlay">
     <div class="login-box">
@@ -42,10 +42,8 @@
   </div>
 </section>
 
-<!-- ================= MAIN ================= -->
+<!-- ================= MAIN (LOGIN AFTER) ================= -->
 <main id="mainSection" class="main-bg" style="display:none;">
-
-  <p class="welcome"><strong id="employeeName"></strong> 님, 환영합니다</p>
 
   <div class="layout">
 
@@ -63,10 +61,12 @@
     <!-- ===== RIGHT CONTENT ===== -->
     <section class="content-area">
 
+      <!-- 기본 포스터 -->
       <div id="posterArea" class="poster">
         <img src="assets/images/iscposter.jpg" alt="ISC Poster">
       </div>
 
+      <!-- 상세 페이지 -->
       <section id="detailPage" class="detail" style="display:none;">
         <h2 id="detailTitle"></h2>
         <div id="detailContent"></div>
@@ -78,7 +78,6 @@
       </section>
 
     </section>
-
   </div>
 </main>
 
@@ -124,6 +123,34 @@ const travelSchedule = [
       { time:"18:30", icon:"🍽️", title:"석식 | 타카오 샤브샤브", desc:"현지식" },
       { time:"20:00", icon:"🌃", title:"타이베이 101 전망대", desc:"야경 관람" }
     ]
+  },
+  {
+    day: "DAY 2",
+    date: "2026.03.12 (목)",
+    title: "선택 관광 / 만찬",
+    items: [
+      { time:"09:00", icon:"🚌", title:"선택 관광", desc:"개인 선택 일정" },
+      { time:"18:00", icon:"🎉", title:"ISC 만찬", desc:"필수 참석" }
+    ]
+  },
+  {
+    day: "DAY 3",
+    date: "2026.03.13 (금)",
+    title: "근교 관광",
+    items: [
+      { time:"10:00", icon:"🌊", title:"야류 해상공원", desc:"기암괴석 관광" },
+      { time:"14:00", icon:"🏮", title:"지우펀", desc:"홍등 마을" }
+    ]
+  },
+  {
+    day: "DAY 4",
+    date: "2026.03.14 (토)",
+    title: "귀국",
+    items: [
+      { time:"07:00", icon:"🏨", title:"호텔 체크아웃", desc:"" },
+      { time:"11:40", icon:"✈️", title:"타이베이 출발", desc:"OZ 712 / KE 2022" },
+      { time:"15:25", icon:"🇰🇷", title:"인천 도착", desc:"" }
+    ]
   }
 ];
 
@@ -141,8 +168,53 @@ function openPage(type) {
       <div class="day-card">
         <h3>${day.day} <span>${day.date}</span></h3>
         <p class="day-title">${day.title}</p>
+
+        <div class="timeline">
+          ${day.items.map(i => `
+            <div class="schedule-item">
+              <div class="timeline-dot"></div>
+              <div class="schedule-card">
+                <div class="schedule-time">${i.time}</div>
+                <div class="schedule-body">
+                  <div class="schedule-title">${i.icon} ${i.title}</div>
+                  ${i.desc ? `<div class="schedule-desc">${i.desc}</div>` : ""}
+                </div>
+              </div>
+            </div>
+          `).join("")}
+        </div>
       </div>
     `).join("");
+  }
+
+  if (type === "flight") {
+    t.textContent = "✈️ 항공편 정보";
+    c.innerHTML = `<div class="card">${currentUser.flight}</div>`;
+  }
+
+  if (type === "myTour") {
+    t.textContent = "🎒 나의 선택 관광";
+    c.innerHTML = `<div class="card"><ul class="mytour-list">
+      ${(currentUser.myTour || []).map(x => `<li>${x}</li>`).join("")}
+    </ul></div>`;
+  }
+
+  if (type === "taiwan") {
+    t.textContent = "🇹🇼 대만의 모든 것";
+    c.innerHTML = `<div class="card">대만 기본 정보 안내</div>`;
+  }
+
+  if (type === "dinner") {
+    t.textContent = "🍽 만찬 안내";
+    c.innerHTML = `<div class="card">ISC 공식 만찬</div>`;
+  }
+
+  if (type === "request") {
+    t.textContent = "📝 요청사항";
+    c.innerHTML = `<div class="card">
+      <textarea placeholder="요청사항 입력"></textarea>
+      <button class="primary-btn">제출</button>
+    </div>`;
   }
 
   if (type === "contact") {
@@ -155,7 +227,6 @@ function goHome() {
   document.getElementById("detailPage").style.display = "none";
   document.getElementById("posterArea").style.display = "block";
 }
-
 function goBack(){ goHome(); }
 </script>
 
