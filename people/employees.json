@@ -212,20 +212,20 @@
     "name": "임나경",
     "flight": {
       "departure": {
-        "date": "2026.03.11",
-        "time": "08:00",
-        "from": "인천",
-        "to": "타이베이",
-        "airline": "아시아나항공",
-        "flightNo": "OZ 711"
+        "date": "사랑해요",
+        "time": "나경이에게",
+        "from": "내가",
+        "to": "나경이를",
+        "airline": "세상에서",
+        "flightNo": "제일"
       },
       "return": {
-        "date": "2026.03.14",
-        "time": "11:40",
-        "from": "타이베이",
-        "to": "인천",
-        "airline": "아시아나항공",
-        "flightNo": "OZ 712"
+        "date": "사랑해",
+        "time": "그리고",
+        "from": "오늘안전하게운전한거",
+        "to": "완전대단해!!",
+        "airline": "나이제",
+        "flightNo": "퇴근할게"
       }
     },
     "myTour": [
