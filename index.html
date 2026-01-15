@@ -163,12 +163,13 @@ const travelSchedule = [
   }
 ];
 
+<script>
 /* ================= 페이지 열기 ================= */
 function openPage(type) {
-   // ✅ [추가] 홈 이미지 숨김 (RED 영역 정리)
+  // 🔴 홈 화면 숨기고
   document.getElementById("homeArea").style.display = "none";
 
-  document.getElementById("posterArea").style.display = "none";
+  // 🔴 상세 페이지 표시
   document.getElementById("detailPage").style.display = "block";
 
   const t = document.getElementById("detailTitle");
@@ -235,15 +236,20 @@ function openPage(type) {
   }
 }
 
+/* ================= 홈으로 ================= */
 function goHome() {
+  // 🔴 상세 페이지 숨기고
   document.getElementById("detailPage").style.display = "none";
-  document.getElementById("posterArea").style.display = "block";
 
-  // ✅ 홈 화면 복귀
+  // 🔴 홈 화면 복귀
   document.getElementById("homeArea").style.display = "block";
 }
-function goBack(){ goHome(); }
+
+function goBack(){ 
+  goHome(); 
+}
 </script>
+
 
 </body>
 </html>
