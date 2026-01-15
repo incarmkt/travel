@@ -1,3 +1,10 @@
+/* =========================
+   모바일 배경 이미지
+========================= */
+body {
+  background: url("../assets/images/main-bg.jpg") center / cover no-repeat fixed;
+}
+
 /* =================================================
    MOBILE ONLY (max-width: 767px)
 ================================================= */
@@ -64,6 +71,10 @@ body {
   max-width: 420px;
   border-radius: 20px;
 }
+<!-- ================= MOBILE SPLASH (POSTER) ================= -->
+<div id="mobileSplash" class="mobile-splash" style="display:none;">
+  <img src="assets/images/iscposter.jpg" alt="ISC Poster">
+</div>
 
 /* =================================================
    MAIN LAYOUT RESET
@@ -212,4 +223,22 @@ textarea {
   padding: 14px;
   border-radius: 12px;
   font-size: 16px;
+}
+/* =========================
+   모바일 스플래시 포스터
+========================= */
+.mobile-splash {
+  position: fixed;
+  inset: 0;
+  background: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.mobile-splash img {
+  max-width: 80%;
+  max-height: 80%;
+  object-fit: contain;
 }
