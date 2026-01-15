@@ -1,18 +1,145 @@
-/* ================= DESKTOP ONLY ================= */
-@media (min-width: 768px) {
+/* ================= HEADER ================= */
+.header {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:10px 24px;
+  background:#fff;
+  border-bottom:1px solid #e5e7eb;
+  height:64px;
+}
 
-  .layout {
-    max-width:1200px;
-    margin:0 auto;
-  }
+.header-left {
+  display:flex;
+  gap:16px;
+  align-items:center;
+}
 
-  .side-menu {
-    position:sticky;
-    top:110px;
-  }
+.logo {
+  width:90px;
+}
 
-  .content-area {
-    padding-right:20px;
-  }
+.header h1 {
+  margin:0;
+  font-size:20px;
+}
 
+.header .sub {
+  margin:2px 0 0;
+  font-size:13px;
+  color:#667085;
+}
+
+.header-right {
+  text-align:right;
+}
+
+.header-right .congrats {
+  margin:0;
+  font-size:13px;
+  color:#1e63c6;
+  font-weight:600;
+}
+
+.header-right .welcome-text {
+  margin:2px 0 0;
+  font-size:14px;
+  color:#344054;
+}
+
+/* ================= VISIBILITY ================= */
+#topHeader,
+#mainSection {
+  display:none;
+}
+
+body.logged-in #topHeader {
+  display:flex;
+}
+
+body.logged-in #mainSection {
+  display:block;
+}
+
+/* ================= MAIN ================= */
+#mainSection {
+  height: calc(100vh - 64px);
+  overflow: hidden;
+}
+
+.main-bg {
+  background: url("../assets/images/main-bg.jpg") center / cover no-repeat fixed;
+  height: 100%;
+  position: relative;
+}
+
+/* ================= LAYOUT ================= */
+.layout {
+  height:100%;
+}
+
+/* ================= SIDE MENU ================= */
+.side-menu {
+  position: fixed;
+
+  /* 화면 기준 여백 */
+  top: 84px;        /* header 64 + 여백 */
+  left: 20px;
+  bottom: 20px;
+
+  width: 260px;
+  padding: 20px 16px;
+
+  background: rgba(255,255,255,0.88);
+  border-radius: 18px;
+
+  display:flex;
+  flex-direction:column;
+  gap:14px;
+
+  z-index: 20;
+}
+
+.side-menu button {
+  padding:18px;
+  border-radius:16px;
+  border:none;
+  background:#1e63c6;
+  color:#fff;
+  font-size:15px;
+  text-align:left;
+  cursor:pointer;
+}
+
+.side-menu button:hover {
+  background:#174ea6;
+}
+
+/* ================= CONTENT AREA ================= */
+.content-area {
+  margin-left: 320px; /* side-menu + 여백 */
+  height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 24px 32px;
+}
+
+/* ================= POSTER ================= */
+.poster img {
+  width:100%;
+  border-radius:18px;
+  display:block;
+}
+
+/* ================= DETAIL ================= */
+.detail {
+  background: rgba(255,255,255,.92);
+  border-radius:18px;
+  padding:32px;
+  min-height: 560px; /* 정보영역 크기 고정 */
+}
+
+.detail h2 {
+  margin-top:0;
+  margin-bottom:16px;
 }
