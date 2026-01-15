@@ -61,25 +61,39 @@
     <!-- ===== RIGHT CONTENT ===== -->
     <section class="content-area">
 
-      <!-- 기본 포스터 -->
-      <div id="posterArea" class="poster">
-        <img src="assets/images/iscposter.jpg" alt="ISC Poster">
+  <!-- 🔴 메인 패널 (RED) -->
+  <div class="main-panel">
+
+    <!-- 홈일 때 -->
+    <div id="homeArea" class="home-view">
+      <img src="assets/images/home.jpg" alt="Home Image">
+    </div>
+
+    <!-- 기존 포스터 영역 (홈 아님) -->
+    <div id="posterArea" class="poster" style="display:none;">
+      <img src="assets/images/iscposter.jpg" alt="ISC Poster">
+    </div>
+
+    <!-- 기존 상세 페이지 -->
+    <section id="detailPage" class="detail" style="display:none;">
+      <h2 id="detailTitle"></h2>
+      <div id="detailContent"></div>
+
+      <div class="nav-buttons">
+        <button class="ghost-btn" onclick="goHome()">홈으로</button>
+        <button class="ghost-btn" onclick="goBack()">뒤로가기</button>
       </div>
-
-      <!-- 상세 페이지 -->
-      <section id="detailPage" class="detail" style="display:none;">
-        <h2 id="detailTitle"></h2>
-        <div id="detailContent"></div>
-
-        <div class="nav-buttons">
-          <button class="ghost-btn" onclick="goHome()">홈으로</button>
-          <button class="ghost-btn" onclick="goBack()">뒤로가기</button>
-        </div>
-      </section>
-
     </section>
+
   </div>
-</main>
+
+  <!-- 🟨 고정 포스터 패널 (YELLOW) -->
+  <aside class="fixed-poster">
+    <img src="assets/images/iscposter.jpg" alt="Fixed Poster">
+  </aside>
+
+</section>
+
 
 <script>
 /* ================= 공통 ================= */
