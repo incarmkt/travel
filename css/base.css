@@ -6,7 +6,6 @@
 html, body {
   margin: 0;
   height: 100%;
-  overflow: hidden;
 }
 
 body {
@@ -14,7 +13,7 @@ body {
   color: #1d2939;
 }
 
-/* ================= LOGIN SCREEN ================= */
+/* ================= LOGIN SCREEN (FINAL / DO NOT TOUCH) ================= */
 .login-hero {
   height: 100vh;
   background: url("../assets/images/taiwan.jpg") center / cover no-repeat;
@@ -23,31 +22,116 @@ body {
 .hero-overlay {
   height: 100%;
   background: rgba(0,0,0,.55);
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  display:flex;
+  align-items:center;
+  justify-content:center;
 }
 
 .login-box {
-  background: #fff;
-  padding: 36px;
-  border-radius: 18px;
-  width: 360px;
-  text-align: center;
+  background:#fff;
+  padding:36px;
+  border-radius:18px;
+  width:360px;
+  text-align:center;
 }
 
 .hero-logo {
-  width: 120px;
-  margin-bottom: 14px;
+  width:120px;
+  margin-bottom:14px;
 }
 
-/* ================= HEADER ================= */
-.header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 10px 24px;
-  background: #fff;
-  border-bottom: 1px solid #e5e7eb;
-  height: 64px;
+.login-box h2 {
+  margin: 10px 0 6px;
+}
+
+.login-box input {
+  width:100%;
+  padding:10px;
+  margin-top:10px;
+}
+
+/* ================= COMMON UI ================= */
+.primary-btn {
+  margin-top:12px;
+  padding:12px;
+  border-radius:12px;
+  border:none;
+  background:#1e63c6;
+  color:#fff;
+  cursor:pointer;
+}
+
+.ghost-btn {
+  padding:10px 16px;
+  border-radius:12px;
+  border:1px solid #d0d5dd;
+  background:#fff;
+  cursor:pointer;
+}
+
+.card {
+  background:#f8fafc;
+  padding:18px;
+  border-radius:14px;
+}
+
+textarea {
+  width:100%;
+  min-height:120px;
+  padding:12px;
+  border-radius:12px;
+  border:1px solid #d0d5dd;
+  resize:vertical;
+}
+
+/* ================= SCHEDULE COMMON ================= */
+.day-card {
+  background:#fff;
+  padding:24px;
+  border-radius:18px;
+  margin-bottom:32px;
+}
+
+.day-title {
+  font-size:14px;
+  color:#475467;
+}
+
+.timeline {
+  margin-top:20px;
+}
+
+.schedule-item {
+  display:flex;
+  gap:14px;
+  margin-bottom:18px;
+}
+
+.timeline-dot {
+  width:12px;
+  height:12px;
+  background:#1e63c6;
+  border-radius:50%;
+  margin-top:10px;
+}
+
+.schedule-card {
+  background:#f8fafc;
+  border-radius:14px;
+  padding:14px 18px;
+  flex:1;
+}
+
+.schedule-time {
+  font-weight:bold;
+  color:#1e63c6;
+}
+
+.schedule-title {
+  font-weight:600;
+}
+
+.schedule-desc {
+  font-size:13px;
+  color:#667085;
 }
