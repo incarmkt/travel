@@ -1,5 +1,18 @@
-.menu {
-  grid-template-columns: repeat(3, 1fr);
-  max-width: 1000px;
-  margin: 0 auto 70px;
+/* ================= DESKTOP ONLY ================= */
+@media (min-width: 768px) {
+
+  .layout {
+    max-width:1200px;
+    margin:0 auto;
+  }
+
+  .side-menu {
+    position:sticky;
+    top:110px;
+  }
+
+  .content-area {
+    padding-right:20px;
+  }
+
 }
