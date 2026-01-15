@@ -1,5 +1,5 @@
 /* =========================
-   모바일 전용 기본 설정
+   MOBILE RESET
 ========================= */
 body {
   margin: 0;
@@ -9,7 +9,7 @@ body {
 }
 
 .logged-in {
-  overflow: hidden;
+  overflow-y: auto;
 }
 
 /* =========================
@@ -20,7 +20,7 @@ body {
 }
 
 /* =========================
-   로그인 화면
+   LOGIN SCREEN
 ========================= */
 .login-hero {
   height: 100vh;
@@ -33,40 +33,22 @@ body {
 }
 
 /* =========================
-   메인 레이아웃 리셋
+   MAIN LAYOUT RESET
 ========================= */
 .layout {
   display: block;
-}
-
-.side-menu {
-  display: none; /* 데스크탑 메뉴 제거 */
-}
-
-.fixed-poster {
-  display: none; /* 포스터 제거 */
+  padding: 0;
 }
 
 /* =========================
-   Screen ② : 카테고리 화면
+   SIDE MENU = Screen ②
 ========================= */
-.content-area {
+.side-menu {
+  display: block;
   padding: 20px;
 }
 
-.main-panel {
-  background: transparent;
-  box-shadow: none;
-}
-
-/* 홈 이미지 제거 */
-.home-view {
-  display: none !important;
-}
-
-/* 모바일 카테고리 버튼 */
-.side-menu button,
-.mobile-menu button {
+.side-menu button {
   width: 100%;
   margin-bottom: 12px;
   padding: 16px;
@@ -76,48 +58,48 @@ body {
 }
 
 /* =========================
-   Screen ③ : 상세 페이지
+   CONTENT AREA
+========================= */
+.content-area {
+  padding: 0;
+}
+
+/* =========================
+   MAIN PANEL
+========================= */
+.main-panel {
+  padding: 16px;
+  background: transparent;
+  box-shadow: none;
+}
+
+/* 홈 이미지 (모바일에서는 제거)
+   → 로그인 후 바로 카테고리 화면처럼 보이게 */
+.home-view {
+  display: none !important;
+}
+
+/* =========================
+   DETAIL PAGE = Screen ③
 ========================= */
 .detail {
   display: none;
-  padding-top: 64px; /* 상단 고정바 공간 */
-  padding-bottom: 24px;
+  padding: 16px;
+}
+
+/* JS에서 detailPage가 display:block 되면
+   모바일에서는 자연스럽게 전체 화면처럼 보임 */
+
+/* =========================
+   FIXED POSTER 제거
+========================= */
+.fixed-poster {
+  display: none !important;
 }
 
 /* =========================
-   🔝 상단 고정 네비게이션
+   CARD / SCHEDULE STYLE
 ========================= */
-.mobile-topbar {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 56px;
-  background: #ffffff;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 14px;
-  border-bottom: 1px solid #e5e7eb;
-  z-index: 1000;
-}
-
-.mobile-topbar button {
-  background: none;
-  border: none;
-  font-size: 15px;
-  font-weight: 600;
-  color: #2563eb;
-}
-
-/* =========================
-   상세 콘텐츠 스타일
-========================= */
-.detail h2 {
-  font-size: 20px;
-  margin-bottom: 16px;
-}
-
 .day-card {
   background: #ffffff;
   border-radius: 16px;
@@ -137,7 +119,7 @@ body {
 }
 
 /* =========================
-   일정 카드
+   TIMELINE
 ========================= */
 .timeline {
   margin-top: 12px;
@@ -181,7 +163,7 @@ body {
 }
 
 /* =========================
-   요청사항 textarea
+   REQUEST FORM
 ========================= */
 textarea {
   width: 100%;
@@ -193,7 +175,7 @@ textarea {
 }
 
 /* =========================
-   버튼
+   BUTTONS
 ========================= */
 .primary-btn {
   width: 100%;
@@ -201,4 +183,9 @@ textarea {
   padding: 14px;
   border-radius: 12px;
   font-size: 16px;
+}
+
+.ghost-btn {
+  width: 100%;
+  margin-top: 8px;
 }
