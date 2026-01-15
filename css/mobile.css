@@ -1,38 +1,31 @@
-/* ================= MOBILE ONLY ================= */
-@media (max-width: 767px) {
+/* ================= MOBILE LAYOUT FIX ================= */
 
-  .header {
-    flex-direction:column;
-    text-align:center;
-  }
+.side-menu {
+  position: static;
+  width: 100%;
+  margin: 12px;
+  border-radius: 16px;
+}
 
-  .main-bg {
-    padding:16px;
-  }
+.content-area {
+  margin-left: 0;
+  padding: 16px;
+  height: auto;
+  overflow: visible;
+}
 
-  .layout {
-    flex-direction:column;
-    gap:20px;
-  }
+.detail {
+  min-height: auto;
+}
 
-  .side-menu {
-    width:100%;
-    flex-direction:row;
-    overflow-x:auto;
-    gap:10px;
-    padding-bottom:6px;
-  }
+.header {
+  flex-direction: column;
+  align-items: flex-start;
+  height: auto;
+}
 
-  .side-menu button {
-    flex:0 0 auto;
-    white-space:nowrap;
-    font-size:13px;
-    padding:12px 14px;
-  }
-
-  .poster,
-  .detail {
-    padding:16px;
-  }
-
+.header-right {
+  width: 100%;
+  text-align: left;
+  margin-top: 6px;
 }
