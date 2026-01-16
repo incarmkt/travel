@@ -386,3 +386,113 @@ body.logged-in {
         background: #ffffff !important;
     }
 }
+/* =================================================
+   🔥 MOBILE FINAL POLISH (진짜 최종)
+================================================= */
+@media (max-width: 767px) {
+
+  /* =================================================
+     1️⃣ 카테고리 화면: 상세 내용 완전 제거
+     - 하단에 보이던 DAY / 카드 전부 차단
+  ================================================= */
+
+  /* 기본: detailPage는 DOM에서 제거된 것처럼 */
+  #detailPage {
+    display: none !important;
+    visibility: hidden !important;
+    height: 0 !important;
+    overflow: hidden !important;
+  }
+
+  /* JS가 명확히 display:block 준 경우에만 복구 */
+  #detailPage[style*="display:block"],
+  #detailPage[style*="display: block"] {
+    display: grid !important;
+    visibility: visible !important;
+    height: auto !important;
+  }
+
+  /* =================================================
+     2️⃣ 상세 화면(빨간 박스) 폭 확장 + 배경 완전 차단
+  ================================================= */
+
+  #detailPage[style*="display:block"],
+  #detailPage[style*="display: block"] {
+
+    /* 좌우 거의 풀폭 */
+    left: 4px !important;
+    right: 4px !important;
+
+    top: 60px !important;
+    bottom: 12px !important;
+
+    background: #ffffff !important;
+    border-radius: 18px !important;
+
+    /* 뒤 레이아웃 완전 차단 */
+    box-shadow: 0 10px 28px rgba(0,0,0,0.12);
+  }
+
+  #detailContent {
+    background: #ffffff !important;
+  }
+
+  /* =================================================
+     3️⃣ 카드 간격 압축 (모바일 가독성 ↑)
+  ================================================= */
+
+  .day-card {
+    margin-bottom: 18px !important;
+    padding: 18px 16px !important;
+    border-radius: 16px !important;
+  }
+
+  .schedule-item {
+    margin-bottom: 12px !important;
+    gap: 10px !important;
+  }
+
+  .schedule-card {
+    padding: 12px 14px !important;
+    border-radius: 14px !important;
+  }
+
+  .schedule-time {
+    font-size: 15px !important;
+  }
+
+  .schedule-title {
+    font-size: 15px !important;
+  }
+
+  .schedule-desc {
+    font-size: 13px !important;
+    margin-top: 2px !important;
+  }
+
+  /* =================================================
+     4️⃣ DAY 타이틀 디자인 개선 (DAY 1 / DAY 2 ...)
+  ================================================= */
+
+  .day-card h3 {
+    margin: 0 0 8px !important;
+    font-size: 17px !important;
+    font-weight: 800 !important;
+    letter-spacing: -0.02em;
+  }
+
+  .day-card h3 span {
+    display: block;
+    margin-top: 2px;
+    font-size: 13px;
+    font-weight: 500;
+    color: #667085;
+  }
+
+  .day-title {
+    margin-bottom: 14px !important;
+    font-size: 14px !important;
+    color: #475467 !important;
+  }
+
+}
