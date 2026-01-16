@@ -418,3 +418,68 @@ textarea {
   font-size: 13px;
   color: #6b7280;
 }
+/* ================= 나의 선택 관광 (DESKTOP) ================= */
+@media (min-width: 768px) {
+  .mytour-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+}
+/* ================= 선택 관광 카드 타이포 개선 ================= */
+.tour-header h3 {
+  font-size: 20px;
+  font-weight: 800;
+  letter-spacing: -0.3px;
+}
+
+.tour-desc {
+  font-size: 15px;
+  line-height: 1.6;
+  color: #475467;
+}
+
+.meal-box {
+  font-size: 14px;
+}
+
+.tour-footer {
+  margin-top: 6px;
+  font-size: 13px;
+  color: #667085;
+}
+/* ================= 중식비 지급 체크 ================= */
+.meal-check {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #f9fafb;
+  border-radius: 10px;
+  padding: 10px 14px;
+  font-size: 13px;
+  margin-bottom: 12px;
+}
+
+.meal-check .status.pending {
+  color: #dc2626;
+  font-weight: 600;
+}
+
+.meal-check .status.done {
+  color: #16a34a;
+  font-weight: 700;
+}
+
+.meal-check button {
+  background: #111827;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 6px 10px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+
