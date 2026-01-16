@@ -254,4 +254,91 @@ textarea {
   font-size: 12px;
   color: #6b7280;
 }
+.country-compare-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 24px;
+}
+
+.country-card {
+  background: #ffffff;
+  border-radius: 20px;
+  padding: 22px;
+  box-shadow: 0 10px 28px rgba(0,0,0,0.06);
+}
+
+.country-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.flag-img {
+  width: 36px;
+  height: 24px;
+  object-fit: cover;
+  border-radius: 4px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+}
+
+.time-box {
+  background: #f1f5f9;
+  border-radius: 12px;
+  padding: 12px;
+  text-align: center;
+  margin-bottom: 14px;
+}
+
+.time-label {
+  display: block;
+  font-size: 12px;
+  color: #64748b;
+  margin-bottom: 4px;
+}
+
+.time-box strong {
+  font-size: 18px;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.country-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.country-list li {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: 1px dashed #e5e7eb;
+  font-size: 14px;
+}
+
+.country-list li:last-child {
+  border-bottom: none;
+}
+
+.country-list span {
+  color: #64748b;
+}
+
+.country-list strong {
+  color: #0f172a;
+  font-weight: 600;
+}
+
+.exchange-row {
+  margin-top: 18px;
+  font-size: 14px;
+  color: #1f2937;
+}
+
+.exchange-note {
+  margin-top: 6px;
+  font-size: 12px;
+  color: #6b7280;
+}
 
