@@ -498,4 +498,71 @@ body.logged-in {
   grid-template-columns: 1fr;
 }
 
+}/* ===============================
+   🇹🇼 대만의 모든 것 - 모바일 2열 유지
+================================ */
+
+@media (max-width: 767px) {
+
+  .country-compare-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;   /* 🔥 모바일에서도 2열 */
+    gap: 10px;
+  }
+
+  .country-card {
+    padding: 12px;
+    border-radius: 14px;
+  }
+
+  .country-header {
+    gap: 6px;
+  }
+
+  .country-header h3 {
+    font-size: 14px;
+  }
+
+  .flag-img {
+    width: 26px;
+    height: auto;
+  }
+
+  .time-box {
+    padding: 8px;
+    margin: 8px 0;
+  }
+
+  .time-label {
+    font-size: 11px;
+  }
+
+  .time-box strong {
+    font-size: 14px;
+  }
+
+  .country-list li {
+    font-size: 12px;
+    padding: 4px 0;
+  }
+
+  .country-list span {
+    font-size: 11px;
+  }
+
+  .country-list strong {
+    font-size: 12px;
+  }
+
+  .exchange-row {
+    font-size: 13px;
+    margin-top: 12px;
+    text-align: center;
+  }
+
+  .exchange-note {
+    font-size: 11px;
+    text-align: center;
+  }
 }
+
