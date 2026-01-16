@@ -269,22 +269,22 @@ body.logged-in #mainSection {
   border-radius: 14px;
 }
 /* ===============================
-   DESKTOP : 상세 하단 버튼 정상 위치
+   DESKTOP : 상세 하단 버튼 정상 배치
    =============================== */
 
-/* detailPage를 flex 구조로 */
+/* 상세 페이지를 세로 레이아웃으로 */
 #detailPage {
   display: flex;
   flex-direction: column;
   min-height: 100%;
 }
 
-/* 콘텐츠 영역 */
+/* 실제 내용 영역이 공간을 채우도록 */
 #detailContent {
   flex: 1;
 }
 
-/* 하단 버튼 영역 */
+/* 하단 버튼은 콘텐츠 아래에 자연스럽게 */
 #detailPage .nav-buttons {
   margin-top: 32px;
   padding-top: 16px;
@@ -294,5 +294,6 @@ body.logged-in #mainSection {
   justify-content: center;
   gap: 12px;
 }
+
 
 
