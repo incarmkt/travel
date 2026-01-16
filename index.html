@@ -279,48 +279,56 @@ if (type === "flight") {
   t.textContent = "🇹🇼 대만의 모든 것";
 
   c.innerHTML = `
-    <!-- ================= 비교 카드 ================= -->
-    <div class="day-card">
-      <h3 class="section-title">🇹🇼 대만 vs 🇰🇷 대한민국</h3>
+   <div class="country-compare">
 
-      <div class="compare-grid">
+  <!-- 한국 카드 -->
+  <div class="country-card korea">
+    <div class="country-header">
+      <img src="assets/flags/kr.svg" alt="한국 국기">
+      <h3>대한민국</h3>
+    </div>
 
-        <!-- 한국 -->
-        <div class="country-card">
-          <div class="country-header">
-            <img src="assets/images/flag-kr.png" alt="대한민국 국기">
-            <span>대한민국</span>
-          </div>
-
-          <ul class="country-list">
-            <li><span>현재 시각</span><strong id="timeKR">-</strong></li>
-            <li><span>표준시</span><strong>UTC+9</strong></li>
-            <li><span>인구</span><strong>약 5,100만 명</strong></li>
-            <li><span>면적</span><strong>약 100,210㎢</strong></li>
-            <li><span>GDP</span><strong>약 1.7조 달러</strong></li>
-          </ul>
-        </div>
-
-        <!-- 대만 -->
-        <div class="country-card highlight">
-          <div class="country-header">
-            <img src="assets/images/flag-tw.png" alt="대만 국기">
-            <span>대만</span>
-          </div>
-
-          <ul class="country-list">
-            <li><span>현재 시각</span><strong id="timeTW">-</strong></li>
-            <li><span>시차</span><strong>한국보다 1시간 느림</strong></li>
-            <li><span>환율</span><strong>1 TWD ≈ 42원</strong></li>
-            <li><span>인구</span><strong>약 2,300만 명</strong></li>
-            <li><span>GDP</span><strong>약 0.8조 달러</strong></li>
-          </ul>
-
-          <p class="sub-note">※ 환율은 변동될 수 있습니다</p>
-        </div>
-
+    <div class="country-main">
+      <div class="time">
+        <span class="label">현재 시각</span>
+        <strong id="timeKR">--:--:--</strong>
       </div>
     </div>
+
+    <ul class="country-info">
+      <li><span>표준시</span><b>UTC+9</b></li>
+      <li><span>인구</span><b>약 5,100만 명</b></li>
+      <li><span>면적</span><b>약 100,210㎢</b></li>
+      <li><span>GDP</span><b>약 1.7조 달러</b></li>
+    </ul>
+  </div>
+
+  <!-- 대만 카드 -->
+  <div class="country-card taiwan">
+    <div class="country-header">
+      <img src="assets/flags/tw.svg" alt="대만 국기">
+      <h3>대만</h3>
+    </div>
+
+    <div class="country-main">
+      <div class="time">
+        <span class="label">현재 시각</span>
+        <strong id="timeTW">--:--:--</strong>
+      </div>
+    </div>
+
+    <ul class="country-info">
+      <li><span>시차</span><b>한국보다 1시간 느림</b></li>
+      <li><span>환율</span><b>1 TWD ≈ 42원</b></li>
+      <li><span>인구</span><b>약 2,300만 명</b></li>
+      <li><span>GDP</span><b>약 0.8조 달러</b></li>
+    </ul>
+  </div>
+
+</div>
+
+<p class="rate-note">※ 환율은 실시간 변동될 수 있습니다.</p>
+
 
     <!-- ================= 설명 카드 ================= -->
     <div class="day-card">
