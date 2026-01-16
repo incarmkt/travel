@@ -81,7 +81,7 @@ body.logged-in {
    Screen ② : 카테고리 (여백 복구 + 파랑)
 ================================================= */
 .side-menu {
-  padding: 24px 16px;     /* 좌우 여백 복구 */
+  padding: 24px 20px;     /* 좌우 여백 복구 */
   margin-top: 24px;       /* 상단 여백 확보 */
 }
 
