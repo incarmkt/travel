@@ -97,6 +97,8 @@
 </main>
   <script>
 /* ================= 공통 ================= */
+    /* ================= 페이지 히스토리 ================= */
+let pageHistory = [];
 let employees = [];
 let currentUser = null;
 
@@ -185,8 +187,13 @@ const travelSchedule = [
 ];
 
 /* ================= 페이지 열기 ================= */
-function openPage(type) {
+function openPage(type, fromHistory = false) {
   const isMobile = window.innerWidth <= 767;
+
+  // 🔹 사용자 클릭으로 열었을 때만 기록
+  if (!fromHistory) {
+    pageHistory.push(type);
+  }
 
 document.getElementById("homeArea").style.display = "none";
 document.getElementById("detailPage").style.display = "block";
@@ -343,6 +350,9 @@ if (type === "flight") {
 function goHome() {
   const isMobile = window.innerWidth <= 767;
 
+  // 🔥 히스토리 완전 초기화
+  pageHistory = [];
+
   document.getElementById("detailPage").style.display = "none";
 
   if (isMobile) {
@@ -350,6 +360,24 @@ function goHome() {
   } else {
     document.getElementById("homeArea").style.display = "block";
   }
+}
+    /* ================= 뒤로가기 ================= */
+function goBack() {
+  const isMobile = window.innerWidth <= 767;
+
+  // 현재 페이지 제거
+  pageHistory.pop();
+
+  // 이전 기록 없으면 홈
+  if (pageHistory.length === 0) {
+    goHome();
+    return;
+  }
+
+  const prevType = pageHistory[pageHistory.length - 1];
+
+  // 🔥 history에 다시 쌓지 않고 렌더만
+  openPage(prevType, true);
 }
   /* ================= 요청사항 전송 (여기에 추가) ================= */
 function submitRequest() {
