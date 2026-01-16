@@ -154,10 +154,10 @@ const myTourTemplates = [
         </div>
         
 <!-- 🔽 여기 추가 -->
-      <div class="meal-check">
-        <span class="status pending">중식비 미지급</span>
-        <button onclick="openMealConfirm()">지급 확인</button>
-      </div>
+     <div class="meal-check" data-tour="단수이 낭만 투어">
+  <span class="status pending">중식비 미지급</span>
+  <button onclick="handleMealClick(this)">지급 확인</button>
+</div>
       
         <div class="tour-footer">
           <span>🎫 입장권</span>
