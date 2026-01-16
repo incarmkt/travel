@@ -259,3 +259,78 @@ body.logged-in {
   max-height: 80%;
   object-fit: contain;
 }
+/* =================================================
+   🔥 MOBILE REAL FIX – 스크롤 구조 복구
+================================================= */
+@media (max-width: 767px) {
+
+  /* 1️⃣ 모바일에서 mainSection 스크롤 복구 */
+  #mainSection {
+    height: auto !important;
+    min-height: calc(100vh - 60px);
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* body는 잠그되, mainSection이 스크롤 담당 */
+  body {
+    overflow: hidden;
+  }
+
+  /* 2️⃣ 사이드 메뉴는 정상 흐름 */
+  .side-menu {
+    position: static !important;
+    margin-top: 0;
+  }
+
+  /* 3️⃣ detailPage는 fixed 제거 */
+  #detailPage {
+    position: relative !important;
+    display: none;
+    margin: 16px;
+    border-radius: 18px;
+    background: rgba(255,255,255,0.92);
+    overflow: hidden;
+  }
+
+  #detailPage[style*="display"] {
+    display: block !important;
+  }
+
+  /* 4️⃣ 상단 영역 (제목 + 버튼) */
+  #detailPage h2,
+  #detailPage .nav-buttons {
+    position: sticky;
+    top: 0;
+    background: #fff;
+    z-index: 2;
+  }
+
+  #detailPage h2 {
+    margin: 0;
+    padding: 12px 14px 6px;
+    font-size: 16px;
+    font-weight: 800;
+  }
+
+  #detailPage .nav-buttons {
+    display: flex;
+    gap: 8px;
+    padding: 8px 14px 12px;
+    border-bottom: 1px solid #e5e7eb;
+  }
+
+  /* 5️⃣ 진짜 스크롤 영역 */
+  #detailContent {
+    max-height: calc(100vh - 180px);
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    padding: 16px 14px;
+  }
+
+  /* 불필요 요소 제거 */
+  .fixed-poster,
+  .home-view {
+    display: none !important;
+  }
+}
