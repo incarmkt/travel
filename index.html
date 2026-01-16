@@ -152,7 +152,13 @@ const myTourTemplates = [
           <span>자유식</span>
           <em class="cash">현금 지급</em>
         </div>
-
+        
+<!-- 🔽 여기 추가 -->
+      <div class="meal-check">
+        <span class="status pending">중식비 미지급</span>
+        <button onclick="openMealConfirm()">지급 확인</button>
+      </div>
+      
         <div class="tour-footer">
           <span>🎫 입장권</span>
           <span>📷 포토스팟</span>
@@ -351,6 +357,7 @@ if (type === "myTour") {
     </div>
   `;
 }
+ 
  // ← openPage 끝
 
 if (type === "taiwan") {
@@ -559,7 +566,21 @@ function submitRequest() {
   alert("전송 중 오류가 발생했습니다.");
 });
 }
+    function openMealConfirm() {
+  const pw = prompt("관리자 비밀번호 입력");
+
+  if (pw !== "incar2026") {
+    alert("비밀번호가 올바르지 않습니다.");
+    return;
+  }
+
+  const status = document.querySelector(".meal-check .status");
+  status.textContent = "중식비 지급 완료";
+  status.classList.remove("pending");
+  status.classList.add("done");
+}
     function startWorldClock() {
+
   function updateTime() {
     const now = new Date();
 
