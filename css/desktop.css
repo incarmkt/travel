@@ -296,6 +296,31 @@ body.logged-in #mainSection {
 }
 
 }
+/* =================================================
+   DESKTOP FIX : 상세 버튼 하단 복구
+================================================= */
+@media (min-width: 768px) {
+
+  /* 상단 고정/sticky 완전 무효화 */
+  .detail-header {
+    position: static !important;
+    top: auto !important;
+    background: transparent;
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+
+  /* 버튼을 하단처럼 보이게 */
+  .detail-header .nav-buttons {
+    margin-top: 24px;
+  }
+
+  /* 실제 콘텐츠 아래에 여백 확보 */
+  #detailContent {
+    margin-bottom: 24px;
+  }
+}
+
 
 
 
