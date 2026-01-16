@@ -276,9 +276,89 @@ if (type === "flight") {
   }
 
   if (type === "taiwan") {
-    t.textContent = "🇹🇼 대만의 모든 것";
-    c.innerHTML = `<div class="card">대만 기본 정보 안내</div>`;
-  }
+  t.textContent = "🇹🇼 대만의 모든 것";
+
+  c.innerHTML = `
+    <!-- ===== 상단 비교 테이블 ===== -->
+    <div class="info-table-wrap">
+      <table class="info-table">
+        <thead>
+          <tr>
+            <th>구분</th>
+            <th>대한민국</th>
+            <th>대만</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>현재 시각</td>
+            <td><span id="timeKR">-</span></td>
+            <td><span id="timeTW">-</span></td>
+          </tr>
+          <tr>
+            <td>환율</td>
+            <td colspan="2">
+              1 TWD ≈ 42원 내외
+              <span class="sub-note">※ 환율은 변동될 수 있습니다</span>
+            </td>
+          </tr>
+          <tr>
+            <td>인구</td>
+            <td>약 5,100만 명</td>
+            <td>약 2,300만 명</td>
+          </tr>
+          <tr>
+            <td>면적</td>
+            <td>약 100,210㎢</td>
+            <td>약 36,197㎢</td>
+          </tr>
+          <tr>
+            <td>GDP</td>
+            <td>약 1.7조 달러</td>
+            <td>약 0.8조 달러</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- ===== 하단 카드 정보 ===== -->
+    <div class="info-card-grid">
+
+      <div class="info-card">
+        <h3>🇹🇼 국기</h3>
+        <p>
+          <strong>청천백일만지홍기</strong><br>
+          하늘의 태양(흰색)은 광명과 평등을,<br>
+          푸른색은 자유를,<br>
+          붉은색은 희생과 박애를 상징합니다.
+        </p>
+      </div>
+
+      <div class="info-card">
+        <h3>🗣 언어</h3>
+        <p>
+          공식어는 <strong>국어(표준 중국어)</strong>이며<br>
+          <strong>번체 한자</strong>를 사용합니다.<br>
+          (한국과 달리 간체자가 아닙니다)
+        </p>
+      </div>
+
+      <div class="info-card">
+        <h3>☀️ 기후</h3>
+        <p>
+          북부는 <strong>아열대</strong>,<br>
+          남부는 <strong>열대 기후</strong>입니다.<br><br>
+          3월 여행 시 평균 기온은<br>
+          약 <strong>18~25℃</strong>로 온화합니다.
+        </p>
+      </div>
+
+    </div>
+  `;
+
+  startWorldClock();
+}
+
 
   if (type === "dinner") {
     t.textContent = "🍽 만찬 안내";
@@ -412,6 +492,37 @@ function submitRequest() {
   alert("전송 중 오류가 발생했습니다.");
 });
 }
+    function startWorldClock() {
+  function updateTime() {
+    const now = new Date();
+
+    const kr = new Intl.DateTimeFormat("ko-KR", {
+      timeZone: "Asia/Seoul",
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit"
+    }).format(now);
+
+    const tw = new Intl.DateTimeFormat("zh-TW", {
+      timeZone: "Asia/Taipei",
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit"
+    }).format(now);
+
+    const krEl = document.getElementById("timeKR");
+    const twEl = document.getElementById("timeTW");
+
+    if (krEl && twEl) {
+      krEl.textContent = kr;
+      twEl.textContent = tw;
+    }
+  }
+
+  updateTime();
+  setInterval(updateTime, 1000);
+}
+
 </script>
 
 
