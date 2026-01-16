@@ -279,64 +279,62 @@ if (type === "flight") {
   t.textContent = "🇹🇼 대만의 모든 것";
 
   c.innerHTML = `
-    <!-- 🔷 비교 카드 -->
+    <!-- ================= 비교 카드 ================= -->
     <div class="day-card">
-      <h3>대만 vs 대한민국 한눈 비교</h3>
+      <h3 class="section-title">🇹🇼 대만 vs 🇰🇷 대한민국</h3>
 
-      <div class="info-table-wrap">
-        <table class="info-table">
-          <thead>
-            <tr>
-              <th>구분</th>
-              <th>대한민국</th>
-              <th>대만</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>현재 시각</td>
-              <td><span id="timeKR">-</span></td>
-              <td><span id="timeTW">-</span></td>
-            </tr>
-            <tr>
-              <td>환율</td>
-              <td colspan="2">
-                1 TWD ≈ 42원 내외
-                <span class="sub-note">※ 환율은 변동될 수 있습니다</span>
-              </td>
-            </tr>
-            <tr>
-              <td>인구</td>
-              <td>약 5,100만 명</td>
-              <td>약 2,300만 명</td>
-            </tr>
-            <tr>
-              <td>면적</td>
-              <td>약 100,210㎢</td>
-              <td>약 36,197㎢</td>
-            </tr>
-            <tr>
-              <td>GDP</td>
-              <td>약 1.7조 달러</td>
-              <td>약 0.8조 달러</td>
-            </tr>
-          </tbody>
-        </table>
+      <div class="compare-grid">
+
+        <!-- 한국 -->
+        <div class="country-card">
+          <div class="country-header">
+            <img src="assets/images/flag-kr.png" alt="대한민국 국기">
+            <span>대한민국</span>
+          </div>
+
+          <ul class="country-list">
+            <li><span>현재 시각</span><strong id="timeKR">-</strong></li>
+            <li><span>표준시</span><strong>UTC+9</strong></li>
+            <li><span>인구</span><strong>약 5,100만 명</strong></li>
+            <li><span>면적</span><strong>약 100,210㎢</strong></li>
+            <li><span>GDP</span><strong>약 1.7조 달러</strong></li>
+          </ul>
+        </div>
+
+        <!-- 대만 -->
+        <div class="country-card highlight">
+          <div class="country-header">
+            <img src="assets/images/flag-tw.png" alt="대만 국기">
+            <span>대만</span>
+          </div>
+
+          <ul class="country-list">
+            <li><span>현재 시각</span><strong id="timeTW">-</strong></li>
+            <li><span>시차</span><strong>한국보다 1시간 느림</strong></li>
+            <li><span>환율</span><strong>1 TWD ≈ 42원</strong></li>
+            <li><span>인구</span><strong>약 2,300만 명</strong></li>
+            <li><span>GDP</span><strong>약 0.8조 달러</strong></li>
+          </ul>
+
+          <p class="sub-note">※ 환율은 변동될 수 있습니다</p>
+        </div>
+
       </div>
     </div>
 
-    <!-- 🔷 정보 카드 -->
+    <!-- ================= 설명 카드 ================= -->
     <div class="day-card">
-      <h3>기본 정보</h3>
+      <h3 class="section-title">기본 정보</h3>
 
       <div class="info-card-grid">
+
         <div class="info-card">
           <h4>🇹🇼 국기</h4>
           <p>
             <strong>청천백일만지홍기</strong><br>
-            하늘의 태양은 광명과 평등,<br>
+            태양은 광명과 평등,<br>
             푸른색은 자유,<br>
-            붉은색은 희생과 박애를 상징합니다.
+            붉은색은 희생과 박애
           </p>
         </div>
 
@@ -344,18 +342,18 @@ if (type === "flight") {
           <h4>🗣 언어</h4>
           <p>
             공식어는 <strong>국어(표준 중국어)</strong><br>
-            <strong>번체 한자</strong>를 사용합니다.
+            <strong>번체 한자</strong> 사용
           </p>
         </div>
 
         <div class="info-card">
           <h4>☀️ 기후</h4>
           <p>
-            북부는 아열대,<br>
-            남부는 열대 기후<br><br>
+            북부 아열대 / 남부 열대<br>
             3월 평균 <strong>18~25℃</strong>
           </p>
         </div>
+
       </div>
     </div>
   `;
