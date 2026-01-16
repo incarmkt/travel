@@ -81,8 +81,8 @@ body.logged-in {
    Screen ② : 카테고리 (여백 복구 + 파랑)
 ================================================= */
 .side-menu {
-  padding: 24px 20px;     /* 좌우 여백 복구 */
-  margin-top: 24px;       /* 상단 여백 확보 */
+  padding: 24px 20px;
+  margin-top: 24px;
 }
 
 .side-menu button {
@@ -99,7 +99,7 @@ body.logged-in {
 }
 
 /* =================================================
-   Screen ③ : DETAIL 구조 분리
+   Screen ③ : DETAIL (모바일 전용)
 ================================================= */
 @media (max-width: 767px) {
 
@@ -111,7 +111,7 @@ body.logged-in {
   /* 🔴 상세 전체 컨테이너 */
   #detailPage {
     position: fixed;
-    top: 60px;        /* 헤더 바로 아래 */
+    top: 60px;              /* header 바로 아래 */
     left: 0;
     right: 0;
     bottom: 0;
@@ -123,27 +123,25 @@ body.logged-in {
     z-index: 900;
   }
 
-  /* 🟨 카테고리 타이틀 + 버튼 바 */
+  /* 🟨 타이틀 + 버튼 (header 아래에 붙임) */
   .detail-header {
     position: sticky;
-    top: 0;
+    top: 0;                 /* 🔥 FIX: 60px → 0 */
+    z-index: 901;
 
     display: flex;
     align-items: center;
     justify-content: space-between;
 
-    padding: 10px 16px;        /* 🔥 과한 여백 제거 */
+    padding: 10px 16px;
     background: #ffffff;
-
     border-bottom: 1px solid #e5e7eb;
-    z-index: 10;
   }
 
   .detail-header h2 {
     margin: 0;
     font-size: 16px;
     font-weight: 700;
-    line-height: 1.2;
   }
 
   .detail-header .nav-buttons {
@@ -161,13 +159,18 @@ body.logged-in {
   #detailContent {
     flex: 1;
     overflow-y: auto;
-
-    padding: 12px 16px 16px;   /* 🔥 타이틀과 거의 붙게 */
+    padding: 12px 16px 16px;
+    -webkit-overflow-scrolling: touch;
   }
 
-  /* 불필요한 기본 제목 제거 */
-  .detail > h2 {
-    display: none;
+  /* 데스크탑용 detail 카드 완전 제거 */
+  .detail {
+    max-width: none;
+    height: auto;
+    padding: 0;
+    border-radius: 0;
+    background: transparent;
+    overflow: visible;
   }
 }
 
@@ -197,47 +200,3 @@ body.logged-in {
   max-height: 80%;
   object-fit: contain;
 }
-/* =================================================
-   MOBILE SCROLL FIX (정보 영역만 스크롤)
-================================================= */
-@media (max-width: 767px) {
-
-  /* 상세 페이지 전체를 화면 높이에 고정 */
-  #detailPage {
-    height: calc(100vh - 60px); /* header 제외 */
-    overflow: hidden;
-  }
-
-  /* 노란 박스(detail-header) 높이 */
-  #detailPage .detail-header {
-    position: sticky;
-    top: 60px;
-    z-index: 900;
-    background: #ffffff;
-  }
-
-  /* 🔥 실제 스크롤 영역 */
-  #detailContent {
-    height: calc(100vh - 60px - 48px); 
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
-  }
-
-}
-/* ===============================
-   MOBILE : DETAIL 중복 박스 제거
-=============================== */
-@media (max-width: 767px) {
-
-  /* 데스크탑용 흰 박스 무효화 */
-  .detail {
-    max-width: none;
-    height: auto;
-    padding: 0;
-    border-radius: 0;
-    background: transparent;
-    overflow: visible;
-  }
-
-}
-
