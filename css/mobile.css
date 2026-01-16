@@ -565,4 +565,19 @@ body.logged-in {
     text-align: center;
   }
 }
+@media (max-width: 767px) {
+
+  .mytour-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .mytour-card {
+    padding: 14px;
+  }
+
+  .mytour-card h4 {
+    font-size: 14px;
+  }
+
+}
 
