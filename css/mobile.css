@@ -1,52 +1,121 @@
 /* =================================================
-   MOBILE DETAIL – SINGLE SOURCE OF TRUTH (최종)
-   - 두겹(중복 박스) 제거
-   - 상단(여행일정 + 버튼) 고정
-   - 아래 내용만 스크롤
-   - 데스크탑 영향 0%
+   MOBILE.CSS – FINAL SINGLE VERSION
+   (이 파일 하나로 모바일 전부 통제)
 ================================================= */
+
+/* ================= BASIC ================= */
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont,
+               "Segoe UI", Roboto, "Noto Sans KR", sans-serif;
+  background: #f6f7fb;
+}
+
+/* 로그인 이후 전체 배경 */
+body.logged-in {
+  background: url("../assets/images/main-bg.jpg")
+              center / cover no-repeat fixed;
+}
+
+/* ================= MOBILE HEADER ================= */
 @media (max-width: 767px) {
 
-  /* ✅ 모바일에서 desktop.css의 고정/잠금 레이아웃 풀기 */
+  body.logged-in .header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 60px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 8px 12px;
+    background: #ffffff;
+
+    z-index: 1000;
+  }
+
+  .header img.logo {
+    width: 44px;
+  }
+
+  .header h1 {
+    font-size: 14px;
+    margin: 0;
+    white-space: nowrap;
+  }
+
+  .header .sub {
+    display: none;
+  }
+
+  .header-right {
+    font-size: 11px;
+    text-align: right;
+  }
+
+  .header-right .welcome-text {
+    font-size: 12px;
+    font-weight: 600;
+  }
+
+  /* 헤더 높이만큼 밀기 */
   #mainSection {
-    height: auto !important;
-    overflow: visible !important;
+    padding-top: 60px;
   }
-  .main-bg {
-    height: auto !important;
-  }
-  .layout {
-    display: block !important;
+}
+
+/* ================= MOBILE CATEGORY ================= */
+@media (max-width: 767px) {
+
+  .side-menu {
+    padding: 24px 20px;
+    margin-top: 12px;
   }
 
-  /* ✅ desktop.css의 “빨간박스(흰 패널)” 역할을 모바일에선 detailPage가 담당하게 함 */
-  .content-area {
-    margin-left: 0 !important;
-    padding: 0 !important;
-    height: auto !important;
-    overflow: visible !important;
-    display: block !important;
-    align-items: stretch !important;
-  }
-  .main-panel {
-    max-width: none !important;
-    height: auto !important;
-    padding: 0 !important;
-    border-radius: 0 !important;
-    background: transparent !important;
-    overflow: visible !important;
-  }
+  .side-menu button {
+    width: 100%;
+    margin-bottom: 14px;
+    padding: 16px;
 
-  /* ✅ 모바일: 전체 페이지 스크롤은 잠그고, 상세 내부만 스크롤 */
+    border-radius: 14px;
+    border: none;
+
+    font-size: 16px;
+    font-weight: 600;
+
+    background: #1f5fbf;
+    color: #ffffff;
+  }
+}
+
+/* ================= MOBILE DETAIL CORE ================= */
+@media (max-width: 767px) {
+
+  /* 🔒 전체 페이지 스크롤 차단 */
   body {
     overflow: hidden;
   }
 
-  /* 🔴 빨간박스: 상세 컨테이너 (화면 안에서 고정) */
+  /* 데스크탑 레이아웃 무효화 */
+  .layout,
+  .content-area,
+  .main-panel {
+    display: block !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    height: auto !important;
+    background: transparent !important;
+    overflow: visible !important;
+  }
+
+  /* 🔴 DETAIL PAGE (빨간 박스) */
   #detailPage {
     position: fixed;
-    /* 상단 헤더(60px) 아래 + 살짝 여백 */
-    top: 72px;
+
+    top: 72px;      /* 헤더 아래 */
     left: 16px;
     right: 16px;
     bottom: 16px;
@@ -54,27 +123,23 @@
     display: flex;
     flex-direction: column;
 
-    /* “잔잔히 깔리는 배경” */
-    background: rgba(255,255,255,0.88);
+    background: rgba(255,255,255,0.9);
     border-radius: 18px;
 
-    /* ✅ 여기 중요: 내부만 스크롤 되게 바깥은 숨김 */
-    overflow: hidden;
+    overflow: hidden;     /* 내부만 스크롤 */
 
-    z-index: 950;
+    z-index: 900;
   }
 
-  /* 🟨 노란박스: 제목 + 버튼 (스크롤에 영향 안 받게 고정) */
+  /* 🟨 DETAIL HEADER (여행일정 + 버튼 고정) */
   #detailPage .detail-header {
     flex: 0 0 auto;
-    position: sticky;
-    top: 0;
 
     display: flex;
     align-items: center;
     justify-content: space-between;
 
-    padding: 10px 12px;
+    padding: 12px 14px;
     background: #ffffff;
 
     border-bottom: 1px solid #e5e7eb;
@@ -85,50 +150,60 @@
     margin: 0;
     font-size: 16px;
     font-weight: 800;
-    line-height: 1.2;
-    white-space: nowrap;
   }
 
   #detailPage .nav-buttons {
-    display: flex !important;
+    display: flex;
     gap: 8px;
-    flex-shrink: 0;
   }
 
-  #detailPage .nav-buttons .ghost-btn {
+  #detailPage .nav-buttons button {
     padding: 6px 10px;
     font-size: 13px;
     border-radius: 10px;
   }
 
-  /* ✅ 핵심: 스크롤 영역 (여기만 스크롤) */
+  /* 📜 SCROLL AREA (여기만 스크롤) */
   #detailContent {
-    flex: 1 1 auto;
-
-    /* 🔥 이게 없으면 flex에서 스크롤이 안 생기는 경우가 매우 많음 */
-    min-height: 0;
-
+    flex: 1;
+    min-height: 0;              /* 🔥 핵심 */
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
 
-    padding: 14px 12px 16px;
-    background: transparent;
+    padding: 16px 14px;
   }
 
-  /* ✅ 데스크탑용 .detail(흰 박스/높이/패딩) 완전 무효화 */
+  /* 데스크탑용 흰 박스 제거 */
   .detail {
-    width: auto !important;
-    max-width: none !important;
-    height: auto !important;
+    background: transparent !important;
     padding: 0 !important;
     border-radius: 0 !important;
-    background: transparent !important;
+    height: auto !important;
     overflow: visible !important;
   }
 
-  /* ✅ 모바일에서 포스터/홈 고정 제거 유지 */
+  /* 모바일에서 미사용 영역 제거 */
   .home-view,
   .fixed-poster {
     display: none !important;
   }
+}
+
+/* ================= MOBILE SPLASH ================= */
+.mobile-splash {
+  position: fixed;
+  inset: 0;
+
+  background: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  z-index: 9999;
+}
+
+.mobile-splash img {
+  max-width: 80%;
+  max-height: 80%;
+  object-fit: contain;
 }
