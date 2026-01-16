@@ -1,5 +1,5 @@
 /* =================================================
-   MOBILE ONLY
+   MOBILE ONLY – FINAL
 ================================================= */
 
 /* 기본 */
@@ -17,7 +17,7 @@ body.logged-in {
 }
 
 /* =================================================
-   MOBILE HEADER (최종 확정)
+   MOBILE HEADER (완성본 유지)
 ================================================= */
 @media (max-width: 767px) {
 
@@ -32,8 +32,8 @@ body.logged-in {
     align-items: center;
     justify-content: space-between;
 
-    padding: 8px 12px;
     height: 60px;
+    padding: 8px 12px;
     background: #ffffff;
   }
 
@@ -50,8 +50,8 @@ body.logged-in {
 
   .header h1 {
     font-size: 14px;
-    line-height: 1.2;
     margin: 0;
+    line-height: 1.2;
     white-space: nowrap;
   }
 
@@ -71,91 +71,108 @@ body.logged-in {
     font-weight: 600;
   }
 
-  /* 헤더 높이만큼 메인 밀기 */
+  /* 헤더 높이만큼 메인 영역 밀기 */
   #mainSection {
     padding-top: 60px;
   }
 }
 
 /* =================================================
-   MAIN / CATEGORY (Screen ②)
+   Screen ② : 카테고리 (여백 복구 + 파랑)
 ================================================= */
-.layout {
-  display: block;
-}
-
-.content-area {
-  padding: 8px 16px 16px;
-}
-
 .side-menu {
-  padding-top: 8px;
+  padding: 24px 16px;     /* 좌우 여백 복구 */
+  margin-top: 24px;       /* 상단 여백 확보 */
 }
 
 .side-menu button {
   width: 100%;
-  margin-bottom: 12px;
+  margin-bottom: 14px;
   padding: 16px;
   border-radius: 14px;
+
   font-size: 16px;
   font-weight: 600;
+
+  background: #1f5fbf;
+  color: #ffffff;
 }
 
 /* =================================================
-   DETAIL (Screen ③)
-================================================= */
-.detail {
-  display: none;
-  padding: 0 16px 16px;
-}
-
-#detailPage[style*="display: block"] {
-  display: block;
-}
-
-#detailPage[style*="display: block"] ~ .side-menu {
-  display: none;
-}
-
-/* =================================================
-   DETAIL NAV (홈 / 뒤로가기)
+   Screen ③ : DETAIL 구조 분리
 ================================================= */
 @media (max-width: 767px) {
 
-  #detailPage .nav-buttons {
-    position: sticky;
-    top: 60px;
-    z-index: 900;
+  /* 전체 페이지 스크롤 차단 */
+  body {
+    overflow: hidden;
+  }
+
+  /* 🔴 상세 전체 컨테이너 */
+  #detailPage {
+    position: fixed;
+    top: 60px;        /* 헤더 바로 아래 */
+    left: 0;
+    right: 0;
+    bottom: 0;
 
     display: flex;
-    gap: 8px;
+    flex-direction: column;
 
+    background: #f6f7fb;
+    z-index: 900;
+  }
+
+  /* 🟨 카테고리 타이틀 + 버튼 바 */
+  .detail-header {
+    position: sticky;
+    top: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 10px 16px;        /* 🔥 과한 여백 제거 */
     background: #ffffff;
-    padding: 8px 12px;
-    margin-bottom: 8px;
+
     border-bottom: 1px solid #e5e7eb;
+    z-index: 10;
   }
 
-  #detailContent {
-    padding-top: 0;
-  }
-
-  /* 여행 일정 제목 → 카드 내부로 통합 */
-  .detail h2 {
-    display: none;
-  }
-
-  .day-card:first-child::before {
-    content: "🗓 여행 일정";
-    display: block;
-    font-size: 18px;
+  .detail-header h2 {
+    margin: 0;
+    font-size: 16px;
     font-weight: 700;
-    margin-bottom: 12px;
+    line-height: 1.2;
+  }
+
+  .detail-header .nav-buttons {
+    display: flex;
+    gap: 8px;
+  }
+
+  .detail-header .nav-buttons button {
+    padding: 6px 10px;
+    font-size: 13px;
+    border-radius: 8px;
+  }
+
+  /* 📜 실제 스크롤 영역 */
+  #detailContent {
+    flex: 1;
+    overflow-y: auto;
+
+    padding: 12px 16px 16px;   /* 🔥 타이틀과 거의 붙게 */
+  }
+
+  /* 불필요한 기본 제목 제거 */
+  .detail > h2 {
+    display: none;
   }
 }
 
 /* =================================================
-   MOBILE EXCLUDE
+   모바일에서 사용 안 하는 요소 제거
 ================================================= */
 .home-view,
 .fixed-poster {
