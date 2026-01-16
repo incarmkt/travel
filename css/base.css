@@ -342,3 +342,76 @@ textarea {
   color: #6b7280;
 }
 
+/* ===============================
+   🎒 나의 선택 관광
+================================ */
+
+.mytour-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.mytour-header {
+  background: #f8fafc;
+  padding: 14px 16px;
+  border-radius: 12px;
+  font-size: 14px;
+}
+
+.mytour-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 14px;
+}
+
+.mytour-card {
+  position: relative;
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 18px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+  border: 1px solid #e5e7eb;
+}
+
+.mytour-card h4 {
+  margin: 0 0 6px;
+  font-size: 15px;
+}
+
+.mytour-note {
+  font-size: 12px;
+  color: #6b7280;
+}
+
+.mytour-card.selected {
+  border-color: #2563eb;
+  background: linear-gradient(180deg, #ffffff, #f0f6ff);
+}
+
+.mytour-badge {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: #2563eb;
+  color: #fff;
+  font-size: 11px;
+  padding: 4px 8px;
+  border-radius: 999px;
+}
+
+.mytour-empty {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 30px;
+  font-size: 14px;
+  color: #6b7280;
+  background: #f9fafb;
+  border-radius: 14px;
+}
+
+.mytour-info {
+  font-size: 12px;
+  color: #6b7280;
+  text-align: center;
+}
