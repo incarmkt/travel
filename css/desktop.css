@@ -268,3 +268,25 @@ body.logged-in #mainSection {
   object-fit: contain;
   border-radius: 14px;
 }
+/* ===============================
+   DESKTOP : 상세 하단 버튼 고정
+   =============================== */
+
+/* detailPage를 기준 컨테이너로 */
+#detailPage {
+  position: relative;
+  padding-bottom: 96px; /* 버튼 영역 만큼 여백 확보 */
+}
+
+/* 하단 버튼 영역 고정 */
+#detailPage .nav-buttons {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 24px;
+
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+}
+
