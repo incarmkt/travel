@@ -1,8 +1,13 @@
 /* =================================================
-   MOBILE ONLY – FINAL
+   MOBILE ONLY – FINAL (SINGLE SOURCE OF TRUTH)
+   목적:
+   1) 모바일 DETAIL 두겹 제거
+   2) 상단(여행일정 + 홈/뒤로가기) 고정
+   3) 그 아래만 스크롤
+   4) 데스크탑 절대 영향 없음
 ================================================= */
 
-/* 기본 */
+/* ================= 기본 ================= */
 body {
   margin: 0;
   background: #f6f7fb;
@@ -17,7 +22,7 @@ body.logged-in {
 }
 
 /* =================================================
-   MOBILE HEADER (완성본 유지)
+   MOBILE HEADER (상단 흰 헤더)
 ================================================= */
 @media (max-width: 767px) {
 
@@ -78,40 +83,57 @@ body.logged-in {
 }
 
 /* =================================================
-   Screen ② : 카테고리 (여백 복구 + 파랑)
-================================================= */
-.side-menu {
-  padding: 24px 20px;
-  margin-top: 24px;
-}
-
-.side-menu button {
-  width: 100%;
-  margin-bottom: 14px;
-  padding: 16px;
-  border-radius: 14px;
-
-  font-size: 16px;
-  font-weight: 600;
-
-  background: #1f5fbf;
-  color: #ffffff;
-}
-
-/* =================================================
-   Screen ③ : DETAIL (모바일 전용)
+   Screen ② : 카테고리 (모바일)
 ================================================= */
 @media (max-width: 767px) {
 
-  /* 전체 페이지 스크롤 차단 */
+  .side-menu {
+    padding: 24px 20px;
+    margin-top: 24px;
+  }
+
+  .side-menu button {
+    width: 100%;
+    margin-bottom: 14px;
+    padding: 16px;
+    border-radius: 14px;
+
+    font-size: 16px;
+    font-weight: 600;
+
+    background: #1f5fbf;
+    color: #ffffff;
+  }
+}
+
+/* =================================================
+   Screen ③ : DETAIL (모바일 단일 구조)
+   🔴 빨간 박스 = #detailPage (고정)
+   🟨 노란 박스 = .detail-header (고정)
+   📜 스크롤 = #detailContent (여기만)
+================================================= */
+@media (max-width: 767px) {
+
+  /* ✅ body 자체 스크롤 차단 */
   body {
     overflow: hidden;
   }
 
-  /* 🔴 상세 전체 컨테이너 */
+  /* ❌ 데스크탑용 흰 박스(.detail) 완전 무효화 → 두겹 제거 */
+  #detailPage.detail {
+    max-width: none;
+    width: 100%;
+    height: auto;
+    padding: 0;
+    border-radius: 0;
+    background: transparent;
+    overflow: visible;
+  }
+
+  /* 🔴 상세 페이지 전체를 화면에 고정 */
   #detailPage {
     position: fixed;
-    top: 60px;              /* header 바로 아래 */
+    top: 60px;        /* 모바일 헤더 바로 아래 */
     left: 0;
     right: 0;
     bottom: 0;
@@ -119,67 +141,64 @@ body.logged-in {
     display: flex;
     flex-direction: column;
 
-    background: #f6f7fb;
     z-index: 900;
+    background: transparent;
   }
 
-  /* 🟨 타이틀 + 버튼 (header 아래에 붙임) */
+  /* 🟨 상단 고정 바 (여행 일정 + 홈/뒤로가기) */
   .detail-header {
-    position: sticky;
-    top: 0;                 /* 🔥 FIX: 60px → 0 */
-    z-index: 901;
+    flex: 0 0 auto;
 
     display: flex;
     align-items: center;
     justify-content: space-between;
 
     padding: 10px 16px;
-    background: #ffffff;
+    background: rgba(255,255,255,0.96);
+
     border-bottom: 1px solid #e5e7eb;
+    z-index: 901;
   }
 
   .detail-header h2 {
     margin: 0;
-    font-size: 16px;
-    font-weight: 700;
+    font-size: 18px;
+    font-weight: 800;
+    line-height: 1.2;
   }
 
   .detail-header .nav-buttons {
     display: flex;
-    gap: 8px;
+    gap: 10px;
   }
 
-  .detail-header .nav-buttons button {
-    padding: 6px 10px;
+  .detail-header .nav-buttons .ghost-btn {
+    padding: 8px 12px;
     font-size: 13px;
-    border-radius: 8px;
+    border-radius: 10px;
   }
 
-  /* 📜 실제 스크롤 영역 */
+  /* 📜 실제 스크롤 영역 (핵심) */
   #detailContent {
-    flex: 1;
+    flex: 1 1 auto;
+    min-height: 0;              /* 🔥 이게 없으면 모바일에서 스크롤 안 됨 */
     overflow-y: auto;
-    padding: 12px 16px 16px;
-    -webkit-overflow-scrolling: touch;
-  }
 
-  /* 데스크탑용 detail 카드 완전 제거 */
-  .detail {
-    max-width: none;
-    height: auto;
-    padding: 0;
-    border-radius: 0;
+    padding: 16px;
     background: transparent;
-    overflow: visible;
+
+    -webkit-overflow-scrolling: touch;
   }
 }
 
 /* =================================================
-   모바일에서 사용 안 하는 요소 제거
+   모바일에서 사용 안 하는 요소
 ================================================= */
-.home-view,
-.fixed-poster {
-  display: none !important;
+@media (max-width: 767px) {
+  .home-view,
+  .fixed-poster {
+    display: none !important;
+  }
 }
 
 /* =================================================
@@ -199,65 +218,4 @@ body.logged-in {
   max-width: 80%;
   max-height: 80%;
   object-fit: contain;
-}/* =================================================
-   MOBILE FINAL FIX – DETAIL 고정 구조 완성
-================================================= */
-@media (max-width: 767px) {
-
-  /* 🔴 detailPage = 빨간 박스 (화면에 고정) */
-  #detailPage {
-    position: fixed;
-    top: 60px;               /* 모바일 헤더 바로 아래 */
-    left: 0;
-    right: 0;
-    bottom: 0;
-
-    display: flex;
-    flex-direction: column;
-
-    background: transparent;
-    z-index: 900;
-  }
-
-  /* 🟨 상단 고정 바 (여행일정 + 버튼) */
-  #detailPage .detail-header {
-    position: sticky;
-    top: 0;
-
-    flex-shrink: 0;
-
-    background: #ffffff;
-    padding: 12px 16px;
-
-    border-bottom: 1px solid #e5e7eb;
-    z-index: 10;
-  }
-
-  /* ❗ 버튼 사라지는 문제 방지 */
-  #detailPage .nav-buttons {
-    display: flex;
-    gap: 8px;
-  }
-
-  /* 📜 스크롤 영역 – 여기만 스크롤 */
-  #detailContent {
-    flex: 1;
-    overflow-y: auto;
-
-    padding: 16px;
-    background: transparent;
-
-    -webkit-overflow-scrolling: touch;
-  }
-
-  /* ❌ 모바일에서 데스크탑 흰 박스 완전 무효화 */
-  .detail {
-    max-width: none;
-    height: auto;
-    padding: 0;
-    border-radius: 0;
-    background: transparent;
-    overflow: visible;
-  }
 }
-
