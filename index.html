@@ -275,59 +275,62 @@ if (type === "flight") {
     </ul></div>`;
   }
 
-  if (type === "taiwan") {
+
+if (type === "taiwan") {
   t.textContent = "🇹🇼 대만의 모든 것";
 
   c.innerHTML = `
-   <div class="country-compare">
+    <div class="country-compare-grid">
 
-  <!-- 한국 카드 -->
-  <div class="country-card korea">
-    <div class="country-header">
-      <img src="assets/flags/kr.svg" alt="한국 국기">
-      <h3>대한민국</h3>
-    </div>
+      <!-- 대한민국 카드 -->
+      <div class="country-card">
+        <div class="country-header">
+          <!-- 🇰🇷 대한민국 국기 SVG -->
+          <svg class="flag-icon" viewBox="0 0 640 480">
+            <rect width="640" height="480" fill="#fff"/>
+            <circle cx="320" cy="240" r="120" fill="#c60c30"/>
+            <path d="M320 120a120 120 0 0 1 0 240a120 120 0 0 1 0-240z" fill="#003478"/>
+          </svg>
+          <h3>대한민국</h3>
+        </div>
 
-    <div class="country-main">
-      <div class="time">
-        <span class="label">현재 시각</span>
-        <strong id="timeKR">--:--:--</strong>
+        <ul class="country-list">
+          <li><strong>현재 시각</strong> <span id="timeKR">--:--:--</span></li>
+          <li>표준시 UTC+9</li>
+          <li>인구 약 5,100만 명</li>
+          <li>면적 약 100,210㎢</li>
+          <li>GDP 약 1.7조 달러</li>
+        </ul>
       </div>
-    </div>
 
-    <ul class="country-info">
-      <li><span>표준시</span><b>UTC+9</b></li>
-      <li><span>인구</span><b>약 5,100만 명</b></li>
-      <li><span>면적</span><b>약 100,210㎢</b></li>
-      <li><span>GDP</span><b>약 1.7조 달러</b></li>
-    </ul>
-  </div>
+      <!-- 대만 카드 -->
+      <div class="country-card">
+        <div class="country-header">
+          <!-- 🇹🇼 대만 국기 SVG -->
+          <svg class="flag-icon" viewBox="0 0 640 480">
+            <rect width="640" height="480" fill="#fe0000"/>
+            <rect width="320" height="240" fill="#000095"/>
+            <circle cx="160" cy="120" r="60" fill="#fff"/>
+          </svg>
+          <h3>대만</h3>
+        </div>
 
-  <!-- 대만 카드 -->
-  <div class="country-card taiwan">
-    <div class="country-header">
-      <img src="assets/flags/tw.svg" alt="대만 국기">
-      <h3>대만</h3>
-    </div>
-
-    <div class="country-main">
-      <div class="time">
-        <span class="label">현재 시각</span>
-        <strong id="timeTW">--:--:--</strong>
+        <ul class="country-list">
+          <li><strong>현재 시각</strong> <span id="timeTW">--:--:--</span></li>
+          <li>한국보다 1시간 느림</li>
+          <li>환율 1 TWD ≈ 42원</li>
+          <li>인구 약 2,300만 명</li>
+          <li>GDP 약 0.8조 달러</li>
+        </ul>
       </div>
+
     </div>
 
-    <ul class="country-info">
-      <li><span>시차</span><b>한국보다 1시간 느림</b></li>
-      <li><span>환율</span><b>1 TWD ≈ 42원</b></li>
-      <li><span>인구</span><b>약 2,300만 명</b></li>
-      <li><span>GDP</span><b>약 0.8조 달러</b></li>
-    </ul>
-  </div>
+    <p class="exchange-note">※ 환율은 변동될 수 있습니다</p>
+  `;
 
-</div>
-
-<p class="rate-note">※ 환율은 실시간 변동될 수 있습니다.</p>
+  startWorldClock();
+}
 
 
     <!-- ================= 설명 카드 ================= -->
