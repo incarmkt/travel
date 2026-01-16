@@ -580,4 +580,35 @@ body.logged-in {
   }
 
 }
+/* ================= 선택 관광 (MOBILE ONLY) ================= */
+.mytour-wrap {
+  grid-template-columns: 1fr;   /* 무조건 한 줄 */
+  gap: 16px;
+}
+
+.tour-card {
+  padding: 16px;                /* 카드 안 여백 축소 */
+}
+
+.tour-header h3 {
+  font-size: 17px;
+}
+
+.tour-desc {
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.meal-box {
+  flex-direction: column;       /* 가로 → 세로 */
+  align-items: flex-start;
+  gap: 6px;
+}
+
+.tour-footer {
+  flex-wrap: wrap;              /* 아이콘 줄바꿈 허용 */
+  gap: 8px;
+  font-size: 12px;
+}
+
 
