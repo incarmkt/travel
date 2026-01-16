@@ -197,3 +197,30 @@ body.logged-in {
   max-height: 80%;
   object-fit: contain;
 }
+/* =================================================
+   MOBILE SCROLL FIX (정보 영역만 스크롤)
+================================================= */
+@media (max-width: 767px) {
+
+  /* 상세 페이지 전체를 화면 높이에 고정 */
+  #detailPage {
+    height: calc(100vh - 60px); /* header 제외 */
+    overflow: hidden;
+  }
+
+  /* 노란 박스(detail-header) 높이 */
+  #detailPage .detail-header {
+    position: sticky;
+    top: 60px;
+    z-index: 900;
+    background: #ffffff;
+  }
+
+  /* 🔥 실제 스크롤 영역 */
+  #detailContent {
+    height: calc(100vh - 60px - 48px); 
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+}
