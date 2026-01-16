@@ -219,3 +219,22 @@ body.logged-in {
   max-height: 80%;
   object-fit: contain;
 }
+/* =================================================
+   🚑 MOBILE SCROLL ROOT FIX (핵심)
+================================================= */
+@media (max-width: 767px) {
+
+  /* desktop.css에서 막아둔 스크롤 해제 */
+  #mainSection {
+    overflow: visible !important;
+    height: auto !important;
+  }
+
+  /* content-area도 같이 풀어줌 */
+  .content-area {
+    overflow: visible !important;
+    height: auto !important;
+  }
+
+}
+
