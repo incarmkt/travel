@@ -123,43 +123,46 @@ body.logged-in {
 }
 
 /* =================================================
-   DETAIL (모바일에서만 “빨간 박스” + “노란 상단바” + “안쪽만 스크롤”)
+   DETAIL (모바일: 고정 패널 + 상단 고정(제목+버튼) + 내용만 스크롤)
+   ✅ HTML/JS 수정 없음 (현재 index.html 구조 그대로 대응)
 ================================================= */
 @media (max-width: 767px) {
 
-  /* ✅ 핵심: 바깥(body)은 잠그고, 안쪽(#detailContent)만 스크롤 */
+  /* ✅ 모바일에서 바깥(body) 스크롤 잠금 (대신 내부 패널만 스크롤) */
   body {
     overflow: hidden;
     overscroll-behavior: none;
   }
 
-  /* detailPage는 기본 영향 0 (두겹 방지) */
+  /* detailPage 기본은 숨김 (JS가 display:block 줄 때만 보임) */
   #detailPage {
     display: none;
   }
 
-  /* ✅ JS가 display:block 주는 순간에만 “고정 패널”로 바뀜 */
+  /* ✅ JS가 display:block을 주는 순간 → 고정 패널 + GRID 레이아웃 */
   #detailPage[style*="display: block"] {
     position: fixed;
-    /* 헤더(60) 아래부터, 화면 안쪽 여백 16 */
-    top: 60px;
+    top: 60px;      /* 모바일 헤더 높이 */
     left: 16px;
     right: 16px;
     bottom: 16px;
 
-    display: flex;
-    flex-direction: column;
+    /* ✅ 핵심: 제목(h2) + 버튼(nav-buttons)을 1행에 고정 배치 */
+    display: grid;
+    grid-template-columns: 1fr auto;
+    grid-template-rows: auto 1fr;
 
     background: rgba(255,255,255,0.92);
     border-radius: 18px;
 
-    /* 바깥은 고정 패널, 내부만 스크롤 */
-    overflow: hidden;
-
+    overflow: hidden; /* 패널 자체는 고정, 내부(#detailContent)만 스크롤 */
     z-index: 900;
+
+    /* 패널 안쪽 여백은 각 영역에서 처리 */
+    padding: 0;
   }
 
-  /* 데스크탑용 .detail(흰 박스 스타일) 완전 무효화 (두겹 원인 제거) */
+  /* ✅ 데스크탑용 .detail 박스(두겹 원인) 무력화 */
   .detail {
     max-width: none !important;
     height: auto !important;
@@ -169,60 +172,74 @@ body.logged-in {
     overflow: visible !important;
   }
 
-  /* 🟨 노란 박스 역할: detail-header(고정) */
-  #detailPage .detail-header {
-    flex: 0 0 auto;
+  /* ====== 1행(고정): 제목 ====== */
+  #detailPage[style*="display: block"] > h2#detailTitle {
+    grid-column: 1 / 2;
+    grid-row: 1 / 2;
 
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-
-    padding: 12px 14px;
-    background: #fff;
-    border-bottom: 1px solid #e5e7eb;
-
-    /* 스크롤 영향 안 받게 */
-    position: relative;
-    z-index: 2;
-  }
-
-  #detailPage .detail-header h2 {
     margin: 0;
+    padding: 12px 14px;
+
     font-size: 16px;
     font-weight: 800;
     line-height: 1.2;
+
+    background: #fff;
+    border-bottom: 1px solid #e5e7eb;
+
+    /* 줄바꿈/넘침 방지 */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
-  #detailPage .nav-buttons {
+  /* ====== 1행(고정): 버튼 ====== */
+  #detailPage[style*="display: block"] > .nav-buttons {
+    grid-column: 2 / 3;
+    grid-row: 1 / 2;
+
     display: flex;
     gap: 8px;
+
+    padding: 10px 12px 10px 0;
+    background: #fff;
+    border-bottom: 1px solid #e5e7eb;
+
+    align-items: center;
+    justify-content: flex-end;
   }
 
-  #detailPage .nav-buttons .ghost-btn {
+  #detailPage[style*="display: block"] > .nav-buttons .ghost-btn {
     padding: 6px 10px;
     font-size: 13px;
     border-radius: 10px;
   }
 
-  /* 📜 여기만 스크롤 */
-  #detailContent {
-    flex: 1 1 auto;
-    min-height: 0;                 /* ✅ iOS/모바일 필수 */
+  /* ====== 2행(스크롤): 내용 ====== */
+  #detailPage[style*="display: block"] > #detailContent {
+    grid-column: 1 / 3;
+    grid-row: 2 / 3;
+
+    /* ✅ 여기만 스크롤 */
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
 
+    /* ✅ flex/grid 스크롤 필수 */
+    min-height: 0;
+
     padding: 16px 14px;
 
-    /* ✅ 터치 스크롤 강제 */
+    /* 터치 스크롤 보장 */
     touch-action: pan-y;
   }
 
-  /* 모바일에서 불필요 영역 제거 */
+  /* 모바일에서 불필요 영역 숨김 */
   .home-view,
   .fixed-poster {
     display: none !important;
   }
 }
+
 
 /* =================================================
    MOBILE SPLASH
