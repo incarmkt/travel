@@ -6,32 +6,37 @@
 body {
   margin: 0;
   background: #f6f7fb;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
-               Roboto, "Noto Sans KR", sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont,
+               "Segoe UI", Roboto, "Noto Sans KR", sans-serif;
 }
 
 /* 로그인 이후 배경 */
 body.logged-in {
-  background: url("../assets/images/main-bg.jpg") center / cover no-repeat fixed;
+  background: url("../assets/images/main-bg.jpg")
+              center / cover no-repeat fixed;
 }
 
 /* =================================================
-   MOBILE HEADER RE-DESIGN (최종)
+   MOBILE HEADER (최종 확정)
 ================================================= */
 @media (max-width: 767px) {
 
   body.logged-in .header {
-    flex-direction: row;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+
+    display: flex;
     align-items: center;
     justify-content: space-between;
 
     padding: 8px 12px;
     height: 60px;
-
     background: #ffffff;
   }
 
-  /* 왼쪽: 로고 + 타이틀 */
   .header-left {
     display: flex;
     align-items: center;
@@ -39,7 +44,7 @@ body.logged-in {
   }
 
   .header img.logo {
-    width: 44px;      /* 🔥 핵심: 로고 축소 */
+    width: 44px;
     flex-shrink: 0;
   }
 
@@ -51,21 +56,14 @@ body.logged-in {
   }
 
   .header .sub {
-    display: none; /* 날짜는 모바일에서 제거 */
+    display: none;
   }
 
-  /* 오른쪽: 축하/환영 문구 */
   .header-right {
-    margin: 0;
     text-align: right;
     font-size: 11px;
     line-height: 1.3;
     white-space: nowrap;
-  }
-
-  .header-right .congrats {
-    font-size: 11px;
-    opacity: 0.8;
   }
 
   .header-right .welcome-text {
@@ -73,49 +71,25 @@ body.logged-in {
     font-weight: 600;
   }
 
-  /* 메인 영역 밀기 (헤더 높이만큼) */
+  /* 헤더 높이만큼 메인 밀기 */
   #mainSection {
     padding-top: 60px;
   }
 }
 
 /* =================================================
-   LOGIN
-================================================= */
-.login-hero {
-  height: 100vh;
-}
-
-.login-box {
-  width: calc(100% - 32px);
-  max-width: 420px;
-  border-radius: 20px;
-}
-
-/* =================================================
-   MAIN
+   MAIN / CATEGORY (Screen ②)
 ================================================= */
 .layout {
   display: block;
 }
 
 .content-area {
-  padding: 16px;
+  padding: 8px 16px 16px;
 }
 
-/* 헤더 높이만큼 메인 영역 내리기 */
-@media (max-width: 767px) {
-  #mainSection {
-    padding-top: 72px;
-  }
-}
-
-/* =================================================
-   Screen ② : 카테고리
-================================================= */
 .side-menu {
-  display: block;
-  padding: 16px;
+  padding-top: 8px;
 }
 
 .side-menu button {
@@ -128,24 +102,60 @@ body.logged-in {
 }
 
 /* =================================================
-   Screen ③ : 상세 (detailPage)
+   DETAIL (Screen ③)
 ================================================= */
 .detail {
   display: none;
-  padding: 16px;
+  padding: 0 16px 16px;
 }
 
 #detailPage[style*="display: block"] {
   display: block;
 }
 
-/* 상세 열리면 카테고리 숨김 */
 #detailPage[style*="display: block"] ~ .side-menu {
   display: none;
 }
 
 /* =================================================
-   모바일에서는 포스터/홈 고정 제거
+   DETAIL NAV (홈 / 뒤로가기)
+================================================= */
+@media (max-width: 767px) {
+
+  #detailPage .nav-buttons {
+    position: sticky;
+    top: 60px;
+    z-index: 900;
+
+    display: flex;
+    gap: 8px;
+
+    background: #ffffff;
+    padding: 8px 12px;
+    margin-bottom: 8px;
+    border-bottom: 1px solid #e5e7eb;
+  }
+
+  #detailContent {
+    padding-top: 0;
+  }
+
+  /* 여행 일정 제목 → 카드 내부로 통합 */
+  .detail h2 {
+    display: none;
+  }
+
+  .day-card:first-child::before {
+    content: "🗓 여행 일정";
+    display: block;
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 12px;
+  }
+}
+
+/* =================================================
+   MOBILE EXCLUDE
 ================================================= */
 .home-view,
 .fixed-poster {
@@ -153,7 +163,7 @@ body.logged-in {
 }
 
 /* =================================================
-   모바일 스플래시 포스터
+   MOBILE SPLASH
 ================================================= */
 .mobile-splash {
   position: fixed;
@@ -170,127 +180,3 @@ body.logged-in {
   max-height: 80%;
   object-fit: contain;
 }
-
-/* =================================================
-   MOBILE : 상단 우측 홈 / 뒤로가기 버튼
-================================================= */
-@media (max-width: 767px) {
-  #detailPage .nav-buttons {
-    position: fixed;
-    top: 12px;
-    right: 12px;
-
-    display: flex;
-    gap: 8px;
-    z-index: 1100;
-
-    /* 데스크탑 스타일 완전 무효화 */
-    margin: 0;
-    padding: 0;
-    border: none;
-    background: transparent;
-  }
-
-  #detailPage .nav-buttons .ghost-btn {
-    padding: 8px 10px;
-    font-size: 13px;
-    border-radius: 10px;
-  }
-
-  /* 상단 버튼에 가려지지 않도록 콘텐츠 밀기 */
-  #detailContent {
-    padding-top: 56px;
-  }
-}
-
-/* =================================================
-   모바일 전용 상세 화면 (Screen ③ - mobileDetail)
-================================================= */
-.mobile-detail {
-  position: fixed;
-  inset: 0;
-  background: #f6f7fb;
-  z-index: 1200;
-  display: none;
-  flex-direction: column;
-}
-
-/* 위에서 아래로 등장 */
-.mobile-detail.show {
-  display: flex;
-  animation: slideUp 0.35s ease;
-}
-
-@keyframes slideUp {
-  from {
-    transform: translateY(100%);
-  }
-  to {
-    transform: translateY(0);
-  }
-}
-
-/* mobileDetail 상단 바 */
-.mobile-detail-header {
-  height: 56px;
-  background: #ffffff;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 0 16px;
-  border-bottom: 1px solid #e5e7eb;
-}
-
-.mobile-detail-header button {
-  background: none;
-  border: none;
-  font-size: 16px;
-  font-weight: 600;
-}
-
-/* mobileDetail 내용 스크롤 */
-.mobile-detail-body {
-  flex: 1;
-  overflow-y: auto;
-  padding: 16px;
-}
-/* =================================================
-   MOBILE FIX – spacing / overlap only
-   (기존 구조 유지, 기능 변경 없음)
-================================================= */
-@media (max-width: 767px) {
-
-  /* ❌ mainSection padding-top 중복 제거 → 60px로 통일 */
-  #mainSection {
-    padding-top: 60px;
-  }
-
-  /* 🔧 카테고리 상단 여백 줄이기 */
-  .content-area {
-    padding-top: 8px;
-  }
-
-  .side-menu {
-    padding-top: 8px;
-  }
-
-  /* 🔧 상세 페이지 상단 버튼 위치 조정
-     → 헤더 아래로 정확히 이동 */
-  #detailPage .nav-buttons {
-    top: 60px;                /* header 높이와 정확히 일치 */
-    background: #f6f7fb;
-    padding: 8px 12px;
-    border-bottom: 1px solid #e5e7eb;
-  }
-
-  /* 🔧 상세 콘텐츠가 버튼/헤더에 붙도록 */
-  #detailContent {
-    padding-top: 12px;        /* 기존 56px 제거 */
-  }
-
-  /* 🔧 상세 페이지 자체 padding 축소 */
-  .detail {
-    padding-top: 8px;
-  }
-}
-
