@@ -320,6 +320,24 @@ body.logged-in #mainSection {
     margin-bottom: 24px;
   }
 }
+/* ===== 데스크탑: 디테일 영역 가독성 ===== */
+@media (min-width: 768px) {
+
+  #detailContent {
+    padding: 32px 40px;
+  }
+
+  .info-table {
+    font-size: 15px;
+  }
+
+  .info-card p {
+    line-height: 1.6;
+    font-size: 14px;
+  }
+
+}
+
 
 
 
