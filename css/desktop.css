@@ -314,5 +314,29 @@ body.logged-in #mainSection {
   }
 
 }
+/* =================================================
+   DESKTOP : 홈 / 뒤로가기 하단 고정 보장
+================================================= */
+@media (min-width: 768px) {
+
+  #detailPage .nav-buttons {
+    position: static !important;
+    top: auto !important;
+    left: auto !important;
+    right: auto !important;
+
+    margin-top: 32px;
+    padding-top: 16px;
+
+    border-top: 1px solid #e5e7eb;
+    background: none !important;
+
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+  }
+
+}
+
 
 
