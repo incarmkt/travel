@@ -295,47 +295,6 @@ body.logged-in #mainSection {
   gap: 12px;
 }
 
-/* =================================================
-   DESKTOP SAFETY RESET
-   (모바일 고정 기능 차단)
-================================================= */
-@media (min-width: 768px) {
-
-  #detailPage .nav-buttons {
-    position: static !important;
-    top: auto !important;
-    left: auto !important;
-    right: auto !important;
-
-    background: none !important;
-    padding: 0 !important;
-    margin: 0 !important;
-    border: none !important;
-  }
-
-}
-/* =================================================
-   DESKTOP : 홈 / 뒤로가기 하단 고정 보장
-================================================= */
-@media (min-width: 768px) {
-
-  #detailPage .nav-buttons {
-    position: static !important;
-    top: auto !important;
-    left: auto !important;
-    right: auto !important;
-
-    margin-top: 32px;
-    padding-top: 16px;
-
-    border-top: 1px solid #e5e7eb;
-    background: none !important;
-
-    display: flex;
-    justify-content: center;
-    gap: 12px;
-  }
-
 }
 
 
