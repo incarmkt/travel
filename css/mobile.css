@@ -494,5 +494,8 @@ body.logged-in {
     font-size: 14px !important;
     color: #475467 !important;
   }
+.country-compare {
+  grid-template-columns: 1fr;
+}
 
 }
