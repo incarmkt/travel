@@ -224,3 +224,20 @@ body.logged-in {
   }
 
 }
+/* ===============================
+   MOBILE : DETAIL 중복 박스 제거
+=============================== */
+@media (max-width: 767px) {
+
+  /* 데스크탑용 흰 박스 무효화 */
+  .detail {
+    max-width: none;
+    height: auto;
+    padding: 0;
+    border-radius: 0;
+    background: transparent;
+    overflow: visible;
+  }
+
+}
+
