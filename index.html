@@ -103,6 +103,81 @@ let pageHistory = [];
 let employees = [];
 let currentUser = null;
 
+    /* ================= 선택관광 템플릿 ================= */
+const myTourTemplates = [
+  {
+    keyword: "티엔라이",
+    html: `
+      <div class="tour-card green">
+        <div class="tour-header">
+          <span class="badge">선택 1안</span>
+          <h3>티엔라이 온천 힐링</h3>
+          <span class="icon">🌿</span>
+        </div>
+
+        <p class="tour-desc">
+          티엔라이 온천욕 & 양명산 국립공원 자락의 최고급 유황 온천
+        </p>
+
+        <div class="meal-box">
+          <strong>🍽 점심 식사</strong>
+          <span>오리고기</span>
+          <em class="included">식사 포함</em>
+        </div>
+
+        <div class="tour-footer">
+          <span>🎫 입장권</span>
+          <span>🚌 전용차량</span>
+          <span>🍴 중식</span>
+        </div>
+      </div>
+    `
+  },
+  {
+    keyword: "단수이",
+    html: `
+      <div class="tour-card red">
+        <div class="tour-header">
+          <span class="badge">선택 2안</span>
+          <h3>단수이 낭만 투어</h3>
+          <span class="icon">🏛️</span>
+        </div>
+
+        <p class="tour-desc">
+          홍마오청, 진리대학, 단수이 옛거리 산책
+        </p>
+
+        <div class="meal-box">
+          <strong>🍽 점심 식사</strong>
+          <span>자유식</span>
+          <em class="cash">현금 지급</em>
+        </div>
+
+        <div class="tour-footer">
+          <span>🎫 입장권</span>
+          <span>📷 포토스팟</span>
+          <span>🍜 중식비</span>
+        </div>
+      </div>
+    `
+  }
+];
+
+/* ================= 선택관광 렌더링 함수 ================= */
+function renderMyTour() {
+  const selected = currentUser.myTour || [];
+
+  const matchedCards = myTourTemplates.filter(t =>
+    selected.some(input => input.includes(t.keyword))
+  );
+
+  if (matchedCards.length === 0) {
+    return `<div class="card">선택된 관광이 없습니다.</div>`;
+  }
+
+  return matchedCards.map(t => t.html).join("");
+}
+
 fetch("people/employees.json?ts=" + Date.now())
   .then(res => res.json())
   .then(data => employees = data);
@@ -229,7 +304,7 @@ if (isMobile) {
         </div>
       </div>
     `).join("");
-  }
+  } // ← openPage 끝
 
 if (type === "flight") {
   const dep = currentUser.flight.departure;
@@ -266,48 +341,17 @@ if (type === "flight") {
     </div>
   `;
 }
-
+ // ← openPage 끝
 
 if (type === "myTour") {
   t.textContent = "🎒 나의 선택 관광";
-
-  const tours = currentUser.myTour || [];
-
   c.innerHTML = `
     <div class="mytour-wrap">
-
-      <div class="mytour-header">
-        <p class="mytour-desc">
-          아래는 <strong>${currentUser.name}</strong> 님이 선택하신 관광 일정입니다.
-        </p>
-      </div>
-
-      <div class="mytour-grid">
-        ${
-          tours.length > 0
-            ? tours.map(tour => `
-              <div class="mytour-card selected">
-                <div class="mytour-badge">선택</div>
-                <h4>${tour}</h4>
-                <p class="mytour-note">선택 완료</p>
-              </div>
-            `).join("")
-            : `
-              <div class="mytour-empty">
-                아직 선택된 관광 일정이 없습니다.
-              </div>
-            `
-        }
-      </div>
-
-      <div class="mytour-info">
-        <p>※ 선택 관광 일정은 사전 확정되며, 현지 변경이 어려울 수 있습니다.</p>
-      </div>
-
+      ${renderMyTour()}
     </div>
   `;
 }
-
+ // ← openPage 끝
 
 if (type === "taiwan") {
   t.textContent = "🇹🇼 대만의 모든 것";
@@ -380,13 +424,14 @@ if (type === "taiwan") {
 
   startWorldClock();
 }
-
+ // ← openPage 끝
 
   if (type === "dinner") {
     t.textContent = "🍽 만찬 안내";
     c.innerHTML = `<div class="card">ISC 공식 만찬</div>`;
   }
-
+ // ← openPage 끝
+  
   if (type === "request") {
   t.textContent = "📝 요청사항";
   c.innerHTML = `<div class="card">
