@@ -1,330 +1,388 @@
-/* =================================================
-   MOBILE.CSS – SINGLE WORKING VERSION
-   (HTML 수정 없이: detail-header + detailContent 구조 기준)
-================================================= */
+/* ================================================= 
+   MOBILE.CSS – SINGLE WORKING VERSION 
+   (HTML 수정 없이: detail-header + detailContent 구조 기준) 
+   ================================================= */
 
 /* 0) 모바일에서 스크롤 계산을 안정화 */
-html, body {
-  height: 100%;
+html,
+body {
+    height: 100%;
 }
 
 /* ================= BASIC ================= */
 body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
-               Roboto, "Noto Sans KR", sans-serif;
-  background: #f6f7fb;
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans KR", sans-serif;
+    background: #f6f7fb;
 }
 
 /* 로그인 이후 배경 */
 body.logged-in {
-  background: url("../assets/images/main-bg.jpg")
-              center / cover no-repeat fixed;
+    background: url("../assets/images/main-bg.jpg") center / cover no-repeat fixed;
 }
 
-/* =================================================
-   MOBILE HEADER (상단바 고정 – 너가 만족한 버전 유지)
-================================================= */
+/* ================================================= 
+   MOBILE HEADER (상단바 고정) 
+   ================================================= */
 @media (max-width: 767px) {
+    body.logged-in .header {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 60px;
+        padding: 8px 12px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        background: #fff;
+        z-index: 1000;
+    }
 
-  body.logged-in .header {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 60px;
-    padding: 8px 12px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    background: #fff;
-    z-index: 1000;
-  }
+    .header-left {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
 
-  .header-left {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
+    .header img.logo {
+        width: 44px;
+        flex-shrink: 0;
+    }
 
-  .header img.logo {
-    width: 44px;
-    flex-shrink: 0;
-  }
+    .header h1 {
+        font-size: 14px;
+        margin: 0;
+        line-height: 1.2;
+        white-space: nowrap;
+    }
 
-  .header h1 {
-    font-size: 14px;
-    margin: 0;
-    line-height: 1.2;
-    white-space: nowrap;
-  }
+    .header .sub {
+        display: none;
+    }
 
-  .header .sub {
-    display: none;
-  }
+    .header-right {
+        text-align: right;
+        font-size: 11px;
+        line-height: 1.3;
+        white-space: nowrap;
+    }
 
-  .header-right {
-    text-align: right;
-    font-size: 11px;
-    line-height: 1.3;
-    white-space: nowrap;
-  }
+    .header-right .welcome-text {
+        font-size: 12px;
+        font-weight: 600;
+    }
 
-  .header-right .welcome-text {
-    font-size: 12px;
-    font-weight: 600;
-  }
-
-  /* 메인 영역은 헤더만큼 내려감 */
-  #mainSection {
-    padding-top: 60px;
-  }
+    /* 메인 영역은 헤더만큼 내려감 */
+    #mainSection {
+        padding-top: 60px;
+    }
 }
 
-/* =================================================
-   CATEGORY (카테고리 화면)
-================================================= */
+/* ================================================= 
+   CATEGORY (카테고리 화면) 
+   ================================================= */
 @media (max-width: 767px) {
+    /* 모바일에서는 데스크탑 레이아웃/고정값들 무력화 */
+    #mainSection,
+    .layout,
+    .content-area,
+    .main-panel {
+        height: auto !important;
+        overflow: visible !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        background: transparent !important;
+    }
 
-  #mainSection,
-  .layout,
-  .content-area,
-  .main-panel {
-    height: auto !important;
-    overflow: visible !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    background: transparent !important;
-  }
+    /* 카테고리 */
+    .side-menu {
+        display: block;
+        padding: 24px 20px;
+        margin-top: 12px;
+    }
 
-  .side-menu {
-    display: block;
-    padding: 24px 20px;
-    margin-top: 12px;
-  }
-
-  .side-menu button {
-    width: 100%;
-    margin-bottom: 14px;
-    padding: 16px;
-    border-radius: 14px;
-    border: none;
-    font-size: 16px;
-    font-weight: 600;
-    background: #1f5fbf;
-    color: #fff;
-  }
+    .side-menu button {
+        width: 100%;
+        margin-bottom: 14px;
+        padding: 16px;
+        border-radius: 14px;
+        border: none;
+        font-size: 16px;
+        font-weight: 600;
+        background: #1f5fbf;
+        color: #fff;
+    }
 }
 
-/* =================================================
-   DETAIL (모바일: 고정 패널 + 상단 고정 + 내용 스크롤)
-================================================= */
+/* ================================================= 
+   DETAIL (모바일 고정 패널 구조) 
+   ================================================= */
 @media (max-width: 767px) {
+    /* 모바일에서 바깥(body) 스크롤 잠금 */
+    body {
+        overflow: hidden;
+        overscroll-behavior: none;
+    }
 
-  body {
-    overflow: hidden;
-    overscroll-behavior: none;
-  }
+    #detailPage {
+        display: none;
+    }
 
-  #detailPage {
-    display: none;
-  }
+    /* 상세 패널 활성화 시 */
+    #detailPage[style*="display: block"] {
+        position: fixed;
+        top: 60px;
+        left: 16px;
+        right: 16px;
+        bottom: 16px;
+        display: grid;
+        grid-template-columns: 1fr auto;
+        grid-template-rows: auto 1fr;
+        background: rgba(255, 255, 255, 0.92);
+        border-radius: 18px;
+        overflow: hidden;
+        z-index: 900;
+        padding: 0;
+    }
 
-  #detailPage[style*="display: block"] {
-    position: fixed;
-    top: 60px;
-    left: 16px;
-    right: 16px;
-    bottom: 16px;
-    display: grid;
-    grid-template-columns: 1fr auto;
-    grid-template-rows: auto 1fr;
-    background: rgba(255,255,255,0.92);
-    border-radius: 18px;
-    overflow: hidden;
-    z-index: 900;
-    padding: 0;
-  }
+    .detail {
+        max-width: none !important;
+        height: auto !important;
+        padding: 0 !important;
+        border-radius: 0 !important;
+        background: transparent !important;
+        overflow: visible !important;
+    }
 
-  .detail {
-    max-width: none !important;
-    height: auto !important;
-    padding: 0 !important;
-    border-radius: 0 !important;
-    background: transparent !important;
-    overflow: visible !important;
-  }
+    /* 제목 고정 */
+    #detailPage[style*="display: block"] > h2#detailTitle {
+        grid-column: 1 / 2;
+        grid-row: 1 / 2;
+        margin: 0;
+        padding: 12px 14px;
+        font-size: 16px;
+        font-weight: 800;
+        line-height: 1.2;
+        background: #fff;
+        border-bottom: 1px solid #e5e7eb;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
 
-  #detailPage[style*="display: block"] > h2#detailTitle {
-    grid-column: 1 / 2;
-    grid-row: 1 / 2;
-    margin: 0;
-    padding: 12px 14px;
-    font-size: 16px;
-    font-weight: 800;
-    line-height: 1.2;
-    background: #fff;
-    border-bottom: 1px solid #e5e7eb;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
+    /* 버튼 고정 */
+    #detailPage[style*="display: block"] > .nav-buttons {
+        grid-column: 2 / 3;
+        grid-row: 1 / 2;
+        display: flex;
+        gap: 8px;
+        padding: 10px 12px 10px 0;
+        background: #fff;
+        border-bottom: 1px solid #e5e7eb;
+        align-items: center;
+        justify-content: flex-end;
+    }
 
-  #detailPage[style*="display: block"] > .nav-buttons {
-    grid-column: 2 / 3;
-    grid-row: 1 / 2;
-    display: flex;
-    gap: 8px;
-    padding: 10px 12px 10px 0;
-    background: #fff;
-    border-bottom: 1px solid #e5e7eb;
-    align-items: center;
-    justify-content: flex-end;
-  }
+    #detailPage[style*="display: block"] > .nav-buttons .ghost-btn {
+        padding: 6px 10px;
+        font-size: 13px;
+        border-radius: 10px;
+    }
 
-  #detailPage[style*="display: block"] > #detailContent {
-    grid-column: 1 / 3;
-    grid-row: 2 / 3;
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
-    min-height: 0;
-    padding: 16px 14px;
-    touch-action: pan-y;
-  }
+    /* 내용 스크롤 */
+    #detailPage[style*="display: block"] > #detailContent {
+        grid-column: 1 / 3;
+        grid-row: 2 / 3;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+        min-height: 0;
+        padding: 16px 14px;
+        touch-action: pan-y;
+    }
 
-  .home-view,
-  .fixed-poster {
-    display: none !important;
-  }
+    .home-view,
+    .fixed-poster {
+        display: none !important;
+    }
 }
 
-/* =================================================
-   MOBILE SPLASH
-================================================= */
+/* ================================================= 
+   MOBILE SPLASH 
+   ================================================= */
 .mobile-splash {
-  position: fixed;
-  inset: 0;
-  background: #000;
-  display: none;
-  align-items: center;
-  justify-content: center;
-  z-index: 9999;
+    position: fixed;
+    inset: 0;
+    background: #000;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
 }
 
 .mobile-splash img {
-  max-width: 80%;
-  max-height: 80%;
-  object-fit: contain;
+    max-width: 80%;
+    max-height: 80%;
+    object-fit: contain;
 }
 
-
-/* =================================================
-   🔥 MOBILE FINAL POLISH (진짜 최종)
-================================================= */
+/* ================================================= 
+   🔥 MOBILE REAL FIX – 스크롤 구조 복구 
+   ================================================= */
 @media (max-width: 767px) {
+    #mainSection {
+        height: auto !important;
+        min-height: calc(100vh - 60px);
+        overflow-y: auto !important;
+        -webkit-overflow-scrolling: touch;
+    }
 
-  /* =================================================
-     1️⃣ 카테고리 화면: 상세 내용 완전 제거
-     - 하단에 보이던 DAY / 카드 전부 차단
-  ================================================= */
+    .side-menu {
+        position: static !important;
+        margin-top: 0;
+    }
 
-  /* 기본: detailPage는 DOM에서 제거된 것처럼 */
-  #detailPage {
-    display: none !important;
-    visibility: hidden !important;
-    height: 0 !important;
-    overflow: hidden !important;
-  }
+    #detailPage {
+        position: relative !important;
+        display: none;
+        margin: 16px;
+        border-radius: 18px;
+        background: rgba(255, 255, 255, 0.92);
+        overflow: hidden;
+    }
 
-  /* JS가 명확히 display:block 준 경우에만 복구 */
-  #detailPage[style*="display:block"],
-  #detailPage[style*="display: block"] {
-    display: grid !important;
-    visibility: visible !important;
-    height: auto !important;
-  }
+    #detailPage[style*="display"] {
+        display: block !important;
+    }
 
-  /* =================================================
-     2️⃣ 상세 화면(빨간 박스) 폭 확장 + 배경 완전 차단
-  ================================================= */
+    #detailPage h2,
+    #detailPage .nav-buttons {
+        position: sticky;
+        top: 0;
+        background: #fff;
+        z-index: 2;
+    }
 
-  #detailPage[style*="display:block"],
-  #detailPage[style*="display: block"] {
+    #detailPage h2 {
+        margin: 0;
+        padding: 12px 14px 6px;
+        font-size: 16px;
+        font-weight: 800;
+    }
 
-    /* 좌우 거의 풀폭 */
-    left: 4px !important;
-    right: 4px !important;
+    #detailPage .nav-buttons {
+        display: flex;
+        gap: 8px;
+        padding: 8px 14px 12px;
+        border-bottom: 1px solid #e5e7eb;
+    }
 
-    top: 60px !important;
-    bottom: 12px !important;
+    #detailContent {
+        max-height: calc(100vh - 180px);
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+        padding: 16px 14px;
+    }
+}
 
-    background: #ffffff !important;
-    border-radius: 18px !important;
+/* ================================================= 
+   ✅ MOBILE PATCH (최종 패치) 
+   ================================================= */
+@media (max-width: 767px) {
+    #mainSection {
+        padding-top: 60px !important;
+    }
 
-    /* 뒤 레이아웃 완전 차단 */
-    box-shadow: 0 10px 28px rgba(0,0,0,0.12);
-  }
+    #detailPage {
+        display: none;
+    }
 
-  #detailContent {
-    background: #ffffff !important;
-  }
+    #detailPage[style*="display:block"],
+    #detailPage[style*="display: block"] {
+        display: grid !important;
+        position: fixed !important;
+        top: 60px !important;
+        left: 16px !important;
+        right: 16px !important;
+        bottom: 16px !important;
+        background: rgba(255, 255, 255, 0.92) !important;
+        border-radius: 18px !important;
+        overflow: hidden !important;
+        z-index: 900 !important;
+        grid-template-columns: 1fr auto;
+        grid-template-rows: auto 1fr;
+    }
 
-  /* =================================================
-     3️⃣ 카드 간격 압축 (모바일 가독성 ↑)
-  ================================================= */
+    #detailPage[style*="display:block"] > h2#detailTitle,
+    #detailPage[style*="display: block"] > h2#detailTitle {
+        grid-column: 1 / 2;
+        grid-row: 1 / 2;
+        margin: 0 !important;
+        padding: 12px 12px !important;
+        font-size: 16px !important;
+        font-weight: 800 !important;
+        line-height: 1.2 !important;
+        background: #fff !important;
+        border-bottom: 1px solid #e5e7eb !important;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
 
-  .day-card {
-    margin-bottom: 18px !important;
-    padding: 18px 16px !important;
-    border-radius: 16px !important;
-  }
+    #detailPage[style*="display:block"] > .nav-buttons,
+    #detailPage[style*="display: block"] > .nav-buttons {
+        grid-column: 2 / 3;
+        grid-row: 1 / 2;
+        display: flex !important;
+        gap: 8px !important;
+        align-items: center !important;
+        justify-content: flex-end !important;
+        padding: 8px 12px 8px 0 !important;
+        background: #fff !important;
+        border-bottom: 1px solid #e5e7eb !important;
+    }
 
-  .schedule-item {
-    margin-bottom: 12px !important;
-    gap: 10px !important;
-  }
+    #detailPage[style*="display:block"] > #detailContent,
+    #detailPage[style*="display: block"] > #detailContent {
+        grid-column: 1 / 3;
+        grid-row: 2 / 3;
+        min-height: 0 !important;
+        overflow-y: auto !important;
+        -webkit-overflow-scrolling: touch;
+        padding: 16px 14px 18px !important;
+    }
 
-  .schedule-card {
-    padding: 12px 14px !important;
-    border-radius: 14px !important;
-  }
+    body {
+        overflow: hidden !important;
+        overscroll-behavior: none;
+    }
+}
 
-  .schedule-time {
-    font-size: 15px !important;
-  }
+/* ================================================= 
+   ✅ MOBILE FINAL TUNING 
+   ================================================= */
+@media (max-width: 767px) {
+    /* 1️⃣ 카테고리 화면 상세 완전 숨김 */
+    #detailPage {
+        display: none !important;
+    }
 
-  .schedule-title {
-    font-size: 15px !important;
-  }
+    #detailPage[style*="display:block"],
+    #detailPage[style*="display: block"] {
+        display: grid !important;
+        /* 📐 좌우 폭 확장 */
+        left: 8px !important;
+        right: 8px !important;
+        top: 60px !important;
+        bottom: 16px !important;
+        /* 🎯 완전 흰색 배경 */
+        background: #ffffff !important;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+        border-radius: 18px !important;
+    }
 
-  .schedule-desc {
-    font-size: 13px !important;
-    margin-top: 2px !important;
-  }
-
-  /* =================================================
-     4️⃣ DAY 타이틀 디자인 개선 (DAY 1 / DAY 2 ...)
-  ================================================= */
-
-  .day-card h3 {
-    margin: 0 0 8px !important;
-    font-size: 17px !important;
-    font-weight: 800 !important;
-    letter-spacing: -0.02em;
-  }
-
-  .day-card h3 span {
-    display: block;
-    margin-top: 2px;
-    font-size: 13px;
-    font-weight: 500;
-    color: #667085;
-  }
-
-  .day-title {
-    margin-bottom: 14px !important;
-    font-size: 14px !important;
-    color: #475467 !important;
-  }
-
+    /* 3️⃣ 내부 스크롤 영역 배경 통일 */
+    #detailContent {
+        background: #ffffff !important;
+    }
 }
