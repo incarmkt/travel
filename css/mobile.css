@@ -334,3 +334,124 @@ body.logged-in {
     display: none !important;
   }
 }
+/* =================================================
+   ✅ MOBILE PATCH (최종)
+   - 카테고리 화면 겹침/하단 버튼 제거
+   - 상세: 빨간 패널 고정 + 상단(제목/버튼) 고정 + 내용만 스크롤
+   - HTML/JS/desktop.css 절대 수정 없음
+================================================= */
+@media (max-width: 767px) {
+
+  /* 1) 모바일 헤더 아래로 콘텐츠 확실히 내리기 (카테고리 겹침 방지) */
+  #mainSection{
+    padding-top: 60px !important;
+  }
+
+  /* 2) 카테고리 화면에서 detailPage가 절대 튀어나오지 않게
+        (style="display:none" 까지 잡아버리던 문제 제거) */
+  #detailPage{
+    display: none;
+  }
+  /* JS가 display:block(공백 유무 둘 다) 줄 때만 표시 */
+  #detailPage[style*="display:block"],
+  #detailPage[style*="display: block"]{
+    display: grid !important;
+  }
+
+  /* 3) 카테고리(side-menu)는 모바일에서 고정 해제 + 정상 흐름 */
+  .side-menu{
+    position: static !important;
+    display: block !important;
+    margin: 0 !important;
+    padding: 18px 16px 22px !important;
+    z-index: auto !important;
+  }
+
+  /* 4) 상세 페이지 = “빨간 박스” 고정 패널 */
+  #detailPage[style*="display:block"],
+  #detailPage[style*="display: block"]{
+    position: fixed !important;
+    top: 60px !important;     /* 모바일 헤더 바로 아래 */
+    left: 16px !important;
+    right: 16px !important;
+    bottom: 16px !important;
+
+    background: rgba(255,255,255,0.92) !important;
+    border-radius: 18px !important;
+    overflow: hidden !important;
+    z-index: 900 !important;
+
+    /* ✅ 노랑영역(제목+버튼) 1행 / 빨강내용 2행 */
+    grid-template-columns: 1fr auto;
+    grid-template-rows: auto 1fr;
+  }
+
+  /* 5) 노랑영역(상단 고정): 제목(좌) */
+  #detailPage[style*="display:block"] > h2#detailTitle,
+  #detailPage[style*="display: block"] > h2#detailTitle{
+    grid-column: 1 / 2;
+    grid-row: 1 / 2;
+
+    margin: 0 !important;
+    padding: 12px 12px !important;
+    font-size: 16px !important;
+    font-weight: 800 !important;
+    line-height: 1.2 !important;
+
+    background: #fff !important;
+    border-bottom: 1px solid #e5e7eb !important;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* 6) 노랑영역(상단 고정): 버튼(우) */
+  #detailPage[style*="display:block"] > .nav-buttons,
+  #detailPage[style*="display: block"] > .nav-buttons{
+    grid-column: 2 / 3;
+    grid-row: 1 / 2;
+
+    display: flex !important;
+    gap: 8px !important;
+    align-items: center !important;
+    justify-content: flex-end !important;
+
+    padding: 8px 12px 8px 0 !important;
+    background: #fff !important;
+    border-bottom: 1px solid #e5e7eb !important;
+  }
+
+  #detailPage .nav-buttons .ghost-btn{
+    padding: 7px 10px !important;
+    font-size: 13px !important;
+    border-radius: 10px !important;
+  }
+
+  /* 7) 빨강영역(스크롤): 내용만 스크롤 */
+  #detailPage[style*="display:block"] > #detailContent,
+  #detailPage[style*="display: block"] > #detailContent{
+    grid-column: 1 / 3;
+    grid-row: 2 / 3;
+
+    min-height: 0 !important;                 /* ✅ 핵심 */
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch;
+
+    padding: 16px 14px 18px !important;
+  }
+
+  /* 8) 모바일에서 데스크탑 레이아웃 요소 제거 */
+  .fixed-poster{
+    display: none !important;
+  }
+
+  /* 9) 모바일에서 바깥 스크롤은 잠그고(전체화면 고정),
+        빨간 박스(#detailContent) 안에서만 스크롤되게 */
+  body{
+    overflow: hidden !important;
+    overscroll-behavior: none;
+  }
+}
+
+
