@@ -268,12 +268,45 @@ if (type === "flight") {
 }
 
 
-  if (type === "myTour") {
-    t.textContent = "🎒 나의 선택 관광";
-    c.innerHTML = `<div class="card"><ul class="mytour-list">
-      ${(currentUser.myTour || []).map(x => `<li>${x}</li>`).join("")}
-    </ul></div>`;
-  }
+if (type === "myTour") {
+  t.textContent = "🎒 나의 선택 관광";
+
+  const tours = currentUser.myTour || [];
+
+  c.innerHTML = `
+    <div class="mytour-wrap">
+
+      <div class="mytour-header">
+        <p class="mytour-desc">
+          아래는 <strong>${currentUser.name}</strong> 님이 선택하신 관광 일정입니다.
+        </p>
+      </div>
+
+      <div class="mytour-grid">
+        ${
+          tours.length > 0
+            ? tours.map(tour => `
+              <div class="mytour-card selected">
+                <div class="mytour-badge">선택</div>
+                <h4>${tour}</h4>
+                <p class="mytour-note">선택 완료</p>
+              </div>
+            `).join("")
+            : `
+              <div class="mytour-empty">
+                아직 선택된 관광 일정이 없습니다.
+              </div>
+            `
+        }
+      </div>
+
+      <div class="mytour-info">
+        <p>※ 선택 관광 일정은 사전 확정되며, 현지 변경이 어려울 수 있습니다.</p>
+      </div>
+
+    </div>
+  `;
+}
 
 
 if (type === "taiwan") {
