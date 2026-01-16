@@ -75,16 +75,23 @@
     </div>
 
     <!-- 상세 페이지 -->
-    <section id="detailPage" class="detail" style="display:none;">
-      <h2 id="detailTitle"></h2>
-      <div id="detailContent"></div>
+<section id="detailPage" class="detail" style="display:none;">
 
+  <!-- 🔒 고정 영역 -->
+  <div class="detail-header">
+    <h2 id="detailTitle"></h2>
 
-      <div class="nav-buttons">
-        <button class="ghost-btn" onclick="goHome()">홈으로</button>
-        <button class="ghost-btn" onclick="goBack()">뒤로가기</button>
-      </div>
-    </section>
+    <div class="nav-buttons">
+      <button class="ghost-btn" onclick="goHome()">홈으로</button>
+      <button class="ghost-btn" onclick="goBack()">뒤로가기</button>
+    </div>
+  </div>
+
+  <!-- 📜 스크롤 영역 -->
+  <div id="detailContent"></div>
+
+</section>
+
 
   </div>
 
