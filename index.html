@@ -281,19 +281,16 @@ if (type === "taiwan") {
 
   c.innerHTML = `
     <div class="country-compare-grid">
-
       <!-- 대한민국 -->
       <div class="country-card">
         <div class="country-header">
-          <img src="assets/images/flag-kr.jpg" class="flag-img" alt="대한민국 국기">
+          <img src="assets/images/flag-kr.jpg" class="flag-img">
           <h3>대한민국</h3>
         </div>
-
         <div class="time-box">
           <span class="time-label">현재 시각</span>
           <strong id="timeKR">--:--:--</strong>
         </div>
-
         <ul class="country-list">
           <li><span>시차</span><strong>기준 국가</strong></li>
           <li><span>인구</span><strong>약 5,100만 명</strong></li>
@@ -305,15 +302,13 @@ if (type === "taiwan") {
       <!-- 대만 -->
       <div class="country-card">
         <div class="country-header">
-          <img src="assets/images/flag-tw.jpg" class="flag-img" alt="대만 국기">
+          <img src="assets/images/flag-tw.jpg" class="flag-img">
           <h3>대만</h3>
         </div>
-
         <div class="time-box">
           <span class="time-label">현재 시각</span>
           <strong id="timeTW">--:--:--</strong>
         </div>
-
         <ul class="country-list">
           <li><span>시차</span><strong>한국보다 1시간 느림</strong></li>
           <li><span>인구</span><strong>약 2,300만 명</strong></li>
@@ -321,7 +316,6 @@ if (type === "taiwan") {
           <li><span>GDP</span><strong>약 0.8조 달러</strong></li>
         </ul>
       </div>
-
     </div>
 
     <div class="exchange-row">
@@ -331,49 +325,29 @@ if (type === "taiwan") {
     <p class="exchange-note">
       ※ 환율은 실시간 변동될 수 있습니다
     </p>
-  `;
 
-  startWorldClock();
-}
-
-    <!-- ================= 설명 카드 ================= -->
     <div class="day-card">
       <h3 class="section-title">기본 정보</h3>
-
       <div class="info-card-grid">
-
         <div class="info-card">
           <h4>🇹🇼 국기</h4>
-          <p>
-            <strong>청천백일만지홍기</strong><br>
-            태양은 광명과 평등,<br>
-            푸른색은 자유,<br>
-            붉은색은 희생과 박애
-          </p>
+          <p><strong>청천백일만지홍기</strong><br>광명 · 자유 · 희생</p>
         </div>
-
         <div class="info-card">
           <h4>🗣 언어</h4>
-          <p>
-            공식어는 <strong>국어(표준 중국어)</strong><br>
-            <strong>번체 한자</strong> 사용
-          </p>
+          <p>표준 중국어 / 번체 한자</p>
         </div>
-
         <div class="info-card">
           <h4>☀️ 기후</h4>
-          <p>
-            북부 아열대 / 남부 열대<br>
-            3월 평균 <strong>18~25℃</strong>
-          </p>
+          <p>3월 평균 18~25℃</p>
         </div>
-
       </div>
     </div>
   `;
 
   startWorldClock();
 }
+
 
   if (type === "dinner") {
     t.textContent = "🍽 만찬 안내";
