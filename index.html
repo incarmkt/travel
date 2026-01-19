@@ -303,7 +303,7 @@ function nowKSTString() {
     second: "2-digit"
   }).format(new Date());
 }
-    const MEAL_SHEET_URL = "https://script.google.com/macros/s/AKfycbxy1I-TMdrHPyHnV9Es3U3IPqBcuM99bZoxeJFOHx_dG0bhM-OCs55R4Me3MH2zdw5jaA/exec";
+    const MEAL_SHEET_URL = "https://script.google.com/macros/s/AKfycbxe8hQ9oGcL0z3N3y82dWaygu05sWI4CC6iLJYBb7vMm-9n8WURifONvPYb9ZUclr8M2A/exec";
 
 function logMealPaymentToSheet(payload) {
   if (!currentUser) return;
@@ -492,18 +492,31 @@ if (type === "myTour") {
     </div>
   `;
 
-  // ✅ 렌더 후에 DOM 잡고 상태 복원
   const wrap = document.querySelector('.meal-check[data-tour="단수이"]');
   if (wrap && currentUser) {
+
+    // 🔥 서버 기준
+    syncMealStatusFromServer(currentUser.id, "단수이", wrap);
+
+    // (선택) 서버 실패 대비용 보조
     const saved = loadMealPaid(currentUser.id, "단수이");
-    if (saved?.time) {
+    if (!wrap.classList.contains("done") && saved?.time) {
       setMealUI(wrap, "DONE", saved.time);
-    } else {
-      setMealUI(wrap, "PENDING");
     }
   }
 }
+  
+ async function syncMealStatusFromServer(userId, tour, wrap) {
+  const url = `${MEAL_SHEET_URL}?id=${userId}&tour=${encodeURIComponent(tour)}`;
+  const res = await fetch(url);
+  const data = await res.json();
 
+  if (data.paid) {
+    setMealUI(wrap, "DONE", data.time);
+  } else {
+    setMealUI(wrap, "PENDING");
+  }
+}
  
  // ← openPage 끝
 
