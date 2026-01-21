@@ -626,5 +626,58 @@ body.logged-in {
   gap: 8px;
   font-size: 12px;
 }
+/* =================================================
+   🔒 MOBILE FORCE STABLE LAYER
+   - 기존 CSS 절대 수정 금지
+   - 맨 마지막에만 추가
+   - iOS / Android 공통 안정화
+================================================= */
+@media (max-width: 767px) {
+
+  /* 1️⃣ body는 스크롤 관여 금지 */
+  html, body {
+    height: 100%;
+    overflow: hidden !important;
+  }
+
+  /* 2️⃣ 메인 영역은 자연 흐름 */
+  #mainSection {
+    height: auto !important;
+    min-height: 100%;
+    overflow: visible !important;
+  }
+
+  /* 3️⃣ 상세 패널이 열렸을 때만 동작 */
+  #detailPage[style*="display"] {
+    position: fixed !important;
+    top: 60px !important;        /* 헤더 높이 */
+    left: 8px !important;
+    right: 8px !important;
+    bottom: 12px !important;
+
+    display: block !important;
+    background: #ffffff !important;
+    border-radius: 18px !important;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+
+    overflow: hidden !important;
+    z-index: 999 !important;
+  }
+
+  /* 4️⃣ 실제 스크롤은 여기만 */
+  #detailContent {
+    height: 100% !important;
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+  }
+
+  /* 5️⃣ 뒤 배경 터치 차단 */
+  .side-menu,
+  .home-view,
+  .fixed-poster {
+    pointer-events: none !important;
+  }
+}
 
 
