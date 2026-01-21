@@ -35,7 +35,12 @@
         <!-- ================= QR SCAN ================= -->
         <div class="card">
           <h3>📷 QR 스캔</h3>
-          <video id="qrVideo" style="width:100%; border-radius:12px;" autoplay></video>
+
+          <!-- ❗️video ❌ → div ✅ -->
+          <div id="qrVideo"
+               style="width:100%; min-height:280px; border-radius:12px; background:#000;">
+          </div>
+
           <p class="hint">직원 개인 QR을 스캔하세요</p>
         </div>
 
@@ -54,10 +59,12 @@
             <strong>사번</strong>
             <span id="empId"></span>
           </div>
+
           <div class="info-row">
             <strong>이름</strong>
             <span id="empName"></span>
           </div>
+
           <div class="info-row">
             <strong>선택관광</strong>
             <span id="empTour"></span>
@@ -77,6 +84,7 @@
   </div>
 </main>
 
+<!-- ================= QR LIB ================= -->
 <script src="https://unpkg.com/html5-qrcode"></script>
 
 <script>
@@ -87,7 +95,7 @@ const GAS_URL = "https://script.google.com/macros/s/AKfycbxe8hQ9oGcL0z3N3y82dWay
 let employees = [];
 let currentEmployee = null;
 
-/* ================= LOAD DATA ================= */
+/* ================= LOAD EMPLOYEE DATA ================= */
 fetch(EMP_URL + "?ts=" + Date.now())
   .then(r => r.json())
   .then(d => employees = d);
@@ -96,24 +104,27 @@ fetch(EMP_URL + "?ts=" + Date.now())
 const qrScanner = new Html5Qrcode("qrVideo");
 
 Html5Qrcode.getCameras().then(devices => {
-  if (devices.length) {
-    qrScanner.start(
-      devices[0].id,
-      { fps: 10, qrbox: 250 },
-      text => {
-        handleScannedText(text);
-      }
-    );
+  if (!devices || !devices.length) {
+    console.warn("카메라를 찾을 수 없습니다.");
+    return;
   }
+
+  qrScanner.start(
+    devices[0].id,
+    { fps: 10, qrbox: 250 },
+    text => handleScannedText(text),
+    err => {}
+  );
 });
 
+/* ================= QR RESULT ================= */
 function handleScannedText(text) {
   try {
     const url = new URL(text);
     const id = url.searchParams.get("eid");
     if (id) loadEmployee(id);
   } catch {
-    // QR이 URL이 아닐 경우 무시
+    // QR이 URL이 아니면 무시
   }
 }
 
@@ -181,6 +192,7 @@ function sendToSheet(payload) {
   });
 }
 
+/* ================= UI ================= */
 function showResult(msg) {
   const el = document.getElementById("actionResult");
   el.textContent = msg;
