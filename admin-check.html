@@ -5,20 +5,26 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>ISC 관리자 출발 체크</title>
 
-  <!-- 기존 CSS 그대로 -->
+  <!-- ✅ 기존 개인 페이지와 CSS 100% 공유 -->
   <link rel="stylesheet" href="css/base.css">
   <link rel="stylesheet" href="css/desktop.css" media="(min-width: 768px)">
   <link rel="stylesheet" href="css/mobile.css" media="(max-width: 767px)">
 </head>
 
-<body class="logged-in">
+<body>
 
-<header class="header compact">
+<!-- ================= 모바일 스플래시 (개인 페이지와 동일) ================= -->
+<div id="mobileSplash" class="mobile-splash" style="display:none;">
+  <img src="assets/images/iscposter.jpg" alt="ISC Poster">
+</div>
+
+<!-- ================= HEADER ================= -->
+<header class="header compact" id="topHeader" style="display:none;">
   <div class="header-left">
     <img src="assets/images/logo.png" class="logo">
     <div>
       <h1>ISC 관리자 출발 체크</h1>
-      <p class="sub">출발 · 선택관광 · 중식비</p>
+      <p class="sub">관리자 전용</p>
     </div>
   </div>
   <div class="header-right">
@@ -26,41 +32,46 @@
   </div>
 </header>
 
-<main id="mainSection">
+<!-- ================= 관리자 로그인 ================= -->
+<section id="adminLogin" class="login-hero">
+  <div class="hero-overlay">
+    <div class="login-box">
+      <img src="assets/images/logo.png" class="hero-logo">
+      <h2>관리자 확인</h2>
+      <p class="hero-desc">관리자 비밀번호 입력</p>
+
+      <input type="password" id="adminPw" placeholder="관리자 번호">
+      <button class="primary-btn" onclick="adminLogin()">확인</button>
+      <p id="adminError" class="error"></p>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 관리자 메인 ================= -->
+<main id="mainSection" class="main-bg" style="display:none;">
   <div class="layout">
     <section class="content-area">
       <div class="main-panel">
 
-        <!-- ================= 관리자 로그인 ================= -->
-        <div class="card" id="adminLogin">
-          <h3>🔐 관리자 확인</h3>
-          <input type="password" id="adminCode" placeholder="관리자 번호 입력">
-          <button class="primary-btn" onclick="checkAdmin()">확인</button>
-          <p id="adminMsg" class="hint"></p>
-        </div>
-
-        <!-- ================= 관리자 메인 ================= -->
-        <div id="adminMain" style="display:none;">
-
-          <!-- QR SCAN -->
+        <!-- ================= QR 스캔 화면 ================= -->
+        <section id="scanSection">
           <div class="card">
             <h3>📷 QR 스캔</h3>
-            <div id="qrVideo"
-                 style="width:100%; min-height:280px; background:#000; border-radius:12px;">
-            </div>
-            <p class="hint">직원 개인 QR 스캔</p>
+            <div id="qrReader" style="width:100%; min-height:280px; border-radius:12px; background:#000;"></div>
+            <p class="hint">직원 개인 QR을 스캔하세요</p>
           </div>
 
-          <!-- MANUAL INPUT -->
           <div class="card">
             <h3>⌨️ 사번 직접 입력</h3>
             <input type="text" id="manualId" placeholder="사번 입력">
             <button class="primary-btn" onclick="loadEmployeeById()">불러오기</button>
           </div>
+        </section>
 
-          <!-- EMPLOYEE INFO -->
-          <div id="employeePanel" class="card" style="display:none;">
-            <h3 id="empTitle"></h3>
+        <!-- ================= 직원 처리 화면 ================= -->
+        <section id="employeeSection" style="display:none;">
+          <div class="card">
+            <h3 id="empTitle">직원 정보</h3>
 
             <div class="info-row"><strong>사번</strong><span id="empId"></span></div>
             <div class="info-row"><strong>이름</strong><span id="empName"></span></div>
@@ -69,73 +80,80 @@
             <div class="action-box">
               <button class="primary-btn" onclick="markDeparture()">🚍 출발 체크</button>
               <button class="ghost-btn" onclick="payMeal()">🍜 중식비 지급</button>
+              <button class="ghost-btn" onclick="backToScan()">← 돌아가기</button>
             </div>
 
             <p id="actionResult" class="hint"></p>
           </div>
+        </section>
 
-        </div>
       </div>
     </section>
   </div>
 </main>
 
-<!-- QR LIB -->
+<!-- ================= QR LIB ================= -->
 <script src="https://unpkg.com/html5-qrcode"></script>
 
 <script>
 /* ================= CONFIG ================= */
-const ADMIN_CODE = "0000"; // 🔥 기존 중식비 관리자 번호
+const ADMIN_PASSWORD = "0000";   // 개인 페이지 중식비 관리자 번호와 동일
 const EMP_URL = "people/employees.json";
 const GAS_URL = "https://script.google.com/macros/s/AKfycbxe8hQ9oGcL0z3N3y82dWaygu05sWI4CC6iLJYBb7vMm-9n8WURifONvPYb9ZUclr8M2A/exec";
 
 let employees = [];
 let currentEmployee = null;
-let qrScanner = null;
+let qrScanner;
 
-/* ================= LOAD DATA ================= */
+/* ================= LOAD EMP DATA ================= */
 fetch(EMP_URL + "?ts=" + Date.now())
   .then(r => r.json())
   .then(d => employees = d);
 
-/* ================= ADMIN LOGIN ================= */
-function checkAdmin() {
-  const input = document.getElementById("adminCode").value.trim();
-  const msg = document.getElementById("adminMsg");
-
-  if (input !== ADMIN_CODE) {
-    msg.textContent = "관리자 번호가 올바르지 않습니다.";
-    msg.style.color = "red";
+/* ================= 관리자 로그인 ================= */
+function adminLogin() {
+  const pw = document.getElementById("adminPw").value.trim();
+  if (pw !== ADMIN_PASSWORD) {
+    document.getElementById("adminError").textContent = "관리자 번호가 올바르지 않습니다.";
     return;
   }
 
-  msg.textContent = "관리자 확인 완료";
-  msg.style.color = "#1f5fbf";
-  document.getElementById("adminMain").style.display = "block";
+  document.getElementById("adminLogin").style.display = "none";
+
+  if (window.innerWidth <= 767) {
+    document.getElementById("mobileSplash").style.display = "flex";
+    setTimeout(showMain, 2000);
+  } else {
+    showMain();
+  }
+}
+
+function showMain() {
+  document.getElementById("mobileSplash").style.display = "none";
+  document.getElementById("topHeader").style.display = "flex";
+  document.getElementById("mainSection").style.display = "block";
+  document.body.classList.add("logged-in");
   startQR();
 }
 
-/* ================= QR SCAN ================= */
+/* ================= QR START ================= */
 function startQR() {
-  qrScanner = new Html5Qrcode("qrVideo");
-
+  qrScanner = new Html5Qrcode("qrReader");
   Html5Qrcode.getCameras().then(devices => {
-    if (!devices.length) return;
-
-    const backCam =
+    const back =
       devices.find(d => d.label.toLowerCase().includes("back")) ||
       devices[devices.length - 1];
 
     qrScanner.start(
-      backCam.id,
-      { fps: 10, qrbox: { width: 250, height: 250 } },
-      text => handleScannedText(text),
-      () => {}
+      back.id,
+      { fps: 10, qrbox: 250 },
+      text => handleQR(text)
     );
   });
 }
 
-function handleScannedText(text) {
+/* ================= QR RESULT ================= */
+function handleQR(text) {
   try {
     const url = new URL(text);
     const id = url.searchParams.get("eid");
@@ -143,18 +161,23 @@ function handleScannedText(text) {
   } catch {}
 }
 
-/* ================= MANUAL ================= */
+/* ================= 직원 불러오기 ================= */
 function loadEmployeeById() {
-  loadEmployee(document.getElementById("manualId").value.trim());
+  const id = document.getElementById("manualId").value.trim();
+  loadEmployee(id);
 }
 
-/* ================= EMPLOYEE ================= */
 function loadEmployee(id) {
   const emp = employees.find(e => e.id === id);
-  if (!emp) return alert("사번 없음");
+  if (!emp) {
+    alert("사번을 찾을 수 없습니다.");
+    return;
+  }
 
   currentEmployee = emp;
-  document.getElementById("employeePanel").style.display = "block";
+  document.getElementById("scanSection").style.display = "none";
+  document.getElementById("employeeSection").style.display = "block";
+
   document.getElementById("empTitle").textContent = `${emp.name}님 정보`;
   document.getElementById("empId").textContent = emp.id;
   document.getElementById("empName").textContent = emp.name;
@@ -185,6 +208,15 @@ function payMeal() {
   showResult("중식비 지급 완료");
 }
 
+/* ================= BACK ================= */
+function backToScan() {
+  currentEmployee = null;
+  document.getElementById("employeeSection").style.display = "none";
+  document.getElementById("scanSection").style.display = "block";
+  document.getElementById("manualId").value = "";
+  document.getElementById("actionResult").textContent = "";
+}
+
 /* ================= SHEET ================= */
 function sendToSheet(payload) {
   fetch(GAS_URL, {
@@ -194,7 +226,7 @@ function sendToSheet(payload) {
   });
 }
 
-/* ================= UI ================= */
+/* ================= UTIL ================= */
 function showResult(msg) {
   const el = document.getElementById("actionResult");
   el.textContent = msg;
