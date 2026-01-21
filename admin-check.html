@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ISC 관리자 출발 체크</title>
+
+  <!-- ✅ 기존 CSS 그대로 공유 -->
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/desktop.css" media="(min-width: 768px)">
+  <link rel="stylesheet" href="css/mobile.css" media="(max-width: 767px)">
+</head>
+
+<body class="logged-in">
+
+<header class="header compact">
+  <div class="header-left">
+    <img src="assets/images/logo.png" class="logo">
+    <div>
+      <h1>ISC 관리자 출발 체크</h1>
+      <p class="sub">선택관광 · 중식비 · 출발 확인</p>
+    </div>
+  </div>
+  <div class="header-right">
+    <p class="welcome-text"><strong>관리자 모드</strong></p>
+  </div>
+</header>
+
+<main id="mainSection">
+  <div class="layout">
+
+    <section class="content-area">
+      <div class="main-panel">
+
+        <!-- ================= QR SCAN ================= -->
+        <div class="card">
+          <h3>📷 QR 스캔</h3>
+          <video id="qrVideo" style="width:100%; border-radius:12px;" autoplay></video>
+          <p class="hint">직원 개인 QR을 스캔하세요</p>
+        </div>
+
+        <!-- ================= MANUAL INPUT ================= -->
+        <div class="card">
+          <h3>⌨️ 사번 직접 입력</h3>
+          <input type="text" id="manualId" placeholder="사번 입력">
+          <button class="primary-btn" onclick="loadEmployeeById()">불러오기</button>
+        </div>
+
+        <!-- ================= EMPLOYEE INFO ================= -->
+        <div id="employeePanel" class="card" style="display:none;">
+          <h3 id="empTitle">직원 정보</h3>
+
+          <div class="info-row">
+            <strong>사번</strong>
+            <span id="empId"></span>
+          </div>
+          <div class="info-row">
+            <strong>이름</strong>
+            <span id="empName"></span>
+          </div>
+          <div class="info-row">
+            <strong>선택관광</strong>
+            <span id="empTour"></span>
+          </div>
+
+          <div class="action-box">
+            <button class="primary-btn" onclick="markDeparture()">🚍 출발 체크</button>
+            <button class="ghost-btn" onclick="payMeal()">🍜 중식비 지급</button>
+          </div>
+
+          <p id="actionResult" class="hint"></p>
+        </div>
+
+      </div>
+    </section>
+
+  </div>
+</main>
+
+<script src="https://unpkg.com/html5-qrcode"></script>
+
+<script>
+/* ================= CONFIG ================= */
+const EMP_URL = "people/employees.json";
+const GAS_URL = "https://script.google.com/macros/s/AKfycbxe8hQ9oGcL0z3N3y82dWaygu05sWI4CC6iLJYBb7vMm-9n8WURifONvPYb9ZUclr8M2A/exec";
+
+let employees = [];
+let currentEmployee = null;
+
+/* ================= LOAD DATA ================= */
+fetch(EMP_URL + "?ts=" + Date.now())
+  .then(r => r.json())
+  .then(d => employees = d);
+
+/* ================= QR SCAN ================= */
+const qrScanner = new Html5Qrcode("qrVideo");
+
+Html5Qrcode.getCameras().then(devices => {
+  if (devices.length) {
+    qrScanner.start(
+      devices[0].id,
+      { fps: 10, qrbox: 250 },
+      text => {
+        handleScannedText(text);
+      }
+    );
+  }
+});
+
+function handleScannedText(text) {
+  try {
+    const url = new URL(text);
+    const id = url.searchParams.get("eid");
+    if (id) loadEmployee(id);
+  } catch {
+    // QR이 URL이 아닐 경우 무시
+  }
+}
+
+/* ================= MANUAL LOAD ================= */
+function loadEmployeeById() {
+  const id = document.getElementById("manualId").value.trim();
+  loadEmployee(id);
+}
+
+/* ================= EMPLOYEE LOAD ================= */
+function loadEmployee(id) {
+  const emp = employees.find(e => e.id === id);
+  if (!emp) {
+    alert("해당 사번을 찾을 수 없습니다.");
+    return;
+  }
+
+  currentEmployee = emp;
+
+  document.getElementById("employeePanel").style.display = "block";
+  document.getElementById("empTitle").textContent = `${emp.name}님 정보`;
+  document.getElementById("empId").textContent = emp.id;
+  document.getElementById("empName").textContent = emp.name;
+  document.getElementById("empTour").textContent =
+    emp.myTour?.length ? emp.myTour.join(", ") : "선택관광 없음";
+
+  document.getElementById("actionResult").textContent = "";
+}
+
+/* ================= ACTIONS ================= */
+function markDeparture() {
+  if (!currentEmployee) return;
+
+  sendToSheet({
+    type: "departure",
+    id: currentEmployee.id,
+    name: currentEmployee.name,
+    tour: currentEmployee.myTour?.join(", ") || "-"
+  });
+
+  showResult("출발 체크 완료");
+}
+
+function payMeal() {
+  if (!currentEmployee) return;
+
+  sendToSheet({
+    type: "meal",
+    id: currentEmployee.id,
+    name: currentEmployee.name,
+    tour: "단수이",
+    action: "APPROVE",
+    time: nowKST()
+  });
+
+  showResult("중식비 지급 처리 완료");
+}
+
+/* ================= SHEET ================= */
+function sendToSheet(payload) {
+  fetch(GAS_URL, {
+    method: "POST",
+    mode: "no-cors",
+    body: JSON.stringify(payload)
+  });
+}
+
+function showResult(msg) {
+  const el = document.getElementById("actionResult");
+  el.textContent = msg;
+  el.style.color = "#1f5fbf";
+}
+
+/* ================= UTIL ================= */
+function nowKST() {
+  return new Intl.DateTimeFormat("ko-KR", {
+    timeZone: "Asia/Seoul",
+    dateStyle: "short",
+    timeStyle: "medium"
+  }).format(new Date());
+}
+</script>
+
+</body>
+</html>
