@@ -5,10 +5,49 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>ISC 관리자 | 출발 체크</title>
 
-  <!-- 기존 CSS 그대로 공유 -->
   <link rel="stylesheet" href="css/base.css">
   <link rel="stylesheet" href="css/desktop.css" media="(min-width: 768px)">
   <link rel="stylesheet" href="css/mobile.css" media="(max-width: 767px)">
+
+  <style>
+    /* ===== 관리자 QR 화면 안정화 전용 ===== */
+    #qrReader {
+      width: 100%;
+      max-width: 360px;
+      aspect-ratio: 1 / 1;
+      margin: 0 auto;
+      border-radius: 12px;
+      overflow: hidden;
+      background: #000;
+    }
+
+    .scan-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .manual-input {
+      width: 100%;
+      max-width: 360px;
+      display: flex;
+      gap: 8px;
+    }
+
+    .manual-input input {
+      flex: 1;
+      padding: 10px;
+      border-radius: 10px;
+      border: 1px solid #d0d5dd;
+    }
+
+    .scan-result {
+      font-weight: 700;
+      text-align: center;
+      min-height: 20px;
+    }
+  </style>
 </head>
 
 <body class="logged-in">
@@ -18,7 +57,7 @@
     <img src="assets/images/logo.png" class="logo">
     <div>
       <h1 id="headerTitle">관리자 출발 체크</h1>
-      <p class="sub" id="headerSub">코스 선택 → QR 또는 사번 입력</p>
+      <p class="sub">일정 선택 → QR 또는 사번 입력</p>
     </div>
   </div>
   <div class="header-right">
@@ -31,49 +70,24 @@
     <section class="content-area">
       <div class="main-panel">
 
-        <!-- ================= STEP 0 : 카테고리 선택 ================= -->
-        <div id="categorySelect" class="card">
-          <h3>🧭 출발 유형 선택</h3>
-          <div style="display:flex; gap:12px; flex-wrap:wrap;">
-            <button class="primary-btn" onclick="selectCategory('전체일정')">전체 관광</button>
-            <button class="primary-btn" onclick="selectCategory('선택관광')">선택 관광</button>
-          </div>
-        </div>
+        <!-- STEP 1 : 일정 선택 -->
+        <div id="scheduleArea"></div>
 
-        <!-- ================= STEP 1 : 코스 선택 ================= -->
-        <div id="courseSelect" class="card" style="display:none;">
-          <h3>🗓 출발 코스 선택</h3>
-          <div class="course-list">
-            <button class="primary-btn" onclick="openScanner('중정기념당')">중정기념당</button>
-            <button class="primary-btn" onclick="openScanner('국립고궁박물관')">국립고궁박물관</button>
-            <button class="primary-btn" onclick="openScanner('타이베이 101')">타이베이 101</button>
-            <button class="primary-btn" onclick="openScanner('ISC 만찬')">ISC 만찬</button>
-          </div>
-          <div style="margin-top:16px;">
-            <button class="ghost-btn" onclick="goCategory()">← 이전</button>
-          </div>
-        </div>
-
-        <!-- ================= STEP 2 : QR 스캔 ================= -->
+        <!-- STEP 2 : QR -->
         <div id="scanSection" class="card" style="display:none;">
-          <h3 id="scanTitle">📷 출발 체크</h3>
+          <h3 id="scanTitle"></h3>
 
-          <!-- QR 스캔 영역 -->
-          <div id="qrReader"
-               style="width:100%; height:260px; border-radius:12px; background:#000;">
-          </div>
+          <div class="scan-wrap">
+            <div id="qrReader"></div>
 
-          <!-- 수동 입력 -->
-          <div class="manual-input" style="margin-top:12px;">
-            <input type="text" id="manualId" placeholder="사번 직접 입력">
-            <button class="ghost-btn" onclick="manualCheck()">등록</button>
-          </div>
+            <div class="manual-input">
+              <input type="text" id="manualId" placeholder="사번 직접 입력">
+              <button class="ghost-btn" onclick="manualCheck()">등록</button>
+            </div>
 
-          <!-- 결과 -->
-          <p id="scanResult" class="hint" style="margin-top:12px;"></p>
+            <div id="scanResult" class="scan-result"></div>
 
-          <div class="nav-buttons">
-            <button class="ghost-btn" onclick="closeScanner()">← 뒤로</button>
+            <button class="ghost-btn" onclick="closeScanner()">← 일정으로</button>
           </div>
         </div>
 
@@ -82,73 +96,96 @@
   </div>
 </main>
 
-<!-- QR 라이브러리 -->
 <script src="https://unpkg.com/html5-qrcode"></script>
 
 <script>
 /* ================= CONFIG ================= */
-const EMP_URL = "people/employees.json";
 const GAS_URL = "https://script.google.com/macros/s/AKfycbywujbffRaXimjgXIjZkeyLv0kea2tDe17jtBmMvLjs6gFB0dz16Xkfj4mJLMN2mof83w/exec";
+const EMP_URL = "people/employees.json";
 
 /* ================= STATE ================= */
 let employees = [];
-let currentCategory = "";
 let currentCourse = "";
 let qrScanner = null;
 
-/* ================= LOAD EMP ================= */
+/* ================= 고객용 일정 그대로 복사 ================= */
+const travelSchedule = [
+  {
+    day: "DAY 1",
+    date: "2026.03.11 (수)",
+    title: "인천 → 타이베이 / 시내 하이라이트",
+    items: [
+      { time:"08:00", title:"인천 국제공항 출발" },
+      { time:"14:00", title:"중정기념당" },
+      { time:"15:30", title:"국립고궁박물관" },
+      { time:"20:00", title:"타이베이 101 전망대" }
+    ]
+  },
+  {
+    day: "DAY 2",
+    date: "2026.03.12 (목)",
+    title: "선택 관광 / 만찬",
+    items: [
+      { time:"09:00", title:"선택 관광" },
+      { time:"18:00", title:"ISC 만찬" }
+    ]
+  },
+  {
+    day: "DAY 3",
+    date: "2026.03.13 (금)",
+    title: "근교 관광",
+    items: [
+      { time:"10:00", title:"야류 해상공원" },
+      { time:"14:00", title:"지우펀" }
+    ]
+  }
+];
+
+/* ================= LOAD ================= */
 fetch(EMP_URL + "?ts=" + Date.now())
   .then(r => r.json())
   .then(d => employees = d);
 
-/* ================= CATEGORY ================= */
-function selectCategory(cat) {
-  currentCategory = cat;
-  document.getElementById("categorySelect").style.display = "none";
-  document.getElementById("courseSelect").style.display = "block";
+renderSchedule();
 
-  document.getElementById("headerTitle").textContent =
-    cat === "전체일정" ? "전체 관광 출발 체크" : "선택 관광 출발 체크";
+/* ================= RENDER ================= */
+function renderSchedule() {
+  const area = document.getElementById("scheduleArea");
+  area.innerHTML = travelSchedule.map(day => `
+    <div class="day-card">
+      <h3>${day.day} <span>${day.date}</span></h3>
+      <p class="day-title">${day.title}</p>
+
+      ${day.items.map(i => `
+        <button class="primary-btn"
+          style="width:100%; margin-bottom:8px;"
+          onclick="openScanner('${i.title}')">
+          ⏰ ${i.time} | ${i.title}
+        </button>
+      `).join("")}
+    </div>
+  `).join("");
 }
 
-function goCategory() {
-  document.getElementById("courseSelect").style.display = "none";
-  document.getElementById("categorySelect").style.display = "block";
-}
-
-/* ================= COURSE ================= */
+/* ================= QR ================= */
 function openScanner(course) {
   currentCourse = course;
-
-  document.getElementById("courseSelect").style.display = "none";
+  document.getElementById("scheduleArea").style.display = "none";
   document.getElementById("scanSection").style.display = "block";
-  document.getElementById("scanTitle").textContent =
-    `📍 ${course} 출발 체크`;
-
+  document.getElementById("scanTitle").textContent = `📍 ${course} 출발 체크`;
   startQR();
 }
 
-/* ================= QR INIT ================= */
 function startQR() {
   if (qrScanner) return;
 
   qrScanner = new Html5Qrcode("qrReader");
-
   Html5Qrcode.getCameras().then(devices => {
-    const backCam =
-      devices.find(d => /back|rear/i.test(d.label)) ||
-      devices[devices.length - 1];
-
-    qrScanner.start(
-      backCam.id,
-      { fps: 10, qrbox: { width: 260, height: 160 } },
-      text => handleQR(text),
-      () => {}
-    );
+    const cam = devices.find(d => /back|rear/i.test(d.label)) || devices[0];
+    qrScanner.start(cam.id, { fps: 10 }, handleQR);
   });
 }
 
-/* ================= QR HANDLE ================= */
 function handleQR(text) {
   try {
     const url = new URL(text);
@@ -157,21 +194,20 @@ function handleQR(text) {
   } catch {}
 }
 
-/* ================= MANUAL ================= */
 function manualCheck() {
   const id = document.getElementById("manualId").value.trim();
   if (id) processDeparture(id);
 }
 
-/* ================= PROCESS ================= */
 function processDeparture(id) {
   const emp = employees.find(e => e.id === id);
+  const result = document.getElementById("scanResult");
+
   if (!emp) {
-    showResult("❌ 등록되지 않은 사번입니다.", false);
+    result.textContent = "❌ 등록되지 않은 사번";
+    result.style.color = "#dc2626";
     return;
   }
-
-  const time = nowKST();
 
   fetch(GAS_URL, {
     method: "POST",
@@ -180,48 +216,32 @@ function processDeparture(id) {
       type: "departure",
       id: emp.id,
       name: emp.name,
-      category: currentCategory,   // ✅ 핵심
+      category: "전체일정",
       course: currentCourse,
-      time
+      time: nowKST()
     })
   });
 
-  showResult(`✅ ${emp.name} (${emp.id}) 출발 등록 완료`, true);
-}
-
-/* ================= UI ================= */
-function showResult(msg, success) {
-  const el = document.getElementById("scanResult");
-  el.textContent = msg;
-  el.style.color = success ? "#16a34a" : "#dc2626";
+  result.textContent = `✅ ${emp.name} 출발 등록 완료`;
+  result.style.color = "#16a34a";
   document.getElementById("manualId").value = "";
 }
 
-/* ================= UTIL ================= */
+function closeScanner() {
+  qrScanner?.stop().then(() => {
+    qrScanner.clear();
+    qrScanner = null;
+  });
+  document.getElementById("scanSection").style.display = "none";
+  document.getElementById("scheduleArea").style.display = "block";
+  document.getElementById("scanResult").textContent = "";
+}
+
 function nowKST() {
   return new Intl.DateTimeFormat("ko-KR", {
     timeZone: "Asia/Seoul",
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-    hour: "2-digit",
-    minute: "2-digit",
-    second: "2-digit"
+    hour:"2-digit", minute:"2-digit", second:"2-digit"
   }).format(new Date());
-}
-
-/* ================= CLOSE ================= */
-function closeScanner() {
-  if (qrScanner) {
-    qrScanner.stop().then(() => {
-      qrScanner.clear();
-      qrScanner = null;
-    });
-  }
-
-  document.getElementById("scanSection").style.display = "none";
-  document.getElementById("courseSelect").style.display = "block";
-  document.getElementById("scanResult").textContent = "";
 }
 </script>
 
