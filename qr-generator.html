@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>ISC 직원 QR 생성기</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- QR 라이브러리 -->
+  <script src="https://cdn.jsdelivr.net/npm/qrcodejs/qrcode.min.js"></script>
+
+  <style>
+    body{
+      font-family: system-ui, -apple-system, sans-serif;
+      background:#f6f7fb;
+      padding:20px;
+    }
+    h1{margin-bottom:20px;}
+    .grid{
+      display:grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap:20px;
+    }
+    .card{
+      background:#fff;
+      border-radius:12px;
+      padding:12px;
+      text-align:center;
+      box-shadow:0 4px 10px rgba(0,0,0,.05);
+    }
+    .name{font-weight:700;margin-top:8px;}
+    .id{font-size:12px;color:#666;}
+  </style>
+</head>
+<body>
+
+<h1>ISC 직원 QR 코드</h1>
+
+<div id="qrGrid" class="grid"></div>
+
+<script>
+const EMP_URL = "people/employees.json?ts=" + Date.now();
+const BASE_URL = "https://incarmkt.github.io/travel/?eid=";
+
+fetch(EMP_URL)
+  .then(res => res.json())
+  .then(employees => {
+    const grid = document.getElementById("qrGrid");
+
+    employees.forEach(emp => {
+      const card = document.createElement("div");
+      card.className = "card";
+
+      const qrBox = document.createElement("div");
+      card.appendChild(qrBox);
+
+      new QRCode(qrBox, {
+        text: BASE_URL + emp.id,
+        width: 120,
+        height: 120
+      });
+
+      card.insertAdjacentHTML("beforeend", `
+        <div class="name">${emp.name}</div>
+        <div class="id">${emp.id}</div>
+      `);
+
+      grid.appendChild(card);
+    });
+  });
+</script>
+
+</body>
+</html>
