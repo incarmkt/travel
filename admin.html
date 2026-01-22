@@ -10,21 +10,19 @@
 <link rel="stylesheet" href="css/mobile.css" media="(max-width:767px)">
 
 <style>
-/* ===== 관리자 전용 ===== */
 .admin-hidden { display:none !important; }
 
-/* QR 화면만 스크롤 차단 */
-.qr-mode {
+/* QR 화면에서만 스크롤 차단 */
+body.qr-mode {
   overflow: hidden !important;
 }
 
 #qrReader {
   width: 100%;
   max-width: 360px;
-  aspect-ratio: 1/1;
+  aspect-ratio: 1 / 1;
   background: #000;
   border-radius: 12px;
-  margin: 0 auto;
 }
 
 .qr-wrap {
@@ -46,7 +44,7 @@
       <h2>ISC 관리자</h2>
       <p class="hero-desc">관리자 비밀번호 입력</p>
       <input type="password" id="adminPw" placeholder="관리자 비밀번호">
-      <button class="primary-btn" onclick="adminLogin()">로그인</button>
+      <button type="button" class="primary-btn" onclick="adminLogin()">로그인</button>
       <p id="adminLoginError" class="error"></p>
     </div>
   </div>
@@ -56,7 +54,7 @@
   <div class="header-left">
     <img src="assets/images/logo.png" class="logo">
     <div>
-      <h1 id="adminTitle">관리자</h1>
+      <h1>ISC 관리자</h1>
       <p class="sub" id="adminSub"></p>
     </div>
   </div>
@@ -67,20 +65,21 @@
     <section class="content-area">
       <div class="main-panel">
 
-        <!-- 관리자 메인 -->
+        <!-- 메인 -->
         <div id="pageMain">
-          <button class="primary-btn" onclick="openPage('travel')">여행 일정 관리</button>
-          <button class="primary-btn" onclick="openPage('meal')">중식비 관리</button>
-          <button class="primary-btn" onclick="openPage('customer')">고객 정보</button>
+          <button class="primary-btn" onclick="openPage('Travel')">여행 일정 관리</button>
+          <button class="primary-btn">중식비 관리</button>
+          <button class="primary-btn">고객 정보</button>
         </div>
 
         <!-- 여행 관리 -->
         <div id="pageTravel" class="admin-hidden">
           <button class="primary-btn" onclick="openSchedule('전체일정')">전체 관광 출발 체크</button>
           <button class="primary-btn" onclick="openSchedule('선택관광')">선택 관광 출발 체크</button>
+          <button class="ghost-btn" onclick="goBack()">← 뒤로</button>
         </div>
 
-        <!-- 일정 리스트 -->
+        <!-- 일정 -->
         <div id="pageSchedule" class="admin-hidden"></div>
 
         <!-- QR -->
@@ -116,34 +115,41 @@ let qrScanner = null;
 
 /* ================= 로그인 ================= */
 function adminLogin() {
-  const pw = adminPw.value.trim();
+  const pw = document.getElementById("adminPw").value.trim();
   if (pw !== ADMIN_PASSWORD) {
-    adminLoginError.textContent = "비밀번호 오류";
+    document.getElementById("adminLoginError").textContent = "비밀번호 오류";
     return;
   }
-  adminLogin.style.display = "none";
-  adminHeader.classList.remove("admin-hidden");
-  adminMain.classList.remove("admin-hidden");
+  document.getElementById("adminLogin").style.display = "none";
+  document.getElementById("adminHeader").classList.remove("admin-hidden");
+  document.getElementById("adminMain").classList.remove("admin-hidden");
   document.body.classList.add("logged-in");
 }
 
-/* ================= 페이지 전환 ================= */
+/* ================= 네비 ================= */
+function hideAll() {
+  document.querySelectorAll("[id^='page']").forEach(p => p.classList.add("admin-hidden"));
+}
+
 function openPage(page) {
   hideAll();
   pageStack.push(page);
-  document.getElementById("page" + capitalize(page)).classList.remove("admin-hidden");
+  document.getElementById("page" + page).classList.remove("admin-hidden");
 }
 
 function goBack() {
   pageStack.pop();
   hideAll();
   const prev = pageStack[pageStack.length - 1] || "Main";
-  document.getElementById("page" + capitalize(prev)).classList.remove("admin-hidden");
+  document.getElementById("page" + prev).classList.remove("admin-hidden");
   document.body.classList.remove("qr-mode");
-}
 
-function hideAll() {
-  document.querySelectorAll("[id^='page']").forEach(p => p.classList.add("admin-hidden"));
+  if (qrScanner) {
+    qrScanner.stop().then(() => {
+      qrScanner.clear();
+      qrScanner = null;
+    });
+  }
 }
 
 /* ================= 일정 ================= */
@@ -151,18 +157,8 @@ function openSchedule(cat) {
   currentCategory = cat;
   hideAll();
   pageStack.push("Schedule");
-  const wrap = document.getElementById("pageSchedule");
-  wrap.innerHTML = travelSchedule.map(d => `
-    <div class="day-card">
-      <h3>${d.day} <span>${d.date}</span></h3>
-      ${d.items.map(i => `
-        <button class="primary-btn" onclick="openQR('${i.title}')">
-          ${i.time} ${i.title}
-        </button>
-      `).join("")}
-    </div>
-  `).join("");
-  wrap.classList.remove("admin-hidden");
+  renderScheduleForAdmin();
+  document.getElementById("pageSchedule").classList.remove("admin-hidden");
 }
 
 /* ================= QR ================= */
@@ -170,9 +166,9 @@ function openQR(course) {
   currentCourse = course;
   hideAll();
   pageStack.push("QR");
-  pageQR.classList.remove("admin-hidden");
+  document.getElementById("pageQR").classList.remove("admin-hidden");
   document.body.classList.add("qr-mode");
-  qrTitle.textContent = `${course} 출발 체크`;
+  document.getElementById("qrTitle").textContent = `${course} 출발 체크`;
   startQR();
 }
 
@@ -180,7 +176,7 @@ function startQR() {
   qrScanner = new Html5Qrcode("qrReader");
   Html5Qrcode.getCameras().then(cams => {
     const cam = cams.find(c => /back/i.test(c.label)) || cams[0];
-    qrScanner.start(cam.id, {}, handleQR);
+    qrScanner.start(cam.id, { fps: 10, qrbox: 250 }, handleQR);
   });
 }
 
@@ -192,34 +188,37 @@ function handleQR(text) {
 }
 
 function manualCheck() {
-  processDeparture(manualId.value.trim());
+  processDeparture(document.getElementById("manualId").value.trim());
 }
 
 function processDeparture(id) {
   const emp = employees.find(e => e.id === id);
   if (!emp) {
-    qrResult.textContent = "❌ 등록되지 않은 사번";
+    document.getElementById("qrResult").textContent = "❌ 등록되지 않은 사번";
     return;
   }
+
   fetch(GAS_URL, {
-    method:"POST",
-    mode:"no-cors",
-    body:JSON.stringify({
-      type:"departure",
-      id:emp.id,
-      name:emp.name,
-      category:currentCategory,
-      course:currentCourse,
-      time:new Date().toLocaleString("ko-KR",{timeZone:"Asia/Seoul"})
+    method: "POST",
+    mode: "no-cors",
+    body: JSON.stringify({
+      type: "departure",
+      id: emp.id,
+      name: emp.name,
+      category: currentCategory,
+      course: currentCourse,
+      time: new Date().toLocaleString("ko-KR",{timeZone:"Asia/Seoul"})
     })
   });
-  qrResult.textContent = `✅ ${emp.name} / ${currentCourse} 출발 완료`;
+
+  document.getElementById("qrResult").textContent =
+    `✅ ${emp.name} / ${currentCourse} 출발 완료`;
 }
 
-/* ================= 기타 ================= */
+/* ================= 직원 ================= */
 fetch(EMP_URL).then(r=>r.json()).then(d=>employees=d);
 
-/* ================= 고객용 여행 일정 그대로 ================= */
+/* ================= 고객용 여행 일정 (원본 그대로) ================= */
 const travelSchedule = [
   {
     day: "DAY 1",
@@ -264,27 +263,23 @@ const travelSchedule = [
   }
 ];
 
-/* ================= 일정 렌더링 ================= */
+/* ================= 일정 렌더 ================= */
 function renderScheduleForAdmin() {
   const wrap = document.getElementById("pageSchedule");
-
   wrap.innerHTML = travelSchedule.map(day => `
     <div class="day-card">
       <h3>${day.day} <span>${day.date}</span></h3>
       <p class="day-title">${day.title}</p>
-
       <div class="timeline">
         ${day.items.map(item => `
           <div class="schedule-item">
             <div class="timeline-dot"></div>
             <div class="schedule-card"
                  onclick="openQR('${item.title}')"
-                 style="cursor:pointer;">
+                 style="cursor:pointer">
               <div class="schedule-time">${item.time}</div>
-              <div class="schedule-body">
-                <div class="schedule-title">${item.icon} ${item.title}</div>
-                ${item.desc ? `<div class="schedule-desc">${item.desc}</div>` : ""}
-              </div>
+              <div class="schedule-title">${item.icon} ${item.title}</div>
+              ${item.desc ? `<div class="schedule-desc">${item.desc}</div>` : ""}
             </div>
           </div>
         `).join("")}
@@ -293,7 +288,6 @@ function renderScheduleForAdmin() {
   `).join("");
 }
 </script>
-
 
 </body>
 </html>
