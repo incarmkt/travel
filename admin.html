@@ -389,9 +389,7 @@ function openPage(type, fromHistory = false){
   openPage("travelRoot", true);
 }
 
-/* =========================================================
-   ✅ 2) 여행 일정: 전체/선택 분기
-========================================================= */
+
 function openSchedule(cat){
   currentCategory = cat;
 
@@ -399,10 +397,17 @@ function openSchedule(cat){
   const t = document.getElementById("detailTitle");
   const c = document.getElementById("detailContent");
 
-  t.textContent = (cat === "전체일정") ? "🗓 전체 관광 출발 체크" : "🗓 선택 관광 출발 체크";
+  t.textContent =
+    (cat === "전체일정")
+      ? "🗓 전체 관광 출발 체크"
+      : "🗓 선택 관광 출발 체크";
 
-  // ✅ 핵심: 선택관광이면 '전체일정'을 보여주지 않게 분리
-  const source = (cat === "전체일정") ? travelSchedule : selectTourSchedule;
+  const source =
+    (cat === "전체일정")
+      ? travelSchedule
+      : travelSchedule.filter(day =>
+          day.title && day.title.includes("선택")
+        );
 
   c.innerHTML = source.map(day => `
     <div class="day-card">
@@ -415,8 +420,8 @@ function openSchedule(cat){
             <div class="timeline-dot"></div>
             <div class="schedule-card admin-clickable"
                  onclick="openDepartureQR('${escapeQuotes(item.title)}')">
-              <div class="schedule-time">${item.time}</div>
-              <div class="schedule-title">${item.icon} ${item.title}</div>
+              <div class="schedule-time">${item.time || ""}</div>
+              <div class="schedule-title">${item.icon || ""} ${item.title}</div>
               ${item.desc ? `<div class="schedule-desc">${item.desc}</div>` : ""}
             </div>
           </div>
@@ -425,6 +430,7 @@ function openSchedule(cat){
     </div>
   `).join("");
 }
+
 
 /* =========================================================
    ✅ 3) 중식비: 그룹 -> 항목 리스트 -> QR
@@ -950,22 +956,6 @@ const travelSchedule = [
   }
 ];
 
-/* =========================================================
-   ✅ 선택관광 2개(원래 페이지에 있던 두 항목만 나오게)
-   - 여기만 네 원본 2개로 교체하면 됨 (내가 멋대로 확장 안 함)
-========================================================= */
-const selectTourSchedule = [
-  {
-    day: "선택관광",
-    date: "",
-    title: "선택관광 (2개 항목)",
-    items: [
-      // ✅ 여기 2개를 네 원본 그대로 넣어
-      { time:"", icon:"⭐", title:"선택관광 A", desc:"" },
-      { time:"", icon:"⭐", title:"선택관광 B", desc:"" }
-    ]
-  }
-];
 
 /* =========================================================
    ✅ 중식비 스케줄 (단수이/기타)
