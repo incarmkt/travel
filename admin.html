@@ -1,248 +1,96 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>ISC 관리자</title>
 
-  <!-- ✅ 기존 CSS 그대로 공유 -->
+  <!-- 고객용과 동일 CSS -->
   <link rel="stylesheet" href="css/base.css">
-  <link rel="stylesheet" href="css/desktop.css" media="(min-width: 768px)">
-  <link rel="stylesheet" href="css/mobile.css" media="(max-width: 767px)">
+  <link rel="stylesheet" href="css/desktop.css" media="(min-width:768px)">
+  <link rel="stylesheet" href="css/mobile.css" media="(max-width:767px)">
 
   <style>
-    /* 관리자 페이지 전용: 기존 CSS 훼손 없이 최소 추가 */
+    body.qr-lock { overflow:hidden; }
 
-    /* QR 화면에서만 body 스크롤 잠금 */
-    body.qr-lock {
-      overflow: hidden !important;
-      overscroll-behavior: none;
+    #qrReader {
+      width:100%;
+      max-width:420px;
+      background:#000;
+      border-radius:12px;
+      overflow:hidden;
     }
-
-    /* 관리자 여행관리 서브 버튼 */
-    .admin-sub-buttons{
-      display:flex;
-      gap:12px;
-      flex-wrap:wrap;
-      justify-content:center;
-      margin: 12px 0 0;
-    }
-
-    /* 일정 클릭 영역을 더 “버튼처럼” */
-    .admin-clickable { cursor:pointer; user-select:none; }
-
-    /* QR 영역: 어떤 폰이든 detail 패널 안에 맞추기 */
-    #qrReader{
-      width: 100%;
-      max-width: 420px;
-      border-radius: 12px;
-      background: #000;
-      overflow: hidden;
-    }
-
-    /* html5-qrcode 내부 비디오가 삐져나오는 케이스 방지 */
-    #qrReader video, #qrReader canvas{
-      width: 100% !important;
-      height: auto !important;
-      border-radius: 12px;
-    }
+    #qrReader video { width:100%!important; height:100%!important; object-fit:cover; }
 
     .qr-panel{
       display:flex;
       flex-direction:column;
-      gap:12px;
       align-items:center;
-      width:100%;
-    }
-
-    .qr-panel .manual-row{
-      width: 100%;
-      max-width: 420px;
-      display:flex;
-      gap:10px;
-    }
-    .qr-panel .manual-row input{
-      flex:1;
-      padding:10px;
-      border-radius:12px;
-      border:1px solid #d0d5dd;
-      background:#fff;
+      gap:12px;
     }
 
     .qr-result{
-      width: 100%;
-      max-width: 420px;
-      padding:10px 12px;
+      width:100%;
+      max-width:420px;
+      padding:10px;
       border-radius:12px;
       background:#f8fafc;
       border:1px solid #e5e7eb;
-      font-size:14px;
-      line-height:1.4;
-      min-height: 44px;
-      display:flex;
-      align-items:center;
-      justify-content:center;
       text-align:center;
-      box-sizing:border-box;
+      font-weight:700;
     }
-    .qr-result.success{ color:#16a34a; font-weight:700; }
-    .qr-result.fail{ color:#dc2626; font-weight:700; }
+    .qr-result.success{color:#16a34a;}
+    .qr-result.fail{color:#dc2626;}
 
-    /* ===============================
-       QR 화면 : 한 화면 고정 (스크롤 제거)
-       =============================== */
-
-    /* QR 모드일 때 detailPage 전체를 고정 레이아웃으로 */
-    body.qr-lock #detailPage {
-      height: calc(100vh - 56px); /* 헤더 높이 제외 */
-      display: flex;
-      flex-direction: column;
-      overflow: hidden;
-    }
-
-    /* 제목 제외한 내용 영역 */
-    body.qr-lock #detailContent {
-      flex: 1;
-      display: flex;
-      justify-content: center;
-      align-items: stretch;
-      overflow: hidden;
-      padding-bottom: 12px; /* 하단 여백 살짝 */
-      box-sizing: border-box;
-    }
-
-    /* QR 전체 묶음 */
-    body.qr-lock .qr-panel {
-      width: 100%;
-      max-width: 480px;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      gap: 10px;
-      padding: 0 12px;
-      box-sizing: border-box;
-    }
-
-    /* QR 카메라 영역 */
-    body.qr-lock #qrReader {
-      flex: 1;
-      max-height: 45vh;
-      background: #000;
-      border-radius: 12px;
-      overflow: hidden;
-    }
-
-    /* 내부 카메라 영상 강제 맞춤 */
-    body.qr-lock #qrReader video,
-    body.qr-lock #qrReader canvas {
-      width: 100% !important;
-      height: 100% !important;
-      object-fit: cover;
-    }
-
-    /* 사번 입력 / 결과 영역은 줄어들지 않게 */
-    body.qr-lock .manual-row,
-    body.qr-lock .qr-result {
-      flex-shrink: 0;
-    }
-
-    /* ===============================
-       QR 화면 전용: 하단 네비 제거
-       =============================== */
-    body.qr-lock #detailPage .nav-buttons {
-      display: none !important;
-    }
-
-    /* iOS/모바일 주소창 대응 */
-    body.qr-lock #detailPage {
-      height: 100dvh;
-    }
-
-    /* 고객 상세 카드(고객정보) */
     .info-card{
       background:#fff;
       border:1px solid #e5e7eb;
       border-radius:12px;
       padding:12px;
-      margin: 10px 0;
+      margin-top:10px;
     }
-    .info-grid{
-      display:grid;
-      grid-template-columns: 1fr 1fr;
-      gap:8px;
-    }
-    .info-row{
-      font-size:14px;
-      color:#111827;
-    }
-    .info-label{
-      color:#6b7280;
-      font-size:12px;
-      margin-bottom:2px;
-    }
-    .pill{
-      display:inline-block;
-      padding:4px 8px;
-      border-radius:999px;
-      border:1px solid #e5e7eb;
-      background:#f9fafb;
-      font-size:12px;
-    }
+    .info-row{font-size:14px;margin-bottom:6px;}
+    .info-label{color:#6b7280;font-size:12px;}
   </style>
 </head>
 
 <body>
 
-<!-- ================= LOGIN (관리자) ================= -->
+<!-- ================= 관리자 로그인 ================= -->
 <section id="adminLoginSection" class="login-hero">
   <div class="hero-overlay">
     <div class="login-box">
       <img src="assets/images/logo.png" class="hero-logo">
       <h2>ISC 관리자</h2>
-      <p class="hero-desc">관리자 비밀번호 입력</p>
-
-      <input type="password" id="adminPwInput" placeholder="관리자 비밀번호">
-      <button class="primary-btn" onclick="adminDoLogin()">로그인</button>
-      <p id="adminLoginError" class="error"></p>
+      <input type="password" id="adminPw" placeholder="관리자 비밀번호">
+      <button class="primary-btn" onclick="adminLogin()">로그인</button>
+      <p id="loginError" class="error"></p>
     </div>
   </div>
 </section>
 
-<!-- ================= HEADER (고객용 구조 그대로) ================= -->
 <header class="header compact" id="topHeader" style="display:none;">
   <div class="header-left">
     <img src="assets/images/logo.png" class="logo">
     <div>
       <h1>ISC 관리자</h1>
-      <p class="sub" id="adminHeaderSub">관리자 모드</p>
+      <p class="sub">관리자 모드</p>
     </div>
-  </div>
-
-  <div class="header-right">
-    <p class="welcome-text"><strong>관리자</strong>님</p>
   </div>
 </header>
 
-<!-- ================= MAIN (고객용 구조 그대로) ================= -->
 <main id="mainSection" class="main-bg" style="display:none;">
   <div class="layout">
 
-    <!-- ✅ 좌측 메뉴(고객용과 동일 UX) -->
     <aside class="side-menu">
-      <!-- ✅ 홈 삭제: 관리자 홈 버튼 제거 -->
-      <button onclick="openPage('travelRoot')">🧭 여행 일정 관리</button>
-      <button onclick="openPage('mealRoot')">💳 중식비 관리</button>
-      <button onclick="openPage('customerRoot')">👤 고객 정보</button>
+      <button onclick="openPage('travelRoot')">🧭 여행일정관리</button>
+      <button onclick="openPage('mealRoot')">💳 중식비지급관리</button>
+      <button onclick="openPage('customerRoot')">👤 고객관리</button>
     </aside>
 
-    <!-- ✅ 우측 영역 -->
     <section class="content-area">
       <div class="main-panel">
 
-        <!-- ✅ 홈 영역(삭제 요구 반영): 화면에서 쓰지 않음 -->
-        <div id="homeArea" class="home-view" style="display:none;"></div>
-
-        <!-- 상세 페이지(고객용과 동일) -->
         <section id="detailPage" class="detail" style="display:none;">
           <h2 id="detailTitle"></h2>
           <div id="detailContent"></div>
@@ -255,736 +103,193 @@
 
       </div>
 
-      <!-- ✅ 우측 고정 포스터(고객용과 동일 구조) -->
       <aside class="fixed-poster">
-        <img src="assets/images/iscposter.jpg" alt="Fixed Poster">
+        <img src="assets/images/iscposter.jpg">
       </aside>
-
     </section>
   </div>
 </main>
 
-<!-- QR 라이브러리 -->
 <script src="https://unpkg.com/html5-qrcode"></script>
-
 <script>
-/* =========================================================
-   ✅ 설정 (요구사항 고정)
-========================================================= */
+/* ================= 설정 ================= */
 const ADMIN_PASSWORD = "0000";
 const GAS_URL = "https://script.google.com/macros/s/AKfycbywujbffRaXimjgXIjZkeyLv0kea2tDe17jtBmMvLjs6gFB0dz16Xkfj4mJLMN2mof83w/exec";
 const EMP_URL = "people/employees.json?ts=" + Date.now();
 
-/* =========================================================
-   ✅ 공통 상태
-========================================================= */
-let pageHistory = [];
+/* ================= 상태 ================= */
 let employees = [];
+let pageHistory = [];
 let qrScanner = null;
 
-/* 현재 컨텍스트 */
-let currentCategory = "";     // "전체일정" | "선택관광"
-let currentCourse = "";       // 출발체크 코스명
-let currentMealGroup = "";    // "단수이" | "기타"
-let currentMealTour = "";     // 중식비 지급 대상(투어/식당명 등)
-let qrMode = "";              // "departure" | "meal" | "customer"
-let lastScannedEmployee = null;
+let qrMode = "";       // departure | meal | customer
+let currentPayload = {}; // GAS에 보낼 데이터
 
-/* =========================================================
-   ✅ 직원 데이터 로드
-========================================================= */
-fetch(EMP_URL)
-  .then(res => res.json())
-  .then(data => employees = data)
-  .catch(console.error);
+fetch(EMP_URL).then(r=>r.json()).then(d=>employees=d);
 
-/* =========================================================
-   ✅ 관리자 로그인
-========================================================= */
-function adminDoLogin(){
-  const pw = String(document.getElementById("adminPwInput").value || "").trim();
-  if (pw !== ADMIN_PASSWORD) {
-    document.getElementById("adminLoginError").textContent = "비밀번호 오류";
+/* ================= 로그인 ================= */
+function adminLogin(){
+  const pw = document.getElementById("adminPw").value.trim();
+  if(pw !== ADMIN_PASSWORD){
+    document.getElementById("loginError").textContent="비밀번호 오류";
     return;
   }
-
-  document.getElementById("adminLoginSection").style.display = "none";
-  document.getElementById("topHeader").style.display = "flex";
-  document.getElementById("mainSection").style.display = "block";
-  document.body.classList.add("logged-in");
-
-  // ✅ 홈 삭제: 첫 화면을 travelRoot로
-  pageHistory = [];
+  document.getElementById("adminLoginSection").style.display="none";
+  document.getElementById("topHeader").style.display="flex";
+  document.getElementById("mainSection").style.display="block";
   openPage("travelRoot");
 }
 
-/* =========================================================
-   ✅ 페이지 열기 (삭제/재구성 없이 분기만 추가)
-========================================================= */
-function openPage(type, fromHistory = false){
-  cleanupQR();
+/* ================= 페이지 ================= */
+function openPage(type, fromHistory=false){
+  stopQR();
+  if(!fromHistory) pageHistory.push(type);
 
-  if (!fromHistory) pageHistory.push(type);
+  document.getElementById("detailPage").style.display="block";
+  const t = detailTitle;
+  const c = detailContent;
 
-  // 홈은 안 씀
-  document.getElementById("homeArea").style.display = "none";
-  document.getElementById("detailPage").style.display = "block";
-
-  // 모바일일 때는 사이드 메뉴 숨김(고객용과 동일)
-  if (window.innerWidth <= 767) {
-    document.querySelector(".side-menu").style.display = "none";
-  }
-
-  const t = document.getElementById("detailTitle");
-  const c = document.getElementById("detailContent");
-
-  /* ================= 여행 일정 관리 (루트) ================= */
-  if (type === "travelRoot") {
-    t.textContent = "🧭 여행 일정 관리";
-    c.innerHTML = `
-      <div class="card" style="text-align:center;">
-        <p style="margin:0; font-weight:700;">출발 체크 구분을 선택하세요</p>
-        <div class="admin-sub-buttons">
-          <button class="primary-btn" onclick="openSchedule('전체일정')">전체 관광 출발 체크</button>
-          <button class="primary-btn" onclick="openSchedule('선택관광')">선택 관광 출발 체크</button>
-        </div>
-      </div>
+  /* 여행일정관리 */
+  if(type==="travelRoot"){
+    t.textContent="🧭 여행일정관리";
+    c.innerHTML=`
+      <button class="primary-btn" onclick="openDeparture('전체일정')">전체일정관리</button>
+      <button class="primary-btn" onclick="openDeparture('선택일정')">선택일정관리</button>
     `;
     return;
   }
 
-  /* ================= 중식비 관리 ================= */
-  if (type === "mealRoot") {
-    t.textContent = "💳 중식비 관리";
-    c.innerHTML = `
-      <div class="card" style="text-align:center;">
-        <p style="margin:0; font-weight:700;">지급 카테고리를 선택하세요</p>
-        <div class="admin-sub-buttons">
-          <button class="primary-btn" onclick="openMealGroup('단수이')">단수이 중식비 지급</button>
-          <button class="primary-btn" onclick="openMealGroup('기타')">기타 중식비 지급</button>
-        </div>
-        <p style="margin:10px 0 0; color:#667085; font-size:12px;">
-          ※ QR 찍으면 GAS에 <span class="pill">type: meal</span> 로 기록됩니다.
-        </p>
-      </div>
+  /* 중식비 */
+  if(type==="mealRoot"){
+    t.textContent="💳 중식비지급관리";
+    c.innerHTML=`
+      <button class="primary-btn" onclick="openMealQR()">중식비 QR 스캔</button>
     `;
     return;
   }
 
-  /* ================= 고객 정보 ================= */
-  if (type === "customerRoot") {
-    t.textContent = "👤 고객 정보";
-    c.innerHTML = `
-      <div class="card" style="text-align:center;">
-        <p style="margin:0; font-weight:700;">QR로 고객을 조회하세요</p>
-        <div style="margin-top:12px;">
-          <button class="primary-btn" onclick="openCustomerScan()">고객 QR 조회</button>
-        </div>
-      </div>
-    `;
+  /* 고객관리 */
+  if(type==="customerRoot"){
+    t.textContent="👤 고객관리";
+    openCustomerQR();
     return;
   }
-
-  /* 기본: 알 수 없는 타입이면 travelRoot로 */
-  openPage("travelRoot", true);
 }
 
-
-function openSchedule(cat){
-  currentCategory = cat;
-
-  openPage("scheduleView");
-  const t = document.getElementById("detailTitle");
-  const c = document.getElementById("detailContent");
-
-  t.textContent =
-    (cat === "전체일정")
-      ? "🗓 전체 관광 출발 체크"
-      : "🗓 선택 관광 출발 체크";
-
-  const source =
-    (cat === "전체일정")
-      ? travelSchedule
-      : travelSchedule.filter(day =>
-          day.title && day.title.includes("선택")
-        );
-
-  c.innerHTML = source.map(day => `
-    <div class="day-card">
-      <h3>${day.day} <span>${day.date}</span></h3>
-      <p class="day-title">${day.title}</p>
-
-      <div class="timeline">
-        ${day.items.map(item => `
-          <div class="schedule-item">
-            <div class="timeline-dot"></div>
-            <div class="schedule-card admin-clickable"
-                 onclick="openDepartureQR('${escapeQuotes(item.title)}')">
-              <div class="schedule-time">${item.time || ""}</div>
-              <div class="schedule-title">${item.icon || ""} ${item.title}</div>
-              ${item.desc ? `<div class="schedule-desc">${item.desc}</div>` : ""}
-            </div>
-          </div>
-        `).join("")}
-      </div>
-    </div>
-  `).join("");
+/* ================= QR 공통 ================= */
+function startQR(){
+  document.body.classList.add("qr-lock");
+  qrScanner = new Html5Qrcode("qrReader");
+  qrScanner.start(
+    { facingMode:"environment" },
+    { fps:10, qrbox:250 },
+    text=>handleQR(text)
+  );
+}
+function stopQR(){
+  document.body.classList.remove("qr-lock");
+  if(qrScanner){
+    qrScanner.stop().then(()=>qrScanner.clear());
+    qrScanner=null;
+  }
 }
 
-
-/* =========================================================
-   ✅ 3) 중식비: 그룹 -> 항목 리스트 -> QR
-========================================================= */
-function openMealGroup(group){
-  currentMealGroup = group;
-
-  openPage("mealListView");
-  const t = document.getElementById("detailTitle");
-  const c = document.getElementById("detailContent");
-
-  t.textContent = `💳 중식비 지급 - ${group}`;
-
-  // ✅ 네가 기존 고객용에 넣어둔 “중식비 대상(대부분 선택관광)”을 여기로 그대로 옮겨 담으면 됨
-  //    (내가 멋대로 삭제/변경하지 않기 위해 '배열'만 분리해둠)
-  const list = (group === "단수이") ? mealSchedule_Dansui : mealSchedule_Etc;
-
-  c.innerHTML = list.map(day => `
-    <div class="day-card">
-      <h3>${day.day} <span>${day.date}</span></h3>
-      <p class="day-title">${day.title}</p>
-
-      <div class="timeline">
-        ${day.items.map(item => `
-          <div class="schedule-item">
-            <div class="timeline-dot"></div>
-            <div class="schedule-card admin-clickable"
-                 onclick="openMealQR('${escapeQuotes(item.title)}')">
-              <div class="schedule-time">${item.time}</div>
-              <div class="schedule-title">${item.icon} ${item.title}</div>
-              ${item.desc ? `<div class="schedule-desc">${item.desc}</div>` : ""}
-            </div>
-          </div>
-        `).join("")}
-      </div>
-    </div>
-  `).join("");
-}
-
-function openMealQR(tourTitle){
-  currentMealTour = tourTitle;
-  qrMode = "meal";
-
-  openPage("mealQRView");
-  const t = document.getElementById("detailTitle");
-  const c = document.getElementById("detailContent");
-
-  t.textContent = `📷 중식비 지급 - ${currentMealGroup} / ${tourTitle}`;
-
-  c.innerHTML = `
+/* ================= 여행일정 ================= */
+function openDeparture(type){
+  qrMode="departure";
+  currentPayload={ category:type };
+  detailTitle.textContent=`📷 ${type} 출발 체크`;
+  detailContent.innerHTML=`
     <div class="qr-panel">
       <div id="qrReader"></div>
-
-      <div class="manual-row">
-        <input type="text" id="manualId" placeholder="사번 직접 입력">
-        <button class="ghost-btn" onclick="manualCheck()">확인</button>
-      </div>
-
-      <div id="qrResult" class="qr-result">QR을 스캔하거나 사번을 입력하세요</div>
-
-      <div style="width:100%; max-width:420px; display:flex; gap:10px;">
-        <button class="primary-btn" style="flex:1;" onclick="approveMeal()">지급(승인)</button>
-        <button class="ghost-btn" style="flex:1;" onclick="cancelMeal()">취소</button>
-      </div>
-    </div>
-  `;
-
-  document.body.classList.add("qr-lock");
+      <div id="qrResult" class="qr-result">QR 스캔 대기중</div>
+    </div>`;
   startQR();
 }
 
-function approveMeal(){
-  if (!lastScannedEmployee) {
-    setQRResult("먼저 QR/사번으로 고객을 확인하세요.", false);
-    return;
-  }
-  processMeal(lastScannedEmployee.id, "APPROVE");
-}
-function cancelMeal(){
-  if (!lastScannedEmployee) {
-    setQRResult("먼저 QR/사번으로 고객을 확인하세요.", false);
-    return;
-  }
-  processMeal(lastScannedEmployee.id, "CANCEL");
-}
-
-function processMeal(id, action){
-  const emp = findEmp(id);
-  if (!emp) {
-    setQRResult("❌ 등록되지 않은 사번입니다.", false);
-    return;
-  }
-
-  const time = nowKSTString();
-
-  // ✅ GAS 기록 (네가 예전에 쓰던 형태: type:"meal")
-  fetch(GAS_URL, {
-    method: "POST",
-    mode: "no-cors",
-    body: JSON.stringify({
-      type: "meal",
-      id: emp.id,
-      name: emp.name,
-      tour: `${currentMealGroup} | ${currentMealTour}`,
-      action: action,       // APPROVE / CANCEL
-      time: time
-    })
-  }).catch(console.error);
-
-  setQRResult(`✅ ${emp.name} (${emp.id}) / ${currentMealGroup} / ${currentMealTour} / ${action} / ${time}`, true);
-}
-
-/* =========================================================
-   ✅ 4) 고객정보: QR 조회 -> 상세
-========================================================= */
-function openCustomerScan(){
-  qrMode = "customer";
-  lastScannedEmployee = null;
-
-  openPage("customerQRView");
-  const t = document.getElementById("detailTitle");
-  const c = document.getElementById("detailContent");
-
-  t.textContent = `📷 고객 조회`;
-
-  c.innerHTML = `
+/* ================= 중식비 ================= */
+function openMealQR(){
+  qrMode="meal";
+  detailTitle.textContent="📷 중식비 지급";
+  detailContent.innerHTML=`
     <div class="qr-panel">
       <div id="qrReader"></div>
-
-      <div class="manual-row">
-        <input type="text" id="manualId" placeholder="사번 직접 입력">
-        <button class="ghost-btn" onclick="manualCheck()">조회</button>
-      </div>
-
-      <div id="qrResult" class="qr-result">QR을 스캔하거나 사번을 입력하세요</div>
-
-      <div style="width:100%; max-width:420px;">
-        <button class="primary-btn" style="width:100%;" onclick="openCustomerDetail()">고객 상세 보기</button>
-      </div>
-    </div>
-  `;
-
-  document.body.classList.add("qr-lock");
+      <div id="qrResult" class="qr-result">QR 스캔 대기중</div>
+    </div>`;
   startQR();
 }
 
-function openCustomerDetail(){
-  if (!lastScannedEmployee) {
-    setQRResult("먼저 QR/사번으로 고객을 조회하세요.", false);
-    return;
-  }
-
-  cleanupQR(); // 상세는 스크롤 가능해야 하므로 QR 종료 + 잠금 해제
-  openPage("customerDetailView");
-
-  const emp = lastScannedEmployee;
-  const t = document.getElementById("detailTitle");
-  const c = document.getElementById("detailContent");
-
-  t.textContent = `👤 고객 상세 - ${emp.name} (${emp.id})`;
-
-  // employees.json에 들어있는 “정리해둔 모든 정보”는 구조를 몰라서
-  // 일단 key/value로 안전하게 전부 펼쳐서 보여준다 (삭제/추정 없이)
-  const kv = Object.keys(emp).map(k => {
-    const v = (typeof emp[k] === "object") ? JSON.stringify(emp[k]) : String(emp[k]);
-    return `
-      <div class="info-row">
-        <div class="info-label">${escapeHtml(k)}</div>
-        <div>${escapeHtml(v)}</div>
-      </div>
-    `;
-  }).join("");
-
-  c.innerHTML = `
-    <div class="info-card">
-      <div style="margin-bottom:8px;">
-        <span class="pill">employees.json 기반</span>
-        <span class="pill">사번:${escapeHtml(String(emp.id))}</span>
-      </div>
-      <div class="info-grid">
-        ${kv}
-      </div>
-    </div>
-
-    <div class="info-card">
-      <div style="margin-bottom:8px;">
-        <span class="pill">출발/중식비 기록</span>
-        <span class="pill">GAS 조회(옵션)</span>
-      </div>
-      <div id="customerLogs" style="color:#6b7280; font-size:13px;">
-        기록 조회 중...
-      </div>
-    </div>
-  `;
-
-  // ✅ (옵션) GAS가 JSON 응답을 지원하면 표시
-  //    GAS 쪽에서 아래처럼 구현되어 있어야 함:
-  //    GET  ?type=customer_logs&id=사번  => { departures:[...], meals:[...] }
-  fetchCustomerLogs(emp.id);
-}
-
-async function fetchCustomerLogs(empId){
-  const box = document.getElementById("customerLogs");
-  if (!box) return;
-
-  try {
-    const url = `${GAS_URL}?type=customer_logs&id=${encodeURIComponent(empId)}&ts=${Date.now()}`;
-    const res = await fetch(url, { method:"GET" });
-    const data = await res.json();
-
-    const dep = Array.isArray(data.departures) ? data.departures : [];
-    const meals = Array.isArray(data.meals) ? data.meals : [];
-
-    const depHtml = dep.length
-      ? `<div style="margin-top:6px;"><b>출발 기록</b><ul>${dep.map(x => `<li>${escapeHtml(JSON.stringify(x))}</li>`).join("")}</ul></div>`
-      : `<div style="margin-top:6px;"><b>출발 기록</b> 없음</div>`;
-
-    const mealHtml = meals.length
-      ? `<div style="margin-top:10px;"><b>중식비 기록</b><ul>${meals.map(x => `<li>${escapeHtml(JSON.stringify(x))}</li>`).join("")}</ul></div>`
-      : `<div style="margin-top:10px;"><b>중식비 기록</b> 없음</div>`;
-
-    box.innerHTML = depHtml + mealHtml;
-
-  } catch (e) {
-    box.innerHTML = `
-      <div style="color:#6b7280; font-size:13px;">
-        현재 GAS가 JSON 조회를 지원하지 않으면 기록을 불러올 수 없습니다.<br>
-        (QR 기록 저장은 정상 동작합니다)
-      </div>
-    `;
-  }
-}
-
-/* =========================================================
-   ✅ 공통 QR: 출발체크 QR
-========================================================= */
-function openDepartureQR(course){
-  currentCourse = course;
-  qrMode = "departure";
-  lastScannedEmployee = null;
-
-  openPage("qrView");
-  const t = document.getElementById("detailTitle");
-  const c = document.getElementById("detailContent");
-
-  t.textContent = `📷 출발 체크 - ${course}`;
-
-  c.innerHTML = `
+/* ================= 고객관리 ================= */
+function openCustomerQR(){
+  qrMode="customer";
+  detailContent.innerHTML=`
     <div class="qr-panel">
       <div id="qrReader"></div>
-
-      <div class="manual-row">
-        <input type="text" id="manualId" placeholder="사번 직접 입력">
-        <button class="ghost-btn" onclick="manualCheck()">등록</button>
-      </div>
-
-      <div id="qrResult" class="qr-result">QR을 스캔하거나 사번을 입력하세요</div>
-    </div>
-  `;
-
-  document.body.classList.add("qr-lock");
+      <div id="qrResult" class="qr-result">QR 스캔 대기중</div>
+    </div>`;
   startQR();
 }
 
-/* =========================================================
-   ✅ QR 시작/처리 (모드 공용)
-========================================================= */
-async function startQR(){
-  if (qrScanner) return;
-
-  try {
-    qrScanner = new Html5Qrcode("qrReader");
-    const devices = await Html5Qrcode.getCameras();
-
-    if (!devices || devices.length === 0) {
-      setQRResult("카메라를 찾을 수 없습니다.", false);
+/* ================= QR 처리 ================= */
+function handleQR(text){
+  try{
+    const id = new URL(text).searchParams.get("eid");
+    const emp = employees.find(e=>String(e.id)===String(id));
+    if(!emp){
+      setQR("등록되지 않은 사번",false);
       return;
     }
 
-    const backCam =
-      devices.find(d => /back|rear|후면/i.test(d.label)) ||
-      devices[devices.length - 1];
+    const time = now();
 
-    await qrScanner.start(
-      backCam.id,
-      {
-        fps: 10,
-        qrbox: (viewfinderWidth, viewfinderHeight) => {
-          const minEdge = Math.min(viewfinderWidth, viewfinderHeight);
-          const size = Math.max(200, Math.min(260, Math.floor(minEdge * 0.7)));
-          return { width: size, height: size };
-        }
-      },
-      (decodedText) => handleQR(decodedText),
-      () => {}
-    );
-
-  } catch (e) {
-    console.error(e);
-    setQRResult("카메라 권한을 허용해주세요.", false);
-  }
-}
-
-function handleQR(text){
-  try {
-    const url = new URL(text);
-    const id = url.searchParams.get("eid");
-    if (id) {
-      // ✅ 공통: 마지막 스캔 고객 저장
-      const emp = findEmp(id);
-      if (emp) lastScannedEmployee = emp;
-
-      // 모드별 처리
-      if (qrMode === "departure") processDeparture(id);
-      else if (qrMode === "meal") {
-        // meal 모드는 스캔 즉시 지급X, '승인' 버튼을 누르게 함
-        if (emp) setQRResult(`✅ ${emp.name} (${emp.id}) 확인됨. 아래에서 지급/취소를 선택하세요.`, true);
-        else setQRResult("❌ 등록되지 않은 사번입니다.", false);
-      }
-      else if (qrMode === "customer") {
-        if (emp) setQRResult(`✅ ${emp.name} (${emp.id}) 조회 완료. '고객 상세 보기'를 누르세요.`, true);
-        else setQRResult("❌ 등록되지 않은 사번입니다.", false);
-      }
+    if(qrMode==="departure"){
+      sendGAS({type:"departure", id:emp.id, name:emp.name, category:currentPayload.category, time});
+      setQR(`${emp.name} 출발체크 완료`,true);
     }
-  } catch {
-    // QR 형식 아니면 무시
-  }
-}
 
-function manualCheck(){
-  const id = String(document.getElementById("manualId")?.value || "").trim();
-  if (!id) return;
-
-  const emp = findEmp(id);
-  if (emp) lastScannedEmployee = emp;
-
-  if (qrMode === "departure") processDeparture(id);
-  else if (qrMode === "meal") {
-    if (emp) setQRResult(`✅ ${emp.name} (${emp.id}) 확인됨. 아래에서 지급/취소를 선택하세요.`, true);
-    else setQRResult("❌ 등록되지 않은 사번입니다.", false);
-  }
-  else if (qrMode === "customer") {
-    if (emp) setQRResult(`✅ ${emp.name} (${emp.id}) 조회 완료. '고객 상세 보기'를 누르세요.`, true);
-    else setQRResult("❌ 등록되지 않은 사번입니다.", false);
-  }
-}
-
-/* =========================================================
-   ✅ 출발 처리 + GAS 기록 (기존 동작 유지)
-========================================================= */
-function processDeparture(id){
-  const emp = findEmp(id);
-  if (!emp) {
-    setQRResult("❌ 등록되지 않은 사번입니다.", false);
-    return;
-  }
-
-  const time = nowKSTString();
-
-  fetch(GAS_URL, {
-    method: "POST",
-    mode: "no-cors",
-    body: JSON.stringify({
-      type: "departure",
-      id: emp.id,
-      name: emp.name,
-      category: currentCategory,
-      course: currentCourse,
-      time: time
-    })
-  }).catch(console.error);
-
-  setQRResult(`✅ ${emp.name} (${emp.id}) / ${currentCourse} / ${time}`, true);
-
-  const input = document.getElementById("manualId");
-  if (input) input.value = "";
-}
-
-function setQRResult(msg, ok){
-  const el = document.getElementById("qrResult");
-  if (!el) return;
-  el.textContent = msg;
-  el.classList.remove("success","fail");
-  el.classList.add(ok ? "success" : "fail");
-}
-
-/* =========================================================
-   ✅ 홈/뒤로가기 (홈 삭제 반영)
-========================================================= */
-function goHome(){
-  cleanupQR();
-  pageHistory = [];
-
-  // ✅ 홈 삭제: travelRoot로
-  openPage("travelRoot", true);
-
-  // 모바일에서 사이드 메뉴 다시 보이기
-  if (window.innerWidth <= 767) {
-    document.querySelector(".side-menu").style.display = "block";
-  }
-}
-
-function goBack(){
-  cleanupQR();
-  pageHistory.pop();
-
-  if (pageHistory.length === 0) {
-    goHome();
-    return;
-  }
-
-  const prev = pageHistory[pageHistory.length - 1];
-  openPage(prev, true);
-}
-
-/* =========================================================
-   ✅ QR 정리 (페이지 이동/뒤로가기/홈에서 항상 호출)
-========================================================= */
-function cleanupQR(){
-  document.body.classList.remove("qr-lock");
-  qrMode = "";
-
-  if (qrScanner) {
-    try {
-      qrScanner.stop()
-        .then(() => {
-          qrScanner.clear();
-          qrScanner = null;
-        })
-        .catch(() => {
-          try { qrScanner.clear(); } catch {}
-          qrScanner = null;
-        });
-    } catch {
-      qrScanner = null;
+    if(qrMode==="meal"){
+      sendGAS({type:"meal", id:emp.id, name:emp.name, time});
+      setQR(`${emp.name} 중식비 지급`,true);
     }
-  }
+
+    if(qrMode==="customer"){
+      showCustomer(emp);
+    }
+
+  }catch{}
 }
 
-/* =========================================================
-   ✅ 유틸
-========================================================= */
-function nowKSTString(){
-  return new Intl.DateTimeFormat("ko-KR", {
-    timeZone: "Asia/Seoul",
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-    hour: "2-digit",
-    minute: "2-digit",
-    second: "2-digit"
+function sendGAS(payload){
+  fetch(GAS_URL,{method:"POST",mode:"no-cors",body:JSON.stringify(payload)});
+}
+
+/* ================= 고객정보 ================= */
+function showCustomer(emp){
+  stopQR();
+  detailTitle.textContent=`👤 ${emp.name} (${emp.id})`;
+  detailContent.innerHTML=`
+    <div class="info-card">
+      ${Object.keys(emp).map(k=>`
+        <div class="info-row">
+          <div class="info-label">${k}</div>
+          <div>${JSON.stringify(emp[k])}</div>
+        </div>`).join("")}
+    </div>`;
+}
+
+/* ================= 유틸 ================= */
+function setQR(msg,ok){
+  qrResult.textContent=msg;
+  qrResult.className="qr-result "+(ok?"success":"fail");
+}
+function now(){
+  return new Intl.DateTimeFormat("ko-KR",{timeZone:"Asia/Seoul",
+    year:"numeric",month:"2-digit",day:"2-digit",
+    hour:"2-digit",minute:"2-digit",second:"2-digit"
   }).format(new Date());
 }
-
-function escapeQuotes(str){
-  return String(str).replace(/'/g, "\\'").replace(/"/g, '\\"');
-}
-function escapeHtml(str){
-  return String(str)
-    .replaceAll("&","&amp;")
-    .replaceAll("<","&lt;")
-    .replaceAll(">","&gt;")
-    .replaceAll('"',"&quot;")
-    .replaceAll("'","&#039;");
-}
-function findEmp(id){
-  return employees.find(e => String(e.id).trim() === String(id).trim()) || null;
-}
-
-/* =========================================================
-   ✅ 엔터로 로그인
-========================================================= */
-document.addEventListener("keydown", (e) => {
-  if (e.key === "Enter" && document.getElementById("adminLoginSection").style.display !== "none") {
-    adminDoLogin();
-  }
-});
-
-/* =========================================================
-   ✅ 여행 일정 (네가 준 원본 그대로 / 삭제 금지)
-========================================================= */
-const travelSchedule = [
-  {
-    day: "DAY 1",
-    date: "2026.03.11 (수)",
-    title: "인천 → 타이베이 / 시내 하이라이트",
-    items: [
-      { time:"08:00", icon:"✈️", title:"인천 국제공항 출발", desc:"OZ 711 / KE 2021" },
-      { time:"12:30", icon:"🍜", title:"중식 | 우육면", desc:"현지 인기 중식당" },
-      { time:"14:00", icon:"🏛️", title:"중정기념당", desc:"장개석 총통 기념관" },
-      { time:"15:30", icon:"🏺", title:"국립고궁박물관", desc:"세계 4대 박물관" },
-      { time:"18:30", icon:"🍽️", title:"석식 | 타카오 샤브샤브", desc:"현지식" },
-      { time:"20:00", icon:"🌃", title:"타이베이 101 전망대", desc:"야경 관람" }
-    ]
-  },
-  {
-    day: "DAY 2",
-    date: "2026.03.12 (목)",
-    title: "선택 관광 / 만찬",
-    items: [
-      { time:"09:00", icon:"🚌", title:"선택 관광", desc:"개인 선택 일정" },
-      { time:"18:00", icon:"🎉", title:"ISC 만찬", desc:"필수 참석" }
-    ]
-  },
-  {
-    day: "DAY 3",
-    date: "2026.03.13 (금)",
-    title: "근교 관광",
-    items: [
-      { time:"10:00", icon:"🌊", title:"야류 해상공원", desc:"기암괴석 관광" },
-      { time:"14:00", icon:"🏮", title:"지우펀", desc:"홍등 마을" }
-    ]
-  },
-  {
-    day: "DAY 4",
-    date: "2026.03.14 (토)",
-    title: "귀국",
-    items: [
-      { time:"07:00", icon:"🏨", title:"호텔 체크아웃", desc:"" },
-      { time:"11:40", icon:"✈️", title:"타이베이 출발", desc:"OZ 712 / KE 2022" },
-      { time:"15:25", icon:"🇰🇷", title:"인천 도착", desc:"" }
-    ]
-  }
-];
-
-
-/* =========================================================
-   ✅ 중식비 스케줄 (단수이/기타)
-   - 네가 원래 고객용에 넣어둔 중식비 대상들을 그대로 옮겨 넣는 공간
-========================================================= */
-const mealSchedule_Dansui = [
-  {
-    day: "단수이",
-    date: "",
-    title: "단수이 중식비 지급 대상",
-    items: [
-      // ✅ 네 원본 그대로 채워
-      { time:"", icon:"🍱", title:"단수이 중식비 항목 1", desc:"" }
-    ]
-  }
-];
-
-const mealSchedule_Etc = [
-  {
-    day: "기타",
-    date: "",
-    title: "기타 중식비 지급 대상",
-    items: [
-      // ✅ 네 원본 그대로 채워
-      { time:"", icon:"🍱", title:"기타 중식비 항목 1", desc:"" }
-    ]
-  }
-];
+function goHome(){ pageHistory=[]; openPage("travelRoot",true); }
+function goBack(){ pageHistory.pop(); openPage(pageHistory.at(-1)||"travelRoot",true); }
 </script>
-
 </body>
 </html>
