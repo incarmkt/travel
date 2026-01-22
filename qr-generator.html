@@ -29,6 +29,12 @@
     }
     .name{font-weight:700;margin-top:8px;}
     .id{font-size:12px;color:#666;}
+    .download{
+      margin-top:8px;
+      font-size:12px;
+      color:#2563eb;
+      cursor:pointer;
+    }
   </style>
 </head>
 <body>
@@ -47,22 +53,48 @@ fetch(EMP_URL)
     const grid = document.getElementById("qrGrid");
 
     employees.forEach(emp => {
+      const empId = String(emp.id).trim(); // ⭐ 핵심: 문자열 고정
+
       const card = document.createElement("div");
       card.className = "card";
 
       const qrBox = document.createElement("div");
+      qrBox.style.margin = "0 auto";
       card.appendChild(qrBox);
 
-      new QRCode(qrBox, {
-        text: BASE_URL + emp.id,
+      // QR 생성
+      const qr = new QRCode(qrBox, {
+        text: BASE_URL + encodeURIComponent(empId),
         width: 120,
-        height: 120
+        height: 120,
+        correctLevel: QRCode.CorrectLevel.M
       });
 
       card.insertAdjacentHTML("beforeend", `
         <div class="name">${emp.name}</div>
-        <div class="id">${emp.id}</div>
+        <div class="id">${empId}</div>
+        <div class="download">QR 다운로드</div>
       `);
+
+      // 다운로드 처리
+      card.querySelector(".download").addEventListener("click", () => {
+        const img = qrBox.querySelector("img") || qrBox.querySelector("canvas");
+        if (!img) return;
+
+        let dataUrl;
+        if (img.tagName === "IMG") {
+          dataUrl = img.src;
+        } else {
+          dataUrl = img.toDataURL("image/png");
+        }
+
+        const a = document.createElement("a");
+        a.href = dataUrl;
+        a.download = `${empId}_${emp.name}_QR.png`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+      });
 
       grid.appendChild(card);
     });
