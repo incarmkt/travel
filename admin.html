@@ -10,6 +10,19 @@
   <link rel="stylesheet" href="css/desktop.css" media="(min-width:768px)">
   <link rel="stylesheet" href="css/mobile.css" media="(max-width:767px)">
 
+  /* 🔥 모바일 터치 차단 문제 해결 */
+@media (max-width: 767px) {
+  .detail, 
+  .home-view {
+    pointer-events: auto !important;
+  }
+
+  .detail * {
+    pointer-events: auto !important;
+  }
+}
+
+
   <style>
     /* ===============================
        관리자 추가 CSS (기존 CSS 훼손 없이 최소)
@@ -518,20 +531,12 @@ async function startQR(){
   if (qrScanner) return;
 
   try{
+    // ✅ 이 줄은 절대 지우지 마
     qrScanner = new Html5Qrcode("qrReader");
-    const cameras = await Html5Qrcode.getCameras();
 
-    if (!cameras || cameras.length === 0){
-      setQRResult("카메라를 찾을 수 없습니다.", false);
-      return;
-    }
-
-    const backCam =
-      cameras.find(c => /back|rear|후면/i.test(c.label)) ||
-      cameras[cameras.length - 1];
-
+    // ✅ 여기서만 권한 요청 (1번)
     await qrScanner.start(
-      backCam.id,
+      { facingMode: "environment" },
       {
         fps: 10,
         qrbox: (vw, vh) => {
@@ -540,15 +545,16 @@ async function startQR(){
           return { width: size, height: size };
         }
       },
-      (decodedText) => handleQR(decodedText),
+      decodedText => handleQR(decodedText),
       () => {}
     );
-  }catch(e){
+
+  } catch(e){
     console.error(e);
     setQRResult("카메라 권한을 허용해주세요.", false);
   }
 }
-
+  
 function cleanupQR(){
   document.body.classList.remove("qr-lock");
   qrMode = "";
