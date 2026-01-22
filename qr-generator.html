@@ -5,100 +5,330 @@
   <title>ISC 직원 QR 생성기</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <!-- QR 라이브러리 -->
+  <!-- QR 생성 -->
   <script src="https://cdn.jsdelivr.net/npm/qrcodejs/qrcode.min.js"></script>
+
+  <!-- ZIP 다운로드 -->
+  <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/file-saver@2.0.5/dist/FileSaver.min.js"></script>
 
   <style>
     body{
       font-family: system-ui, -apple-system, sans-serif;
       background:#f6f7fb;
       padding:20px;
+      margin:0;
     }
-    h1{margin-bottom:20px;}
+    .topbar{
+      display:flex;
+      gap:10px;
+      align-items:center;
+      flex-wrap:wrap;
+      margin-bottom:16px;
+    }
+    h1{margin:0;}
+    .muted{color:#667085;font-size:13px;margin:6px 0 0;}
+    .btn{
+      border:0;
+      border-radius:12px;
+      padding:10px 14px;
+      cursor:pointer;
+      font-weight:700;
+      background:#111827;
+      color:#fff;
+    }
+    .btn.secondary{
+      background:#fff;
+      color:#111827;
+      border:1px solid #e5e7eb;
+    }
     .grid{
       display:grid;
-      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-      gap:20px;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap:14px;
     }
     .card{
       background:#fff;
-      border-radius:12px;
+      border-radius:14px;
       padding:12px;
       text-align:center;
       box-shadow:0 4px 10px rgba(0,0,0,.05);
+      border:1px solid #eef2f7;
     }
-    .name{font-weight:700;margin-top:8px;}
-    .id{font-size:12px;color:#666;}
-    .download{
-      margin-top:8px;
+    .name{font-weight:800;margin-top:8px;}
+    .id{font-size:12px;color:#6b7280;margin-top:2px;}
+    .mini-actions{
+      margin-top:10px;
+      display:flex;
+      gap:8px;
+      justify-content:center;
+      flex-wrap:wrap;
+    }
+    .mini-actions button{
       font-size:12px;
-      color:#2563eb;
-      cursor:pointer;
+      padding:8px 10px;
+      border-radius:10px;
     }
+    .status{
+      margin-top:10px;
+      font-size:13px;
+      color:#111827;
+      background:#fff;
+      border:1px solid #e5e7eb;
+      border-radius:12px;
+      padding:10px 12px;
+    }
+    .status.good{border-color:#bbf7d0; background:#f0fdf4; color:#166534;}
+    .status.bad{border-color:#fecaca; background:#fef2f2; color:#991b1b;}
+    .hidden{display:none;}
   </style>
 </head>
 <body>
 
-<h1>ISC 직원 QR 코드</h1>
+  <div class="topbar">
+    <div style="flex:1; min-width:220px;">
+      <h1>ISC 직원 QR 코드 생성기</h1>
+      <div class="muted">
+        QR 내용은 <b>https://incarmkt.github.io/travel/?eid=사번</b> 형식입니다.
+      </div>
+    </div>
 
-<div id="qrGrid" class="grid"></div>
+    <button id="btnReload" class="btn secondary">새로고침(직원목록 다시불러오기)</button>
+    <button id="btnZip" class="btn">전체 직원 QR ZIP 다운로드</button>
+  </div>
+
+  <div id="statusBox" class="status hidden"></div>
+
+  <div id="qrGrid" class="grid"></div>
 
 <script>
-const EMP_URL = "people/employees.json?ts=" + Date.now();
+/* ==============================
+   설정
+============================== */
+const EMP_URL  = "people/employees.json?ts=" + Date.now();
 const BASE_URL = "https://incarmkt.github.io/travel/?eid=";
 
-fetch(EMP_URL)
-  .then(res => res.json())
-  .then(employees => {
-    const grid = document.getElementById("qrGrid");
+/* ==============================
+   상태
+============================== */
+let employees = [];
 
-    employees.forEach(emp => {
-      const empId = String(emp.id).trim(); // ⭐ 핵심: 문자열 고정
+/* ==============================
+   유틸
+============================== */
+function setStatus(msg, kind=""){
+  const box = document.getElementById("statusBox");
+  box.classList.remove("hidden","good","bad");
+  if(kind==="good") box.classList.add("good");
+  if(kind==="bad") box.classList.add("bad");
+  box.textContent = msg;
+}
 
-      const card = document.createElement("div");
-      card.className = "card";
+function clearStatus(){
+  const box = document.getElementById("statusBox");
+  box.classList.add("hidden");
+  box.textContent = "";
+}
 
-      const qrBox = document.createElement("div");
-      qrBox.style.margin = "0 auto";
-      card.appendChild(qrBox);
+function safeName(str){
+  return String(str || "").replace(/[\\/:*?"<>|]/g, "_").trim();
+}
 
-      // QR 생성
-      const qr = new QRCode(qrBox, {
-        text: BASE_URL + encodeURIComponent(empId),
-        width: 120,
-        height: 120,
-        correctLevel: QRCode.CorrectLevel.M
-      });
+function dataURLtoBase64(dataUrl){
+  return dataUrl.split(",")[1];
+}
 
-      card.insertAdjacentHTML("beforeend", `
-        <div class="name">${emp.name}</div>
-        <div class="id">${empId}</div>
-        <div class="download">QR 다운로드</div>
-      `);
+function sleep(ms){ return new Promise(r => setTimeout(r, ms)); }
 
-      // 다운로드 처리
-      card.querySelector(".download").addEventListener("click", () => {
-        const img = qrBox.querySelector("img") || qrBox.querySelector("canvas");
-        if (!img) return;
+/* ==============================
+   렌더
+============================== */
+function renderGrid(list){
+  const grid = document.getElementById("qrGrid");
+  grid.innerHTML = "";
 
-        let dataUrl;
-        if (img.tagName === "IMG") {
-          dataUrl = img.src;
-        } else {
-          dataUrl = img.toDataURL("image/png");
+  list.forEach(emp => {
+    const card = document.createElement("div");
+    card.className = "card";
+
+    const qrBox = document.createElement("div");
+    qrBox.style.display = "inline-block";
+    qrBox.style.padding = "6px";
+    qrBox.style.background = "#fff";
+    qrBox.style.borderRadius = "12px";
+    qrBox.style.border = "1px solid #eef2f7";
+
+    card.appendChild(qrBox);
+
+    // ✅ QR 생성(여기가 정답)
+    const qrText = BASE_URL + String(emp.id).trim();
+
+    new QRCode(qrBox, {
+      text: qrText,
+      width: 140,
+      height: 140
+    });
+
+    const nameEl = document.createElement("div");
+    nameEl.className = "name";
+    nameEl.textContent = emp.name;
+
+    const idEl = document.createElement("div");
+    idEl.className = "id";
+    idEl.textContent = emp.id;
+
+    const actions = document.createElement("div");
+    actions.className = "mini-actions";
+
+    const btnCopy = document.createElement("button");
+    btnCopy.className = "btn secondary";
+    btnCopy.textContent = "링크복사";
+    btnCopy.onclick = async () => {
+      try{
+        await navigator.clipboard.writeText(qrText);
+        setStatus(`${emp.name} (${emp.id}) 링크 복사 완료`, "good");
+      }catch{
+        setStatus("클립보드 복사 실패(브라우저 권한 확인)", "bad");
+      }
+    };
+
+    const btnPng = document.createElement("button");
+    btnPng.className = "btn secondary";
+    btnPng.textContent = "PNG다운로드";
+    btnPng.onclick = async () => {
+      try{
+        // qrcodejs는 img 또는 canvas를 만들 수 있음
+        await sleep(30);
+        const img = qrBox.querySelector("img");
+        const canvas = qrBox.querySelector("canvas");
+        let dataUrl = "";
+
+        if(img && img.src){
+          dataUrl = img.src; // data:image/png;base64...
+        }else if(canvas){
+          dataUrl = canvas.toDataURL("image/png");
+        }else{
+          throw new Error("QR 렌더 요소 없음");
         }
 
         const a = document.createElement("a");
         a.href = dataUrl;
-        a.download = `${empId}_${emp.name}_QR.png`;
+        a.download = `${safeName(emp.id)}_${safeName(emp.name)}.png`;
         document.body.appendChild(a);
         a.click();
-        document.body.removeChild(a);
+        a.remove();
+
+        setStatus(`${emp.name} (${emp.id}) PNG 다운로드 완료`, "good");
+      }catch(e){
+        console.error(e);
+        setStatus("PNG 다운로드 실패", "bad");
+      }
+    };
+
+    actions.appendChild(btnCopy);
+    actions.appendChild(btnPng);
+
+    card.appendChild(nameEl);
+    card.appendChild(idEl);
+    card.appendChild(actions);
+
+    grid.appendChild(card);
+  });
+
+  clearStatus();
+}
+
+/* ==============================
+   직원 데이터 로드
+============================== */
+async function loadEmployees(){
+  setStatus("직원 목록 불러오는 중...", "");
+  try{
+    const res = await fetch(EMP_URL, { cache:"no-store" });
+    employees = await res.json();
+
+    // 기본 정렬(사번 오름차순) - 문자열 사번도 안전하게
+    employees.sort((a,b) => String(a.id).localeCompare(String(b.id), "ko"));
+
+    renderGrid(employees);
+    setStatus(`직원 ${employees.length}명 로드 완료`, "good");
+  }catch(e){
+    console.error(e);
+    setStatus("employees.json 로드 실패 (경로/배포 확인)", "bad");
+  }
+}
+
+/* ==============================
+   전체 ZIP 다운로드
+============================== */
+async function downloadZipAll(){
+  if(!employees.length){
+    setStatus("직원 목록이 비어있습니다. 먼저 로드하세요.", "bad");
+    return;
+  }
+
+  setStatus("ZIP 생성 중... (직원 수 많으면 조금 걸릴 수 있음)", "");
+
+  try{
+    const zip = new JSZip();
+    const folder = zip.folder("ISC_QR");
+
+    // ZIP은 해상도 조금 키워서 저장
+    for(let i=0; i<employees.length; i++){
+      const emp = employees[i];
+      setStatus(`ZIP 생성 중... ${i+1}/${employees.length} (${emp.name})`, "");
+
+      const temp = document.createElement("div");
+      // 화면에 안 보이게
+      temp.style.position = "fixed";
+      temp.style.left = "-9999px";
+      temp.style.top = "-9999px";
+      document.body.appendChild(temp);
+
+      const qrText = BASE_URL + String(emp.id).trim();
+
+      new QRCode(temp, {
+        text: qrText,
+        width: 320,
+        height: 320
       });
 
-      grid.appendChild(card);
-    });
-  });
+      // 렌더 대기
+      await sleep(60);
+
+      const img = temp.querySelector("img");
+      const canvas = temp.querySelector("canvas");
+
+      let dataUrl = "";
+      if(img && img.src) dataUrl = img.src;
+      else if(canvas) dataUrl = canvas.toDataURL("image/png");
+      else throw new Error("QR 렌더 요소 없음");
+
+      const base64 = dataURLtoBase64(dataUrl);
+      const fileName = `${safeName(emp.id)}_${safeName(emp.name)}.png`;
+      folder.file(fileName, base64, { base64:true });
+
+      temp.remove();
+    }
+
+    const blob = await zip.generateAsync({ type:"blob" });
+    saveAs(blob, "ISC_직원_QR.zip");
+    setStatus("ZIP 다운로드 완료 ✅", "good");
+
+  }catch(e){
+    console.error(e);
+    setStatus("ZIP 생성/다운로드 실패", "bad");
+  }
+}
+
+/* ==============================
+   이벤트
+============================== */
+document.getElementById("btnReload").addEventListener("click", loadEmployees);
+document.getElementById("btnZip").addEventListener("click", downloadZipAll);
+
+/* 최초 로드 */
+loadEmployees();
 </script>
 
 </body>
