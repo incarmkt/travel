@@ -1,208 +1,204 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ISC 관리자 시스템</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ISC 관리자 | 전체 관광 출발 체크</title>
 
+  <!-- 기존 CSS 그대로 공유 -->
   <link rel="stylesheet" href="css/base.css">
   <link rel="stylesheet" href="css/desktop.css" media="(min-width: 768px)">
   <link rel="stylesheet" href="css/mobile.css" media="(max-width: 767px)">
 </head>
-<body>
 
-<!-- 모바일 스플래시 -->
-<div id="mobileSplash" class="mobile-splash" style="display:none;">
-  <img src="assets/images/iscposter.jpg">
-</div>
+<body class="logged-in">
 
-<!-- HEADER -->
-<header class="header compact" id="topHeader" style="display:none;">
+<header class="header compact">
   <div class="header-left">
     <img src="assets/images/logo.png" class="logo">
     <div>
-      <h1>ISC 관리자 시스템</h1>
-      <p class="sub">출발 · 중식비 · 고객관리</p>
+      <h1>전체 관광 출발 체크</h1>
+      <p class="sub">QR 또는 사번으로 즉시 출발 등록</p>
     </div>
+  </div>
+  <div class="header-right">
+    <p class="welcome-text"><strong>관리자 모드</strong></p>
   </div>
 </header>
 
-<!-- 로그인 -->
-<section id="loginSection" class="login-hero">
-  <div class="hero-overlay">
-    <div class="login-box">
-      <img src="assets/images/logo.png" class="hero-logo">
-      <h2>관리자 로그인</h2>
-      <input type="password" id="adminPw" placeholder="관리자 번호">
-      <button class="primary-btn" onclick="adminLogin()">로그인</button>
-      <p id="loginError" class="error"></p>
-    </div>
-  </div>
-</section>
-
-<!-- MAIN -->
-<main id="mainSection" class="main-bg" style="display:none;">
+<main id="mainSection">
   <div class="layout">
-
-    <!-- 사이드 메뉴 -->
-    <aside class="side-menu">
-      <button onclick="openPage('travel')">🧭 여행 관리</button>
-      <button onclick="openPage('meal')">🍜 중식비 관리</button>
-      <button onclick="openPage('lookup')">👤 고객 조회</button>
-    </aside>
-
-    <!-- 콘텐츠 -->
     <section class="content-area">
       <div class="main-panel">
 
-        <!-- 홈 -->
-        <div id="homeArea" class="home-view">
-          <img src="assets/images/home.jpg">
+        <!-- ================= STEP 1 : 일정 선택 ================= -->
+        <div id="courseSelect" class="card">
+          <h3>🗓 출발 코스 선택</h3>
+
+          <div class="course-list">
+            <button class="primary-btn" onclick="openScanner('중정기념당')">중정기념당</button>
+            <button class="primary-btn" onclick="openScanner('국립고궁박물관')">국립고궁박물관</button>
+            <button class="primary-btn" onclick="openScanner('타이베이 101')">타이베이 101</button>
+            <button class="primary-btn" onclick="openScanner('ISC 만찬')">ISC 만찬</button>
+          </div>
         </div>
 
-        <!-- 상세 -->
-        <section id="detailPage" class="detail" style="display:none;">
-          <h2 id="detailTitle"></h2>
-          <div id="detailContent"></div>
+        <!-- ================= STEP 2 : QR 스캔 ================= -->
+        <div id="scanSection" class="card" style="display:none;">
+          <h3 id="scanTitle">📷 출발 체크</h3>
+
+          <!-- QR 스캔 영역 -->
+          <div id="qrReader"
+               style="width:100%; height:260px; border-radius:12px; background:#000;">
+          </div>
+
+          <!-- 수동 입력 -->
+          <div class="manual-input">
+            <input type="text" id="manualId" placeholder="사번 직접 입력">
+            <button class="ghost-btn" onclick="manualCheck()">등록</button>
+          </div>
+
+          <!-- 결과 표시 -->
+          <p id="scanResult" class="hint"></p>
 
           <div class="nav-buttons">
-            <button class="ghost-btn" onclick="goHome()">홈으로</button>
-            <button class="ghost-btn" onclick="goBack()">뒤로가기</button>
+            <button class="ghost-btn" onclick="closeScanner()">← 뒤로</button>
           </div>
-        </section>
+        </div>
 
       </div>
     </section>
   </div>
 </main>
 
+<!-- QR 라이브러리 -->
 <script src="https://unpkg.com/html5-qrcode"></script>
 
 <script>
-/* ================= 공통 ================= */
-const ADMIN_PASSWORD = "0000";
-let pageHistory = [];
+/* ================= CONFIG ================= */
+const EMP_URL = "people/employees.json";
+const GAS_URL = "https://script.google.com/macros/s/AKfycbxXXXXXXXXXXXX/exec";
+
+let employees = [];
+let currentCourse = "";
 let qrScanner = null;
 
-/* ================= 로그인 ================= */
-function adminLogin() {
-  const pw = adminPw.value.trim();
-  if (pw !== ADMIN_PASSWORD) {
-    loginError.textContent = "관리자 번호 오류";
-    return;
-  }
+/* ================= LOAD EMP ================= */
+fetch(EMP_URL + "?ts=" + Date.now())
+  .then(r => r.json())
+  .then(d => employees = d);
 
-  loginSection.style.display = "none";
+/* ================= COURSE SELECT ================= */
+function openScanner(course) {
+  currentCourse = course;
 
-  if (innerWidth <= 767) {
-    mobileSplash.style.display = "flex";
-    setTimeout(showMain, 2000);
-  } else {
-    showMain();
-  }
+  document.getElementById("courseSelect").style.display = "none";
+  document.getElementById("scanSection").style.display = "block";
+  document.getElementById("scanTitle").textContent =
+    `📍 ${course} 출발 체크`;
+
+  startQR();
 }
 
-function showMain() {
-  mobileSplash.style.display = "none";
-  topHeader.style.display = "flex";
-  mainSection.style.display = "block";
-  document.body.classList.add("logged-in");
-}
-
-/* ================= 페이지 이동 ================= */
-function openPage(type, fromHistory=false) {
-  if (!fromHistory) pageHistory.push(type);
-
-  homeArea.style.display = "none";
-  detailPage.style.display = "block";
-
-  if (type === "travel") renderTravelAdmin();
-  if (type === "meal") renderMealAdmin();
-  if (type === "lookup") renderLookup();
-}
-
-/* ================= 여행 관리 ================= */
-function renderTravelAdmin() {
-  detailTitle.textContent = "🧭 여행 관리";
-  detailContent.innerHTML = `
-    <div class="card">
-      <button class="primary-btn" onclick="startScan('departure_all')">전체 일정 출발 체크</button>
-      <button class="primary-btn" onclick="startScan('departure_tour')">선택 관광 출발 체크</button>
-    </div>
-    <div id="scanArea"></div>
-  `;
-}
-
-/* ================= 중식비 관리 ================= */
-function renderMealAdmin() {
-  detailTitle.textContent = "🍜 중식비 관리";
-  detailContent.innerHTML = `
-    <div class="card">
-      <button class="primary-btn" onclick="startScan('meal_danshui')">단수이 중식비 지급</button>
-    </div>
-    <div id="scanArea"></div>
-  `;
-}
-
-/* ================= QR 스캔 ================= */
-function startScan(mode) {
-  const area = document.getElementById("scanArea");
-  area.innerHTML = `
-    <div class="card">
-      <h3>QR 스캔 중…</h3>
-      <div id="qrReader" style="height:300px;background:#000"></div>
-      <p class="hint">연속 스캔 가능</p>
-    </div>
-  `;
+/* ================= QR INIT ================= */
+function startQR() {
+  if (qrScanner) return;
 
   qrScanner = new Html5Qrcode("qrReader");
 
   Html5Qrcode.getCameras().then(devices => {
-    const cam = devices.find(d => d.label.includes("back")) || devices[0];
+    const backCam =
+      devices.find(d => /back|rear/i.test(d.label)) ||
+      devices[devices.length - 1];
+
     qrScanner.start(
-      cam.id,
-      { fps: 10, qrbox: 250 },
-      text => handleScan(text, mode)
+      backCam.id,
+      { fps: 10, qrbox: { width: 260, height: 160 } },
+      text => handleQR(text),
+      () => {}
     );
   });
 }
 
-/* ================= 스캔 처리 ================= */
-function handleScan(text, mode) {
+/* ================= QR HANDLE ================= */
+function handleQR(text) {
   try {
     const url = new URL(text);
     const id = url.searchParams.get("eid");
-    if (!id) return;
-
-    sendToSheet(mode, id);
-  } catch {}
+    if (id) processDeparture(id);
+  } catch {
+    // QR 형식 아니면 무시
+  }
 }
 
-/* ================= 시트 전송 ================= */
-function sendToSheet(mode, id) {
-  fetch("YOUR_GAS_URL", {
+/* ================= MANUAL ================= */
+function manualCheck() {
+  const id = document.getElementById("manualId").value.trim();
+  if (id) processDeparture(id);
+}
+
+/* ================= PROCESS ================= */
+function processDeparture(id) {
+  const emp = employees.find(e => e.id === id);
+  if (!emp) {
+    showResult("❌ 등록되지 않은 사번입니다.", false);
+    return;
+  }
+
+  const time = nowKST();
+
+  // 시트 기록
+  fetch(GAS_URL, {
     method: "POST",
     mode: "no-cors",
     body: JSON.stringify({
-      type: mode,
-      id,
-      time: new Date().toISOString()
+      type: "departure",
+      id: emp.id,
+      name: emp.name,
+      course: currentCourse,
+      time
     })
   });
+
+  showResult(`✅ ${emp.name} (${emp.id}) 출발 등록 완료`, true);
 }
 
-/* ================= 네비 ================= */
-function goHome() {
-  pageHistory = [];
-  detailPage.style.display = "none";
-  homeArea.style.display = "block";
+/* ================= UI ================= */
+function showResult(msg, success) {
+  const el = document.getElementById("scanResult");
+  el.textContent = msg;
+  el.style.color = success ? "#16a34a" : "#dc2626";
+
+  document.getElementById("manualId").value = "";
 }
 
-function goBack() {
-  pageHistory.pop();
-  if (pageHistory.length === 0) return goHome();
-  openPage(pageHistory[pageHistory.length-1], true);
+/* ================= UTIL ================= */
+function nowKST() {
+  return new Intl.DateTimeFormat("ko-KR", {
+    timeZone: "Asia/Seoul",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit"
+  }).format(new Date());
+}
+
+/* ================= CLOSE ================= */
+function closeScanner() {
+  if (qrScanner) {
+    qrScanner.stop().then(() => {
+      qrScanner.clear();
+      qrScanner = null;
+    });
+  }
+
+  document.getElementById("scanSection").style.display = "none";
+  document.getElementById("courseSelect").style.display = "block";
+  document.getElementById("scanResult").textContent = "";
 }
 </script>
+
 </body>
 </html>
