@@ -187,7 +187,10 @@ function renderMyTour() {
 
 fetch("people/employees.json?ts=" + Date.now())
   .then(res => res.json())
-  .then(data => employees = data);
+  .then(data => {
+    employees = data;
+    tryAutoLogin(); // 🔥 이 한 줄이 없어서 안 됐던 거
+  });
 
 /* ================= 중식비 지급 로직 ================= */
 
@@ -356,6 +359,26 @@ function login() {
 
   document.getElementById("employeeName").textContent = user.name;
   document.body.classList.add("logged-in");
+}
+function tryAutoLogin() {
+  const params = new URLSearchParams(window.location.search);
+  const eid = params.get("eid");
+
+  if (!eid) return;
+
+  // input에 사번 주입
+  const input = document.getElementById("employeeId");
+  if (input) input.value = eid;
+
+  const user = employees.find(e => String(e.id) === String(eid));
+  if (!user) {
+    document.getElementById("loginError").textContent =
+      "QR 사번이 유효하지 않습니다.";
+    return;
+  }
+
+  // 🔥 여기서 끝
+  login();
 }
 
 /* ================= 여행 일정 ================= */
