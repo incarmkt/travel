@@ -12,7 +12,7 @@
 <style>
 .admin-hidden { display:none !important; }
 
-/* QR 화면에서만 스크롤 차단 */
+/* QR 화면에서만 스크롤 잠금 */
 body.qr-mode {
   overflow: hidden !important;
 }
@@ -23,6 +23,7 @@ body.qr-mode {
   aspect-ratio: 1 / 1;
   background: #000;
   border-radius: 12px;
+  margin: 0 auto;
 }
 
 .qr-wrap {
@@ -50,6 +51,7 @@ body.qr-mode {
   </div>
 </section>
 
+<!-- ================= 관리자 헤더 ================= -->
 <header id="adminHeader" class="header compact admin-hidden">
   <div class="header-left">
     <img src="assets/images/logo.png" class="logo">
@@ -60,43 +62,44 @@ body.qr-mode {
   </div>
 </header>
 
+<!-- ================= 메인 ================= -->
 <main id="adminMain" class="admin-hidden">
-  <div class="layout">
-    <section class="content-area">
-      <div class="main-panel">
 
-        <!-- 메인 -->
-        <div id="pageMain">
-          <button class="primary-btn" onclick="openPage('Travel')">여행 일정 관리</button>
-          <button class="primary-btn">중식비 관리</button>
-          <button class="primary-btn">고객 정보</button>
-        </div>
+  <!-- 관리자 메인 -->
+  <section id="pageMain" class="content-area">
+    <div class="main-panel">
+      <button class="primary-btn" onclick="openPage('Travel')">여행 일정 관리</button>
+      <button class="primary-btn">중식비 관리</button>
+      <button class="primary-btn">고객 정보</button>
+    </div>
+  </section>
 
-        <!-- 여행 관리 -->
-        <div id="pageTravel" class="admin-hidden">
-          <button class="primary-btn" onclick="openSchedule('전체일정')">전체 관광 출발 체크</button>
-          <button class="primary-btn" onclick="openSchedule('선택관광')">선택 관광 출발 체크</button>
-          <button class="ghost-btn" onclick="goBack()">← 뒤로</button>
-        </div>
+  <!-- 여행 관리 -->
+  <section id="pageTravel" class="content-area admin-hidden">
+    <div class="main-panel">
+      <button class="primary-btn" onclick="openSchedule('전체일정')">전체 관광 출발 체크</button>
+      <button class="primary-btn" onclick="openSchedule('선택관광')">선택 관광 출발 체크</button>
+      <button class="ghost-btn" onclick="goBack()">← 뒤로</button>
+    </div>
+  </section>
 
-        <!-- 일정 -->
-        <div id="pageSchedule" class="admin-hidden"></div>
+  <!-- 일정 리스트 -->
+  <section id="pageSchedule" class="content-area admin-hidden"></section>
 
-        <!-- QR -->
-        <div id="pageQR" class="admin-hidden card">
-          <h3 id="qrTitle"></h3>
-          <div class="qr-wrap">
-            <div id="qrReader"></div>
-            <input id="manualId" placeholder="사번 직접 입력">
-            <button class="ghost-btn" onclick="manualCheck()">등록</button>
-            <div id="qrResult"></div>
-            <button class="ghost-btn" onclick="goBack()">← 뒤로</button>
-          </div>
-        </div>
-
+  <!-- QR -->
+  <section id="pageQR" class="content-area admin-hidden">
+    <div class="card">
+      <h3 id="qrTitle"></h3>
+      <div class="qr-wrap">
+        <div id="qrReader"></div>
+        <input id="manualId" placeholder="사번 직접 입력">
+        <button class="ghost-btn" onclick="manualCheck()">등록</button>
+        <div id="qrResult"></div>
+        <button class="ghost-btn" onclick="goBack()">← 뒤로</button>
       </div>
-    </section>
-  </div>
+    </div>
+  </section>
+
 </main>
 
 <script src="https://unpkg.com/html5-qrcode"></script>
@@ -128,7 +131,7 @@ function adminLogin() {
 
 /* ================= 네비 ================= */
 function hideAll() {
-  document.querySelectorAll("[id^='page']").forEach(p => p.classList.add("admin-hidden"));
+  document.querySelectorAll("main > section").forEach(s => s.classList.add("admin-hidden"));
 }
 
 function openPage(page) {
@@ -218,7 +221,7 @@ function processDeparture(id) {
 /* ================= 직원 ================= */
 fetch(EMP_URL).then(r=>r.json()).then(d=>employees=d);
 
-/* ================= 고객용 여행 일정 (원본 그대로) ================= */
+/* ================= 여행 일정 (절대 수정 금지) ================= */
 const travelSchedule = [
   {
     day: "DAY 1",
