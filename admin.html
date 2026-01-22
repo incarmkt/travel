@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>ISC 관리자 | 전체 관광 출발 체크</title>
+  <title>ISC 관리자 | 출발 체크</title>
 
   <!-- 기존 CSS 그대로 공유 -->
   <link rel="stylesheet" href="css/base.css">
@@ -17,8 +17,8 @@
   <div class="header-left">
     <img src="assets/images/logo.png" class="logo">
     <div>
-      <h1>전체 관광 출발 체크</h1>
-      <p class="sub">QR 또는 사번으로 즉시 출발 등록</p>
+      <h1 id="headerTitle">관리자 출발 체크</h1>
+      <p class="sub" id="headerSub">코스 선택 → QR 또는 사번 입력</p>
     </div>
   </div>
   <div class="header-right">
@@ -31,15 +31,26 @@
     <section class="content-area">
       <div class="main-panel">
 
-        <!-- ================= STEP 1 : 일정 선택 ================= -->
-        <div id="courseSelect" class="card">
-          <h3>🗓 출발 코스 선택</h3>
+        <!-- ================= STEP 0 : 카테고리 선택 ================= -->
+        <div id="categorySelect" class="card">
+          <h3>🧭 출발 유형 선택</h3>
+          <div style="display:flex; gap:12px; flex-wrap:wrap;">
+            <button class="primary-btn" onclick="selectCategory('전체일정')">전체 관광</button>
+            <button class="primary-btn" onclick="selectCategory('선택관광')">선택 관광</button>
+          </div>
+        </div>
 
+        <!-- ================= STEP 1 : 코스 선택 ================= -->
+        <div id="courseSelect" class="card" style="display:none;">
+          <h3>🗓 출발 코스 선택</h3>
           <div class="course-list">
             <button class="primary-btn" onclick="openScanner('중정기념당')">중정기념당</button>
             <button class="primary-btn" onclick="openScanner('국립고궁박물관')">국립고궁박물관</button>
             <button class="primary-btn" onclick="openScanner('타이베이 101')">타이베이 101</button>
             <button class="primary-btn" onclick="openScanner('ISC 만찬')">ISC 만찬</button>
+          </div>
+          <div style="margin-top:16px;">
+            <button class="ghost-btn" onclick="goCategory()">← 이전</button>
           </div>
         </div>
 
@@ -53,13 +64,13 @@
           </div>
 
           <!-- 수동 입력 -->
-          <div class="manual-input">
+          <div class="manual-input" style="margin-top:12px;">
             <input type="text" id="manualId" placeholder="사번 직접 입력">
             <button class="ghost-btn" onclick="manualCheck()">등록</button>
           </div>
 
-          <!-- 결과 표시 -->
-          <p id="scanResult" class="hint"></p>
+          <!-- 결과 -->
+          <p id="scanResult" class="hint" style="margin-top:12px;"></p>
 
           <div class="nav-buttons">
             <button class="ghost-btn" onclick="closeScanner()">← 뒤로</button>
@@ -77,9 +88,11 @@
 <script>
 /* ================= CONFIG ================= */
 const EMP_URL = "people/employees.json";
-const GAS_URL = "https://script.google.com/macros/s/AKfycbxXXXXXXXXXXXX/exec";
+const GAS_URL = "https://script.google.com/macros/s/AKfycbywujbffRaXimjgXIjZkeyLv0kea2tDe17jtBmMvLjs6gFB0dz16Xkfj4mJLMN2mof83w/exec";
 
+/* ================= STATE ================= */
 let employees = [];
+let currentCategory = "";
 let currentCourse = "";
 let qrScanner = null;
 
@@ -88,7 +101,22 @@ fetch(EMP_URL + "?ts=" + Date.now())
   .then(r => r.json())
   .then(d => employees = d);
 
-/* ================= COURSE SELECT ================= */
+/* ================= CATEGORY ================= */
+function selectCategory(cat) {
+  currentCategory = cat;
+  document.getElementById("categorySelect").style.display = "none";
+  document.getElementById("courseSelect").style.display = "block";
+
+  document.getElementById("headerTitle").textContent =
+    cat === "전체일정" ? "전체 관광 출발 체크" : "선택 관광 출발 체크";
+}
+
+function goCategory() {
+  document.getElementById("courseSelect").style.display = "none";
+  document.getElementById("categorySelect").style.display = "block";
+}
+
+/* ================= COURSE ================= */
 function openScanner(course) {
   currentCourse = course;
 
@@ -126,9 +154,7 @@ function handleQR(text) {
     const url = new URL(text);
     const id = url.searchParams.get("eid");
     if (id) processDeparture(id);
-  } catch {
-    // QR 형식 아니면 무시
-  }
+  } catch {}
 }
 
 /* ================= MANUAL ================= */
@@ -147,7 +173,6 @@ function processDeparture(id) {
 
   const time = nowKST();
 
-  // 시트 기록
   fetch(GAS_URL, {
     method: "POST",
     mode: "no-cors",
@@ -155,6 +180,7 @@ function processDeparture(id) {
       type: "departure",
       id: emp.id,
       name: emp.name,
+      category: currentCategory,   // ✅ 핵심
       course: currentCourse,
       time
     })
@@ -168,7 +194,6 @@ function showResult(msg, success) {
   const el = document.getElementById("scanResult");
   el.textContent = msg;
   el.style.color = success ? "#16a34a" : "#dc2626";
-
   document.getElementById("manualId").value = "";
 }
 
