@@ -148,10 +148,7 @@
   border-color:#fde68a;
   font-weight:800;
 }
-    /* QR 모드에서는 하단 nav 버튼 숨김(스크롤 방지) */
-    body.qr-lock #detailPage .nav-buttons{
-      display:none !important;
-    }
+  
 
     /* 고객 상세 카드 */
     .info-card{
@@ -212,7 +209,19 @@
   background:#f59e0b;
   color:#111;
 }
-
+.qr-counter{
+  margin-top:8px;
+  font-size:14px;
+  font-weight:700;
+  color:#111827;
+}
+    body.qr-lock .nav-buttons{
+  position: sticky;
+  bottom: 0;
+  background: #fff;
+  padding-bottom: env(safe-area-inset-bottom);
+  z-index: 20;
+}
   </style>
 </head>
 
@@ -253,7 +262,6 @@
 
     <!-- ✅ 좌측 메뉴(고객용과 동일 UX) -->
     <aside class="side-menu">
-      <button onclick="openHome()">🏠 관리자 홈</button>
       <button onclick="openPage('travelRoot')">🧭 여행일정관리</button>
       <button onclick="openPage('mealRoot')">💳 중식비지급관리</button>
       <button onclick="openPage('customerRoot')">👤 고객관리</button>
@@ -328,6 +336,11 @@ let currentMealTitle = "";  // 중식비 항목명(예: 단수이)
 /* 연속 스캔 중복 방지 */
 let lastScanKey = "";
 let scanLock = false; // 🔥 추가
+  // 🔥 추가
+let localCounters = {
+  departure: {}, // { "인천 국제공항 출발": 12 }
+  meal: {}        // { "단수이 중식비": 8 }
+};
   
 /* =========================================================
    ✅ 직원 데이터 로드
@@ -540,12 +553,28 @@ function openQRScreen(titleText, opts){
 
   t.textContent = titleText;
 
-  c.innerHTML = `
-    <div class="qr-customer-like">
-      <div id="qrReader" class="qr-camera"></div>
-      <div id="qrToast" class="qr-toast">QR 스캔 대기중</div>
+c.innerHTML = `
+  <div class="qr-customer-like">
+    <div id="qrReader" class="qr-camera"></div>
+
+    <!-- ✅ 수기 사번 입력 (QR 안될 때 대비) -->
+    <div class="manual-row" style="margin-top:12px;">
+      <input
+        id="manualIdInput"
+        type="number"
+        inputmode="numeric"
+        placeholder="사번 직접 입력"
+      />
+      <button class="primary-btn" onclick="manualSubmit()">확인</button>
     </div>
-  `;
+
+    <div id="qrToast" class="qr-toast">QR 스캔 대기중</div>
+
+    <div id="qrCounter" class="qr-counter">
+      현재 처리 인원: 0명
+    </div>
+  </div>
+`;
 
   document.body.classList.add("qr-lock");
   startQR();
@@ -635,6 +664,26 @@ if (key === lastScanKey){
   return;
 }
   lastScanKey = key;
+  // 🔥 여기 추가
+let count = 0;
+
+if (qrMode === "departure"){
+  localCounters.departure[currentCourse] =
+    (localCounters.departure[currentCourse] || 0) + 1;
+  count = localCounters.departure[currentCourse];
+}
+
+if (qrMode === "meal"){
+  localCounters.meal[currentMealTitle] =
+    (localCounters.meal[currentMealTitle] || 0) + 1;
+  count = localCounters.meal[currentMealTitle];
+}
+
+// 🔥 카운터 화면 반영
+const counterEl = document.getElementById("qrCounter");
+if (counterEl){
+  counterEl.textContent = `현재 처리 인원: ${count}명`;
+}
   lastScanAt = now;
 
   if (qrMode === "departure"){
@@ -848,7 +897,22 @@ function escapeHtml(str){
     .replaceAll('"',"&quot;")
     .replaceAll("'","&#039;");
 }
+function exitQR(){
+  cleanupQR();
+  goBack(); // 기존 히스토리 기반 이동 그대로 사용
+}
+function manualSubmit(){
+  const input = document.getElementById("manualIdInput");
+  if (!input) return;
 
+  const id = input.value.trim();
+  if (!id) return;
+
+  // 🔥 QR과 완전히 동일한 처리 흐름
+  processEmployeeId(id);
+
+  input.value = "";
+}
 /* =========================================================
    ✅ 엔터로 로그인
 ========================================================= */
