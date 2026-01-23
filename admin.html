@@ -337,10 +337,11 @@ let currentMealTitle = "";  // 중식비 항목명(예: 단수이)
 let lastScanKey = "";
 let scanLock = false; // 🔥 추가
   // 🔥 추가
-let localCounters = {
-  departure: {}, // { "인천 국제공항 출발": 12 }
-  meal: {}        // { "단수이 중식비": 8 }
-};
+// ✅ 단말기 기준 (QR 화면마다 0부터)
+let deviceCounter = 0;
+
+// ✅ 전체 기준 (서버에서 내려받아 표시용)
+let totalCounter = 0;
   
 /* =========================================================
    ✅ 직원 데이터 로드
@@ -505,9 +506,11 @@ pageHistory.push("travelList"); // 히스토리용
 function openDepartureQR(courseTitle){
   currentCourse = courseTitle;
   qrMode = "departure";
-  lastScannedEmployee = null;
   lastScanKey = "";
 
+  deviceCounter = 0;           // 🔥 핵심
+  updateCounterUI();           // 화면 반영
+}
   openQRScreen(`📷 출발 체크 - ${courseTitle}`, {
     showReset: true
   });
@@ -570,9 +573,10 @@ c.innerHTML = `
 
     <div id="qrToast" class="qr-toast">QR 스캔 대기중</div>
 
-    <div id="qrCounter" class="qr-counter">
-      현재 처리 인원: 0명
-    </div>
+   <div class="qr-counter">
+  <div id="deviceCounter">처리 인원: 0명</div>
+  <div id="totalCounter">전체 처리 인원: -</div>
+</div>
   </div>
 `;
 
@@ -667,12 +671,18 @@ if (key === lastScanKey){
   // 🔥 여기 추가
 let count = 0;
 
-if (qrMode === "departure"){
-  localCounters.departure[currentCourse] =
-    (localCounters.departure[currentCourse] || 0) + 1;
-  count = localCounters.departure[currentCourse];
-}
+// ✅ 단말기 기준
+deviceCounter++;
+updateCounterUI();
 
+  function updateCounterUI(){
+  document.getElementById("deviceCounter").textContent =
+    `처리 인원: ${deviceCounter}명`;
+
+  document.getElementById("totalCounter").textContent =
+    `전체 처리 인원: ${totalCounter}명`;
+}
+  
 if (qrMode === "meal"){
   localCounters.meal[currentMealTitle] =
     (localCounters.meal[currentMealTitle] || 0) + 1;
