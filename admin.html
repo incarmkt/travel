@@ -337,12 +337,11 @@ let currentMealTitle = "";  // 중식비 항목명(예: 단수이)
 let lastScanKey = "";
 let scanLock = false; // 🔥 추가
   // 🔥 추가
-// ✅ 단말기 기준 (QR 화면마다 0부터)
-let deviceCounter = 0;
-
-// ✅ 전체 기준 (서버에서 내려받아 표시용)
-let totalCounter = 0;
-
+let localCounters = {
+  departure: {}, // { "인천 국제공항 출발": 12 }
+  meal: {}        // { "단수이 중식비": 8 }
+};
+  
 /* =========================================================
    ✅ 직원 데이터 로드
 ========================================================= */
@@ -506,10 +505,8 @@ pageHistory.push("travelList"); // 히스토리용
 function openDepartureQR(courseTitle){
   currentCourse = courseTitle;
   qrMode = "departure";
+  lastScannedEmployee = null;
   lastScanKey = "";
-
-  deviceCounter = 0;        // 단말기 카운터 초기화
-  updateCounterUI();
 
   openQRScreen(`📷 출발 체크 - ${courseTitle}`, {
     showReset: true
@@ -573,10 +570,9 @@ c.innerHTML = `
 
     <div id="qrToast" class="qr-toast">QR 스캔 대기중</div>
 
-   <div class="qr-counter">
-  <div id="deviceCounter">처리 인원: 0명</div>
-  <div id="totalCounter">전체 처리 인원: -</div>
-</div>
+    <div id="qrCounter" class="qr-counter">
+      현재 처리 인원: 0명
+    </div>
   </div>
 `;
 
@@ -662,16 +658,33 @@ function processEmployeeId(id){
   const now = Date.now();
   const key = `${qrMode}|${emp.id}|${currentCategory}|${currentCourse}|${currentMealTitle}`;
 
-  if (key === lastScanKey){
-    setQRResult(`⚠️ ${emp.name}(${emp.id}) 이미 처리됨`, false);
-    return;
-  }
-
+// 이 조건 자체를 단순화
+if (key === lastScanKey){
+  setQRResult(`⚠️ ${emp.name}(${emp.id}) 이미 처리됨`, false);
+  return;
+}
   lastScanKey = key;
+  // 🔥 여기 추가
+let count = 0;
 
-  // ✅ 단말기 카운트
-  deviceCounter++;
-  updateCounterUI();
+if (qrMode === "departure"){
+  localCounters.departure[currentCourse] =
+    (localCounters.departure[currentCourse] || 0) + 1;
+  count = localCounters.departure[currentCourse];
+}
+
+if (qrMode === "meal"){
+  localCounters.meal[currentMealTitle] =
+    (localCounters.meal[currentMealTitle] || 0) + 1;
+  count = localCounters.meal[currentMealTitle];
+}
+
+// 🔥 카운터 화면 반영
+const counterEl = document.getElementById("qrCounter");
+if (counterEl){
+  counterEl.textContent = `현재 처리 인원: ${count}명`;
+}
+  lastScanAt = now;
 
   if (qrMode === "departure"){
     sendDeparture(emp);
@@ -684,7 +697,7 @@ function processEmployeeId(id){
   }
 
   if (qrMode === "customer"){
-    cleanupQR();
+    cleanupQR();            // ❗ 고객조회에서만
     showCustomerDetail(emp);
     return;
   }
@@ -725,33 +738,23 @@ function beep(){
 function sendDeparture(emp){
   const time = nowKSTString();
 
-  setQRResult(
-    `✅ ${emp.name}(${emp.id}) 출발 체크 완료\n[${currentCategory}] ${currentCourse}\n${time}`,
-    true
-  );
-
-  fetch(GAS_URL, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      type: "departure",
-      id: emp.id,
-      name: emp.name,
-      category: currentCategory,
-      course: currentCourse,
-      time
-    })
-  })
-  .then(res => res.json())          // ✅ 여기서 JSON을 “받는 것”
-  .then(data => {
-    if (data.totalCount !== undefined){
-      totalCounter = data.totalCount;
-      updateCounterUI();
-    }
-  })
-  .catch(console.error);
+  setQRResult(`✅ ${emp.name}(${emp.id}) 출발 체크 완료\n[${currentCategory}] ${currentCourse}\n${time}`, true);
+ // 🔥 네트워크는 다음 틱으로 넘김
+  setTimeout(() => {
+    fetch(GAS_URL, {
+      method:"POST",
+      mode:"no-cors",
+      body: JSON.stringify({
+        type: "departure",
+        id: emp.id,
+        name: emp.name,
+        category: currentCategory,
+        course: currentCourse,
+        time
+      })
+    }).catch(console.error);
+  }, 0);
 }
-
 
 /* =========================================================
    ✅ GAS 전송: 중식비 지급(승인)
@@ -760,15 +763,13 @@ function sendDeparture(emp){
 function sendMealApprove(emp){
   const time = nowKSTString();
   
-  setQRResult(
-    `✅ ${emp.name}(${emp.id}) 중식비 지급 완료\n[${currentMealTitle}]\n${time}`,
-    true
-  );
-
+  setQRResult(`✅ ${emp.name}(${emp.id}) 중식비 지급 완료\n[${currentMealTitle}]\n${time}`, true);
+  
+ // 🔥 네트워크는 뒤로
   setTimeout(() => {
     fetch(GAS_URL, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
+      method:"POST",
+      mode:"no-cors",
       body: JSON.stringify({
         type: "meal",
         id: emp.id,
@@ -777,15 +778,7 @@ function sendMealApprove(emp){
         action: "APPROVE",
         time
       })
-    })
-    .then(res => res.json())
-    .then(data => {
-      if (data.totalCount !== undefined){
-        totalCounter = data.totalCount;
-        updateCounterUI();
-      }
-    })
-    .catch(console.error);
+    }).catch(console.error);
   }, 0);
 }
 /* =========================================================
