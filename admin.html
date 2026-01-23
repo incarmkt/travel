@@ -342,7 +342,7 @@ let deviceCounter = 0;
 
 // ✅ 전체 기준 (서버에서 내려받아 표시용)
 let totalCounter = 0;
-  
+
 /* =========================================================
    ✅ 직원 데이터 로드
 ========================================================= */
@@ -508,9 +508,9 @@ function openDepartureQR(courseTitle){
   qrMode = "departure";
   lastScanKey = "";
 
-  deviceCounter = 0;           // 🔥 핵심
-  updateCounterUI();           // 화면 반영
-}
+  deviceCounter = 0;        // 단말기 카운터 초기화
+  updateCounterUI();
+
   openQRScreen(`📷 출발 체크 - ${courseTitle}`, {
     showReset: true
   });
@@ -662,39 +662,16 @@ function processEmployeeId(id){
   const now = Date.now();
   const key = `${qrMode}|${emp.id}|${currentCategory}|${currentCourse}|${currentMealTitle}`;
 
-// 이 조건 자체를 단순화
-if (key === lastScanKey){
-  setQRResult(`⚠️ ${emp.name}(${emp.id}) 이미 처리됨`, false);
-  return;
-}
+  if (key === lastScanKey){
+    setQRResult(`⚠️ ${emp.name}(${emp.id}) 이미 처리됨`, false);
+    return;
+  }
+
   lastScanKey = key;
-  // 🔥 여기 추가
-let count = 0;
 
-// ✅ 단말기 기준
-deviceCounter++;
-updateCounterUI();
-
-  function updateCounterUI(){
-  document.getElementById("deviceCounter").textContent =
-    `처리 인원: ${deviceCounter}명`;
-
-  document.getElementById("totalCounter").textContent =
-    `전체 처리 인원: ${totalCounter}명`;
-}
-  
-if (qrMode === "meal"){
-  localCounters.meal[currentMealTitle] =
-    (localCounters.meal[currentMealTitle] || 0) + 1;
-  count = localCounters.meal[currentMealTitle];
-}
-
-// 🔥 카운터 화면 반영
-const counterEl = document.getElementById("qrCounter");
-if (counterEl){
-  counterEl.textContent = `현재 처리 인원: ${count}명`;
-}
-  lastScanAt = now;
+  // ✅ 단말기 카운트
+  deviceCounter++;
+  updateCounterUI();
 
   if (qrMode === "departure"){
     sendDeparture(emp);
@@ -707,7 +684,7 @@ if (counterEl){
   }
 
   if (qrMode === "customer"){
-    cleanupQR();            // ❗ 고객조회에서만
+    cleanupQR();
     showCustomerDetail(emp);
     return;
   }
@@ -748,23 +725,33 @@ function beep(){
 function sendDeparture(emp){
   const time = nowKSTString();
 
-  setQRResult(`✅ ${emp.name}(${emp.id}) 출발 체크 완료\n[${currentCategory}] ${currentCourse}\n${time}`, true);
- // 🔥 네트워크는 다음 틱으로 넘김
-  setTimeout(() => {
-    fetch(GAS_URL, {
-      method:"POST",
-      mode:"no-cors",
-      body: JSON.stringify({
-        type: "departure",
-        id: emp.id,
-        name: emp.name,
-        category: currentCategory,
-        course: currentCourse,
-        time
-      })
-    }).catch(console.error);
-  }, 0);
+  setQRResult(
+    `✅ ${emp.name}(${emp.id}) 출발 체크 완료\n[${currentCategory}] ${currentCourse}\n${time}`,
+    true
+  );
+
+  fetch(GAS_URL, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      type: "departure",
+      id: emp.id,
+      name: emp.name,
+      category: currentCategory,
+      course: currentCourse,
+      time
+    })
+  })
+  .then(res => res.json())          // ✅ 여기서 JSON을 “받는 것”
+  .then(data => {
+    if (data.totalCount !== undefined){
+      totalCounter = data.totalCount;
+      updateCounterUI();
+    }
+  })
+  .catch(console.error);
 }
+
 
 /* =========================================================
    ✅ GAS 전송: 중식비 지급(승인)
@@ -773,13 +760,15 @@ function sendDeparture(emp){
 function sendMealApprove(emp){
   const time = nowKSTString();
   
-  setQRResult(`✅ ${emp.name}(${emp.id}) 중식비 지급 완료\n[${currentMealTitle}]\n${time}`, true);
-  
- // 🔥 네트워크는 뒤로
+  setQRResult(
+    `✅ ${emp.name}(${emp.id}) 중식비 지급 완료\n[${currentMealTitle}]\n${time}`,
+    true
+  );
+
   setTimeout(() => {
     fetch(GAS_URL, {
-      method:"POST",
-      mode:"no-cors",
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         type: "meal",
         id: emp.id,
@@ -788,7 +777,15 @@ function sendMealApprove(emp){
         action: "APPROVE",
         time
       })
-    }).catch(console.error);
+    })
+    .then(res => res.json())
+    .then(data => {
+      if (data.totalCount !== undefined){
+        totalCounter = data.totalCount;
+        updateCounterUI();
+      }
+    })
+    .catch(console.error);
   }, 0);
 }
 /* =========================================================
