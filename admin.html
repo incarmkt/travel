@@ -265,6 +265,7 @@
       <button onclick="openPage('travelRoot')">🧭 여행일정관리</button>
       <button onclick="openPage('mealRoot')">💳 중식비지급관리</button>
       <button onclick="openPage('customerRoot')">👤 고객관리</button>
+      <button onclick="openPage('reportRoot')">📊 관리자 요약 리포트</button>
     </aside>
 
     <section class="content-area">
@@ -399,6 +400,10 @@ function openHome(){
 ========================================================= */
 function openPage(type, fromHistory=false){
   cleanupQR();
+  if (type === "reportRoot") {
+  openAdminReport();
+  return;
+}
 
   if (!fromHistory) pageHistory.push(type);
 
@@ -766,19 +771,32 @@ function sendDeparture(emp){
   setQRResult(`✅ ${emp.name}(${emp.id}) 출발 체크 완료\n[${currentCategory}] ${currentCourse}\n${time}`, true);
  // 🔥 네트워크는 다음 틱으로 넘김
   setTimeout(() => {
-    fetch(GAS_URL, {
-      method:"POST",
-      mode:"no-cors",
-      body: JSON.stringify({
-        type: "departure",
-        id: emp.id,
-        name: emp.name,
-        category: currentCategory,
-        course: currentCourse,
-        time
-      })
-    }).catch(console.error);
-  }, 0);
+fetch(GAS_URL, {
+  method: "POST",
+  body: JSON.stringify({
+    type: "departure",
+    id: emp.id,
+    name: emp.name,
+    category: currentCategory,
+    course: currentCourse,
+    time
+  })
+})
+.then(r => r.json())
+.then(data => {
+  if (data.totalCount != null) {
+    updateTotalCount(data.totalCount);
+  }
+})
+.catch(console.error);
+}
+             
+function updateTotalCount(total){
+  const el = document.getElementById("qrCounter");
+  if (!el) return;
+
+  el.textContent =
+    `현재 처리 인원: ${uiCounters[qrMode]}명 / 전체: ${total}명`;
 }
 
 /* =========================================================
@@ -849,7 +867,55 @@ function showCustomerDetail(emp){
     </div>
   `;
 }
+  /* =========================================================
+   ✅ 관리자 리포트 화면
+========================================================= */
+function openAdminReport(){
+  const t = document.getElementById("detailTitle");
+  const c = document.getElementById("detailContent");
 
+  t.textContent = "📊 관리자 요약 리포트";
+
+  c.innerHTML = `
+    <div class="card">
+      <h3>📍 여행 출발 인원</h3>
+      <div id="departureReport">불러오는 중...</div>
+    </div>
+
+    <div class="card" style="margin-top:16px;">
+      <h3>🍱 중식비 지급 인원</h3>
+      <div id="mealReport">불러오는 중...</div>
+    </div>
+  `;
+
+  loadAdminReport();
+}
+  /* =========================================================
+   ✅ 데이터 로딩 함수
+========================================================= */
+  function loadAdminReport(){
+  fetch(`${GAS_URL}?mode=summary`)
+    .then(r => r.json())
+    .then(data => {
+      renderReport("departureReport", data.departure);
+      renderReport("mealReport", data.meal);
+    })
+    .catch(e => {
+      document.getElementById("departureReport").textContent = "불러오기 실패";
+      document.getElementById("mealReport").textContent = "불러오기 실패";
+    });
+}
+/* =========================================================
+   ✅ 렌더링 함수
+========================================================= */
+  function renderReport(targetId, rows){
+  const el = document.getElementById(targetId);
+  if (!el || !rows) return;
+
+  el.innerHTML = rows.map(r =>
+    `<div>• ${r.title} : <b>${r.count}명</b></div>`
+  ).join("");
+}
 /* =========================================================
    ✅ 뒤로가기
 ========================================================= */
