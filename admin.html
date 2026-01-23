@@ -142,8 +142,12 @@
       box-sizing:border-box;
     }
     .qr-result.success{ color:#16a34a; font-weight:800; }
-    .qr-result.fail{ color:#dc2626; font-weight:800; }
-
+    .qr-result.fail{
+  color:#d97706;          /* 노란 계열 */
+  background:#fffbeb;
+  border-color:#fde68a;
+  font-weight:800;
+}
     /* QR 모드에서는 하단 nav 버튼 숨김(스크롤 방지) */
     body.qr-lock #detailPage .nav-buttons{
       display:none !important;
@@ -172,6 +176,43 @@
       background:#f9fafb;
       font-size:12px;
     }
+    .qr-customer-like{
+  width:100%;
+  height:100%;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+}
+
+.qr-camera{
+  width:100%;
+  max-width:420px;
+  aspect-ratio:1/1;
+  border-radius:16px;
+  overflow:hidden;
+  background:#000;
+}
+
+.qr-toast{
+  margin-top:12px;
+  padding:10px 14px;
+  border-radius:999px;
+  font-size:14px;
+  font-weight:700;
+  background:#111;
+  color:#fff;
+}
+
+.qr-toast.success{
+  background:#16a34a;
+}
+
+.qr-toast.fail{
+  background:#f59e0b;
+  color:#111;
+}
+
   </style>
 </head>
 
@@ -282,12 +323,10 @@ let qrMode = "";
 let currentCategory = "";   // 전체일정관리 | 선택일정관리
 let currentCourse = "";     // 일정 항목명(예: 중식 | 우육면)
 let currentMealTitle = "";  // 중식비 항목명(예: 단수이 중식비)
-let lastScannedEmployee = null;
+
 
 /* 연속 스캔 중복 방지 */
 let lastScanKey = "";
-let lastScanAt = 0;
-const SCAN_DEBOUNCE_MS = 250;
 let scanLock = false; // 🔥 추가
   
 /* =========================================================
@@ -493,6 +532,7 @@ function openCustomerScan(){
    ✅ 공통 QR 화면 렌더링
    - QR + 사번 입력 + 결과 + 초기화 버튼
    - 모바일 스크롤 없이 한 화면 고정
+   - 고객용 QR 레이아웃과 동일
 ========================================================= */
 function openQRScreen(titleText, opts){
   const t = document.getElementById("detailTitle");
@@ -501,29 +541,18 @@ function openQRScreen(titleText, opts){
   t.textContent = titleText;
 
   c.innerHTML = `
-    <div class="qr-panel">
-      <div id="qrReader"></div>
-
-      <div class="manual-row">
-        <input type="text" id="manualId" placeholder="사번 직접 입력">
-        <button class="ghost-btn" onclick="manualSubmit()">등록</button>
-      </div>
-
-      <div id="qrResult" class="qr-result">QR 스캔 대기중</div>
-
-      ${opts.showReset ? `
-        <button class="ghost-btn" onclick="resetResult()">결과 초기화</button>
-      ` : ``}
-
-      <p style="margin:0; color:#667085; font-size:12px; text-align:center;">
-        QR이 안 되면 사번을 입력 후 등록하세요 (연속 스캔 가능)
-      </p>
+    <div class="qr-customer-like">
+      <div id="qrReader" class="qr-camera"></div>
+      <div id="qrToast" class="qr-toast">QR 스캔 대기중</div>
     </div>
   `;
 
   document.body.classList.add("qr-lock");
   startQR();
 }
+
+
+
 
 /* =========================================================
    ✅ QR 시작/종료
@@ -536,16 +565,16 @@ async function startQR(){
     qrScanner = new Html5Qrcode("qrReader");
 
     // ✅ 여기서만 권한 요청 (1번)
-    await qrScanner.start(
-      { facingMode: "environment" },
-      {
-        fps: 25,
-        qrbox: { width: 260, height: 260 }
-      },
-      decodedText => handleQR(decodedText),
-      () => {}
-    );
-
+  await qrScanner.start(
+  { facingMode: "environment" },
+  {
+    fps: 30,                    // 체감 동일 / 안정성 ↑
+    qrbox: { width: 220, height: 220 },
+    disableFlip: true
+  },
+  decodedText => handleQR(decodedText),
+  () => {}
+);
   } catch(e){
     console.error(e);
     setQRResult("카메라 권한을 허용해주세요.", false);
@@ -579,6 +608,8 @@ function handleQR(text){
   if (!id) return;
 
   scanLock = true;      // 🔥 즉시 잠금
+   beep(); // 🔊 여기 추가
+  vibrate();   // 📳 진동
   processEmployeeId(id);
 
   // 🔓 200ms 후 다시 인식 허용 (체감 최적값)
@@ -587,13 +618,6 @@ function handleQR(text){
   }, 200);
 }
 
-
-function manualSubmit(){
-  const id = String(document.getElementById("manualId")?.value || "").trim();
-  if (!id) return;
-  processEmployeeId(id);
-  document.getElementById("manualId").value = "";
-}
 
 function processEmployeeId(id){
   const emp = findEmp(id);
@@ -605,14 +629,13 @@ function processEmployeeId(id){
   const now = Date.now();
   const key = `${qrMode}|${emp.id}|${currentCategory}|${currentCourse}|${currentMealTitle}`;
 
-  if (key === lastScanKey && (now - lastScanAt) < SCAN_DEBOUNCE_MS){
-    /* 너무 빠른 중복 스캔 무시 */
-    return;
-  }
+// 이 조건 자체를 단순화
+if (key === lastScanKey){
+  setQRResult(`⚠️ ${emp.name}(${emp.id}) 이미 처리됨`, false);
+  return;
+}
   lastScanKey = key;
   lastScanAt = now;
-
-  lastScannedEmployee = emp;
 
   if (qrMode === "departure"){
     sendDeparture(emp);
@@ -625,8 +648,38 @@ function processEmployeeId(id){
   }
 
   if (qrMode === "customer"){
+    cleanupQR();            // ❗ 고객조회에서만
     showCustomerDetail(emp);
     return;
+  }
+}
+    /* =========================================================
+   ✅ qr시 삑소리
+========================================================= */
+function beep(){
+  try{
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+
+    osc.type = "square";
+    osc.frequency.value = 1200; // 삑 소리 높이
+    gain.gain.value = 0.1;
+
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+
+    osc.start();
+    osc.stop(ctx.currentTime + 0.08); // 0.08초
+
+  }catch(e){}
+}
+  /* =========================================================
+   ✅ qr시 진동
+========================================================= */
+  function vibrate(){
+  if (navigator.vibrate){
+    navigator.vibrate(40); // 40ms (QR 스캔용 최적)
   }
 }
 
@@ -683,7 +736,6 @@ function sendMealApprove(emp){
    ✅ 고객 상세 출력 (여기서만)
 ========================================================= */
 function showCustomerDetail(emp){
-  cleanupQR(); // 고객 상세에서는 스크롤 가능해야 하므로 잠금 해제
   document.querySelector(".side-menu").style.display = (window.innerWidth <= 767) ? "none" : "block";
 
   const t = document.getElementById("detailTitle");
@@ -752,11 +804,11 @@ function resetResult(){
    ✅ 결과 표시
 ========================================================= */
 function setQRResult(msg, ok){
-  const el = document.getElementById("qrResult");
+  const el = document.getElementById("qrToast");
   if (!el) return;
+
   el.textContent = msg;
-  el.classList.remove("success","fail");
-  el.classList.add(ok ? "success" : "fail");
+  el.className = "qr-toast " + (ok ? "success" : "fail");
 }
 
 /* =========================================================
