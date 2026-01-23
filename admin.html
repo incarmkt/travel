@@ -369,7 +369,8 @@ function adminDoLogin(){
     document.getElementById("adminLoginError").textContent = "비밀번호 오류";
     return;
   }
-
+document.getElementById("adminLoginError").textContent = "";
+  
   document.getElementById("adminLoginSection").style.display = "none";
   document.getElementById("topHeader").style.display = "flex";
   document.getElementById("mainSection").style.display = "block";
@@ -1008,10 +1009,13 @@ function manualSubmit(){
    ✅ 엔터로 로그인
 ========================================================= */
 document.addEventListener("keydown", (e) => {
-  const loginVisible = document.getElementById("adminLoginSection").style.display !== "none";
-  if (e.key === "Enter" && loginVisible) adminDoLogin();
-});
+  const loginVisible =
+    document.getElementById("adminLoginSection").offsetParent !== null;
 
+  if (e.key === "Enter" && loginVisible) {
+    adminDoLogin();
+  }
+});
 /* =========================================================
    ✅ (원본) 여행 일정 데이터: 네가 준 그대로 유지
 ========================================================= */
