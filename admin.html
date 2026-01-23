@@ -287,8 +287,9 @@ let lastScannedEmployee = null;
 /* 연속 스캔 중복 방지 */
 let lastScanKey = "";
 let lastScanAt = 0;
-const SCAN_DEBOUNCE_MS = 900;
-
+const SCAN_DEBOUNCE_MS = 250;
+let scanLock = false; // 🔥 추가
+  
 /* =========================================================
    ✅ 직원 데이터 로드
 ========================================================= */
@@ -538,12 +539,8 @@ async function startQR(){
     await qrScanner.start(
       { facingMode: "environment" },
       {
-        fps: 10,
-        qrbox: (vw, vh) => {
-          const minEdge = Math.min(vw, vh);
-          const size = Math.max(200, Math.min(260, Math.floor(minEdge * 0.72)));
-          return { width: size, height: size };
-        }
+        fps: 25,
+        qrbox: { width: 260, height: 260 }
       },
       decodedText => handleQR(decodedText),
       () => {}
@@ -576,10 +573,20 @@ function cleanupQR(){
    - 연속 스캔 중복 방지(debounce)
 ========================================================= */
 function handleQR(text){
+  if (scanLock) return; // 🔒 이미 인식 중이면 무시
+
   const id = extractEid(text);
   if (!id) return;
+
+  scanLock = true;      // 🔥 즉시 잠금
   processEmployeeId(id);
+
+  // 🔓 200ms 후 다시 인식 허용 (체감 최적값)
+  setTimeout(() => {
+    scanLock = false;
+  }, 200);
 }
+
 
 function manualSubmit(){
   const id = String(document.getElementById("manualId")?.value || "").trim();
@@ -629,20 +636,22 @@ function processEmployeeId(id){
 function sendDeparture(emp){
   const time = nowKSTString();
 
-  fetch(GAS_URL, {
-    method:"POST",
-    mode:"no-cors",
-    body: JSON.stringify({
-      type: "departure",
-      id: emp.id,
-      name: emp.name,
-      category: currentCategory,
-      course: currentCourse,
-      time
-    })
-  }).catch(console.error);
-
   setQRResult(`✅ ${emp.name}(${emp.id}) 출발 체크 완료\n[${currentCategory}] ${currentCourse}\n${time}`, true);
+ // 🔥 네트워크는 다음 틱으로 넘김
+  setTimeout(() => {
+    fetch(GAS_URL, {
+      method:"POST",
+      mode:"no-cors",
+      body: JSON.stringify({
+        type: "departure",
+        id: emp.id,
+        name: emp.name,
+        category: currentCategory,
+        course: currentCourse,
+        time
+      })
+    }).catch(console.error);
+  }, 0);
 }
 
 /* =========================================================
@@ -651,23 +660,25 @@ function sendDeparture(emp){
 ========================================================= */
 function sendMealApprove(emp){
   const time = nowKSTString();
-
-  fetch(GAS_URL, {
-    method:"POST",
-    mode:"no-cors",
-    body: JSON.stringify({
-      type: "meal",
-      id: emp.id,
-      name: emp.name,
-      tour: currentMealTitle,  // ✅ 고객용에서 쓰는 단수이/항목명과 맞추면 동기화 쉬움
-      action: "APPROVE",
-      time
-    })
-  }).catch(console.error);
-
+  
   setQRResult(`✅ ${emp.name}(${emp.id}) 중식비 지급 완료\n[${currentMealTitle}]\n${time}`, true);
+  
+ // 🔥 네트워크는 뒤로
+  setTimeout(() => {
+    fetch(GAS_URL, {
+      method:"POST",
+      mode:"no-cors",
+      body: JSON.stringify({
+        type: "meal",
+        id: emp.id,
+        name: emp.name,
+        tour: currentMealTitle,
+        action: "APPROVE",
+        time
+      })
+    }).catch(console.error);
+  }, 0);
 }
-
 /* =========================================================
    ✅ 고객 상세 출력 (여기서만)
 ========================================================= */
@@ -752,12 +763,9 @@ function setQRResult(msg, ok){
    ✅ 유틸
 ========================================================= */
 function extractEid(text){
-  try{
-    const url = new URL(text);
-    return url.searchParams.get("eid");
-  }catch{
-    return null;
-  }
+  // eid=xxxxx 만 찾으면 됨
+  const m = text.match(/[?&]eid=([^&]+)/);
+  return m ? m[1] : null;
 }
 
 function findEmp(id){
