@@ -10,7 +10,10 @@
   <link rel="stylesheet" href="css/desktop.css" media="(min-width:768px)">
   <link rel="stylesheet" href="css/mobile.css" media="(max-width:767px)">
 
-  /* 🔥 모바일 터치 차단 문제 해결 */
+
+
+  <style>
+      /* 🔥 모바일 터치 차단 문제 해결 */
 @media (max-width: 767px) {
   .detail, 
   .home-view {
@@ -21,9 +24,6 @@
     pointer-events: auto !important;
   }
 }
-
-
-  <style>
     /* ===============================
        관리자 추가 CSS (기존 CSS 훼손 없이 최소)
        =============================== */
@@ -412,8 +412,8 @@ function openPage(type, fromHistory=false){
 ========================================================= */
 function openTravelList(cat){
   currentCategory = cat;
-  openPage("travelListView");
-
+pageHistory.push("travelList"); // 히스토리용
+  
   const t = document.getElementById("detailTitle");
   const c = document.getElementById("detailContent");
 
