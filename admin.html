@@ -479,15 +479,19 @@ function openPage(type, fromHistory=false){
    ✅ 여행일정관리: 카테고리 선택 후 일정 리스트
 ========================================================= */
 function openTravelList(cat){
-  currentCategory = cat;
-pageHistory.push("travelList"); // 히스토리용
-  
+  currentCategory = cat; // ✅ 중요
+
+  const myTourTemplates = [
+    { keyword: "티엔라이", label: "선택 1안 | 티엔라이 온천 힐링" },
+    { keyword: "고궁박물관", label: "선택 2안 | 고궁박물관 역사 기행" },
+    { keyword: "자유일정", label: "선택 3안 | 자유일정" }
+  ];
+
   const t = document.getElementById("detailTitle");
   const c = document.getElementById("detailContent");
 
   t.textContent = `🗓 ${cat}`;
 
-  /* ✅ 선택일정관리: “선택 관광” 관련 항목만 뽑기(너가 기존에 쓰던 방식 존중) */
   const source = (cat === "전체일정관리")
     ? travelSchedule
     : travelSchedule.filter(day => (day.title || "").includes("선택"));
@@ -498,21 +502,41 @@ pageHistory.push("travelList"); // 히스토리용
       <p class="day-title">${escapeHtml(day.title)}</p>
 
       <div class="timeline">
-        ${day.items.map(item => `
-          <div class="schedule-item">
-            <div class="timeline-dot"></div>
-            <div class="schedule-card admin-clickable"
-                 onclick="openDepartureQR('${escapeQuotes(item.title)}')">
-              <div class="schedule-time">${escapeHtml(item.time || "")}</div>
-              <div class="schedule-title">${escapeHtml(item.icon || "")} ${escapeHtml(item.title || "")}</div>
-              ${item.desc ? `<div class="schedule-desc">${escapeHtml(item.desc)}</div>` : ""}
+        ${day.items.map(item => {
+
+          /* ✅ 선택 관광 분해 */
+          if (cat === "선택일정관리" && item.title === "선택 관광") {
+            return myTourTemplates.map(tour => `
+              <div class="schedule-item">
+                <div class="timeline-dot"></div>
+                <div class="schedule-card admin-clickable"
+                     onclick="openDepartureQR('${tour.keyword}')">
+                  <div class="schedule-time">${escapeHtml(item.time || "")}</div>
+                  <div class="schedule-title">🧭 ${escapeHtml(tour.label)}</div>
+                  <div class="schedule-desc">선택 관광 세부 일정</div>
+                </div>
+              </div>
+            `).join("");
+          }
+
+          /* ✅ 기존 일정 유지 */
+          return `
+            <div class="schedule-item">
+              <div class="timeline-dot"></div>
+              <div class="schedule-card admin-clickable"
+                   onclick="openDepartureQR('${escapeQuotes(item.title)}')">
+                <div class="schedule-time">${escapeHtml(item.time || "")}</div>
+                <div class="schedule-title">${escapeHtml(item.icon || "")} ${escapeHtml(item.title || "")}</div>
+                ${item.desc ? `<div class="schedule-desc">${escapeHtml(item.desc)}</div>` : ""}
+              </div>
             </div>
-          </div>
-        `).join("")}
+          `;
+        }).join("")}
       </div>
     </div>
   `).join("");
 }
+
 
 /* =========================================================
    ✅ 여행 출발 체크 QR 화면 (연속 스캔)
