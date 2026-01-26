@@ -25,12 +25,15 @@
        =============================== */
 
     /* QR 모드일 때만 스크롤 잠금 */
+/* QR 모드일 때만 스크롤 잠금 */
 body.qr-lock{
-  overflow:hidden;
+  overflow: hidden;
+  overscroll-behavior: none;
 }
 
+/* QR 모드가 아닐 때는 정상 스크롤 */
 body:not(.qr-lock){
-  overflow:auto;
+  overflow: auto;
 }
 
 
