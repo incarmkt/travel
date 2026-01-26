@@ -230,6 +230,19 @@ body:not(.qr-lock){
     display: none;
   }
 }
+    /* ===============================
+   관리자 홈: 포스터 없는 레이아웃 보정 (데스크탑만)
+   =============================== */
+@media (min-width: 768px) {
+  body.admin-home .content-area {
+    max-width: 100%;
+  }
+
+  body.admin-home .main-panel {
+    max-width: 980px;   /* ← 고객용 카드 체급에 맞춘 값 */
+    margin: 0 auto;
+  }
+}
   </style>
 </head>
 
