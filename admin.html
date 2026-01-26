@@ -15,12 +15,8 @@
   <style>
       /* 🔥 모바일 터치 차단 문제 해결 */
 @media (max-width: 767px) {
-  .detail, 
-  .home-view {
-    pointer-events: auto !important;
-  }
-
-  .detail * {
+  body.qr-lock .detail,
+  body.qr-lock .detail * {
     pointer-events: auto !important;
   }
 }
@@ -29,10 +25,14 @@
        =============================== */
 
     /* QR 모드일 때만 스크롤 잠금 */
-    body.qr-lock{
-      overflow:hidden !important;
-      overscroll-behavior:none;
-    }
+body.qr-lock{
+  overflow:hidden;
+}
+
+body:not(.qr-lock){
+  overflow:auto;
+}
+
 
     /* ✅ 관리자 홈(모바일에서 3카테고리 버튼이 중앙에 예쁘게 보이도록) */
     .admin-home-card{
