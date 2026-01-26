@@ -222,7 +222,14 @@ body:not(.qr-lock){
   padding-bottom: env(safe-area-inset-bottom);
   z-index: 20;
 }
-
+/* ===============================
+   관리자 홈: fixed-poster 숨김 (데스크탑만)
+   =============================== */
+@media (min-width: 768px) {
+  body.admin-home .fixed-poster {
+    display: none;
+  }
+}
   </style>
 </head>
 
@@ -380,7 +387,8 @@ document.getElementById("adminLoginError").textContent = "";
 function openHome(){
   cleanupQR();
   pageHistory = [];
-
+  
+document.body.classList.add("admin-home");   // 🔥 추가
   document.getElementById("detailPage").style.display = "none";
   document.getElementById("homeArea").style.display = "block";
 
@@ -395,6 +403,7 @@ function openHome(){
    ✅ 페이지 열기
 ========================================================= */
 function openPage(type, fromHistory=false){
+  document.body.classList.remove("admin-home"); // 🔥 추가
   cleanupQR();
   if (type === "reportRoot") {
   openAdminReport();
