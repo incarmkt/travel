@@ -222,6 +222,18 @@ body:not(.qr-lock){
   padding-bottom: env(safe-area-inset-bottom);
   z-index: 20;
 }
+    .home-view {
+  display: block;
+}
+
+.home-image {
+  width: 100%;
+  max-width: 520px;
+  margin: 0 auto;
+  display: block;
+  border-radius: 16px;
+}
+
   </style>
 </head>
 
@@ -291,6 +303,12 @@ body:not(.qr-lock){
       </aside>
     </section>
   </div>
+  <div id="homeArea" class="home-view">
+  <img src="assets/images/home.jpg"
+       alt="Home Image"
+       class="home-image">
+</div>
+
 </main>
 
 <!-- QR 라이브러리 -->
@@ -373,29 +391,14 @@ function openHome(){
   cleanupQR();
   pageHistory = [];
 
-  document.getElementById("detailPage").style.display = "block";
+  document.getElementById("detailPage").style.display = "none";
+  document.getElementById("homeArea").style.display = "block";
 
-  // 🔥 데스크탑/모바일 공통 복구
-  document.querySelector(".side-menu").style.display = "block";
-
-  document.getElementById("detailTitle").textContent = "";
-  document.getElementById("detailContent").innerHTML = `
-  <img src="assets/images/home.jpg"
-     style="
-       width:100%;
-       max-width:520px;
-       margin:0 auto;
-       display:block;
-       border-radius:16px;
-     ">
-  `;
-
-  // 모바일에서도 좌측 메뉴 복구
+  // 모바일에서도 메뉴 복구
   if (window.innerWidth <= 767){
     document.querySelector(".side-menu").style.display = "block";
   }
 }
-
 
 
 /* =========================================================
