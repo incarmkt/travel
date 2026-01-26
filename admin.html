@@ -354,6 +354,8 @@ let uiCounters = {
   
 // 🔥 QR 종료 시 돌아갈 관리자 페이지
     let lastAdminPage = ""; 
+  let lastDetailPage = "";   // travelDetail | mealQR | customerQR 등
+let lastTravelList = "";  // 전체일정관리 | 선택일정관리
   
 /* =========================================================
    ✅ 직원 데이터 로드
@@ -486,6 +488,7 @@ function openPage(type, fromHistory=false){
    ✅ 여행일정관리: 카테고리 선택 후 일정 리스트
 ========================================================= */
 function openTravelList(cat){
+  lastTravelList = cat;   // 🔥 여기
   currentCategory = cat; // ✅ 중요
 
   const myTourTemplates = [
@@ -549,6 +552,7 @@ function openTravelList(cat){
    ✅ 여행 출발 체크 QR 화면 (연속 스캔)
 ========================================================= */
 function openDepartureQR(courseTitle){
+   lastDetailPage = "travelDetail"; // 🔥 추가
   currentCourse = courseTitle;
   qrMode = "departure";
   lastScannedEmployee = null;
@@ -564,6 +568,7 @@ function openDepartureQR(courseTitle){
    - 고객용과 양식 통일: type:"meal", tour, action, time
 ========================================================= */
 function openMealQR(mealTitle){
+  lastDetailPage = "mealRoot"; // 🔥 중식비는 루트가 바로 이전
   currentMealTitle = mealTitle;
   qrMode = "meal";
   lastScannedEmployee = null;
@@ -578,6 +583,7 @@ function openMealQR(mealTitle){
    ✅ 고객관리 QR (조회 후 상세 출력)
 ========================================================= */
 function openCustomerScan(){
+   lastDetailPage = "customerRoot"; // 🔥
   qrMode = "customer";
   lastScannedEmployee = null;
   lastScanKey = "";
@@ -960,12 +966,21 @@ function openAdminReport(){
 function goBack(){
   cleanupQR();
 
-  // ✅ 항상 마지막 관리자 루트로 복귀
-  if (lastAdminPage){
-    openPage(lastAdminPage, true);
-  } else {
-    openHome();
+  /* 1️⃣ QR → 직전 세부 화면 */
+  if (lastDetailPage === "travelDetail"){
+    openTravelList(lastTravelList);
+    return;
   }
+
+  /* 2️⃣ 세부 → 여행 루트 */
+  if (lastTravelList){
+    openPage("travelRoot", true);
+    lastTravelList = "";
+    return;
+  }
+
+  /* 3️⃣ 고객관리 / 리포트 / 단일 화면 */
+  openHome();
 }
 
 /* =========================================================
