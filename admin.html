@@ -25,13 +25,10 @@
        =============================== */
 
     /* QR 모드일 때만 스크롤 잠금 */
-/* QR 모드일 때만 스크롤 잠금 */
 body.qr-lock{
   overflow: hidden;
-  overscroll-behavior: none;
 }
 
-/* QR 모드가 아닐 때는 정상 스크롤 */
 body:not(.qr-lock){
   overflow: auto;
 }
@@ -274,11 +271,6 @@ body:not(.qr-lock){
     <section class="content-area">
       <div class="main-panel">
 
-        <!-- ✅ 관리자 홈(고객용하고 동일하게 보여야 함) -->
-<div id="homeArea" class="home-view" style="display:none;">
-  <img src="assets/images/home.jpg" alt="Home Image">
-</div>
-
 
         <!-- 상세 페이지(고객용과 동일) -->
         <section id="detailPage" class="detail" style="display:none;">
@@ -381,15 +373,24 @@ function openHome(){
   cleanupQR();
   pageHistory = [];
 
-  // 상세 페이지 숨기기
-  document.getElementById("detailPage").style.display = "none";
+  document.getElementById("detailPage").style.display = "block";
 
-  // 홈 이미지 보여주기 (고객용과 동일)
-  document.getElementById("homeArea").style.display = "block";
-
-  // 사이드 메뉴는 항상 유지
+  // 🔥 데스크탑/모바일 공통 복구
   document.querySelector(".side-menu").style.display = "block";
+
+  document.getElementById("detailTitle").textContent = "";
+  document.getElementById("detailContent").innerHTML = `
+    <img src="assets/images/home.jpg"
+         alt="Home Image"
+         style="width:100%; border-radius:16px;">
+  `;
+
+  // 모바일에서도 좌측 메뉴 복구
+  if (window.innerWidth <= 767){
+    document.querySelector(".side-menu").style.display = "block";
+  }
 }
+
 
 
 /* =========================================================
@@ -404,8 +405,7 @@ function openPage(type, fromHistory=false){
 
   if (!fromHistory) pageHistory.push(type);
 
-  document.getElementById("homeArea").style.display = "none";
-  document.getElementById("detailPage").style.display = "block";
+document.getElementById("detailPage").style.display = "block";
 
   /* 모바일일 때: detail 진입하면 메뉴 숨김 (고객용 방식 유지) */
   if (window.innerWidth <= 767){
@@ -586,11 +586,27 @@ c.innerHTML = `
     </div>
   </div>
 `;
-
-  document.body.classList.add("qr-lock");
   startQR();
 }
 
+  function cleanupQR(){
+  document.body.classList.remove("qr-lock");
+  qrMode = "";
+
+  if (window.innerWidth > 767){
+    document.querySelector(".side-menu").style.display = "block";
+  }
+
+  if (qrScanner){
+    try{
+      qrScanner.stop()
+        .then(()=>{ qrScanner.clear(); qrScanner=null; })
+        .catch(()=>{ qrScanner=null; });
+    }catch{
+      qrScanner=null;
+    }
+  }
+}
 
 
 
@@ -621,21 +637,6 @@ async function startQR(){
   }
 }
   
-function cleanupQR(){
-  document.body.classList.remove("qr-lock");
-  qrMode = "";
-
-  if (qrScanner){
-    try{
-      qrScanner.stop()
-        .then(()=>{ qrScanner.clear(); qrScanner=null; })
-        .catch(()=>{ try{ qrScanner.clear(); }catch{} qrScanner=null; });
-    }catch{
-      qrScanner=null;
-    }
-  }
-}
-
 /* =========================================================
    ✅ QR 처리
    - QR 내용: ...?eid=사번 형태를 전제로 함 (너가 말한 구조)
@@ -815,7 +816,6 @@ function sendMealApprove(emp){
   setTimeout(() => {
     fetch(GAS_URL, {
       method:"POST",
-      mode:"no-cors",
       body: JSON.stringify({
         type: "meal",
         id: emp.id,
@@ -1034,10 +1034,10 @@ const travelSchedule = [
       { time:"08:00/9:00", icon:"✈️", title:"인천 국제공항 출발", desc:"OZ 711 / KE 2021" },
       { time:"12:30/13:30", icon:"🍜", title:"중식 | 우육면", desc:"현지 인기 중식당" },
       { time:"13:30/14:30", icon:"🏛️", title:"단수이 옛거리/홍마오청/진리대학", desc:"홍마오청·옛거리 관광" },
-      { time:"16:30/17:30", icon:"🏨", title:"호텔 체크인", desc:"호텔" },
+      { time:"16:30/17:30", icon:"🏨", title:"호텔 체크인", desc:"타이베이 메리어트 호텔[5성급]" },
       { time:"18:00/18:30", icon:"🍽️", title:"석식 | 타카오 샤브샤브", desc:"무제한 샤브샤브" },
       { time:"19:00/19:30", icon:"🌃", title:"타이베이 101 전망대", desc:"야경 관람" },
-      { time:"21:30", icon:"🏨", title:"호텔이름", desc:"호텔" }
+      { time:"21:30", icon:"🏨", title:"호텔 복귀", desc:"타이베이 메리어트 호텔[5성급]" }
     ]
   },
   {
@@ -1054,13 +1054,13 @@ const travelSchedule = [
     date: "2026.03.13 (금)",
     title: "근교 관광",
     items: [
-       { time:"10:00", icon:"🏨🍽️", title:"호텔 조식 후 출발", desc:"-" },
+       { time:"10:00", icon:"🏨🍽️", title:"호텔 조식 후 출발", desc:"타이베이 메리어트 호텔[5성급]" },
       { time:"11:00", icon:"🌊", title:"야류 해상공원", desc:"기암괴석 관광" },
       { time:"12:30", icon:"🦐", title:"중식 : 씨푸드", desc:"현지 해산물 특식" },
       { time:"14:30", icon:"🏮", title:"스펀 천등날리기", desc:"소원천등 날리기" },
-      { time:"17:00", icon:"🏮", title:"지우펀 야경", desc:"기암괴석 관광" },
+      { time:"17:00", icon:"🏮", title:"지우펀 야경", desc:"홍등 마을" },
       { time:"20:00", icon:"🌊", title:"야시장 및 석식", desc:"야시장 자유식 및 쇼핑" },
-      { time:"21:30", icon:"🏨", title:"호텔복귀", desc:"홍등 마을" },
+      { time:"21:30", icon:"🏨", title:"호텔복귀", desc:"타이베이 메리어트 호텔[5성급]" },
       { time:"전일", icon:"🧭", title:"자유일정 선택시", desc:"전체 개인부담(중식비 지급 X)" }
     ]
   },
@@ -1069,9 +1069,9 @@ const travelSchedule = [
     date: "2026.03.14 (토)",
     title: "귀국",
     items: [
-      { time:"08:00/9:00", icon:"🏨", title:"호텔 체크아웃", desc:"" },
+      { time:"08:00/9:00", icon:"🏨", title:"호텔 체크아웃", desc:"타이베이 메리어트 호텔[5성급]" },
       { time:"11:40/12:25", icon:"✈️", title:"타이베이 출발", desc:"OZ 712 / KE 2022" },
-      { time:"15:25/15:50", icon:"🇰🇷", title:"인천 도착", desc:"" }
+      { time:"15:25/15:50", icon:"🇰🇷", title:"인천 도착", desc:"ISC In Taiwan" }
     ]
   }
 ];
