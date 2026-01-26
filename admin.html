@@ -340,16 +340,7 @@ let scanLock = false; // 🔥 추가
 const sessionScans = JSON.parse(
   sessionStorage.getItem("isc_scans") || "{}"
 );
-  // 🔥 추가
-let localCounters = {
-  departure: {}, // { "인천 국제공항 출발": 12 }
-  meal: {}        // { "단수이 중식비": 8 }
-};
-  // ✅ 화면 표시용 카운트
-let uiCounters = {
-  departure: 0,
-  meal: 0
-};
+
   
 // 🔥 QR 종료 시 돌아갈 관리자 페이지
   let currentView = ""; 
@@ -557,6 +548,15 @@ function openDepartureQR(courseTitle){
   openQRScreen(`📷 출발 체크 - ${courseTitle}`, {
     showReset: true
   });
+   // ✅ [여기 추가] QR 화면 열릴 때 현재 인원 조회
+  fetch(`${GAS_URL}?mode=countDeparture&category=${encodeURIComponent(currentCategory)}&course=${encodeURIComponent(currentCourse)}`)
+    .then(r => r.json())
+    .then(d => {
+      const counterEl = document.getElementById("qrCounter");
+      if (counterEl) {
+        counterEl.textContent = `현재 처리 인원: ${d.totalCount}명`;
+      }
+    });
 }
 
 /* =========================================================
@@ -573,6 +573,15 @@ function openMealQR(mealTitle){
   openQRScreen(`📷 중식비 지급 - ${mealTitle}`, {
     showReset: true
   });
+    // ✅ [여기 추가] 중식비 현재 지급 인원 조회
+  fetch(`${GAS_URL}?mode=countMeal&tour=${encodeURIComponent(currentMealTitle)}`)
+    .then(r => r.json())
+    .then(d => {
+      const counterEl = document.getElementById("qrCounter");
+      if (counterEl) {
+        counterEl.textContent = `현재 처리 인원: ${d.totalCount}명`;
+      }
+    });
 }
 
 /* =========================================================
@@ -703,7 +712,6 @@ function processEmployeeId(id){
     return;
   }
 
-  const now = Date.now();
   const key = `${qrMode}|${emp.id}|${currentCategory}|${currentCourse}|${currentMealTitle}`;
 
 // ✅ 1차: 같은 화면 연속 스캔 방지
@@ -723,32 +731,8 @@ lastScanKey = key;
 sessionScans[key] = true;
 sessionStorage.setItem("isc_scans", JSON.stringify(sessionScans));
 
-  // 🔥 여기 추가
-let count = 0;
-
-if (qrMode === "departure"){
-  localCounters.departure[currentCourse] =
-    (localCounters.departure[currentCourse] || 0) + 1;
-
-  uiCounters.departure++;
-  count = uiCounters.departure;
-}
-
-if (qrMode === "meal"){
-  localCounters.meal[currentMealTitle] =
-    (localCounters.meal[currentMealTitle] || 0) + 1;
-
-  uiCounters.meal++;
-  count = uiCounters.meal;
-}
-
 
 // 🔥 카운터 화면 반영
-const counterEl = document.getElementById("qrCounter");
-if (counterEl){
-  counterEl.textContent = `현재 처리 인원: ${count}명`;
-}
-  lastScanAt = now;
 
   if (qrMode === "departure"){
     sendDeparture(emp);
@@ -809,35 +793,30 @@ function sendDeparture(emp){
 
   // 🔥 네트워크는 다음 틱으로 넘김
   setTimeout(() => {
-    fetch(GAS_URL, {
-      method: "POST",
-      body: JSON.stringify({
-        type: "departure",
-        id: emp.id,
-        name: emp.name,
-        category: currentCategory,
-        course: currentCourse,
-        time
-      })
-    })
-    .then(r => r.json())
-    .then(data => {
-      if (data && data.totalCount != null) {
-        updateTotalCount(data.totalCount);
-      }
-    })
-    .catch(console.error);
+fetch(GAS_URL, {
+  method: "POST",
+  body: JSON.stringify({
+    type: "departure",
+    id: emp.id,
+    name: emp.name,
+    category: currentCategory,
+    course: currentCourse,
+    time
+  })
+})
+.then(r => r.json())
+.then(data => {
+  if (data && data.totalCount != null) {
+    const el = document.getElementById("qrCounter");
+    if (el){
+      el.textContent = `현재 처리 인원: ${data.totalCount}명`;
+    }
+  }
+})
+.catch(console.error);
   }, 0);
 }
 
-             
-function updateTotalCount(total){
-  const el = document.getElementById("qrCounter");
-  if (!el) return;
-
-  el.textContent =
-    `현재 처리 인원: ${uiCounters[qrMode]}명 / 전체: ${total}명`;
-}
 
 /* =========================================================
    ✅ GAS 전송: 중식비 지급(승인)
@@ -850,18 +829,27 @@ function sendMealApprove(emp){
   
  // 🔥 네트워크는 뒤로
   setTimeout(() => {
-    fetch(GAS_URL, {
-      method:"POST",
-      mode:"no-cors",
-      body: JSON.stringify({
-        type: "meal",
-        id: emp.id,
-        name: emp.name,
-        tour: currentMealTitle,
-        action: "APPROVE",
-        time
-      })
-    }).catch(console.error);
+ fetch(GAS_URL, {
+  method:"POST",
+  body: JSON.stringify({
+    type: "meal",
+    id: emp.id,
+    name: emp.name,
+    tour: currentMealTitle,
+    action: "APPROVE",
+    time
+  })
+})
+.then(r => r.json())
+.then(data => {
+  if (data && data.totalCount != null) {
+    const el = document.getElementById("qrCounter");
+    if (el){
+      el.textContent = `현재 처리 인원: ${data.totalCount}명`;
+    }
+  }
+})
+.catch(console.error);
   }, 0);
 }
 /* =========================================================
