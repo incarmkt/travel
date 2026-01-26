@@ -298,11 +298,6 @@ body:not(.qr-lock){
       </aside>
     </section>
   </div>
-  <div id="homeArea" class="home-view">
-  <img src="assets/images/home.jpg"
-       alt="Home Image"
-       class="home-image">
-</div>
 
 </main>
 
@@ -407,7 +402,8 @@ function openPage(type, fromHistory=false){
 }
 
   if (!fromHistory) pageHistory.push(type);
-
+  
+document.getElementById("homeArea").style.display = "none";
 document.getElementById("detailPage").style.display = "block";
 
   /* 모바일일 때: detail 진입하면 메뉴 숨김 (고객용 방식 유지) */
@@ -1058,7 +1054,7 @@ const travelSchedule = [
     title: "근교 관광",
     items: [
        { time:"10:00", icon:"🏨🍽️", title:"호텔 조식 후 출발", desc:"타이베이 메리어트 호텔[5성급]" },
-      { time:"11:00", icon:"🌊", title:"야류 해상공원", desc:"기암괴석 관광" },
+      { time:"11:00", icon:"🌊", title:"예류 지질공원", desc:"기암괴석 관광" },
       { time:"12:30", icon:"🦐", title:"중식 : 씨푸드", desc:"현지 해산물 특식" },
       { time:"14:30", icon:"🏮", title:"스펀 천등날리기", desc:"소원천등 날리기" },
       { time:"17:00", icon:"🏮", title:"지우펀 야경", desc:"홍등 마을" },
