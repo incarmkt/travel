@@ -271,21 +271,21 @@
     <section class="content-area">
       <div class="main-panel">
 
-        <!-- ✅ 관리자 홈(모바일에서 3개 카테고리가 이 화면처럼 보여야 함) -->
         <div id="homeArea" class="home-view" style="display:none;">
-          <div class="card admin-home-card">
-            <h3 style="margin:0;">관리자 메뉴를 선택하세요</h3>
-            <p style="margin:8px 0 0; color:#667085; font-size:13px;">
-              ※ 여행/중식비는 QR을 연속 스캔하여 자동 기록됩니다.
-            </p>
-            <div class="admin-home-buttons">
-              <button class="primary-btn" onclick="openPage('travelRoot')">🧭 여행일정관리</button>
-              <button class="primary-btn" onclick="openPage('mealRoot')">💳 중식비지급관리</button>
-              <button class="primary-btn" onclick="openPage('customerRoot')">👤 고객관리</button>
-            </div>
-          </div>
-        </div>
-
+  <div class="card" style="padding:0; overflow:hidden;">
+    <img
+      src="assets/images/home.jpg"
+      alt="ISC 관리자 홈"
+      style="
+        width:100%;
+        height:auto;
+        display:block;
+        border-radius:12px;
+      "
+    />
+  </div>
+</div>
+        
         <!-- 상세 페이지(고객용과 동일) -->
         <section id="detailPage" class="detail" style="display:none;">
           <h2 id="detailTitle"></h2>
