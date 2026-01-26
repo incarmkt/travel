@@ -222,17 +222,6 @@ body:not(.qr-lock){
   padding-bottom: env(safe-area-inset-bottom);
   z-index: 20;
 }
-    .home-view {
-  display: block;
-}
-
-.home-image {
-  width: 100%;
-  max-width: 520px;
-  margin: 0 auto;
-  display: block;
-  border-radius: 16px;
-}
 
   </style>
 </head>
@@ -283,19 +272,25 @@ body:not(.qr-lock){
     <section class="content-area">
       <div class="main-panel">
 
+ <!-- ✅ 홈 -->
+    <div id="homeArea" class="home-view">
+      <img src="assets/images/home.jpg"
+           alt="Home Image"
+           class="home-image">
+    </div>
 
-        <!-- 상세 페이지(고객용과 동일) -->
-        <section id="detailPage" class="detail" style="display:none;">
-          <h2 id="detailTitle"></h2>
-          <div id="detailContent"></div>
+    <!-- ✅ 상세 -->
+    <section id="detailPage" class="detail" style="display:none;">
+      <h2 id="detailTitle"></h2>
+      <div id="detailContent"></div>
 
-          <div class="nav-buttons">
-            <button class="ghost-btn" onclick="openHome()">홈으로</button>
-            <button class="ghost-btn" onclick="goBack()">뒤로가기</button>
-          </div>
-        </section>
-
+      <div class="nav-buttons">
+        <button class="ghost-btn" onclick="openHome()">홈으로</button>
+        <button class="ghost-btn" onclick="goBack()">뒤로가기</button>
       </div>
+    </section>
+
+  </div>
 
       <!-- ✅ 우측 고정 포스터(고객용과 동일 구조) -->
       <aside class="fixed-poster">
