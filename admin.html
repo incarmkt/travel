@@ -352,6 +352,9 @@ let uiCounters = {
   meal: 0
 };
   
+// 🔥 QR 종료 시 돌아갈 관리자 페이지
+    let lastAdminPage = ""; 
+  
 /* =========================================================
    ✅ 직원 데이터 로드
 ========================================================= */
@@ -401,6 +404,10 @@ function openHome(){
 ========================================================= */
 function openPage(type, fromHistory=false){
   cleanupQR();
+  // 🔥 관리자 루트 페이지 기억
+  if (["travelRoot","mealRoot","customerRoot","reportRoot"].includes(type)) {
+    lastAdminPage = type;
+  }
   if (type === "reportRoot") {
   openAdminReport();
   return;
@@ -952,15 +959,13 @@ function openAdminReport(){
 ========================================================= */
 function goBack(){
   cleanupQR();
-  pageHistory.pop();
 
-  if (pageHistory.length === 0){
+  // ✅ 항상 마지막 관리자 루트로 복귀
+  if (lastAdminPage){
+    openPage(lastAdminPage, true);
+  } else {
     openHome();
-    return;
   }
-
-  const prev = pageHistory[pageHistory.length - 1];
-  openPage(prev, true);
 }
 
 /* =========================================================
