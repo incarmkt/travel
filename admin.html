@@ -323,7 +323,6 @@ const EMP_URL = "people/employees.json?ts=" + Date.now();
    ✅ 공통 상태
 ========================================================= */
 let employees = [];
-let pageHistory = [];
 let qrScanner = null;
 
 /* QR 모드: departure | meal | customer */
@@ -353,9 +352,8 @@ let uiCounters = {
 };
   
 // 🔥 QR 종료 시 돌아갈 관리자 페이지
-    let lastAdminPage = ""; 
-  let lastDetailPage = "";   // travelDetail | mealQR | customerQR 등
-let lastTravelList = "";  // 전체일정관리 | 선택일정관리
+  let currentView = ""; 
+// home | travelRoot | travelList | travelQR | mealRoot | mealQR | customer | report
   
 /* =========================================================
    ✅ 직원 데이터 로드
@@ -390,8 +388,8 @@ document.getElementById("adminLoginError").textContent = "";
 ========================================================= */
 function openHome(){
   cleanupQR();
-  pageHistory = [];
-
+  currentView = "home";
+  
   document.getElementById("detailPage").style.display = "none";
   document.getElementById("homeArea").style.display = "block";
 
@@ -406,16 +404,6 @@ function openHome(){
 ========================================================= */
 function openPage(type, fromHistory=false){
   cleanupQR();
-  // 🔥 관리자 루트 페이지 기억
-  if (["travelRoot","mealRoot","customerRoot","reportRoot"].includes(type)) {
-    lastAdminPage = type;
-  }
-  if (type === "reportRoot") {
-  openAdminReport();
-  return;
-}
-
-  if (!fromHistory) pageHistory.push(type);
 
   document.getElementById("homeArea").style.display = "none";
   document.getElementById("detailPage").style.display = "block";
@@ -424,6 +412,12 @@ function openPage(type, fromHistory=false){
   if (window.innerWidth <= 767){
     document.querySelector(".side-menu").style.display = "none";
   }
+    // 🔥 관리자 루트 페이지 기억
+  if (type === "reportRoot") {
+     currentView = "report"; 
+  openAdminReport();
+  return;
+}
 
   const t = document.getElementById("detailTitle");
   const c = document.getElementById("detailContent");
@@ -432,6 +426,7 @@ function openPage(type, fromHistory=false){
      1) 여행일정관리 (루트)
      ============================= */
   if (type === "travelRoot"){
+    currentView = "travelRoot";
     t.textContent = "🧭 여행일정관리";
     c.innerHTML = `
       <div class="card" style="text-align:center;">
@@ -454,6 +449,7 @@ function openPage(type, fromHistory=false){
      - 고객용 페이지에서 상태 동기화할 때도 이 로그를 씀
      ============================= */
   if (type === "mealRoot"){
+     currentView = "mealRoot";
     t.textContent = "💳 중식비지급관리";
     c.innerHTML = `
       <div class="card" style="text-align:center;">
@@ -488,7 +484,7 @@ function openPage(type, fromHistory=false){
    ✅ 여행일정관리: 카테고리 선택 후 일정 리스트
 ========================================================= */
 function openTravelList(cat){
-  lastTravelList = cat;   // 🔥 여기
+   currentView = "travelList";
   currentCategory = cat; // ✅ 중요
 
   const myTourTemplates = [
@@ -552,7 +548,7 @@ function openTravelList(cat){
    ✅ 여행 출발 체크 QR 화면 (연속 스캔)
 ========================================================= */
 function openDepartureQR(courseTitle){
-   lastDetailPage = "travelDetail"; // 🔥 추가
+   currentView = "travelQR";
   currentCourse = courseTitle;
   qrMode = "departure";
   lastScannedEmployee = null;
@@ -568,7 +564,7 @@ function openDepartureQR(courseTitle){
    - 고객용과 양식 통일: type:"meal", tour, action, time
 ========================================================= */
 function openMealQR(mealTitle){
-  lastDetailPage = "mealRoot"; // 🔥 중식비는 루트가 바로 이전
+  currentView = "mealQR";
   currentMealTitle = mealTitle;
   qrMode = "meal";
   lastScannedEmployee = null;
@@ -583,7 +579,7 @@ function openMealQR(mealTitle){
    ✅ 고객관리 QR (조회 후 상세 출력)
 ========================================================= */
 function openCustomerScan(){
-   lastDetailPage = "customerRoot"; // 🔥
+   currentView = "customer";
   qrMode = "customer";
   lastScannedEmployee = null;
   lastScanKey = "";
@@ -872,6 +868,7 @@ function sendMealApprove(emp){
    ✅ 고객 상세 출력 (여기서만)
 ========================================================= */
 function showCustomerDetail(emp){
+   currentView = "customerDetail";
   document.querySelector(".side-menu").style.display = (window.innerWidth <= 767) ? "none" : "block";
 
   const t = document.getElementById("detailTitle");
@@ -966,21 +963,32 @@ function openAdminReport(){
 function goBack(){
   cleanupQR();
 
-  /* 1️⃣ QR → 직전 세부 화면 */
-  if (lastDetailPage === "travelDetail"){
-    openTravelList(lastTravelList);
-    return;
-  }
+  switch (currentView){
 
-  /* 2️⃣ 세부 → 여행 루트 */
-  if (lastTravelList){
-    openPage("travelRoot", true);
-    lastTravelList = "";
-    return;
-  }
+    case "travelQR":
+      openTravelList(currentCategory);
+      break;
 
-  /* 3️⃣ 고객관리 / 리포트 / 단일 화면 */
-  openHome();
+    case "travelList":
+      openPage("travelRoot", true);
+      break;
+
+    case "mealQR":
+      openPage("mealRoot", true);
+      break;
+
+    case "customer":
+    case "report":
+      openHome();
+      break;
+      
+      case "customerDetail":
+  openCustomerScan();
+  break;
+
+    default:
+      openHome();
+  }
 }
 
 /* =========================================================
