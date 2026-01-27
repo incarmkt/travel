@@ -502,36 +502,32 @@ function openTravelList(cat){
       <p class="day-title">${escapeHtml(day.title)}</p>
 
       <div class="timeline">
-        ${day.items.map(item => {
+      ${day.items.map(item =>
+  (cat === "선택일정관리" && item.title === "선택 관광")
+    ? myTourTemplates.map(tour => `
+        <div class="schedule-item">
+          <div class="timeline-dot"></div>
+          <div class="schedule-card admin-clickable"
+               onclick="openDepartureQR('${tour.keyword}')">
+            <div class="schedule-time">${escapeHtml(item.time || "")}</div>
+            <div class="schedule-title">🧭 ${escapeHtml(tour.label)}</div>
+            <div class="schedule-desc">선택 관광 세부 일정</div>
+          </div>
+        </div>
+      `).join("")
+    : `
+        <div class="schedule-item">
+          <div class="timeline-dot"></div>
+          <div class="schedule-card admin-clickable"
+               onclick="openDepartureQR('${escapeQuotes(item.title)}')">
+            <div class="schedule-time">${escapeHtml(item.time || "")}</div>
+            <div class="schedule-title">${escapeHtml(item.icon || "")} ${escapeHtml(item.title || "")}</div>
+            ${item.desc ? `<div class="schedule-desc">${escapeHtml(item.desc)}</div>` : ""}
+          </div>
+        </div>
+      `
+).join("")}
 
-          /* ✅ 선택 관광 분해 */
-          if (cat === "선택일정관리" && item.title === "선택 관광") {
-            return myTourTemplates.map(tour => `
-              <div class="schedule-item">
-                <div class="timeline-dot"></div>
-                <div class="schedule-card admin-clickable"
-                     onclick="openDepartureQR('${tour.keyword}')">
-                  <div class="schedule-time">${escapeHtml(item.time || "")}</div>
-                  <div class="schedule-title">🧭 ${escapeHtml(tour.label)}</div>
-                  <div class="schedule-desc">선택 관광 세부 일정</div>
-                </div>
-              </div>
-            `).join("");
-          }
-
-          /* ✅ 기존 일정 유지 */
-          return `
-            <div class="schedule-item">
-              <div class="timeline-dot"></div>
-              <div class="schedule-card admin-clickable"
-                   onclick="openDepartureQR('${escapeQuotes(item.title)}')">
-                <div class="schedule-time">${escapeHtml(item.time || "")}</div>
-                <div class="schedule-title">${escapeHtml(item.icon || "")} ${escapeHtml(item.title || "")}</div>
-                ${item.desc ? `<div class="schedule-desc">${escapeHtml(item.desc)}</div>` : ""}
-              </div>
-            </div>
-          `;
-        }).join("")}
       </div>
     </div>
   `).join("");
