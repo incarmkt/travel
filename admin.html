@@ -791,10 +791,10 @@ function beep(){
 function sendDeparture(emp){
   const time = nowKSTString();
 
-  setQRResult(
-    `✅ ${emp.name}(${emp.id}) 출발 체크 완료\n[${currentCategory}] ${currentCourse}\n${time}`,
-    true
-  );
+ setQRResult(
+  `✅ ${emp.name}(${emp.id}) 출발 체크 완료 | [${currentCategory}] ${currentCourse} | ${time}`,
+  true
+);
 
   // 🔥 네트워크는 다음 틱으로 넘김
   setTimeout(() => {
@@ -838,7 +838,10 @@ fetch(GAS_URL, {
 function sendMealApprove(emp){
   const time = nowKSTString();
   
-  setQRResult(`✅ ${emp.name}(${emp.id}) 중식비 지급 완료\n[${currentMealTitle}]\n${time}`, true);
+ setQRResult(
+  `✅ ${emp.name}(${emp.id}) 중식비 지급 완료 | [${currentMealTitle}] | ${time}`,
+  true
+);
   
  // 🔥 네트워크는 뒤로
   setTimeout(() => {
