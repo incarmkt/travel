@@ -316,7 +316,7 @@
    - 네 요구: 고객용 HTML에서 쓰는 관리자 비밀번호와 동일해야 함
 ========================================================= */
 const ADMIN_PASSWORD = "0000";  // ✅ 고객용과 동일 값 유지
-const GAS_URL = "https://script.google.com/macros/s/AKfycbxiHY2_E0cVRlh1A45s5ilaYEwq10mqnp5qxvaFr_KZVE6Uzk72B24zlt_agXsO7NvD7A/exec";
+const GAS_URL = "https://script.google.com/macros/s/AKfycbzjixnQpkNRR616MDdspd5PX4NIO2kGXYjZb_DH-3d6dVml6fiEXKH-WSzf6ZhwbfhW8w/exec";
 const EMP_URL = "people/employees.json?ts=" + Date.now();
 
 /* =========================================================
@@ -733,16 +733,18 @@ function processEmployeeId(id){
   
 lastScannedEmployee = emp; // ✅ 여기
 
-  const key = `${qrMode}|${emp.id}|${currentCategory}|${currentCourse}|${currentMealTitle}`;
-
+  const key = (qrMode === "meal")
+  ? `${qrMode}|${emp.id}|${currentMealTitle}|${mealActionMode}`
+  : `${qrMode}|${emp.id}|${currentCategory}|${currentCourse}`;
+  
 // ✅ 1차: 같은 화면 연속 스캔 방지
 if (key === lastScanKey){
   setQRResult(`⚠️ ${emp.name}(${emp.id}) 이미 처리됨`, false);
   return;
 }
 
-// ✅ 2차: 나갔다 들어와도 중복 방지
-if (sessionScans[key]){
+// meal 모드에서는 sessionScans 중복차단 제외
+if (qrMode !== "meal" && sessionScans[key]){
   setQRResult(`⚠️ ${emp.name}(${emp.id}) 이미 기록된 항목입니다`, false);
   return;
 }
@@ -914,46 +916,86 @@ function setMealMode(mode){
    ✅ 고객 상세 출력 (여기서만)
 ========================================================= */
 function showCustomerDetail(emp){
-   currentView = "customerDetail";
-  document.querySelector(".side-menu").style.display = (window.innerWidth <= 767) ? "none" : "block";
+  currentView = "customerDetail";
 
   const t = document.getElementById("detailTitle");
   const c = document.getElementById("detailContent");
 
-  t.textContent = `👤 고객 상세 - ${emp.name} (${emp.id})`;
+  t.textContent = `👤 ${emp.name} (${emp.id})`;
 
-  const kv = Object.keys(emp).map(k => {
-    const v = (typeof emp[k] === "object") ? JSON.stringify(emp[k]) : String(emp[k]);
-    return `
-      <div class="info-row">
-        <div class="info-label">${escapeHtml(k)}</div>
-        <div>${escapeHtml(v)}</div>
-      </div>
-    `;
-  }).join("");
+  c.innerHTML = `<div class="info-card">불러오는 중...</div>`;
 
-  c.innerHTML = `
-    <div class="info-card">
-      <div style="margin-bottom:8px;">
-        <span class="pill">employees.json 기반</span>
-        <span class="pill">사번:${escapeHtml(String(emp.id))}</span>
-      </div>
-      <div class="info-grid">
-        ${kv}
-      </div>
-    </div>
+  fetch(`${GAS_URL}?mode=customerAdmin&id=${encodeURIComponent(emp.id)}`)
+    .then(r => r.json())
+    .then(admin => {
 
-    <div class="info-card">
-      <div style="margin-bottom:8px;">
-        <span class="pill">참고</span>
-        <span class="pill">고객관리에서만 상세 출력</span>
-      </div>
-      <div style="color:#667085; font-size:13px;">
-        여행/중식비 관리 화면은 “연속 스캔 자동 기록”이 목적이라 상세 출력은 하지 않습니다.
-      </div>
-    </div>
-  `;
+      /* 출발 기록 */
+      const depList = admin.departures.length
+        ? admin.departures.map(d =>
+            `<li>${escapeHtml(d.category)} / ${escapeHtml(d.course)}</li>`
+          ).join("")
+        : `<li class="pill">출발 기록 없음</li>`;
+
+      c.innerHTML = `
+        <!-- ================= 기본정보 ================= -->
+        <div class="info-card">
+          <h3>✈️ 기본정보</h3>
+
+          <div class="info-grid">
+            <div class="info-row">
+              <div class="info-label">출국편</div>
+              <div>
+                ${emp.flight.departure.date} ${emp.flight.departure.time}<br>
+                ${emp.flight.departure.from} → ${emp.flight.departure.to}<br>
+                ${emp.flight.departure.airline}
+                (${emp.flight.departure.flightNo})
+              </div>
+            </div>
+
+            <div class="info-row">
+              <div class="info-label">귀국편</div>
+              <div>
+                ${emp.flight.return.date} ${emp.flight.return.time}<br>
+                ${emp.flight.return.from} → ${emp.flight.return.to}<br>
+                ${emp.flight.return.airline}
+                (${emp.flight.return.flightNo})
+              </div>
+            </div>
+          </div>
+
+          <div style="margin-top:12px;">
+            <div class="info-label">선택 관광</div>
+            ${
+              emp.myTour.length
+                ? emp.myTour.map(t => `<span class="pill">${escapeHtml(t)}</span>`).join(" ")
+                : `<span class="pill">선택 없음</span>`
+            }
+          </div>
+        </div>
+
+        <!-- ================= 관리정보 ================= -->
+        <div class="info-card">
+          <h3>🛠 관리정보</h3>
+
+          <div class="info-label">출발 체크 기록</div>
+          <ul style="margin:6px 0 12px 16px;">
+            ${depList}
+          </ul>
+
+          <div class="info-label">중식비 지급 상태</div>
+          <div style="margin-top:4px;">
+            <span class="pill ${
+              admin.mealStatus === "지급 완료" ? "" : "ghost-btn"
+            }">
+              ${admin.mealStatus}
+            </span>
+          </div>
+        </div>
+      `;
+    });
 }
+
+
   /* =========================================================
    ✅ 관리자 리포트 화면
 ========================================================= */
