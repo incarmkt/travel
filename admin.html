@@ -326,7 +326,8 @@ let employees = [];
 let qrScanner = null;
 let deviceCount = 0;        // ① 단말기(세션) 카운트
 let qrSessionKey = "";      // QR 화면 단위로 카운트 저장 키
-
+let lastScannedEmployee = null;
+  
 /* QR 모드: departure | meal | customer */
 let qrMode = "";
 /* 스캔 컨텍스트 */
@@ -571,6 +572,8 @@ function openMealQR(mealTitle){
   openQRScreen(`📷 중식비 지급 - ${mealTitle}`, {
     showReset: true
   });
+  const cancelArea = document.getElementById("mealCancelArea");
+if (cancelArea) cancelArea.style.display = "block";
     // ✅ [여기 추가] 중식비 현재 지급 인원 조회
   fetch(`${GAS_URL}?mode=countMeal&tour=${encodeURIComponent(currentMealTitle)}`)
     .then(r => r.json())
@@ -623,6 +626,9 @@ c.innerHTML = `
    <div id="deviceCount">이 단말 처리 인원: 0명</div>
   <div id="totalCount">전체 누적 인원: 0명</div>
     </div>
+    <div id="mealCancelArea" style="display:none; margin-top:12px;">
+  <button class="ghost-btn" onclick="cancelMeal()">❌ 중식비 취소</button>
+</div>
   </div>
 `;
 
@@ -705,6 +711,8 @@ function processEmployeeId(id){
     setQRResult("❌ 등록되지 않은 사번입니다.", false);
     return;
   }
+  
+lastScannedEmployee = emp; // ✅ 여기
 
   const key = `${qrMode}|${emp.id}|${currentCategory}|${currentCourse}|${currentMealTitle}`;
 
@@ -871,6 +879,45 @@ function sendMealApprove(emp){
 .catch(console.error);
   }, 0);
 }
+
+  function cancelMeal(){
+  if (!lastScannedEmployee){
+    setQRResult("⚠️ 취소할 대상이 없습니다. 먼저 사번을 스캔하세요.", false);
+    return;
+  }
+
+  const emp = lastScannedEmployee;
+  const time = nowKSTString();
+
+  setQRResult(
+    `❌ ${emp.name}(${emp.id}) 중식비 지급 취소\n[${currentMealTitle}]\n${time}`,
+    false
+  );
+
+  fetch(GAS_URL, {
+    method: "POST",
+    body: JSON.stringify({
+      type: "meal",
+      id: emp.id,
+      name: emp.name,
+      tour: currentMealTitle,
+      action: "CANCEL",
+      time
+    })
+  })
+  .then(r => r.json())
+  .then(() => {
+    // ✅ 전체 누적 다시 조회
+    fetch(`${GAS_URL}?mode=countMeal&tour=${encodeURIComponent(currentMealTitle)}`)
+      .then(r => r.json())
+      .then(d => {
+        const tc = document.getElementById("totalCount");
+        if (tc) tc.textContent = `전체 누적 인원: ${Number(d.totalCount || 0)}명`;
+      });
+  })
+  .catch(console.error);
+}
+
 /* =========================================================
    ✅ 고객 상세 출력 (여기서만)
 ========================================================= */
