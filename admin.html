@@ -1241,14 +1241,8 @@ function loadCountsOnEnter(){
   })
   .then(r => r.json())
   .then(() => {
-    // 화면 상태 즉시 반영
-    const statusEl = document.getElementById("adminMealStatus");
-    if (statusEl){
-      statusEl.textContent =
-        (action === "APPROVE") ? "지급 완료" : "미지급";
-    }
-
-    alert("처리 완료");
+   // ✅ 여기서 화면을 "다시 로드"하는 게 핵심
+    showCustomerDetail({ id, name }); // 🔥 이 줄 추가
   })
   .catch(() => alert("처리 실패"));
 }
@@ -1324,8 +1318,9 @@ const travelSchedule = [
    - 네 고객용에서 쓰는 “단수이” 항목명을 그대로 옮겨 적어주면 됨
 ========================================================= */
 const MEAL_ITEMS = [
-  { title: "자유일정" },
-  { title: "기타 중식비" }
+  { title: "티엔라이" },
+  { title: "고궁박물관" },
+  { title: "자유일정" }
 ];
 
 /* =========================================================
