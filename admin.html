@@ -1240,9 +1240,13 @@ function loadCountsOnEnter(){
 })
   })
   .then(r => r.json())
-  .then(() => {
-   // ✅ 여기서 화면을 "다시 로드"하는 게 핵심
-    showCustomerDetail({ id, name }); // 🔥 이 줄 추가
+ .then(() => {
+  const emp = findEmp(id);   // ✅ 전체 emp 객체 다시 찾기
+  if (!emp){
+    alert("직원 정보를 찾을 수 없습니다.");
+    return;
+  }
+  showCustomerDetail(emp);
   })
   .catch(() => alert("처리 실패"));
 }
