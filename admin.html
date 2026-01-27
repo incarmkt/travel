@@ -650,6 +650,10 @@ c.innerHTML = `
   if (mealArea){
     mealArea.style.display = (qrMode === "meal") ? "block" : "none";
   }
+  const counter = document.getElementById("qrCounter");
+if (counter){
+  counter.style.display = (qrMode === "customer") ? "none" : "block";
+}
   
   document.body.classList.add("qr-lock");
   loadCountsOnEnter();   // ✅ 입장 시 ①② 세팅
@@ -1184,6 +1188,42 @@ function loadCountsOnEnter(){
       })
       .catch(console.error);
   }
+}
+/* =========================================================
+   ✅ 중식비재지급 고객관리에서
+========================================================= */
+  function adminMealAction(id, name, action){
+  if (!confirm(
+    action === "APPROVE"
+      ? "중식비를 다시 지급 처리하시겠습니까?"
+      : "중식비를 취소 처리하시겠습니까?"
+  )) return;
+
+  const time = nowKSTString();
+
+  fetch(GAS_URL, {
+    method: "POST",
+    body: JSON.stringify({
+      type: "meal",
+      id,
+      name,
+      tour: currentMealTitle || "관리자처리",
+      action,
+      time
+    })
+  })
+  .then(r => r.json())
+  .then(() => {
+    // 화면 상태 즉시 반영
+    const statusEl = document.getElementById("adminMealStatus");
+    if (statusEl){
+      statusEl.textContent =
+        (action === "APPROVE") ? "지급 완료" : "미지급";
+    }
+
+    alert("처리 완료");
+  })
+  .catch(() => alert("처리 실패"));
 }
 
 /* =========================================================
