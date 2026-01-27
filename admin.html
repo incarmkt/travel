@@ -936,7 +936,7 @@ function showCustomerDetail(emp){
     .then(admin => {
 const mealRows = emp.myTour.map(tour => {
   const mealMap = admin.mealMap || {};
-  const status = admin.mealMap[tour];
+const status = mealMap[tour] || null;
 
   if (!status) {
     return `
