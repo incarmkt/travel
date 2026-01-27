@@ -327,7 +327,7 @@ let qrScanner = null;
 let deviceCount = 0;        // ① 단말기(세션) 카운트
 let qrSessionKey = "";      // QR 화면 단위로 카운트 저장 키
 let lastScannedEmployee = null;
-  
+let mealActionMode = "APPROVE"; // 기본 승인
 /* QR 모드: departure | meal | customer */
 let qrMode = "";
 /* 스캔 컨텍스트 */
@@ -626,9 +626,22 @@ c.innerHTML = `
    <div id="deviceCount">이 단말 처리 인원: 0명</div>
   <div id="totalCount">전체 누적 인원: 0명</div>
     </div>
-    <div id="mealCancelArea" style="display:none; margin-top:12px;">
-  <button class="ghost-btn" onclick="cancelMeal()">❌ 중식비 취소</button>
+<div id="mealActionArea" style="margin-top:12px;">
+  <button
+    id="approveBtn"
+    class="primary-btn"
+    onclick="setMealMode('APPROVE')">
+    ✅ 승인
+  </button>
+
+  <button
+    id="cancelBtn"
+    class="ghost-btn"
+    onclick="setMealMode('CANCEL')">
+    ❌ 취소
+  </button>
 </div>
+
   </div>
 `;
 
@@ -741,10 +754,10 @@ sessionStorage.setItem("isc_scans", JSON.stringify(sessionScans));
     return;
   }
 
-  if (qrMode === "meal"){
-    sendMealApprove(emp);
-    return;
-  }
+ if (qrMode === "meal"){
+  sendMeal(emp);
+  return;
+}
 
   if (qrMode === "customer"){
     cleanupQR();            // ❗ 고객조회에서만
@@ -834,64 +847,15 @@ fetch(GAS_URL, {
    ✅ GAS 전송: 중식비 지급(승인)
    - 고객용과 양식 통일: type:"meal", action:"APPROVE", tour, time
 ========================================================= */
-function sendMealApprove(emp){
+function sendMeal(emp){
   const time = nowKSTString();
-  
-  setQRResult(`✅ ${emp.name}(${emp.id}) 중식비 지급 완료\n[${currentMealTitle}]\n${time}`, true);
-  
- // 🔥 네트워크는 뒤로
-  setTimeout(() => {
- fetch(GAS_URL, {
-  method:"POST",
-  body: JSON.stringify({
-    type: "meal",
-    id: emp.id,
-    name: emp.name,
-    tour: currentMealTitle,
-    action: "APPROVE",
-    time
-  })
-})
-.then(r => r.json())
-.then(data => {
-  const status = String(data?.status || "").toUpperCase();
 
-  // ① 단말기 카운트: OK일 때만 +1
-  if (status === "OK") {
-    deviceCount++;
-    sessionStorage.setItem(qrSessionKey, String(deviceCount));
-
-    const dc = document.getElementById("deviceCount");
-    if (dc) dc.textContent = `이 단말 처리 인원: ${deviceCount}명`;
-
-    // ② 전체 누적: doGet으로 재조회(실시간 보장)
-    fetch(`${GAS_URL}?mode=countMeal&tour=${encodeURIComponent(currentMealTitle)}`)
-      .then(r => r.json())
-      .then(d => {
-        const tc = document.getElementById("totalCount");
-        if (tc) tc.textContent = `전체 누적 인원: ${Number(d.totalCount || 0)}명`;
-      })
-      .catch(console.error);
-  }
-
-  // NO_CHANGE/DUPLICATE면 ①도 ②도 그대로 유지 (원하면 여기서 토스트만 경고로 바꿔도 됨)
-})
-.catch(console.error);
-  }, 0);
-}
-
-  function cancelMeal(){
-  if (!lastScannedEmployee){
-    setQRResult("⚠️ 취소할 대상이 없습니다. 먼저 사번을 스캔하세요.", false);
-    return;
-  }
-
-  const emp = lastScannedEmployee;
-  const time = nowKSTString();
+  const actionText =
+    mealActionMode === "APPROVE" ? "지급 완료" : "지급 취소";
 
   setQRResult(
-    `❌ ${emp.name}(${emp.id}) 중식비 지급 취소\n[${currentMealTitle}]\n${time}`,
-    false
+    `${mealActionMode === "APPROVE" ? "✅" : "❌"} ${emp.name}(${emp.id}) 중식비 ${actionText}\n[${currentMealTitle}]\n${time}`,
+    mealActionMode === "APPROVE"
   );
 
   fetch(GAS_URL, {
@@ -901,13 +865,13 @@ function sendMealApprove(emp){
       id: emp.id,
       name: emp.name,
       tour: currentMealTitle,
-      action: "CANCEL",
+      action: mealActionMode,
       time
     })
   })
   .then(r => r.json())
   .then(() => {
-    // ✅ 전체 누적 다시 조회
+    // 전체 누적 갱신
     fetch(`${GAS_URL}?mode=countMeal&tour=${encodeURIComponent(currentMealTitle)}`)
       .then(r => r.json())
       .then(d => {
@@ -918,6 +882,8 @@ function sendMealApprove(emp){
   .catch(console.error);
 }
 
+
+ 
 /* =========================================================
    ✅ 고객 상세 출력 (여기서만)
 ========================================================= */
