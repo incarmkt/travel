@@ -316,7 +316,7 @@
    - 네 요구: 고객용 HTML에서 쓰는 관리자 비밀번호와 동일해야 함
 ========================================================= */
 const ADMIN_PASSWORD = "0000";  // ✅ 고객용과 동일 값 유지
-const GAS_URL = "https://script.google.com/macros/s/AKfycbzjixnQpkNRR616MDdspd5PX4NIO2kGXYjZb_DH-3d6dVml6fiEXKH-WSzf6ZhwbfhW8w/exec";
+const GAS_URL = "https://script.google.com/macros/s/AKfycbyFhMHT_G-ZFbQRQYds8ihdG20AARpYcMa9u2RSw3GW3Si_Pm6jAy2oxg79FHQDAJ7ksg/exec";
 const EMP_URL = "people/employees.json?ts=" + Date.now();
 
 /* =========================================================
@@ -747,16 +747,18 @@ if (key === lastScanKey){
   return;
 }
 
-// meal 모드에서는 sessionScans 중복차단 제외
-if (qrMode !== "meal" && sessionScans[key]){
+// meal, 고객조회 모드에서는 sessionScans 중복차단 제외
+if (qrMode !== "meal" && qrMode !== "customer" && sessionScans[key]) {
   setQRResult(`⚠️ ${emp.name}(${emp.id}) 이미 기록된 항목입니다`, false);
   return;
 }
 
 // 기록
 lastScanKey = key;
-sessionScans[key] = true;
-sessionStorage.setItem("isc_scans", JSON.stringify(sessionScans));
+if (qrMode !== "customer") {
+  sessionScans[key] = true;
+  sessionStorage.setItem("isc_scans", JSON.stringify(sessionScans));
+}
 
 
 // 🔥 카운터 화면 반영
@@ -932,6 +934,38 @@ function showCustomerDetail(emp){
   fetch(`${GAS_URL}?mode=customerAdmin&id=${encodeURIComponent(emp.id)}`)
     .then(r => r.json())
     .then(admin => {
+const mealRows = emp.myTour.map(tour => {
+  const mealMap = admin.mealMap || {};
+  const status = admin.mealMap[tour];
+
+  if (!status) {
+    return `
+      <div>• ${escapeHtml(tour)} : 지급 대상 아님</div>
+    `;
+  }
+
+  if (status === "APPROVE") {
+    return `
+      <div>
+        • ${escapeHtml(tour)} : <b style="color:#16a34a">지급 완료</b>
+        <button class="ghost-btn"
+          onclick="adminMealAction('${emp.id}', '${emp.name}', '${tour}', 'CANCEL')">
+          취소
+        </button>
+      </div>
+    `;
+  }
+
+  return `
+    <div>
+      • ${escapeHtml(tour)} : <b>미지급</b>
+      <button class="primary-btn"
+        onclick="adminMealAction('${emp.id}', '${emp.name}', '${tour}', 'APPROVE')">
+        지급
+      </button>
+    </div>
+  `;
+}).join("");
 
       /* 출발 기록 */
       const depList = admin.departures.length
@@ -978,28 +1012,15 @@ function showCustomerDetail(emp){
         </div>
 
         <!-- ================= 관리정보 ================= -->
-        <div class="info-card">
+<div class="info-card">
   <h3>🛠 관리정보</h3>
 
   <div class="info-label">출발 체크 기록</div>
   <ul>${depList}</ul>
 
   <div class="info-label" style="margin-top:8px;">중식비 상태</div>
-  <div style="margin-bottom:10px;">
-    <b id="adminMealStatus">${admin.mealStatus}</b>
-  </div>
-
-  <!-- ✅ 관리자 전용 중식비 제어 -->
-  <div class="admin-sub-buttons">
-    <button class="primary-btn"
-      onclick="adminMealAction('${emp.id}', '${emp.name}', 'APPROVE')">
-      💳 중식비 재지급
-    </button>
-
-    <button class="ghost-btn"
-      onclick="adminMealAction('${emp.id}', '${emp.name}', 'CANCEL')">
-      ❌ 중식비 취소
-    </button>
+  <div class="info-card">
+    ${mealRows}
   </div>
 </div>
 `;
@@ -1198,7 +1219,7 @@ function loadCountsOnEnter(){
 /* =========================================================
    ✅ 중식비재지급 고객관리에서
 ========================================================= */
-  function adminMealAction(id, name, action){
+  function adminMealAction(id, name, tour, action){
   if (!confirm(
     action === "APPROVE"
       ? "중식비를 다시 지급 처리하시겠습니까?"
@@ -1209,14 +1230,14 @@ function loadCountsOnEnter(){
 
   fetch(GAS_URL, {
     method: "POST",
-    body: JSON.stringify({
-      type: "meal",
-      id,
-      name,
-      tour: currentMealTitle || "관리자처리",
-      action,
-      time
-    })
+   body: JSON.stringify({
+  type: "meal",
+  id,
+  name,
+  tour,          // ✅ 선택 관광명
+  action,        // ✅ APPROVE / CANCEL
+  time
+})
   })
   .then(r => r.json())
   .then(() => {
