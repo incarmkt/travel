@@ -979,25 +979,30 @@ function showCustomerDetail(emp){
 
         <!-- ================= 관리정보 ================= -->
         <div class="info-card">
-          <h3>🛠 관리정보</h3>
+  <h3>🛠 관리정보</h3>
 
-          <div class="info-label">출발 체크 기록</div>
-          <ul style="margin:6px 0 12px 16px;">
-            ${depList}
-          </ul>
+  <div class="info-label">출발 체크 기록</div>
+  <ul>${depList}</ul>
 
-          <div class="info-label">중식비 지급 상태</div>
-          <div style="margin-top:4px;">
-            <span class="pill ${
-              admin.mealStatus === "지급 완료" ? "" : "ghost-btn"
-            }">
-              ${admin.mealStatus}
-            </span>
-          </div>
-        </div>
-      `;
-    });
-}
+  <div class="info-label" style="margin-top:8px;">중식비 상태</div>
+  <div style="margin-bottom:10px;">
+    <b id="adminMealStatus">${admin.mealStatus}</b>
+  </div>
+
+  <!-- ✅ 관리자 전용 중식비 제어 -->
+  <div class="admin-sub-buttons">
+    <button class="primary-btn"
+      onclick="adminMealAction('${emp.id}', '${emp.name}', 'APPROVE')">
+      💳 중식비 재지급
+    </button>
+
+    <button class="ghost-btn"
+      onclick="adminMealAction('${emp.id}', '${emp.name}', 'CANCEL')">
+      ❌ 중식비 취소
+    </button>
+  </div>
+</div>
+
 
 
   /* =========================================================
