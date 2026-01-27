@@ -572,8 +572,6 @@ function openMealQR(mealTitle){
   openQRScreen(`📷 중식비 지급 - ${mealTitle}`, {
     showReset: true
   });
-  const cancelArea = document.getElementById("mealCancelArea");
-if (cancelArea) cancelArea.style.display = "block";
     // ✅ [여기 추가] 중식비 현재 지급 인원 조회
   fetch(`${GAS_URL}?mode=countMeal&tour=${encodeURIComponent(currentMealTitle)}`)
     .then(r => r.json())
@@ -882,6 +880,22 @@ function sendMeal(emp){
   .catch(console.error);
 }
 
+function setMealMode(mode){
+  mealActionMode = mode;
+
+  const approveBtn = document.getElementById("approveBtn");
+  const cancelBtn  = document.getElementById("cancelBtn");
+
+  if (mode === "APPROVE"){
+    approveBtn.className = "primary-btn";
+    cancelBtn.className  = "ghost-btn";
+    setQRResult("✅ 중식비 승인 모드", true);
+  } else {
+    approveBtn.className = "ghost-btn";
+    cancelBtn.className  = "primary-btn";
+    setQRResult("⚠️ 중식비 취소 모드", false);
+  }
+}
 
  
 /* =========================================================
