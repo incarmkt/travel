@@ -325,6 +325,9 @@ const EMP_URL = "people/employees.json?ts=" + Date.now();
 let employees = [];
 let qrScanner = null;
 
+let deviceCount = 0;        // ① 단말기(세션) 카운트
+let qrSessionKey = "";      // QR 화면 단위로 카운트 저장 키
+  
 /* QR 모드: departure | meal | customer */
 let qrMode = "";
 /* 스캔 컨텍스트 */
@@ -628,13 +631,15 @@ c.innerHTML = `
     <div id="qrToast" class="qr-toast">QR 스캔 대기중</div>
 
     <div id="qrCounter" class="qr-counter">
-      현재 처리 인원: 0명
-    </div>
+  <div id="deviceCount">이 단말 처리 인원: 0명</div>
+  <div id="totalCount">전체 누적 인원: 0명</div>
+</div>
   </div>
 `;
 
   document.body.classList.add("qr-lock");
-  startQR();
+loadCountsOnEnter();  // ✅ 추가 (입장 시 ①② 세팅)
+startQR();
 }
 
 
@@ -806,15 +811,23 @@ fetch(GAS_URL, {
 })
 .then(r => r.json())
 .then(data => {
+  const status = String(data?.status || "OK").toUpperCase();
+
+  // ✅ 전체 누적은 서버 값이 최우선
   if (data && data.totalCount != null) {
-    const el = document.getElementById("qrCounter");
-    if (el){
-      el.textContent = `현재 처리 인원: ${data.totalCount}명`;
-    }
+    const tc = document.getElementById("totalCount");
+    if (tc) tc.textContent = `전체 누적 인원: ${Number(data.totalCount || 0)}명`;
+  }
+
+  // ✅ 출발은 DUPLICATE면 단말기 카운트 증가 X
+  if (status === "OK") {
+    deviceCount++;
+    sessionStorage.setItem(qrSessionKey, String(deviceCount));
+
+    const dc = document.getElementById("deviceCount");
+    if (dc) dc.textContent = `이 단말 처리 인원: ${deviceCount}명`;
   }
 })
-.catch(console.error);
-  }, 0);
 }
 
 
@@ -842,15 +855,31 @@ function sendMealApprove(emp){
 })
 .then(r => r.json())
 .then(data => {
-  if (data && data.totalCount != null) {
-    const el = document.getElementById("qrCounter");
-    if (el){
-      el.textContent = `현재 처리 인원: ${data.totalCount}명`;
-    }
+  const status = String(data?.status || "OK").toUpperCase();
+
+  // ✅ 중식비는 GAS가 totalCount를 지금 doPost에서 안 주고 있음
+  // 그래서 "OK"일 때만 doGet 카운트로 한 번 더 갱신(실시간 보장)
+  // (GAS 구조 변경 없이 프론트에서 해결)
+
+  if (status === "OK") {
+    deviceCount++;
+    sessionStorage.setItem(qrSessionKey, String(deviceCount));
+
+    const dc = document.getElementById("deviceCount");
+    if (dc) dc.textContent = `이 단말 처리 인원: ${deviceCount}명`;
+
+    // ✅ 전체 누적 다시 조회
+    fetch(`${GAS_URL}?mode=countMeal&tour=${encodeURIComponent(currentMealTitle)}`)
+      .then(r => r.json())
+      .then(d => {
+        const tc = document.getElementById("totalCount");
+        if (tc) tc.textContent = `전체 누적 인원: ${Number(d.totalCount || 0)}명`;
+      })
+      .catch(console.error);
   }
+
+  // ✅ NO_CHANGE면 카운트 변화 없음 (표시만 경고로 유지하고 싶으면 여기서 토스트 처리 가능)
 })
-.catch(console.error);
-  }, 0);
 }
 /* =========================================================
    ✅ 고객 상세 출력 (여기서만)
@@ -1051,6 +1080,41 @@ function manualSubmit(){
 
   input.value = "";
 }
+  function buildQrSessionKey(){
+  // QR 모드 + 컨텍스트로 “해당 화면 단위” 카운트 유지
+  return `isc_device_count|${qrMode}|${currentCategory}|${currentCourse}|${currentMealTitle}`;
+}
+
+function loadCountsOnEnter(){
+  // ① 단말기 카운트(세션)
+  qrSessionKey = buildQrSessionKey();
+  deviceCount = Number(sessionStorage.getItem(qrSessionKey) || "0") || 0;
+
+  const dc = document.getElementById("deviceCount");
+  if (dc) dc.textContent = `이 단말 처리 인원: ${deviceCount}명`;
+
+  // ② 전체 누적(시트) - 모드별 카운트 조회
+  if (qrMode === "departure"){
+    fetch(`${GAS_URL}?mode=countDeparture&category=${encodeURIComponent(currentCategory)}&course=${encodeURIComponent(currentCourse)}`)
+      .then(r => r.json())
+      .then(d => {
+        const tc = document.getElementById("totalCount");
+        if (tc) tc.textContent = `전체 누적 인원: ${Number(d.totalCount || 0)}명`;
+      })
+      .catch(console.error);
+  }
+
+  if (qrMode === "meal"){
+    fetch(`${GAS_URL}?mode=countMeal&tour=${encodeURIComponent(currentMealTitle)}`)
+      .then(r => r.json())
+      .then(d => {
+        const tc = document.getElementById("totalCount");
+        if (tc) tc.textContent = `전체 누적 인원: ${Number(d.totalCount || 0)}명`;
+      })
+      .catch(console.error);
+  }
+}
+
 /* =========================================================
    ✅ 엔터로 로그인
 ========================================================= */
