@@ -566,12 +566,15 @@ function openMealQR(mealTitle){
   currentView = "mealQR";
   currentMealTitle = mealTitle;
   qrMode = "meal";
+  mealActionMode = "APPROVE"; // ✅ 항상 승인으로 초기화
   lastScannedEmployee = null;
   lastScanKey = "";
 
   openQRScreen(`📷 중식비 지급 - ${mealTitle}`, {
     showReset: true
   });
+  // DOM 생성 이후 버튼 상태 초기화
+setTimeout(() => setMealMode("APPROVE"), 0);
     // ✅ [여기 추가] 중식비 현재 지급 인원 조회
   fetch(`${GAS_URL}?mode=countMeal&tour=${encodeURIComponent(currentMealTitle)}`)
     .then(r => r.json())
@@ -642,7 +645,12 @@ c.innerHTML = `
 
   </div>
 `;
-
+// ✅ 여기서 제어해야 함 (DOM 생성 이후)
+  const mealArea = document.getElementById("mealActionArea");
+  if (mealArea){
+    mealArea.style.display = (qrMode === "meal") ? "block" : "none";
+  }
+  
   document.body.classList.add("qr-lock");
   loadCountsOnEnter();   // ✅ 입장 시 ①② 세팅
   startQR();
@@ -878,6 +886,10 @@ function sendMeal(emp){
       });
   })
   .catch(console.error);
+   // ❗ 취소 처리 후 자동으로 승인 모드 복귀
+  if (mealActionMode === "CANCEL") {
+    setTimeout(() => setMealMode("APPROVE"), 300);
+  }
 }
 
 function setMealMode(mode){
