@@ -1050,31 +1050,57 @@ function openAdminReport(){
 
   loadAdminReport();
 }
+  
+  function renderDepartureReport(data){
+  const el = document.getElementById("departureReport");
+  if (!el || !data) return;
+
+  let html = "";
+
+  Object.keys(data).forEach(category => {
+    html += `
+      <div style="margin-bottom:12px;">
+        <h4 style="margin:6px 0;">📌 ${escapeHtml(category)}</h4>
+        ${Object.keys(data[category]).map(course => `
+          <div style="padding-left:12px;">
+            • ${escapeHtml(course)} : 
+            <b>${data[category][course]}명</b>
+          </div>
+        `).join("")}
+      </div>
+    `;
+  });
+
+  el.innerHTML = html || "출발 데이터 없음";
+}
+  
+function renderMealReport(data){
+  const el = document.getElementById("mealReport");
+  if (!el || !data) return;
+
+  el.innerHTML = Object.keys(data).length
+    ? Object.keys(data).map(tour => `
+        <div>
+          • ${escapeHtml(tour)} : <b>${data[tour]}명</b>
+        </div>
+      `).join("")
+    : "중식비 지급 데이터 없음";
+}
+
   /* =========================================================
    ✅ 데이터 로딩 함수
 ========================================================= */
-  function loadAdminReport(){
+function loadAdminReport(){
   fetch(`${GAS_URL}?mode=summary`)
     .then(r => r.json())
     .then(data => {
-      renderReport("departureReport", data.departure);
-      renderReport("mealReport", data.meal);
+      renderDepartureReport(data.departure);
+      renderMealReport(data.meal);
     })
-    .catch(e => {
+    .catch(() => {
       document.getElementById("departureReport").textContent = "불러오기 실패";
       document.getElementById("mealReport").textContent = "불러오기 실패";
     });
-}
-/* =========================================================
-   ✅ 렌더링 함수
-========================================================= */
-  function renderReport(targetId, rows){
-  const el = document.getElementById(targetId);
-  if (!el || !rows) return;
-
-  el.innerHTML = rows.map(r =>
-    `<div>• ${r.title} : <b>${r.count}명</b></div>`
-  ).join("");
 }
 /* =========================================================
    ✅ 뒤로가기
