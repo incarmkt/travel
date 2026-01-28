@@ -129,13 +129,16 @@ h4 {
    7. LOGIN – 손대지 말고 분위기만
    =============================== */
 .login-hero {
+  position: relative;
+  min-height: 100vh;
+
   background:
     linear-gradient(
       180deg,
       rgba(15,23,42,0.55),
       rgba(15,23,42,0.75)
     ),
-    url("/travel/assets/images/taiwan.jpg") center / cover no-repeat;
+    url("../assets/images/taiwan.jpg") center / cover no-repeat;
 }
 
 .login-box {
