@@ -256,6 +256,11 @@
   <div class="header-right">
     <p class="welcome-text"><strong>관리자</strong>님</p>
   </div>
+  <!-- HEADER RIGHT -->
+<div class="header-right">
+  <button class="menu-btn" onclick="toggleMobileMenu()">☰</button>
+</div>
+
 </header>
 
 <!-- ================= MAIN (고객용 구조 그대로) ================= -->
@@ -308,6 +313,22 @@
     </section>
   </div>
 </main>
+  <!-- ================= MOBILE MENU PANEL ================= -->
+<div id="mobileMenu" class="mobile-menu">
+  <div class="menu-sheet">
+    <h3>메뉴</h3>
+
+    <button onclick="openPage('travelRoot')">🧭 여행일정관리</button>
+    <button onclick="openPage('mealRoot')">🍱 중식비지급관리</button>
+    <button onclick="openPage('customerRoot')">👤 고객관리</button>
+    <button onclick="openPage('reportRoot')">📊 관리자 리포트</button>
+
+    <div class="menu-divider"></div>
+
+    <button onclick="openHome()">🏠 홈</button>
+  </div>
+</div>
+
   
   <!-- ================= APP BOTTOM ACTION BAR ================= -->
 <nav class="app-bottom-bar">
