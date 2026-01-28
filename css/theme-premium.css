@@ -353,4 +353,133 @@ a,
     transform: translateY(0);
   }
 }
+/* =================================================
+   LOGIN TYPOGRAPHY REFINEMENT (1안 핵심)
+================================================= */
+
+/* 로그인 전체 글씨 기본 리셋 */
+.login-box {
+  font-family: -apple-system, BlinkMacSystemFont,
+               "Segoe UI", Roboto,
+               "Noto Sans KR", "Apple SD Gothic Neo",
+               sans-serif;
+}
+
+/* 브랜드 타이틀 (ISC 관리자) */
+.login-box h2 {
+  font-size: 24px;
+  font-weight: 800;
+  letter-spacing: -0.6px;
+  color: #0f172a;
+  margin-bottom: 4px;
+}
+
+/* 설명 문구 */
+.login-box .hero-desc {
+  font-size: 14px;
+  font-weight: 500;
+  color: #64748b;
+  line-height: 1.6;
+  margin-bottom: 26px;
+}
+
+/* input 안내 느낌 */
+.login-box input {
+  font-size: 15px;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.login-box input::placeholder {
+  color: #94a3b8;
+  font-weight: 500;
+}
+
+/* 로그인 버튼 텍스트 */
+.login-box .primary-btn {
+  font-size: 16px;
+  font-weight: 800;
+  letter-spacing: -0.3px;
+}
+
+/* 에러 메시지 (튀지 않게, 하지만 인식은 되게) */
+.login-box .error {
+  font-size: 13px;
+  font-weight: 600;
+  color: #b91c1c;
+}
+
+/* 하단 시스템 텍스트 */
+.login-box::after {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.6px;
+  color: #94a3b8;
+}
+/* =================================================
+   APP BOTTOM ACTION BAR (TRAVEL APP STYLE)
+================================================= */
+
+@media (max-width: 767px) {
+
+  .app-bottom-bar {
+    position: fixed;
+    bottom: env(safe-area-inset-bottom);
+    left: 50%;
+    transform: translateX(-50%);
+    width: calc(100% - 24px);
+    max-width: 420px;
+
+    height: 64px;
+    background: rgba(255,255,255,0.95);
+    backdrop-filter: blur(16px);
+    border-radius: 28px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 18px;
+
+    box-shadow: 0 20px 40px rgba(15,23,42,0.25);
+    z-index: 999;
+  }
+
+  .app-bottom-bar .nav-btn {
+    background: none;
+    border: none;
+    font-size: 20px;
+    opacity: 0.6;
+  }
+
+  /* 🔥 메인 액션 버튼 */
+  .app-bottom-bar .main-action {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+
+    background: linear-gradient(
+      135deg,
+      #fb923c,
+      #f97316
+    );
+    color: #fff;
+    font-size: 26px;
+    font-weight: 900;
+
+    box-shadow: 0 12px 30px rgba(249,115,22,0.45);
+    transform: translateY(-22px);
+    opacity: 1;
+  }
+
+  .app-bottom-bar .main-action:active {
+    transform: translateY(-22px) scale(0.95);
+  }
+
+  /* 콘텐츠 영역 가림 방지 */
+  .content-area {
+    padding-bottom: 110px;
+  }
+}
+
+
 
