@@ -368,10 +368,6 @@ body.logged-in {
         padding: 16px 14px 18px !important;
     }
 
-    body {
-        overflow: hidden !important;
-        overscroll-behavior: none;
-    }
 }
 
 /* ================================================= 
