@@ -29,12 +29,9 @@
     </div>
   </div>
 
-  <div class="header-right">
-    <p class="congrats">ISC 달성을 축하드립니다.</p>
-    <p class="welcome-text"><strong id="employeeName"></strong> 님, 환영합니다</p>
-  </div>
-  <!-- HEADER RIGHT -->
-<div class="header-right">
+ <div class="header-right">
+  <p class="congrats">ISC 달성을 축하드립니다.</p>
+  <p class="welcome-text"><strong id="employeeName"></strong> 님, 환영합니다</p>
   <button class="menu-btn" onclick="toggleMobileMenu()">☰</button>
 </div>
 </header>
@@ -77,9 +74,28 @@
   <div class="main-panel">
 
     <!-- 홈일 때 -->
-    <div id="homeArea" class="home-view">
-      <img src="assets/images/home.jpg" alt="Home Image">
-    </div>
+   <div id="homeArea" class="home-view">
+
+  <div class="card" style="margin-bottom:16px;">
+    <h3>👋 환영합니다</h3>
+    <p class="sub">
+      ISC 달성을 축하드립니다.<br>
+      여행 정보를 아래에서 확인하세요.
+    </p>
+  </div>
+
+  <div class="card" onclick="openPage('schedule')" style="cursor:pointer;">
+    <h3>🗓 오늘의 여행 일정</h3>
+    <p class="sub">전체 일정 한눈에 보기</p>
+  </div>
+
+  <div class="card" onclick="openPage('flight')" style="cursor:pointer; margin-top:14px;">
+    <h3>✈️ 항공편 정보</h3>
+    <p class="sub">출·귀국 항공편 요약</p>
+  </div>
+
+</div>
+
 
     <!-- 상세 페이지 -->
 <section id="detailPage" class="detail" style="display:none;">
