@@ -1,14 +1,14 @@
 /* =================================================
-   THEME : Premium Travel App (Customer – INIT)
-   PURPOSE : Visual skin only (SAFE RESET)
+   THEME : Premium Travel App (Customer – FINAL)
+   PURPOSE : Visual skin + Home layout
    RULE : base / desktop / mobile CSS 절대 수정 X
 ================================================= */
 
 /* ===============================
-   1. DESIGN TOKENS (ONLY COLORS & FEEL)
-   =============================== */
+   1. DESIGN TOKENS
+=============================== */
 :root {
-  --primary: #2563eb;        /* 인카 블루 계열 */
+  --primary: #2563eb;
   --accent: #38bdf8;
 
   --bg-main: #f6f8fc;
@@ -21,14 +21,14 @@
   --border-soft: #e5e7eb;
 
   --shadow-sm: 0 4px 12px rgba(15,23,42,0.05);
-  --shadow-md: 0 12px 24px rgba(15,23,42,0.08);
+  --shadow-md: 0 12px 28px rgba(0,0,0,0.25);
 
-  --radius: 18px;
+  --radius: 22px;
 }
 
 /* ===============================
-   2. GLOBAL TONE (NO STRUCTURE)
-   =============================== */
+   2. GLOBAL
+=============================== */
 body {
   background: var(--bg-main);
   color: var(--text-main);
@@ -40,8 +40,8 @@ body {
 }
 
 /* ===============================
-   3. HEADER – CLEAN & PREMIUM
-   =============================== */
+   3. HEADER
+=============================== */
 .header {
   background: #fff;
   border-bottom: 1px solid var(--border-soft);
@@ -49,7 +49,6 @@ body {
 
 .header h1 {
   font-weight: 700;
-  letter-spacing: -0.4px;
 }
 
 .header .sub,
@@ -58,9 +57,8 @@ body {
 }
 
 /* ===============================
-   4. CARD BASE SYSTEM
-   (이 프로젝트의 핵심 뼈대)
-   =============================== */
+   4. CARD BASE
+=============================== */
 .card,
 .day-card,
 .schedule-card,
@@ -68,54 +66,19 @@ body {
 .country-card {
   background: var(--bg-card);
   border-radius: var(--radius);
-  box-shadow: var(--shadow-md);
+  box-shadow: var(--shadow-sm);
   border: none !important;
 }
 
-/* 카드 간 기본 간격 */
-.card + .card {
-  margin-top: 14px;
-}
-
 /* ===============================
-   5. TEXT HIERARCHY
-   =============================== */
-h1, h2, h3 {
-  font-weight: 800;
-  letter-spacing: -0.4px;
-}
-
-h4 {
-  font-weight: 700;
-}
-
-.sub,
-.desc,
-.schedule-desc {
-  color: var(--text-sub);
-  font-size: 13px;
-}
-
-.small,
-.muted {
-  font-size: 12px;
-  color: var(--text-mute);
-}
-
-/* ===============================
-   6. BUTTON – ONLY POLISH
-   =============================== */
+   5. BUTTON
+=============================== */
 .primary-btn {
   background: linear-gradient(135deg, var(--primary), var(--accent));
   color: #fff;
-  border: none;
   border-radius: 999px;
   font-weight: 700;
-  box-shadow: 0 8px 20px rgba(37,99,235,0.35);
-}
-
-.primary-btn:active {
-  transform: scale(0.97);
+  border: none;
 }
 
 .ghost-btn {
@@ -126,126 +89,16 @@ h4 {
 }
 
 /* ===============================
-   7. LOGIN – 손대지 말고 분위기만
-   =============================== */
+   6. LOGIN HERO
+=============================== */
 .login-hero {
   position: relative;
   min-height: 100vh;
-
   background:
-    linear-gradient(
-      180deg,
-      rgba(15,23,42,0.55),
-      rgba(15,23,42,0.75)
-    ),
+    linear-gradient(180deg, rgba(15,23,42,.55), rgba(15,23,42,.75)),
     url("../assets/images/taiwan.jpg") center / cover no-repeat;
-}
-
-.login-box {
-  background: rgba(255,255,255,0.92);
-  backdrop-filter: blur(14px);
-  border-radius: 26px;
-  box-shadow: 0 30px 60px rgba(15,23,42,0.35);
-}
-
-.login-box h2 {
-  font-size: 22px;
-  font-weight: 800;
-}
-
-.login-box .hero-desc {
-  font-size: 14px;
-  color: var(--text-sub);
-}
-
-/* ===============================
-   8. MOBILE – 절대 구조 변경 금지
-   =============================== */
-@media (max-width: 767px) {
-
-  body {
-    background: var(--bg-main);
-  }
-
-  .content-area {
-    padding: 16px;
-  }
-
-  /* 메뉴/하단바/사이드메뉴 절대 손대지 않음 */
-}
-/* ===============================
-   LOGIN – MOBILE SIZE FIX
-=============================== */
-@media (max-width: 767px) {
-
-  .login-box {
-    max-width: 320px;
-    padding: 28px 22px;
-  }
-
-  .login-box h2 {
-    font-size: 20px;
-  }
-
-  .login-box .hero-desc {
-    font-size: 13px;
-    margin-bottom: 18px;
-  }
-}
-/* ===============================
-   LOGIN – TAIWAN WIND ANIMATION
-=============================== */
-.login-hero::before {
-  content: "";
-  position: absolute;
-  inset: -10%;
-  background:
-    linear-gradient(
-      120deg,
-      rgba(255,255,255,0.08),
-      rgba(255,255,255,0.02),
-      rgba(255,255,255,0.08)
-    );
-  animation: windFlow 12s linear infinite;
-  pointer-events: none;
-}
-
-@keyframes windFlow {
-  0%   { transform: translateX(-10%) translateY(0); }
-  50%  { transform: translateX(10%) translateY(2%); }
-  100% { transform: translateX(-10%) translateY(0); }
-}
-
-/* ===============================
-   LOGIN BOX – FLOAT FEEL
-=============================== */
-.login-box {
-  animation: floatIn 0.8s ease-out both;
-}
-
-@keyframes floatIn {
-  from {
-    opacity: 0;
-    transform: translateY(16px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-/* ===============================
-   LOGIN OVERLAY FIX (CRITICAL)
-=============================== */
-.login-hero .hero-overlay {
-  background: transparent !important;
-}
-
-/* ===============================
-   LOGIN – BACKGROUND WIND (FINAL)
-=============================== */
-.login-hero {
-  background-size: 110% 110%;
-  animation: bgWind 20s ease-in-out infinite;
+  background-size: 120% 120%;
+  animation: bgWind 22s ease-in-out infinite;
 }
 
 @keyframes bgWind {
@@ -255,30 +108,60 @@ h4 {
   75%  { background-position: 49% 51%; }
   100% { background-position: 50% 50%; }
 }
-@media (max-width: 767px) {
-  .login-hero {
-    animation-duration: 24s;
-    background-size: 120% 120%;
-  }
+
+.login-hero::before {
+  content: "";
+  position: absolute;
+  inset: -10%;
+  background: linear-gradient(
+    120deg,
+    rgba(255,255,255,.08),
+    rgba(255,255,255,.02),
+    rgba(255,255,255,.08)
+  );
+  animation: windFlow 14s linear infinite;
+  pointer-events: none;
+}
+
+@keyframes windFlow {
+  0%   { transform: translateX(-10%); }
+  50%  { transform: translateX(10%); }
+  100% { transform: translateX(-10%); }
+}
+
+.login-hero .hero-overlay {
+  background: transparent !important;
+}
+
+.login-box {
+  background: rgba(255,255,255,.92);
+  backdrop-filter: blur(14px);
+  border-radius: 26px;
+  box-shadow: 0 30px 60px rgba(15,23,42,.35);
+  animation: floatIn .8s ease-out both;
+}
+
+@keyframes floatIn {
+  from { opacity:0; transform:translateY(16px); }
+  to   { opacity:1; transform:translateY(0); }
 }
 
 /* ===============================
-   HOME – PREMIUM APP LAYOUT
+   7. HOME – PREMIUM MOBILE
 =============================== */
-
-.premium-home {
+.home-view {
   padding: 16px;
 }
 
-/* HERO */
+/* 상단 히어로 */
 .home-hero {
   height: 220px;
-  border-radius: 22px;
+  border-radius: 26px;
   background:
-    linear-gradient(180deg, rgba(0,0,0,.25), rgba(0,0,0,.55)),
+    linear-gradient(180deg, rgba(0,0,0,.25), rgba(0,0,0,.6)),
     url("../assets/images/taiwan.jpg") center / cover no-repeat;
   color: #fff;
-  padding: 24px;
+  padding: 22px;
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
@@ -294,151 +177,36 @@ h4 {
   opacity: .9;
 }
 
-/* TODAY CARD */
-.today-card {
-  margin-top: -30px;
-  background: rgba(255,255,255,.85);
-  backdrop-filter: blur(10px);
-  border-radius: 20px;
-  padding: 16px;
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  box-shadow: var(--shadow-md);
-  cursor: pointer;
-}
-
-.today-card strong {
-  font-size: 16px;
-}
-
-.today-card p {
-  font-size: 13px;
-  color: var(--text-sub);
-}
-
-.today-card .arrow {
-  margin-left: auto;
-  font-size: 22px;
-  color: var(--text-mute);
-}
-
-/* GRID */
-.quick-grid {
-  margin-top: 22px;
+/* 2x2 GRID */
+.home-grid {
+  margin-top: 20px;
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 14px;
-}
-
-.quick-grid button {
-  height: 90px;
-  border-radius: 18px;
-  border: none;
-  background: linear-gradient(135deg, #2563eb, #38bdf8);
-  color: #fff;
-  font-weight: 700;
-  font-size: 15px;
-}
-/* ===============================
-   HOME APP LAYOUT (STRUCTURE ONLY)
-=============================== */
-
-.home-app {
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-  gap: 18px;
-}
-
-/* HERO */
-.home-hero {
-  padding: 28px 22px;
-  border-radius: 22px;
-  background: rgba(0,0,0,0.25);
-  color: #fff;
-}
-
-.home-hero h1 {
-  font-size: 22px;
-  font-weight: 800;
-  margin-bottom: 6px;
-}
-
-.home-hero p {
-  font-size: 14px;
-  opacity: 0.85;
-}
-
-/* GRID */
-.home-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 14px;
-}
-
-.home-tile {
-  height: 90px;
-  border-radius: 20px;
-  background: #2563eb;
-  color: #fff;
-  font-size: 15px;
-  font-weight: 700;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-}
-
-/* 두 번째 그리드용 */
-.home-tile.wide {
-  height: 80px;
-}
-
-/* WIDE CARD */
-.home-wide {
-  margin-top: 6px;
-}
-
-.wide-card {
-  height: 64px;
-  border-radius: 18px;
-  background: #0f172a;
-  color: #fff;
-  font-size: 15px;
-  font-weight: 700;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-/* 홈 2x2 그리드 */
-.home-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 14px;
-  padding: 16px;
 }
 
 /* 네모 카드 */
 .home-tile {
   height: 110px;
   border-radius: 22px;
-  background: rgba(37, 99, 235, 0.9);
+  background: rgba(37,99,235,.9);
   color: #fff;
+  padding: 16px;
+  box-shadow: var(--shadow-md);
+  backdrop-filter: blur(6px);
+
   display: flex;
   flex-direction: column;
   justify-content: center;
-  padding: 16px;
-  box-shadow: 0 12px 28px rgba(0,0,0,0.25);
-  backdrop-filter: blur(6px);
+  gap: 6px;
+}
+
+.home-tile:hover {
+  transform: translateY(-2px);
 }
 
 .home-tile .icon {
   font-size: 24px;
-  margin-bottom: 6px;
 }
 
 .home-tile .title {
@@ -448,16 +216,25 @@ h4 {
 
 /* 하단 가로 카드 */
 .wide-card {
-  margin: 0 16px 20px;
+  margin: 18px 0 24px;
   height: 64px;
   border-radius: 24px;
-  background: rgba(15,23,42,0.75);
+  background: rgba(15,23,42,.75);
   color: #fff;
+  font-size: 16px;
+  font-weight: 700;
+  box-shadow: 0 14px 32px rgba(0,0,0,.35);
+
   display: flex;
   align-items: center;
   padding: 0 20px;
-  font-size: 16px;
-  font-weight: 700;
-  box-shadow: 0 14px 32px rgba(0,0,0,0.35);
 }
 
+/* ===============================
+   8. MOBILE ONLY
+=============================== */
+@media (max-width: 767px) {
+  .content-area {
+    padding: 0;
+  }
+}
