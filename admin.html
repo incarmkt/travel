@@ -1,3 +1,5 @@
+관리자
+
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -10,8 +12,6 @@
   <link rel="stylesheet" href="css/desktop.css" media="(min-width:768px)">
   <link rel="stylesheet" href="css/mobile.css" media="(max-width:767px)">
 
-  <!-- ✅ 무조건 맨 마지막 -->
-<link rel="stylesheet" href="css/theme-premium.css">
 
 
   <style>
@@ -256,11 +256,6 @@
   <div class="header-right">
     <p class="welcome-text"><strong>관리자</strong>님</p>
   </div>
-  <!-- HEADER RIGHT -->
-<div class="header-right">
-  <button class="menu-btn" onclick="toggleMobileMenu()">☰</button>
-</div>
-
 </header>
 
 <!-- ================= MAIN (고객용 구조 그대로) ================= -->
@@ -313,34 +308,6 @@
     </section>
   </div>
 </main>
-  <!-- ================= MOBILE MENU PANEL ================= -->
-<div id="mobileMenu" class="mobile-menu">
-  <div class="menu-sheet">
-    <h3>메뉴</h3>
-
-    <button onclick="openPage('travelRoot')">🧭 여행일정관리</button>
-    <button onclick="openPage('mealRoot')">🍱 중식비지급관리</button>
-    <button onclick="openPage('customerRoot')">👤 고객관리</button>
-    <button onclick="openPage('reportRoot')">📊 관리자 리포트</button>
-
-    <div class="menu-divider"></div>
-
-    <button onclick="openHome()">🏠 홈</button>
-  </div>
-</div>
-
-  
-  <!-- ================= APP BOTTOM ACTION BAR ================= -->
-<nav class="app-bottom-bar">
-  <button class="nav-btn" onclick="openHome()">🏠</button>
-  <button class="nav-btn" onclick="openPage('travelRoot')">🧭</button>
-
-  <!-- 🔥 핵심 액션 -->
-  <button class="nav-btn main-action" onclick="openHome()">＋</button>
-
-  <button class="nav-btn" onclick="openPage('customerRoot')">👤</button>
-  <button class="nav-btn" onclick="openPage('reportRoot')">📊</button>
-</nav>
 
 <!-- QR 라이브러리 -->
 <script src="https://unpkg.com/html5-qrcode"></script>
@@ -1310,9 +1277,6 @@ function loadCountsOnEnter(){
   showCustomerDetail(emp);
   })
   .catch(() => alert("처리 실패"));
-}
-  function toggleMobileMenu() {
-  document.getElementById("mobileMenu").classList.toggle("show");
 }
 
 /* =========================================================
