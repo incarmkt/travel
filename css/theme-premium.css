@@ -246,3 +246,30 @@ body {
     z-index: 10;
   }
 }
+/* ===============================
+   MOBILE SCROLL POLICY (GLOBAL LOCK)
+=============================== */
+@media (max-width: 767px) {
+  html, body {
+    height: 100%;
+    overflow: hidden; /* 🔒 전체 스크롤 차단 */
+  }
+
+  #mainSection,
+  .layout,
+  .content-area {
+    height: 100%;
+    overflow: hidden; /* 🔒 홈/로그인/QR 스크롤 금지 */
+  }
+}
+/* ===============================
+   DETAIL PAGE ONLY SCROLL
+=============================== */
+@media (max-width: 767px) {
+  #detailPage {
+    height: 100%;
+    overflow-y: auto;     /* ✅ 여기만 스크롤 허용 */
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
