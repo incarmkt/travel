@@ -224,4 +224,102 @@
 
 }
 
+/* =================================================
+   PREMIUM MOBILE HOME – FINAL FIX
+================================================= */
+@media (max-width: 767px) {
+
+  /* 🔒 홈 화면 한 화면 고정 */
+  #homeArea {
+    height: calc(100vh - 60px);
+    overflow: hidden;
+  }
+
+  .main-panel {
+    height: 100%;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ================= HERO ================= */
+  .home-hero {
+    padding: 20px 16px 12px;
+    text-align: center;
+  }
+
+  .home-hero h1 {
+    font-size: 22px;
+    margin-bottom: 6px;
+  }
+
+  .home-hero p {
+    font-size: 13px;
+    opacity: 0.85;
+  }
+
+  /* ================= GRID ================= */
+  .home-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto auto auto;
+    gap: 12px;
+    padding: 12px 16px;
+    flex: 1;
+  }
+
+  /* ================= TILE ================= */
+  .home-tile {
+    position: relative;
+    border-radius: 18px;
+    padding: 14px 16px;
+    min-height: 88px;          /* 🔥 정사각형 제거 */
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    /* 🔥 클릭 복구 핵심 */
+    pointer-events: auto;
+    z-index: 5;
+  }
+
+  .home-tile::before,
+  .home-tile::after {
+    pointer-events: none !important;
+  }
+
+  .home-tile .icon {
+    font-size: 22px;
+    flex-shrink: 0;
+  }
+
+  .home-tile .title {
+    font-size: 15px;
+    font-weight: 600;
+    line-height: 1.2;
+  }
+
+  /* ================= 대만의 모든 것 (가로 카드) ================= */
+  .home-tile:first-child {
+    grid-column: 1 / 3;
+    min-height: 96px;
+    font-size: 16px;
+  }
+
+  /* ================= 하단 긴 카드 ================= */
+  .wide-card {
+    margin: 8px 16px 16px;
+    height: 52px;
+    border-radius: 16px;
+    font-size: 15px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    pointer-events: auto;
+    z-index: 5;
+  }
+}
+
 
