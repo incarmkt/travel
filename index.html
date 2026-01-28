@@ -71,15 +71,6 @@
   <!-- 🔴 메인 패널 (RED) -->
   <div class="main-panel">
 
-    <!-- 홈일 때 -->
-<div id="homeArea" class="home-app">
-@media (max-width: 767px) {
-  #homeArea {
-    height: 100%;
-    overflow: hidden;   /* 🔒 홈은 절대 스크롤 안 됨 */
-  }
-}
-
   <!-- HERO -->
   <section class="home-hero">
     <h1>ISC Taiwan 2025</h1>
@@ -126,57 +117,6 @@
   📞 긴급 연락망
 </div>
   
-<!-- 📱 MOBILE HOME (NEW) -->
-<div id="mobileHome" class="home-app" style="display:none;">
-
-  <!-- HERO -->
-  <section class="home-hero">
-    <h1>ISC Taiwan 2025</h1>
-    <p>지금부터 여정이 시작됩니다</p>
-  </section>
-
-  <!-- 2x2 GRID -->
-  <div class="home-grid">
-
-    <div class="home-tile" onclick="openPage('schedule')">
-      <span class="icon">📅</span>
-      <span class="title">여행 일정</span>
-    </div>
-
-    <div class="home-tile" onclick="openPage('flight')">
-      <span class="icon">✈️</span>
-      <span class="title">항공편</span>
-    </div>
-
-    <div class="home-tile" onclick="openPage('myTour')">
-      <span class="icon">🎒</span>
-      <span class="title">나의 선택 관광</span>
-    </div>
-
-    <div class="home-tile" onclick="openPage('dinner')">
-      <span class="icon">🍽</span>
-      <span class="title">ISC 만찬</span>
-    </div>
-
-    <div class="home-tile" onclick="openPage('taiwan')">
-      <span class="icon">🇹🇼</span>
-      <span class="title">대만의 모든 것</span>
-    </div>
-
-    <div class="home-tile" onclick="openPage('request')">
-      <span class="icon">📝</span>
-      <span class="title">요청사항</span>
-    </div>
-
-  </div>
-
-  <!-- WIDE CARD -->
-  <div class="wide-card" onclick="openPage('contact')">
-    📞 긴급 연락망
-  </div>
-
-</div>
-
   </section>
 
 </div>
@@ -487,9 +427,8 @@ if (window.innerWidth <= 767) {
     document.getElementById("mainSection").style.display = "block";
 
     // 🔥 모바일 홈 전환
-    document.getElementById("homeArea").style.display = "none";
-    document.getElementById("mobileHome").style.display = "block";
-    document.querySelector(".side-menu").style.display = "none";
+document.getElementById("homeArea").style.display = "block";
+
 
   }, 2000);
 }
@@ -585,7 +524,6 @@ function openPage(type, fromHistory = false) {
   }
 
 document.getElementById("homeArea").style.display = "none";
-document.getElementById("mobileHome").style.display = "none";
 document.getElementById("detailPage").style.display = "block";
 
 if (isMobile) {
@@ -594,6 +532,7 @@ if (isMobile) {
 
   const t = document.getElementById("detailTitle");
   const c = document.getElementById("detailContent");
+  c.innerHTML = ""; // 🔥 이전 화면 잔상 제거
 
   if (type === "schedule") {
     t.textContent = "🗓 여행 일정";
@@ -678,7 +617,7 @@ if (type === "myTour") {
     }
   }
 }
-  
+  // ← openPage 끝 
  async function syncMealStatusFromServer(userId, tour, wrap) {
   const url = `${MEAL_SHEET_URL}?id=${userId}&tour=${encodeURIComponent(tour)}`;
   const res = await fetch(url);
@@ -691,7 +630,6 @@ if (type === "myTour") {
   }
 }
  
- // ← openPage 끝
 
 if (type === "taiwan") {
   t.textContent = "🇹🇼 대만의 모든 것";
@@ -841,13 +779,11 @@ function goHome() {
   // 🔥 히스토리 완전 초기화
   pageHistory = [];
 
-  document.getElementById("detailPage").style.display = "none";
+document.getElementById("homeArea").style.display = "block";
+document.getElementById("detailPage").style.display = "none";
 
-if (isMobile) {
-  document.getElementById("mobileHome").style.display = "block";
+if (window.innerWidth <= 767) {
   document.querySelector(".side-menu").style.display = "none";
-} else {
-  document.getElementById("homeArea").style.display = "block";
 }
 }
     /* ================= 뒤로가기 ================= */
