@@ -1,190 +1,130 @@
 /* =================================================
-   THEME : Premium Travel App (SAFE VERSION)
-   SCOPE  : LOGIN + HOME ONLY
-   RULE   : base / desktop / mobile CSS 절대 침범 X
+   THEME – PREMIUM (LOGIN + HOME ONLY)
+   SAFE VERSION
 ================================================= */
 
-/* =================================================
-   1. DESIGN TOKENS
-================================================= */
+/* ===============================
+   DESIGN TOKENS
+=============================== */
 :root {
-  --primary: #2563eb;
-  --accent: #38bdf8;
-
-  --glass-bg: rgba(255,255,255,0.92);
-  --glass-dark: rgba(0,0,0,0.55);
-
-  --text-main: #0f172a;
-  --text-sub: #475569;
-
-  --radius-lg: 26px;
-  --radius-md: 18px;
-
-  --shadow-lg: 0 20px 50px rgba(0,0,0,.25);
-  --shadow-md: 0 10px 28px rgba(0,0,0,.18);
+  --radius: 20px;
+  --shadow: 0 12px 30px rgba(0,0,0,.25);
 }
 
-/* =================================================
-   2. LOGIN SCREEN (LOGIN 전용)
-================================================= */
-#loginSection.login-hero {
+/* ===============================
+   LOGIN (디자인만)
+=============================== */
+.login-hero {
   background:
-    linear-gradient(180deg, rgba(0,0,0,.45), rgba(0,0,0,.65)),
-    url("../assets/images/photo-login.jpg") center / cover no-repeat;
-}
-
-#loginSection .login-box {
-  background: var(--glass-bg);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-lg);
-}
-
-#loginSection .login-box h2 {
-  font-weight: 900;
-  letter-spacing: -0.3px;
-}
-
-#loginSection .hero-desc {
-  color: #475569;
-}
-
-/* =================================================
-   3. HOME AREA ONLY
-================================================= */
-#homeArea.home-app {
-  position: relative;
-  min-height: 100%;
-  padding: 20px;
-
-  background:
-    linear-gradient(180deg, rgba(0,0,0,.25), rgba(0,0,0,.75)),
+    linear-gradient(180deg, rgba(0,0,0,.45), rgba(0,0,0,.7)),
     url("../assets/images/photo-home.jpg") center / cover no-repeat;
 }
 
-/* 홈 영역 안에서만 블러 */
+.login-box {
+  background: rgba(255,255,255,.95);
+  border-radius: 24px;
+  box-shadow: 0 30px 70px rgba(0,0,0,.4);
+}
+
+/* ===============================
+   HOME AREA – 핵심
+=============================== */
+#homeArea {
+  position: relative;
+  padding: 20px;
+}
+
+/* ❗ 클릭 차단 방지 */
+#homeArea,
+#homeArea * {
+  pointer-events: auto;
+}
+
+/* 배경 (클릭 통과) */
 #homeArea::before {
   content: "";
   position: absolute;
   inset: 0;
-  backdrop-filter: blur(3px);
+  background:
+    linear-gradient(180deg, rgba(0,0,0,.25), rgba(0,0,0,.65)),
+    url("../assets/images/photo-home.jpg") center / cover no-repeat;
   z-index: 0;
+  pointer-events: none;
 }
 
-#homeArea > * {
+/* ===============================
+   HOME HERO
+=============================== */
+#homeArea .home-hero {
   position: relative;
   z-index: 1;
-}
-
-/* =================================================
-   4. HOME HERO
-================================================= */
-#homeArea .home-hero {
-  height: 240px;
   padding: 24px;
-  border-radius: var(--radius-lg);
-
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-
+  border-radius: 24px;
   color: #fff;
-
-  background:
-    linear-gradient(180deg, rgba(0,0,0,.2), rgba(0,0,0,.75)),
-    url("../assets/images/photo-hero.jpg") center / cover no-repeat;
-
-  box-shadow: var(--shadow-lg);
+  margin-bottom: 24px;
 }
 
 #homeArea .home-hero h1 {
   font-size: 28px;
   font-weight: 900;
-  margin: 0;
 }
 
 #homeArea .home-hero p {
-  margin-top: 6px;
-  font-size: 15px;
   opacity: .9;
 }
 
-/* =================================================
-   5. HOME GRID (카테고리 카드)
-================================================= */
+/* ===============================
+   HOME GRID (카테고리 카드)
+=============================== */
 #homeArea .home-grid {
-  margin-top: 22px;
+  position: relative;
+  z-index: 1;
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 14px;
 }
 
-/* 공통 카드 */
-#homeArea .home-tile,
-#homeArea .wide-card {
-  height: 120px;
+/* 카드 공통 */
+#homeArea .home-tile {
+  height: 110px;
+  border-radius: var(--radius);
   padding: 16px;
-  border-radius: var(--radius-md);
+  color: #fff;
+  font-weight: 800;
+  font-size: 15px;
 
   display: flex;
   align-items: flex-end;
 
-  color: #fff;
-  font-size: 16px;
-  font-weight: 800;
-
   background:
-    linear-gradient(135deg, rgba(56,189,248,.65), rgba(37,99,235,.85)),
-    url("../assets/images/photo-card.jpg") center / cover no-repeat;
+    linear-gradient(135deg, rgba(37,99,235,.75), rgba(30,64,175,.9)),
+    url("../assets/images/photo-card.jpg") center / cover;
 
-  box-shadow: var(--shadow-md);
+  box-shadow: var(--shadow);
+  cursor: pointer;
+  transition: transform .2s ease, box-shadow .2s ease;
 }
 
-/* 카드별 미세 색상 차이 */
-#homeArea .home-tile:nth-child(1) {
-  background:
-    linear-gradient(135deg, rgba(59,130,246,.7), rgba(37,99,235,.9)),
-    url("../assets/images/photo-card1.jpg") center / cover;
+#homeArea .home-tile:active {
+  transform: scale(.97);
 }
 
-#homeArea .home-tile:nth-child(2) {
-  background:
-    linear-gradient(135deg, rgba(14,165,233,.7), rgba(2,132,199,.9)),
-    url("../assets/images/photo-card2.jpg") center / cover;
-}
-
-#homeArea .home-tile:nth-child(3) {
-  background:
-    linear-gradient(135deg, rgba(34,197,94,.65), rgba(21,128,61,.85)),
-    url("../assets/images/photo-card3.jpg") center / cover;
-}
-
-#homeArea .home-tile:nth-child(4) {
-  background:
-    linear-gradient(135deg, rgba(251,191,36,.7), rgba(217,119,6,.85)),
-    url("../assets/images/photo-card4.jpg") center / cover;
-}
-
-/* =================================================
-   6. 긴급 연락망 (하단 와이드)
-================================================= */
+/* ===============================
+   긴급 연락망 (단독)
+=============================== */
 #homeArea .wide-card {
   grid-column: span 2;
-  height: 72px;
-  font-size: 17px;
+  height: 70px;
   justify-content: center;
-  align-items: center;
+  background:
+    linear-gradient(135deg, rgba(220,38,38,.8), rgba(185,28,28,.9)),
+    url("../assets/images/photo-card.jpg") center / cover;
 }
 
-/* =================================================
-   7. DESKTOP 확장 (HOME만)
-================================================= */
-@media (min-width: 1024px) {
-
-  #homeArea {
-    max-width: 1100px;
-    margin: 0 auto;
-  }
-
+/* ===============================
+   DESKTOP 확장
+=============================== */
+@media (min-width: 768px) {
   #homeArea .home-grid {
     grid-template-columns: repeat(3, 1fr);
   }
