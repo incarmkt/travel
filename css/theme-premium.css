@@ -220,3 +220,51 @@ html, body {
   background: #e5e7eb;
   font-weight: 700;
 }
+body.premium .premium-login {
+  position: fixed;
+  inset: 0;
+  background: url("../assets/images/iscposter.jpg") center / cover no-repeat;
+}
+
+body.premium .premium-login .hero-overlay {
+  background: rgba(0,0,0,0.55);
+}
+
+body.premium .login-box {
+  border-radius: 22px;
+  padding: 28px 24px;
+  backdrop-filter: blur(6px);
+}
+body.premium .premium-home {
+  height: calc(100vh - 60px);
+  overflow: hidden;
+}
+body.premium .premium-home .main-panel {
+  height: 100%;
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+body.premium .home-tile.wide {
+  height: 80px;
+  border-radius: 20px;
+  font-size: 17px;
+}
+body.premium .home-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  flex-grow: 1;
+}
+
+body.premium .home-grid .home-tile {
+  height: 70px;
+  border-radius: 18px;
+}
+body.premium .home-tile {
+  pointer-events: auto !important;
+  cursor: pointer;
+  z-index: 10;
+}
+
