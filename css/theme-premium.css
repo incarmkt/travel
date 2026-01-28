@@ -238,3 +238,11 @@ body {
     padding: 0;
   }
 }
+@media (max-width: 767px) {
+  .detail {
+    display: block !important;
+    pointer-events: auto !important;
+    position: relative;
+    z-index: 10;
+  }
+}
