@@ -69,9 +69,11 @@ body.logged-in,
    4. HOME / CATEGORY CLEANUP
    =============================== */
 
-/* 홈에서 카테고리 버튼 제거 */
-.side-menu {
-  display: none;
+/* 모바일에서만 숨김 */
+@media (max-width: 767px) {
+  .side-menu {
+    display: none;
+  }
 }
 
 /* 홈 배경 이미지 제거 */
