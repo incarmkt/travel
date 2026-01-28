@@ -119,6 +119,57 @@
 <div class="wide-card" onclick="openPage('contact')">
   📞 긴급 연락망
 </div>
+  
+<!-- 📱 MOBILE HOME (NEW) -->
+<div id="mobileHome" class="home-app" style="display:none;">
+
+  <!-- HERO -->
+  <section class="home-hero">
+    <h1>ISC Taiwan 2025</h1>
+    <p>지금부터 여정이 시작됩니다</p>
+  </section>
+
+  <!-- 2x2 GRID -->
+  <div class="home-grid">
+
+    <div class="home-tile" onclick="openPage('schedule')">
+      <span class="icon">📅</span>
+      <span class="title">여행 일정</span>
+    </div>
+
+    <div class="home-tile" onclick="openPage('flight')">
+      <span class="icon">✈️</span>
+      <span class="title">항공편</span>
+    </div>
+
+    <div class="home-tile" onclick="openPage('myTour')">
+      <span class="icon">🎒</span>
+      <span class="title">나의 선택 관광</span>
+    </div>
+
+    <div class="home-tile" onclick="openPage('dinner')">
+      <span class="icon">🍽</span>
+      <span class="title">ISC 만찬</span>
+    </div>
+
+    <div class="home-tile" onclick="openPage('taiwan')">
+      <span class="icon">🇹🇼</span>
+      <span class="title">대만의 모든 것</span>
+    </div>
+
+    <div class="home-tile" onclick="openPage('request')">
+      <span class="icon">📝</span>
+      <span class="title">요청사항</span>
+    </div>
+
+  </div>
+
+  <!-- WIDE CARD -->
+  <div class="wide-card" onclick="openPage('contact')">
+    📞 긴급 연락망
+  </div>
+
+</div>
 
   </section>
 
@@ -420,16 +471,22 @@ function login() {
   document.getElementById("loginSection").style.display = "none";
 
   // 📱 모바일: 스플래시 2초
-  if (window.innerWidth <= 767) {
-    const splash = document.getElementById("mobileSplash");
-    splash.style.display = "flex";
+if (window.innerWidth <= 767) {
+  const splash = document.getElementById("mobileSplash");
+  splash.style.display = "flex";
 
-    setTimeout(() => {
-      splash.style.display = "none";
-      document.getElementById("topHeader").style.display = "flex";
-      document.getElementById("mainSection").style.display = "block";
-    }, 2000);
-  } 
+  setTimeout(() => {
+    splash.style.display = "none";
+    document.getElementById("topHeader").style.display = "flex";
+    document.getElementById("mainSection").style.display = "block";
+
+    // 🔥 모바일 홈 전환
+    document.getElementById("homeArea").style.display = "none";
+    document.getElementById("mobileHome").style.display = "block";
+    document.querySelector(".side-menu").style.display = "none";
+
+  }, 2000);
+}
   // 🖥 데스크탑: 즉시 진입
   else {
     document.getElementById("topHeader").style.display = "flex";
@@ -522,6 +579,7 @@ function openPage(type, fromHistory = false) {
   }
 
 document.getElementById("homeArea").style.display = "none";
+document.getElementById("mobileHome").style.display = "none";
 document.getElementById("detailPage").style.display = "block";
 
 if (isMobile) {
@@ -779,11 +837,12 @@ function goHome() {
 
   document.getElementById("detailPage").style.display = "none";
 
-  if (isMobile) {
-    document.querySelector(".side-menu").style.display = "block";
-  } else {
-    document.getElementById("homeArea").style.display = "block";
-  }
+if (isMobile) {
+  document.getElementById("mobileHome").style.display = "block";
+  document.querySelector(".side-menu").style.display = "none";
+} else {
+  document.getElementById("homeArea").style.display = "block";
+}
 }
     /* ================= 뒤로가기 ================= */
 function goBack() {
