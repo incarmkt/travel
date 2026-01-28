@@ -442,6 +442,10 @@ function login() {
 
   document.getElementById("employeeName").textContent = user.name;
   document.body.classList.add("logged-in")
+  // 🔥 홈 표시 추가
+document.getElementById("homeArea").style.display = "block";
+document.getElementById("detailPage").style.display = "none";
+
   renderHomeCards();
 }
 function tryAutoLogin() {
@@ -939,10 +943,7 @@ function renderFlightSummary() {
   `;
 }
 
-  updateTime();
-  setInterval(updateTime, 1000);
-}
-
+ 
 </script>
 
 
