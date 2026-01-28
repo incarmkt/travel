@@ -11,19 +11,16 @@
   --primary: #2563eb;
   --accent: #38bdf8;
 
-  --bg-main: #f6f8fc;
-  --bg-card: #ffffff;
+  --bg-main: #0f172a;
+  --bg-card: rgba(255,255,255,.18);
 
-  --text-main: #0f172a;
-  --text-sub: #64748b;
-  --text-mute: #94a3b8;
+  --text-main: #ffffff;
+  --text-sub: rgba(255,255,255,.85);
 
-  --border-soft: #e5e7eb;
+  --shadow-sm: 0 6px 18px rgba(0,0,0,.25);
+  --shadow-md: 0 20px 45px rgba(0,0,0,.45);
 
-  --shadow-sm: 0 4px 12px rgba(15,23,42,0.05);
-  --shadow-md: 0 12px 28px rgba(0,0,0,0.25);
-
-  --radius: 22px;
+  --radius: 26px;
 }
 
 /* ===============================
@@ -43,141 +40,92 @@ body {
    3. HEADER
 =============================== */
 .header {
-  background: #fff;
-  border-bottom: 1px solid var(--border-soft);
+  background: rgba(15,23,42,.9);
+  border-bottom: 1px solid rgba(255,255,255,.1);
 }
 
-.header h1 {
-  font-weight: 700;
-}
-
+.header h1,
 .header .sub,
 .header .congrats {
-  color: var(--text-sub);
-}
-
-/* ===============================
-   4. CARD BASE
-=============================== */
-.card,
-.day-card,
-.schedule-card,
-.tour-card,
-.country-card {
-  background: var(--bg-card);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow-sm);
-  border: none !important;
-}
-
-/* ===============================
-   5. BUTTON
-=============================== */
-.primary-btn {
-  background: linear-gradient(135deg, var(--primary), var(--accent));
   color: #fff;
-  border-radius: 999px;
-  font-weight: 700;
-  border: none;
-}
-
-.ghost-btn {
-  background: #fff;
-  border: 1px solid var(--border-soft);
-  border-radius: 999px;
-  font-weight: 600;
 }
 
 /* ===============================
-   6. LOGIN HERO
+   4. LOGIN HERO
 =============================== */
 .login-hero {
   position: relative;
   min-height: 100vh;
   background:
-    linear-gradient(180deg, rgba(15,23,42,.55), rgba(15,23,42,.75)),
+    linear-gradient(180deg, rgba(15,23,42,.6), rgba(15,23,42,.85)),
     url("../assets/images/taiwan.jpg") center / cover no-repeat;
-  background-size: 120% 120%;
-  animation: bgWind 22s ease-in-out infinite;
-}
-
-@keyframes bgWind {
-  0%   { background-position: 50% 50%; }
-  25%  { background-position: 48% 52%; }
-  50%  { background-position: 52% 48%; }
-  75%  { background-position: 49% 51%; }
-  100% { background-position: 50% 50%; }
-}
-
-.login-hero::before {
-  content: "";
-  position: absolute;
-  inset: -10%;
-  background: linear-gradient(
-    120deg,
-    rgba(255,255,255,.08),
-    rgba(255,255,255,.02),
-    rgba(255,255,255,.08)
-  );
-  animation: windFlow 14s linear infinite;
-  pointer-events: none;
-}
-
-@keyframes windFlow {
-  0%   { transform: translateX(-10%); }
-  50%  { transform: translateX(10%); }
-  100% { transform: translateX(-10%); }
-}
-
-.login-hero .hero-overlay {
-  background: transparent !important;
 }
 
 .login-box {
   background: rgba(255,255,255,.92);
-  backdrop-filter: blur(14px);
-  border-radius: 26px;
-  box-shadow: 0 30px 60px rgba(15,23,42,.35);
-  animation: floatIn .8s ease-out both;
-}
-
-@keyframes floatIn {
-  from { opacity:0; transform:translateY(16px); }
-  to   { opacity:1; transform:translateY(0); }
+  backdrop-filter: blur(16px);
+  border-radius: 28px;
+  box-shadow: 0 30px 70px rgba(0,0,0,.45);
 }
 
 /* ===============================
-   7. HOME – PREMIUM MOBILE
+   5. HOME APP (GLOBAL)
 =============================== */
-.home-view {
+.home-app {
+  min-height: 100vh;
   padding: 16px;
+  background:
+    linear-gradient(180deg, rgba(15,23,42,.35), rgba(15,23,42,.9)),
+    url("../assets/images/taiwan.jpg") center / cover no-repeat;
+  position: relative;
 }
 
-/* 상단 히어로 */
+.home-app::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  backdrop-filter: blur(2px);
+  z-index: 0;
+}
+
+.home-app > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* ===============================
+   6. HOME HERO
+=============================== */
 .home-hero {
-  height: 220px;
-  border-radius: 26px;
-  background:
-    linear-gradient(180deg, rgba(0,0,0,.25), rgba(0,0,0,.6)),
-    url("../assets/images/taiwan.jpg") center / cover no-repeat;
+  height: 260px;
+  border-radius: 30px;
+  padding: 24px;
   color: #fff;
-  padding: 22px;
+
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
+
+  background:
+    linear-gradient(180deg, rgba(0,0,0,.2), rgba(0,0,0,.7)),
+    url("../assets/images/taiwan.jpg") center / cover no-repeat;
+
+  box-shadow: var(--shadow-md);
 }
 
-.home-hero h2 {
-  font-size: 26px;
-  font-weight: 800;
+.home-hero h1 {
+  font-size: 30px;
+  font-weight: 900;
 }
 
 .home-hero p {
-  font-size: 14px;
+  font-size: 15px;
   opacity: .9;
 }
 
-/* 2x2 GRID */
+/* ===============================
+   7. HOME GRID (6 EQUAL CARDS)
+=============================== */
 .home-grid {
   margin-top: 20px;
   display: grid;
@@ -185,91 +133,100 @@ body {
   gap: 14px;
 }
 
-/* 네모 카드 */
-.home-tile {
-  height: 110px;
-  border-radius: 22px;
-  background: rgba(37,99,235,.9);
-  color: #fff;
-  padding: 16px;
-  box-shadow: var(--shadow-md);
-  backdrop-filter: blur(6px);
-
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  gap: 6px;
-}
-
-.home-tile:hover {
-  transform: translateY(-2px);
-}
-
-.home-tile .icon {
-  font-size: 24px;
-}
-
-.home-tile .title {
-  font-size: 15px;
-  font-weight: 700;
-}
-
-/* 하단 가로 카드 */
+/* 모든 카드 동일한 위상 */
+.home-tile,
 .wide-card {
-  margin: 18px 0 24px;
-  height: 64px;
-  border-radius: 24px;
-  background: rgba(15,23,42,.75);
+  height: 120px;
+  border-radius: var(--radius);
+  padding: 16px;
   color: #fff;
+  font-weight: 800;
   font-size: 16px;
-  font-weight: 700;
-  box-shadow: 0 14px 32px rgba(0,0,0,.35);
 
   display: flex;
-  align-items: center;
-  padding: 0 20px;
+  align-items: flex-end;
+
+  background:
+    linear-gradient(135deg, rgba(56,189,248,.65), rgba(37,99,235,.85)),
+    url("../assets/images/taiwan.jpg") center / cover no-repeat;
+
+  box-shadow: var(--shadow-md);
+  backdrop-filter: blur(8px);
+}
+
+/* 카드별 색감만 살짝 다르게 */
+.home-tile:nth-child(1) {
+  background: linear-gradient(135deg, rgba(59,130,246,.7), rgba(37,99,235,.9)),
+              url("../assets/images/taiwan.jpg") center / cover;
+}
+.home-tile:nth-child(2) {
+  background: linear-gradient(135deg, rgba(14,165,233,.7), rgba(2,132,199,.9)),
+              url("../assets/images/taiwan.jpg") center / cover;
+}
+.home-tile:nth-child(3) {
+  background: linear-gradient(135deg, rgba(34,197,94,.65), rgba(21,128,61,.85)),
+              url("../assets/images/taiwan.jpg") center / cover;
+}
+.home-tile:nth-child(4) {
+  background: linear-gradient(135deg, rgba(251,191,36,.7), rgba(217,119,6,.85)),
+              url("../assets/images/taiwan.jpg") center / cover;
+}
+.wide-card:nth-of-type(1) {
+  background: linear-gradient(135deg, rgba(99,102,241,.75), rgba(79,70,229,.9)),
+              url("../assets/images/taiwan.jpg") center / cover;
+}
+.wide-card:nth-of-type(2) {
+  background: linear-gradient(135deg, rgba(236,72,153,.7), rgba(190,24,93,.85)),
+              url("../assets/images/taiwan.jpg") center / cover;
 }
 
 /* ===============================
-   8. MOBILE ONLY
+   8. 긴급 연락망 (하단 단독)
 =============================== */
-@media (max-width: 767px) {
-  .content-area {
-    padding: 0;
-  }
+.wide-card.contact {
+  grid-column: span 2;
+  height: 72px;
+  font-size: 17px;
+  justify-content: center;
 }
-@media (max-width: 767px) {
-  .detail {
-    display: block !important;
-    pointer-events: auto !important;
-    position: relative;
-    z-index: 10;
-  }
-}
+
 /* ===============================
-   MOBILE SCROLL POLICY (GLOBAL LOCK)
+   9. DETAIL PAGE SCROLL
 =============================== */
 @media (max-width: 767px) {
   html, body {
     height: 100%;
-    overflow: hidden; /* 🔒 전체 스크롤 차단 */
+    overflow: hidden;
   }
 
   #mainSection,
   .layout,
   .content-area {
     height: 100%;
-    overflow: hidden; /* 🔒 홈/로그인/QR 스크롤 금지 */
+    overflow: hidden;
   }
-}
-/* ===============================
-   DETAIL PAGE ONLY SCROLL
-=============================== */
-@media (max-width: 767px) {
+
   #detailPage {
     height: 100%;
-    overflow-y: auto;     /* ✅ 여기만 스크롤 허용 */
+    overflow-y: auto;
     -webkit-overflow-scrolling: touch;
   }
 }
 
+/* ===============================
+   10. DESKTOP – SAME FEEL, WIDER
+=============================== */
+@media (min-width: 1024px) {
+  .home-app {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .home-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .wide-card.contact {
+    grid-column: span 3;
+  }
+}
