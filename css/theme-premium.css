@@ -381,3 +381,111 @@ html, body {
     transparent
   );
 }
+
+/* ===== HOME TILE IMAGE BASE ===== */
+.home-tile {
+  background-size: cover;
+  background-position: center;
+  color: #fff;
+}
+
+.tile-taiwan {
+  background-image: url("../assets/images/tile-taiwan.jpg");
+}
+
+.tile-schedule {
+  background-image: url("../assets/images/tile-schedule.jpg");
+}
+
+.tile-flight {
+  background-image: url("../assets/images/tile-flight.jpg");
+}
+
+.tile-tour {
+  background-image: url("../assets/images/tile-tour.jpg");
+}
+
+.tile-dinner {
+  background-image: url("../assets/images/tile-dinner.jpg");
+}
+
+.tile-contact {
+  background-image: url("../assets/images/tile-contact.jpg");
+}
+
+.tile-request {
+  background-image: url("../assets/images/tile-request.jpg");
+}
+/* =================================================
+   DETAIL PAGE – PREMIUM CARD DESIGN
+================================================= */
+
+#detailPage {
+  background: #f4f6fb;
+}
+
+.day-card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 18px;
+  margin-bottom: 16px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+}
+
+.day-card h3 {
+  font-size: 16px;
+  font-weight: 800;
+  margin-bottom: 6px;
+}
+
+.day-card .day-title {
+  font-size: 14px;
+  color: #475569;
+  margin-bottom: 14px;
+}
+
+/* 타임라인 */
+.timeline {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.schedule-item {
+  display: flex;
+  gap: 12px;
+}
+
+.timeline-dot {
+  width: 8px;
+  height: 8px;
+  background: #2563eb;
+  border-radius: 50%;
+  margin-top: 6px;
+  flex-shrink: 0;
+}
+
+.schedule-card {
+  background: #f8fafc;
+  border-radius: 12px;
+  padding: 12px 14px;
+  width: 100%;
+}
+
+.schedule-time {
+  font-size: 12px;
+  font-weight: 700;
+  color: #2563eb;
+}
+
+.schedule-title {
+  font-size: 14px;
+  font-weight: 700;
+  margin-top: 4px;
+}
+
+.schedule-desc {
+  font-size: 13px;
+  color: #64748b;
+  margin-top: 2px;
+}
