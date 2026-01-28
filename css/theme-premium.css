@@ -158,16 +158,20 @@ html, body {
   margin: 16px 0;
 }
 
-/* ===== GRID ===== */
-.home-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
+/* 🔥 홈 카드 영역을 남은 공간 전부 사용 */
+.premium-home .main-panel {
+  display: flex;
+  flex-direction: column;
 }
 
-/* 직사각형 비율 */
+.home-grid {
+  flex: 1;                  /* 남은 공간 전부 */
+  align-content: stretch;
+}
+
 .home-grid .home-tile {
-  height: 74px;
+  height: auto;             /* 고정 제거 */
+  min-height: 64px;
 }
 
 /* 색감 */
@@ -274,5 +278,14 @@ body.premium .home-tile {
   .side-menu {
     display: none !important;
   }
+}
+/* 🔥 홈 화면 높이 강제 채우기 */
+#mainSection,
+.layout,
+.content-area,
+#homeArea,
+.premium-home,
+.main-panel {
+  height: 100%;
 }
 
