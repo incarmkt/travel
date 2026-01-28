@@ -65,75 +65,64 @@
       <button onclick="openPage('contact')">📞 긴급 연락망</button>
     </aside>
 
-    <!-- ===== RIGHT CONTENT ===== -->
-    <section class="content-area">
+      
+<!-- ===== RIGHT CONTENT ===== -->
+<section class="content-area">
 
-  <!-- 🔴 메인 패널 (RED) -->
+<div id="homeArea">
+
   <div class="main-panel">
 
-  <!-- HERO -->
-  <section class="home-hero">
-    <h1>ISC Taiwan 2025</h1>
-    <p>지금부터 여정이 시작됩니다</p>
-  </section>
+    <!-- HERO -->
+    <section class="home-hero">
+      <h1>ISC Taiwan 2025</h1>
+      <p>지금부터 여정이 시작됩니다</p>
+    </section>
 
-<!-- 홈 카드 영역 -->
-<div class="home-grid">
+    <!-- 🔵 대만의 모든 것 (최상단, 단독) -->
+    <div class="home-tile wide primary" onclick="openPage('taiwan')">
+      <span class="icon">🇹🇼</span>
+      <span class="title">대만의 모든 것</span>
+    </div>
 
-  <div class="home-tile" onclick="openPage('schedule')">
-    <span class="icon">📅</span>
-    <span class="title">여행 일정</span>
+    <!-- 2열 카테고리 -->
+    <div class="home-grid">
+
+      <div class="home-tile blue" onclick="openPage('schedule')">
+        <span class="icon">📅</span>
+        <span class="title">여행 일정</span>
+      </div>
+
+      <div class="home-tile sky" onclick="openPage('flight')">
+        <span class="icon">✈️</span>
+        <span class="title">항공편</span>
+      </div>
+
+      <div class="home-tile pink" onclick="openPage('myTour')">
+        <span class="icon">🎒</span>
+        <span class="title">선택 관광</span>
+      </div>
+
+      <div class="home-tile gold" onclick="openPage('dinner')">
+        <span class="icon">🍽</span>
+        <span class="title">만찬</span>
+      </div>
+
+      <div class="home-tile gray" onclick="openPage('schedule')">
+        <span class="icon">📞</span>
+        <span class="title">긴급 연락망</span>
+      </div>
+
+      <div class="home-tile gray arrow" onclick="openPage('request')">
+        <span class="icon">📝</span>
+        <span class="title">요청사항</span>
+        <span class="chevron">›</span>
+      </div>
+
+    </div>
+
   </div>
-
-  <div class="home-tile" onclick="openPage('flight')">
-    <span class="icon">✈️</span>
-    <span class="title">항공편</span>
-  </div>
-
-  <div class="home-tile" onclick="openPage('myTour')">
-    <span class="icon">🎒</span>
-    <span class="title">나의 선택 관광</span>
-  </div>
-
-  <div class="home-tile" onclick="openPage('dinner')">
-    <span class="icon">🍽</span>
-    <span class="title">ISC 만찬</span>
-  </div>
-
-  <div class="home-tile" onclick="openPage('taiwan')">
-    <span class="icon">🇹🇼</span>
-    <span class="title">대만의 모든 것</span>
-  </div>
-
-  <div class="home-tile" onclick="openPage('request')">
-    <span class="icon">📝</span>
-    <span class="title">요청사항</span>
-  </div>
-
 </div>
-
-<!-- 하단 가로 카드 -->
-<div class="wide-card" onclick="openPage('contact')">
-  📞 긴급 연락망
-</div>
-  
-  </section>
-
-</div>
-
-
-
-    <!-- 상세 페이지 -->
-<section id="detailPage" class="detail" style="display:none;">
-  <h2 id="detailTitle"></h2>
-
-  <div id="detailContent"></div>
-
-  <div class="nav-buttons">
-    <button class="ghost-btn" onclick="goHome()">홈으로</button>
-    <button class="ghost-btn" onclick="goBack()">뒤로가기</button>
-  </div>
-</section>
 
 
   </div>
@@ -783,7 +772,7 @@ document.getElementById("homeArea").style.display = "block";
 document.getElementById("detailPage").style.display = "none";
 
 if (window.innerWidth <= 767) {
-  document.querySelector(".side-menu").style.display = "none";
+  document.querySelector(".side-menu").style.display = "block";
 }
 }
     /* ================= 뒤로가기 ================= */
