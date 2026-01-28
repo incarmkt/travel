@@ -230,3 +230,10 @@ body {
     grid-column: span 3;
   }
 }
+/* theme-premium.css */
+@media (max-width: 767px) {
+  #homeArea {
+    height: 100%;
+    overflow: hidden;
+  }
+}
