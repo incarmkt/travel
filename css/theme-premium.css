@@ -480,6 +480,83 @@ a,
     padding-bottom: 110px;
   }
 }
+/* =================================================
+   MOBILE HAMBURGER MENU (APP STYLE)
+================================================= */
+
+.menu-btn {
+  background: none;
+  border: none;
+  font-size: 22px;
+  padding: 8px;
+}
+
+@media (max-width: 767px) {
+
+  .mobile-menu {
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.45);
+    backdrop-filter: blur(6px);
+    display: none;
+    z-index: 1000;
+  }
+
+  .mobile-menu.show {
+    display: block;
+  }
+
+  .menu-sheet {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 240px;
+    background: #fff;
+    border-radius: 18px;
+    padding: 16px;
+    box-shadow: 0 30px 60px rgba(15,23,42,0.35);
+    animation: menuDrop 0.25s ease-out;
+  }
+
+  .menu-sheet h3 {
+    font-size: 14px;
+    font-weight: 800;
+    margin-bottom: 10px;
+    color: #0f172a;
+  }
+
+  .menu-sheet button {
+    width: 100%;
+    text-align: left;
+    background: none;
+    border: none;
+    padding: 12px 10px;
+    font-size: 14px;
+    font-weight: 600;
+    border-radius: 10px;
+  }
+
+  .menu-sheet button:hover {
+    background: #f1f5f9;
+  }
+
+  .menu-divider {
+    height: 1px;
+    background: #e5e7eb;
+    margin: 10px 0;
+  }
+}
+
+@keyframes menuDrop {
+  from {
+    opacity: 0;
+    transform: translateY(-6px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
 
 
 
