@@ -340,5 +340,78 @@ h4 {
   font-weight: 700;
   font-size: 15px;
 }
+/* ===============================
+   HOME APP LAYOUT (STRUCTURE ONLY)
+=============================== */
+
+.home-app {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+/* HERO */
+.home-hero {
+  padding: 28px 22px;
+  border-radius: 22px;
+  background: rgba(0,0,0,0.25);
+  color: #fff;
+}
+
+.home-hero h1 {
+  font-size: 22px;
+  font-weight: 800;
+  margin-bottom: 6px;
+}
+
+.home-hero p {
+  font-size: 14px;
+  opacity: 0.85;
+}
+
+/* GRID */
+.home-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.home-tile {
+  height: 90px;
+  border-radius: 20px;
+  background: #2563eb;
+  color: #fff;
+  font-size: 15px;
+  font-weight: 700;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+/* 두 번째 그리드용 */
+.home-tile.wide {
+  height: 80px;
+}
+
+/* WIDE CARD */
+.home-wide {
+  margin-top: 6px;
+}
+
+.wide-card {
+  height: 64px;
+  border-radius: 18px;
+  background: #0f172a;
+  color: #fff;
+  font-size: 15px;
+  font-weight: 700;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 
 
