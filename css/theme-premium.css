@@ -262,4 +262,83 @@ h4 {
   }
 }
 
+/* ===============================
+   HOME – PREMIUM APP LAYOUT
+=============================== */
+
+.premium-home {
+  padding: 16px;
+}
+
+/* HERO */
+.home-hero {
+  height: 220px;
+  border-radius: 22px;
+  background:
+    linear-gradient(180deg, rgba(0,0,0,.25), rgba(0,0,0,.55)),
+    url("../assets/images/taiwan.jpg") center / cover no-repeat;
+  color: #fff;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+
+.home-hero h2 {
+  font-size: 26px;
+  font-weight: 800;
+}
+
+.home-hero p {
+  font-size: 14px;
+  opacity: .9;
+}
+
+/* TODAY CARD */
+.today-card {
+  margin-top: -30px;
+  background: rgba(255,255,255,.85);
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  box-shadow: var(--shadow-md);
+  cursor: pointer;
+}
+
+.today-card strong {
+  font-size: 16px;
+}
+
+.today-card p {
+  font-size: 13px;
+  color: var(--text-sub);
+}
+
+.today-card .arrow {
+  margin-left: auto;
+  font-size: 22px;
+  color: var(--text-mute);
+}
+
+/* GRID */
+.quick-grid {
+  margin-top: 22px;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px;
+}
+
+.quick-grid button {
+  height: 90px;
+  border-radius: 18px;
+  border: none;
+  background: linear-gradient(135deg, #2563eb, #38bdf8);
+  color: #fff;
+  font-weight: 700;
+  font-size: 15px;
+}
+
 
