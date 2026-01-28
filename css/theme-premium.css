@@ -243,6 +243,12 @@ h4 {
     transform: translateY(0);
   }
 }
+/* ===============================
+   LOGIN OVERLAY FIX (CRITICAL)
+=============================== */
+.login-hero .hero-overlay {
+  background: transparent !important;
+}
 
 
 
