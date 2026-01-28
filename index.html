@@ -73,6 +73,12 @@
 
     <!-- 홈일 때 -->
 <div id="homeArea" class="home-app">
+@media (max-width: 767px) {
+  #homeArea {
+    height: 100%;
+    overflow: hidden;   /* 🔒 홈은 절대 스크롤 안 됨 */
+  }
+}
 
   <!-- HERO -->
   <section class="home-hero">
