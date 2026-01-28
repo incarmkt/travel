@@ -20,6 +20,9 @@ html, body {
   background: #0f172a;
   color: #fff;
 }
+#homeArea {
+  overflow: visible;
+}
 
 /* ===== HEADER ===== */
 .header {
@@ -266,5 +269,10 @@ body.premium .home-tile {
   pointer-events: auto !important;
   cursor: pointer;
   z-index: 10;
+}
+@media (max-width: 767px) {
+  .side-menu {
+    display: none !important;
+  }
 }
 
