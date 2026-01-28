@@ -72,35 +72,33 @@
   <div class="main-panel">
 
     <!-- 홈일 때 -->
-<div id="homeArea" class="home-view premium-home">
+<div id="homeArea" class="home-app">
 
   <!-- HERO -->
   <section class="home-hero">
-    <h2>ISC Taiwan 2025</h2>
+    <h1>ISC Taiwan 2025</h1>
     <p>지금부터 여정이 시작됩니다</p>
   </section>
 
-  <!-- TODAY CARD -->
-  <section class="today-card" onclick="openPage('schedule')">
-    <div class="today-icon">📅</div>
-    <div>
-      <strong>오늘의 일정</strong>
-      <p>자유 일정 / 선택 관광</p>
-    </div>
-    <span class="arrow">›</span>
+  <!-- GRID 1 -->
+  <section class="home-grid">
+    <div class="home-tile" onclick="openPage('schedule')">📅 여행 일정</div>
+    <div class="home-tile" onclick="openPage('flight')">✈️ 항공편</div>
+    <div class="home-tile" onclick="openPage('myTour')">🎒 나의 선택 관광</div>
+    <div class="home-tile" onclick="openPage('dinner')">🍽 ISC 만찬</div>
+    <div class="home-tile" onclick="openPage('taiwan')">🇹🇼 대만의 모든 것</div>
+    <div class="home-tile" onclick="openPage('request')">📝 요청사항</div>
   </section>
 
-  <!-- QUICK GRID -->
-  <section class="quick-grid">
-    <button onclick="openPage('schedule')">🗓 여행 일정</button>
-    <button onclick="openPage('flight')">✈️ 항공편</button>
-    <button onclick="openPage('myTour')">🎒 선택 관광</button>
-    <button onclick="openPage('dinner')">🍽 만찬</button>
-    <button onclick="openPage('taiwan')">🇹🇼 대만 정보</button>
-    <button onclick="openPage('request')">📝 요청사항</button>
+  <!-- WIDE CARD -->
+  <section class="home-wide">
+    <div class="wide-card" onclick="openPage('contact')">
+      📞 긴급 연락망
+    </div>
   </section>
 
 </div>
+
 
 
     <!-- 상세 페이지 -->
