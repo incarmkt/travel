@@ -1,3 +1,5 @@
+고객용
+
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -8,9 +10,6 @@
   <link rel="stylesheet" href="css/base.css">
   <link rel="stylesheet" href="css/desktop.css" media="(min-width: 768px)">
   <link rel="stylesheet" href="css/mobile.css" media="(max-width: 767px)">
-<!-- ✅ 무조건 맨 마지막 -->
-<link rel="stylesheet" href="css/theme-premium.css">
-  
 </head>
 <body>
   
@@ -29,11 +28,10 @@
     </div>
   </div>
 
- <div class="header-right">
-  <p class="congrats">ISC 달성을 축하드립니다.</p>
-  <p class="welcome-text"><strong id="employeeName"></strong> 님, 환영합니다</p>
-  <button class="menu-btn" onclick="toggleMobileMenu()">☰</button>
-</div>
+  <div class="header-right">
+    <p class="congrats">ISC 달성을 축하드립니다.</p>
+    <p class="welcome-text"><strong id="employeeName"></strong> 님, 환영합니다</p>
+  </div>
 </header>
 
 <!-- ================= LOGIN (FINAL / DO NOT TOUCH) ================= -->
@@ -74,30 +72,9 @@
   <div class="main-panel">
 
     <!-- 홈일 때 -->
-  <div id="homeArea" class="home-view">
-
-  <!-- 환영 카드 -->
-  <div class="card" style="margin-bottom:16px;">
-    <h3>👋 환영합니다</h3>
-    <p class="sub">
-      <strong id="homeUserName"></strong> 님,<br>
-      ISC 달성을 축하드립니다.
-    </p>
-  </div>
-
-  <!-- 오늘의 일정 카드 -->
-  <div id="todayScheduleCard" class="card" style="cursor:pointer; margin-bottom:16px;">
-    <!-- JS로 자동 채움 -->
-  </div>
-
-  <!-- 항공 요약 카드 -->
-  <div class="card" onclick="openPage('flight')" style="cursor:pointer;">
-    <h3>✈️ 항공편 요약</h3>
-    <p class="sub" id="homeFlightSummary"></p>
-  </div>
-
-</div>
-
+    <div id="homeArea" class="home-view">
+      <img src="assets/images/home.jpg" alt="Home Image">
+    </div>
 
     <!-- 상세 페이지 -->
 <section id="detailPage" class="detail" style="display:none;">
@@ -121,37 +98,6 @@
 
   </div>
 </main>
-  <!-- ================= MOBILE MENU PANEL ================= -->
-<div id="mobileMenu" class="mobile-menu">
-  <div class="menu-sheet">
-    <h3>메뉴</h3>
-
-    <button onclick="openPage('schedule')">🗓 여행 일정</button>
-      <button onclick="openPage('flight')">✈️ 항공편 정보</button>
-      <button onclick="openPage('taiwan')">🇹🇼 대만의 모든 것</button>
-      <button onclick="openPage('myTour')">🎒 나의 선택 관광</button>
-      <button onclick="openPage('dinner')">🍽 만찬 안내</button>
-      <button onclick="openPage('request')">📝 요청사항</button>
-      <button onclick="openPage('contact')">📞 긴급 연락망</button>
-
-    <div class="menu-divider"></div>
-
-    <button onclick="openHome()">🏠 홈</button>
-  </div>
-</div>
-
-  <!-- ================= APP BOTTOM ACTION BAR ================= -->
-<nav class="app-bottom-bar">
-  <button class="nav-btn" onclick="openHome()">🏠</button>
-  <button class="nav-btn" onclick="openPage('travelRoot')">🧭</button>
-
-  <!-- 🔥 핵심 액션 -->
-  <button class="nav-btn main-action" onclick="openHome()">＋</button>
-
-  <button class="nav-btn" onclick="openPage('customerRoot')">👤</button>
-  <button class="nav-btn" onclick="openPage('reportRoot')">📊</button>
-</nav>
-
   <script>
 /* ================= 공통 ================= */
     /* ================= 페이지 히스토리 ================= */
@@ -389,7 +335,7 @@ function nowKSTString() {
     second: "2-digit"
   }).format(new Date());
 }
-    const MEAL_SHEET_URL = "https://script.google.com/macros/s/AKfycbx2tVkT00Z8uXQWl6EeTIUUhZ3_NJHx3JDqSCHC5oJWkUCm0OtcTmaV6g20cNKoh0no9w/exec";
+    const MEAL_SHEET_URL = "https://script.google.com/macros/s/AKfycbxEM9--BWjK64kV-KvPuOBCahwWzcVX3iIQpDKb56SZ5_t-guNJbf6KpvZrm1dL8dqiwA/exec";
 
 function logMealPaymentToSheet(payload) {
   if (!currentUser) return;
@@ -441,12 +387,7 @@ function login() {
   }
 
   document.getElementById("employeeName").textContent = user.name;
-  document.body.classList.add("logged-in")
-  // 🔥 홈 표시 추가
-document.getElementById("homeArea").style.display = "block";
-document.getElementById("detailPage").style.display = "none";
-
-  renderHomeCards();
+  document.body.classList.add("logged-in");
 }
 function tryAutoLogin() {
   const params = new URLSearchParams(window.location.search);
@@ -874,76 +815,11 @@ function submitRequest() {
       twEl.textContent = tw;
     }
   }
-      function toggleMobileMenu() {
-  document.getElementById("mobileMenu").classList.toggle("show");
-}
-/* ================= 홈 카드 렌더링 ================= */
 
-function renderHomeCards() {
-  if (!currentUser) return;
-
-  // 이름 표시
-  const nameEl = document.getElementById("homeUserName");
-  if (nameEl) nameEl.textContent = currentUser.name;
-
-  renderTodaySchedule();
-  renderFlightSummary();
+  updateTime();
+  setInterval(updateTime, 1000);
 }
 
-/* ================= 오늘의 일정 ================= */
-function renderTodaySchedule() {
-  const card = document.getElementById("todayScheduleCard");
-  if (!card) return;
-
-  const today = new Date();
-  const todayStr = today.toISOString().slice(0,10).replace(/-/g,".");
-
-  // 오늘 날짜에 해당하는 DAY 찾기
-  const todayPlan = travelSchedule.find(d =>
-    d.date.includes(todayStr)
-  );
-
-  // 오늘 일정 없음
-  if (!todayPlan) {
-    card.innerHTML = `
-      <h3>🗓 오늘의 일정</h3>
-      <p class="sub">오늘은 공식 일정이 없습니다.</p>
-    `;
-    return;
-  }
-
-  // 첫 일정
-  const firstItem = todayPlan.items[0];
-
-  card.innerHTML = `
-    <h3>🗓 오늘의 일정</h3>
-    <p class="sub">
-      <strong>${todayPlan.day}</strong> · ${todayPlan.date}<br>
-      ${todayPlan.title}
-    </p>
-    <p class="sub" style="margin-top:6px;">
-      다음 일정: ${firstItem.time} · ${firstItem.title}
-    </p>
-  `;
-
-  card.onclick = () => openPage("schedule");
-}
-
-/* ================= 항공 요약 ================= */
-function renderFlightSummary() {
-  const el = document.getElementById("homeFlightSummary");
-  if (!el || !currentUser?.flight) return;
-
-  const dep = currentUser.flight.departure;
-  const ret = currentUser.flight.return;
-
-  el.innerHTML = `
-    출국 ${dep.airline} ${dep.flightNo} · ${dep.time}<br>
-    귀국 ${ret.airline} ${ret.flightNo} · ${ret.time}
-  `;
-}
-
- 
 </script>
 
 
