@@ -133,3 +133,95 @@
     grid-column: span 3;
   }
 }
+/* ===============================
+   PREMIUM THEME SCOPE
+=============================== */
+
+@media (max-width: 767px) {
+
+  /* 홈 화면에서만 기존 모바일 구조 차단 */
+  #homeArea {
+    display: block;
+  }
+
+  .side-menu,
+  .fixed-poster {
+    display: none !important;
+  }
+
+  #detailPage {
+    display: none;
+  }
+
+}
+@media (max-width: 767px) {
+
+  /* 홈 전체 래퍼 */
+  #homeArea .main-panel {
+    padding: 20px;
+  }
+
+  /* HERO */
+  .home-hero {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #fff;
+  }
+
+  .home-hero h1 {
+    font-size: 26px;
+    font-weight: 800;
+  }
+
+  .home-hero p {
+    opacity: 0.9;
+  }
+
+  /* 🔥 카테고리 그리드 */
+  .home-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+  }
+
+  /* 공통 카드 */
+  .home-tile {
+    border-radius: 20px;
+    padding: 18px;
+    color: #fff;
+    font-weight: 700;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    backdrop-filter: blur(8px);
+    cursor: pointer;
+  }
+
+  /* 🔵 대만의 모든 것 (최상단 단독) */
+  .home-tile.wide {
+    grid-column: 1 / -1;
+    margin-bottom: 14px;
+    font-size: 18px;
+    padding: 22px;
+    background: linear-gradient(135deg, rgba(80,120,255,.9), rgba(120,170,255,.9));
+  }
+
+  /* 색상 카드 */
+  .home-tile.blue  { background: linear-gradient(135deg,#5b86e5,#36d1dc); }
+  .home-tile.sky   { background: linear-gradient(135deg,#56ccf2,#2f80ed); }
+  .home-tile.pink  { background: linear-gradient(135deg,#f857a6,#ff5858); }
+  .home-tile.gold  { background: linear-gradient(135deg,#f2994a,#f2c94c); }
+  .home-tile.gray  { background: rgba(255,255,255,0.18); }
+
+  .home-tile .icon {
+    font-size: 22px;
+  }
+
+  .home-tile.arrow {
+    justify-content: space-between;
+  }
+
+}
+
+
