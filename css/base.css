@@ -1,3 +1,4 @@
+
 /* ================= RESET & COMMON ================= */
 * {
   box-sizing: border-box;
@@ -481,5 +482,3 @@ textarea {
   font-size: 12px;
   cursor: pointer;
 }
-
-
