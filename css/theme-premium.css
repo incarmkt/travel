@@ -198,34 +198,24 @@ h4 {
 .login-hero::before {
   content: "";
   position: absolute;
-  inset: 0;
+  inset: -10%;
   background:
-    radial-gradient(
-      circle at 20% 30%,
+    linear-gradient(
+      120deg,
       rgba(255,255,255,0.08),
-      transparent 40%
-    ),
-    radial-gradient(
-      circle at 80% 60%,
-      rgba(255,255,255,0.06),
-      transparent 45%
+      rgba(255,255,255,0.02),
+      rgba(255,255,255,0.08)
     );
-  animation: windMove 18s linear infinite;
+  animation: windFlow 12s linear infinite;
   pointer-events: none;
 }
 
-/* 부드러운 이동 */
-@keyframes windMove {
-  0% {
-    transform: translateX(0) translateY(0);
-  }
-  50% {
-    transform: translateX(-20px) translateY(10px);
-  }
-  100% {
-    transform: translateX(0) translateY(0);
-  }
+@keyframes windFlow {
+  0%   { transform: translateX(-10%) translateY(0); }
+  50%  { transform: translateX(10%) translateY(2%); }
+  100% { transform: translateX(-10%) translateY(0); }
 }
+
 /* ===============================
    LOGIN BOX – FLOAT FEEL
 =============================== */
@@ -250,5 +240,26 @@ h4 {
   background: transparent !important;
 }
 
+/* ===============================
+   LOGIN – BACKGROUND WIND (FINAL)
+=============================== */
+.login-hero {
+  background-size: 110% 110%;
+  animation: bgWind 20s ease-in-out infinite;
+}
+
+@keyframes bgWind {
+  0%   { background-position: 50% 50%; }
+  25%  { background-position: 48% 52%; }
+  50%  { background-position: 52% 48%; }
+  75%  { background-position: 49% 51%; }
+  100% { background-position: 50% 50%; }
+}
+@media (max-width: 767px) {
+  .login-hero {
+    animation-duration: 24s;
+    background-size: 120% 120%;
+  }
+}
 
 
