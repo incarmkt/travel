@@ -1,325 +1,222 @@
 /* =================================================
-   THEME – PREMIUM (LOGIN + HOME ONLY)
-   SAFE VERSION
+   THEME PREMIUM – SINGLE SOURCE OF TRUTH
+   고객용 최종 CSS (모바일 퍼스트)
 ================================================= */
 
-/* ===============================
-   DESIGN TOKENS
-=============================== */
-:root {
-  --radius: 20px;
-  --shadow: 0 12px 30px rgba(0,0,0,.25);
+/* ===== RESET ===== */
+* {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
 }
 
-/* ===============================
-   LOGIN (디자인만)
-=============================== */
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden; /* 🔥 홈은 스크롤 없음 */
+  font-family: -apple-system, BlinkMacSystemFont,
+               "Segoe UI", Roboto, "Noto Sans KR", sans-serif;
+  background: #0f172a;
+  color: #fff;
+}
+
+/* ===== HEADER ===== */
+.header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 56px;
+  padding: 8px 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(255,255,255,0.95);
+  color: #111;
+  z-index: 1000;
+}
+
+.header .logo {
+  width: 42px;
+}
+
+.header h1 {
+  font-size: 14px;
+  margin: 0;
+}
+
+.header .sub {
+  display: none;
+}
+
+.header-right {
+  text-align: right;
+  font-size: 11px;
+}
+
+/* ===== LOGIN ===== */
 .login-hero {
-  background:
-    linear-gradient(180deg, rgba(0,0,0,.45), rgba(0,0,0,.7)),
-    url("../assets/images/photo-home.jpg") center / cover no-repeat;
+  position: fixed;
+  inset: 0;
+  background: url("../assets/images/photo1.jpg") center/cover no-repeat;
+}
+
+.hero-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.55);
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .login-box {
-  background: rgba(255,255,255,.95);
-  border-radius: 24px;
-  box-shadow: 0 30px 70px rgba(0,0,0,.4);
-}
-
-/* ===============================
-   HOME AREA – 핵심
-=============================== */
-#homeArea {
-  position: relative;
-  padding: 20px;
-}
-
-/* ❗ 클릭 차단 방지 */
-#homeArea,
-#homeArea * {
-  pointer-events: auto;
-}
-
-/* 배경 (클릭 통과) */
-#homeArea::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background:
-    linear-gradient(180deg, rgba(0,0,0,.25), rgba(0,0,0,.65)),
-    url("../assets/images/photo-home.jpg") center / cover no-repeat;
-  z-index: 0;
-  pointer-events: none;
-}
-
-/* ===============================
-   HOME HERO
-=============================== */
-#homeArea .home-hero {
-  position: relative;
-  z-index: 1;
+  width: 86%;
+  max-width: 320px;
+  background: rgba(255,255,255,0.95);
+  border-radius: 18px;
   padding: 24px;
-  border-radius: 24px;
+  text-align: center;
+  color: #111;
+}
+
+.hero-logo {
+  width: 72px;
+  margin-bottom: 12px;
+}
+
+.primary-btn {
+  width: 100%;
+  margin-top: 12px;
+  padding: 12px;
+  border-radius: 12px;
+  border: none;
+  background: #2563eb;
   color: #fff;
-  margin-bottom: 24px;
-}
-
-#homeArea .home-hero h1 {
-  font-size: 28px;
-  font-weight: 900;
-}
-
-#homeArea .home-hero p {
-  opacity: .9;
-}
-
-/* ===============================
-   HOME GRID (카테고리 카드)
-=============================== */
-#homeArea .home-grid {
-  position: relative;
-  z-index: 1;
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 14px;
-}
-
-/* 카드 공통 */
-#homeArea .home-tile {
-  height: 110px;
-  border-radius: var(--radius);
-  padding: 16px;
-  color: #fff;
-  font-weight: 800;
   font-size: 15px;
+  font-weight: 700;
+}
 
+/* ===== MAIN ===== */
+#mainSection {
+  position: fixed;
+  inset: 56px 0 0 0;
+  display: block;
+}
+
+/* ===== HOME ===== */
+#homeArea {
+  height: 100%;
+  overflow: hidden;
+}
+
+.main-panel {
+  height: 100%;
+  padding: 16px;
+  background: url("../assets/images/photo2.jpg") center/cover no-repeat;
+}
+
+/* HERO */
+.home-hero {
+  margin-bottom: 14px;
+}
+
+.home-hero h1 {
+  margin: 0;
+  font-size: 26px;
+  font-weight: 800;
+}
+
+.home-hero p {
+  margin: 6px 0 0;
+  font-size: 14px;
+  opacity: 0.9;
+}
+
+/* ===== TILE COMMON ===== */
+.home-tile {
+  position: relative;
+  border-radius: 18px;
+  padding: 18px;
+  font-size: 16px;
+  font-weight: 700;
   display: flex;
-  align-items: flex-end;
-
-  background:
-    linear-gradient(135deg, rgba(37,99,235,.75), rgba(30,64,175,.9)),
-    url("../assets/images/photo-card.jpg") center / cover;
-
-  box-shadow: var(--shadow);
+  align-items: center;
+  gap: 10px;
   cursor: pointer;
-  transition: transform .2s ease, box-shadow .2s ease;
+  background: rgba(255,255,255,0.25);
+  backdrop-filter: blur(8px);
 }
 
-#homeArea .home-tile:active {
-  transform: scale(.97);
+/* ===== WIDE TILE ===== */
+.home-tile.wide {
+  height: 78px;
+  margin: 16px 0;
 }
 
-/* ===============================
-   긴급 연락망 (단독)
-=============================== */
-#homeArea .wide-card {
-  grid-column: span 2;
-  height: 70px;
-  justify-content: center;
-  background:
-    linear-gradient(135deg, rgba(220,38,38,.8), rgba(185,28,28,.9)),
-    url("../assets/images/photo-card.jpg") center / cover;
+/* ===== GRID ===== */
+.home-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
 }
 
-/* ===============================
-   DESKTOP 확장
-=============================== */
-@media (min-width: 768px) {
-  #homeArea .home-grid {
-    grid-template-columns: repeat(3, 1fr);
-  }
-
-  #homeArea .wide-card {
-    grid-column: span 3;
-  }
-}
-/* ===============================
-   PREMIUM THEME SCOPE
-=============================== */
-
-@media (max-width: 767px) {
-
-  /* 홈 화면에서만 기존 모바일 구조 차단 */
-  #homeArea {
-    display: block;
-  }
-
-  .side-menu,
-  .fixed-poster {
-    display: none !important;
-  }
-
-  #detailPage {
-    display: none;
-  }
-
-}
-@media (max-width: 767px) {
-
-  /* 홈 전체 래퍼 */
-  #homeArea .main-panel {
-    padding: 20px;
-  }
-
-  /* HERO */
-  .home-hero {
-    text-align: center;
-    margin-bottom: 20px;
-    color: #fff;
-  }
-
-  .home-hero h1 {
-    font-size: 26px;
-    font-weight: 800;
-  }
-
-  .home-hero p {
-    opacity: 0.9;
-  }
-
-  /* 🔥 카테고리 그리드 */
-  .home-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 14px;
-  }
-
-  /* 공통 카드 */
-  .home-tile {
-    border-radius: 20px;
-    padding: 18px;
-    color: #fff;
-    font-weight: 700;
-    font-size: 16px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    backdrop-filter: blur(8px);
-    cursor: pointer;
-  }
-
-  /* 🔵 대만의 모든 것 (최상단 단독) */
-  .home-tile.wide {
-    grid-column: 1 / -1;
-    margin-bottom: 14px;
-    font-size: 18px;
-    padding: 22px;
-    background: linear-gradient(135deg, rgba(80,120,255,.9), rgba(120,170,255,.9));
-  }
-
-  /* 색상 카드 */
-  .home-tile.blue  { background: linear-gradient(135deg,#5b86e5,#36d1dc); }
-  .home-tile.sky   { background: linear-gradient(135deg,#56ccf2,#2f80ed); }
-  .home-tile.pink  { background: linear-gradient(135deg,#f857a6,#ff5858); }
-  .home-tile.gold  { background: linear-gradient(135deg,#f2994a,#f2c94c); }
-  .home-tile.gray  { background: rgba(255,255,255,0.18); }
-
-  .home-tile .icon {
-    font-size: 22px;
-  }
-
-  .home-tile.arrow {
-    justify-content: space-between;
-  }
-
+/* 직사각형 비율 */
+.home-grid .home-tile {
+  height: 74px;
 }
 
-/* =================================================
-   PREMIUM MOBILE HOME – FINAL FIX
-================================================= */
-@media (max-width: 767px) {
+/* 색감 */
+.home-tile.blue { background: rgba(59,130,246,0.55); }
+.home-tile.sky { background: rgba(56,189,248,0.55); }
+.home-tile.pink { background: rgba(236,72,153,0.55); }
+.home-tile.gold { background: rgba(234,179,8,0.55); }
+.home-tile.gray { background: rgba(148,163,184,0.45); }
 
-  /* 🔒 홈 화면 한 화면 고정 */
-  #homeArea {
-    height: calc(100vh - 60px);
-    overflow: hidden;
-  }
-
-  .main-panel {
-    height: 100%;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-  }
-
-  /* ================= HERO ================= */
-  .home-hero {
-    padding: 20px 16px 12px;
-    text-align: center;
-  }
-
-  .home-hero h1 {
-    font-size: 22px;
-    margin-bottom: 6px;
-  }
-
-  .home-hero p {
-    font-size: 13px;
-    opacity: 0.85;
-  }
-
-  /* ================= GRID ================= */
-  .home-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    grid-template-rows: auto auto auto;
-    gap: 12px;
-    padding: 12px 16px;
-    flex: 1;
-  }
-
-  /* ================= TILE ================= */
-  .home-tile {
-    position: relative;
-    border-radius: 18px;
-    padding: 14px 16px;
-    min-height: 88px;          /* 🔥 정사각형 제거 */
-    display: flex;
-    align-items: center;
-    gap: 12px;
-
-    /* 🔥 클릭 복구 핵심 */
-    pointer-events: auto;
-    z-index: 5;
-  }
-
-  .home-tile::before,
-  .home-tile::after {
-    pointer-events: none !important;
-  }
-
-  .home-tile .icon {
-    font-size: 22px;
-    flex-shrink: 0;
-  }
-
-  .home-tile .title {
-    font-size: 15px;
-    font-weight: 600;
-    line-height: 1.2;
-  }
-
-  /* ================= 대만의 모든 것 (가로 카드) ================= */
-  .home-tile:first-child {
-    grid-column: 1 / 3;
-    min-height: 96px;
-    font-size: 16px;
-  }
-
-  /* ================= 하단 긴 카드 ================= */
-  .wide-card {
-    margin: 8px 16px 16px;
-    height: 52px;
-    border-radius: 16px;
-    font-size: 15px;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    pointer-events: auto;
-    z-index: 5;
-  }
+/* 화살표 */
+.home-tile.arrow .chevron {
+  position: absolute;
+  right: 14px;
+  font-size: 20px;
+  opacity: 0.7;
 }
 
+/* ===== DETAIL PAGE ===== */
+#detailPage {
+  position: fixed;
+  inset: 56px 0 0 0;
+  background: #f8fafc;
+  color: #111;
+  display: none;
+  overflow-y: auto;
+  z-index: 900;
+}
 
+#detailTitle {
+  padding: 16px;
+  font-size: 18px;
+  font-weight: 800;
+}
+
+#detailContent {
+  padding: 0 16px 80px;
+}
+
+.nav-buttons {
+  position: fixed;
+  bottom: 12px;
+  left: 12px;
+  right: 12px;
+  display: flex;
+  gap: 10px;
+}
+
+.ghost-btn {
+  flex: 1;
+  padding: 12px;
+  border-radius: 14px;
+  border: none;
+  background: #e5e7eb;
+  font-weight: 700;
+}
