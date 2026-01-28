@@ -3,7 +3,7 @@
    고객용 최종 CSS (모바일 퍼스트)
 ================================================= */
 
-/* ===== RESET ===== */
+/* ================= RESET ================= */
 * {
   box-sizing: border-box;
   -webkit-tap-highlight-color: transparent;
@@ -14,17 +14,14 @@ html, body {
   padding: 0;
   width: 100%;
   height: 100%;
-  overflow: hidden; /* 🔥 홈은 스크롤 없음 */
   font-family: -apple-system, BlinkMacSystemFont,
                "Segoe UI", Roboto, "Noto Sans KR", sans-serif;
   background: #0f172a;
   color: #fff;
-}
-#homeArea {
-  overflow: visible;
+  overflow: hidden; /* 홈 기준 */
 }
 
-/* ===== HEADER ===== */
+/* ================= HEADER ================= */
 .header {
   position: fixed;
   top: 0;
@@ -40,29 +37,16 @@ html, body {
   z-index: 1000;
 }
 
-.header .logo {
-  width: 42px;
-}
+.header .logo { width: 42px; }
+.header h1 { font-size: 14px; margin: 0; }
+.header .sub { display: none; }
+.header-right { font-size: 11px; text-align: right; }
 
-.header h1 {
-  font-size: 14px;
-  margin: 0;
-}
-
-.header .sub {
-  display: none;
-}
-
-.header-right {
-  text-align: right;
-  font-size: 11px;
-}
-
-/* ===== LOGIN ===== */
+/* ================= LOGIN ================= */
 .login-hero {
   position: fixed;
   inset: 0;
-  background: url("../assets/images/photo1.jpg") center/cover no-repeat;
+  background: url("../assets/images/iscposter.jpg") center / cover no-repeat;
 }
 
 .hero-overlay {
@@ -78,8 +62,8 @@ html, body {
   width: 86%;
   max-width: 320px;
   background: rgba(255,255,255,0.95);
-  border-radius: 18px;
-  padding: 24px;
+  border-radius: 22px;
+  padding: 28px 24px;
   text-align: center;
   color: #111;
 }
@@ -101,28 +85,39 @@ html, body {
   font-weight: 700;
 }
 
-/* ===== MAIN ===== */
+/* ================= MAIN LAYOUT ================= */
 #mainSection {
   position: fixed;
   inset: 56px 0 0 0;
   display: block;
 }
 
-/* ===== HOME ===== */
+.layout,
+.content-area,
 #homeArea {
   height: 100%;
+}
+
+/* ================= HOME ================= */
+#homeArea {
   overflow: hidden;
+}
+
+.premium-home {
+  height: 100%;
 }
 
 .main-panel {
   height: 100%;
-  padding: 16px;
-  background: url("../assets/images/photo2.jpg") center/cover no-repeat;
+  padding: 18px;
+  background: url("../assets/images/photo2.jpg") center / cover no-repeat;
+  display: flex;
+  flex-direction: column;
 }
 
-/* HERO */
+/* ===== HERO ===== */
 .home-hero {
-  margin-bottom: 14px;
+  margin-bottom: 12px;
 }
 
 .home-hero h1 {
@@ -132,56 +127,52 @@ html, body {
 }
 
 .home-hero p {
-  margin: 6px 0 0;
+  margin-top: 6px;
   font-size: 14px;
   opacity: 0.9;
 }
 
-/* ===== TILE COMMON ===== */
+/* ================= HOME TILE ================= */
 .home-tile {
   position: relative;
   border-radius: 18px;
   padding: 18px;
-  font-size: 16px;
-  font-weight: 700;
   display: flex;
   align-items: center;
   gap: 10px;
+  font-size: 16px;
+  font-weight: 700;
   cursor: pointer;
   background: rgba(255,255,255,0.25);
   backdrop-filter: blur(8px);
 }
 
-/* ===== WIDE TILE ===== */
+/* WIDE TILE */
 .home-tile.wide {
-  height: 78px;
-  margin: 16px 0;
+  height: 80px;
+  margin: 14px 0;
 }
 
-/* 🔥 홈 카드 영역을 남은 공간 전부 사용 */
-.premium-home .main-panel {
-  display: flex;
-  flex-direction: column;
-}
-
+/* ================= GRID ================= */
 .home-grid {
-  flex: 1;                  /* 남은 공간 전부 */
-  align-content: stretch;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  flex: 1; /* 🔥 남은 영역 전부 사용 */
 }
 
 .home-grid .home-tile {
-  height: auto;             /* 고정 제거 */
   min-height: 64px;
 }
 
-/* 색감 */
+/* COLORS */
 .home-tile.blue { background: rgba(59,130,246,0.55); }
 .home-tile.sky { background: rgba(56,189,248,0.55); }
 .home-tile.pink { background: rgba(236,72,153,0.55); }
 .home-tile.gold { background: rgba(234,179,8,0.55); }
 .home-tile.gray { background: rgba(148,163,184,0.45); }
 
-/* 화살표 */
+/* ARROW */
 .home-tile.arrow .chevron {
   position: absolute;
   right: 14px;
@@ -189,7 +180,7 @@ html, body {
   opacity: 0.7;
 }
 
-/* ===== DETAIL PAGE ===== */
+/* ================= DETAIL PAGE ================= */
 #detailPage {
   position: fixed;
   inset: 56px 0 0 0;
@@ -197,6 +188,7 @@ html, body {
   color: #111;
   display: none;
   overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
   z-index: 900;
 }
 
@@ -210,82 +202,9 @@ html, body {
   padding: 0 16px 80px;
 }
 
-.nav-buttons {
-  position: fixed;
-  bottom: 12px;
-  left: 12px;
-  right: 12px;
-  display: flex;
-  gap: 10px;
-}
-
-.ghost-btn {
-  flex: 1;
-  padding: 12px;
-  border-radius: 14px;
-  border: none;
-  background: #e5e7eb;
-  font-weight: 700;
-}
-body.premium .premium-login {
-  position: fixed;
-  inset: 0;
-  background: url("../assets/images/iscposter.jpg") center / cover no-repeat;
-}
-
-body.premium .premium-login .hero-overlay {
-  background: rgba(0,0,0,0.55);
-}
-
-body.premium .login-box {
-  border-radius: 22px;
-  padding: 28px 24px;
-  backdrop-filter: blur(6px);
-}
-body.premium .premium-home {
-  height: calc(100vh - 60px);
-  overflow: hidden;
-}
-body.premium .premium-home .main-panel {
-  height: 100%;
-  padding: 18px;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-body.premium .home-tile.wide {
-  height: 80px;
-  border-radius: 20px;
-  font-size: 17px;
-}
-body.premium .home-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-  flex-grow: 1;
-}
-
-body.premium .home-grid .home-tile {
-  height: 70px;
-  border-radius: 18px;
-}
-body.premium .home-tile {
-  pointer-events: auto !important;
-  cursor: pointer;
-  z-index: 10;
-}
+/* ================= MOBILE ONLY ================= */
 @media (max-width: 767px) {
   .side-menu {
     display: none !important;
   }
 }
-/* 🔥 홈 화면 높이 강제 채우기 */
-#mainSection,
-.layout,
-.content-area,
-#homeArea,
-.premium-home,
-.main-panel {
-  height: 100%;
-}
-
