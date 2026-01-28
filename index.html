@@ -74,24 +74,26 @@
   <div class="main-panel">
 
     <!-- 홈일 때 -->
-   <div id="homeArea" class="home-view">
+  <div id="homeArea" class="home-view">
 
+  <!-- 환영 카드 -->
   <div class="card" style="margin-bottom:16px;">
     <h3>👋 환영합니다</h3>
     <p class="sub">
-      ISC 달성을 축하드립니다.<br>
-      여행 정보를 아래에서 확인하세요.
+      <strong id="homeUserName"></strong> 님,<br>
+      ISC 달성을 축하드립니다.
     </p>
   </div>
 
-  <div class="card" onclick="openPage('schedule')" style="cursor:pointer;">
-    <h3>🗓 오늘의 여행 일정</h3>
-    <p class="sub">전체 일정 한눈에 보기</p>
+  <!-- 오늘의 일정 카드 -->
+  <div id="todayScheduleCard" class="card" style="cursor:pointer; margin-bottom:16px;">
+    <!-- JS로 자동 채움 -->
   </div>
 
-  <div class="card" onclick="openPage('flight')" style="cursor:pointer; margin-top:14px;">
-    <h3>✈️ 항공편 정보</h3>
-    <p class="sub">출·귀국 항공편 요약</p>
+  <!-- 항공 요약 카드 -->
+  <div class="card" onclick="openPage('flight')" style="cursor:pointer;">
+    <h3>✈️ 항공편 요약</h3>
+    <p class="sub" id="homeFlightSummary"></p>
   </div>
 
 </div>
@@ -439,7 +441,8 @@ function login() {
   }
 
   document.getElementById("employeeName").textContent = user.name;
-  document.body.classList.add("logged-in");
+  document.body.classList.add("logged-in")
+  renderHomeCards();
 }
 function tryAutoLogin() {
   const params = new URLSearchParams(window.location.search);
@@ -869,6 +872,71 @@ function submitRequest() {
   }
       function toggleMobileMenu() {
   document.getElementById("mobileMenu").classList.toggle("show");
+}
+/* ================= 홈 카드 렌더링 ================= */
+
+function renderHomeCards() {
+  if (!currentUser) return;
+
+  // 이름 표시
+  const nameEl = document.getElementById("homeUserName");
+  if (nameEl) nameEl.textContent = currentUser.name;
+
+  renderTodaySchedule();
+  renderFlightSummary();
+}
+
+/* ================= 오늘의 일정 ================= */
+function renderTodaySchedule() {
+  const card = document.getElementById("todayScheduleCard");
+  if (!card) return;
+
+  const today = new Date();
+  const todayStr = today.toISOString().slice(0,10).replace(/-/g,".");
+
+  // 오늘 날짜에 해당하는 DAY 찾기
+  const todayPlan = travelSchedule.find(d =>
+    d.date.includes(todayStr)
+  );
+
+  // 오늘 일정 없음
+  if (!todayPlan) {
+    card.innerHTML = `
+      <h3>🗓 오늘의 일정</h3>
+      <p class="sub">오늘은 공식 일정이 없습니다.</p>
+    `;
+    return;
+  }
+
+  // 첫 일정
+  const firstItem = todayPlan.items[0];
+
+  card.innerHTML = `
+    <h3>🗓 오늘의 일정</h3>
+    <p class="sub">
+      <strong>${todayPlan.day}</strong> · ${todayPlan.date}<br>
+      ${todayPlan.title}
+    </p>
+    <p class="sub" style="margin-top:6px;">
+      다음 일정: ${firstItem.time} · ${firstItem.title}
+    </p>
+  `;
+
+  card.onclick = () => openPage("schedule");
+}
+
+/* ================= 항공 요약 ================= */
+function renderFlightSummary() {
+  const el = document.getElementById("homeFlightSummary");
+  if (!el || !currentUser?.flight) return;
+
+  const dep = currentUser.flight.departure;
+  const ret = currentUser.flight.return;
+
+  el.innerHTML = `
+    출국 ${dep.airline} ${dep.flightNo} · ${dep.time}<br>
+    귀국 ${ret.airline} ${ret.flightNo} · ${ret.time}
+  `;
 }
 
   updateTime();
