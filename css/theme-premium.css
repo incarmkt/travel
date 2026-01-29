@@ -344,5 +344,54 @@ body.detail-open .detail-sheet__inner {
     font-size: 13px;
   }
 }
+/* ================= HERO AS HEADER ================= */
+
+.home-view {
+  padding-top: 0;              /* 🔥 상단 여백 제거 */
+}
+
+.home-hero {
+  position: relative;
+  z-index: 5;
+
+  padding: 24px 20px 32px;
+  margin: 0 auto 24px;
+
+  width: min(100%, 860px);
+}
+
+.hero-info {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 12px 20px;
+  align-items: start;
+}
+
+.hero-copy {
+  margin-top: 28px;
+
+  transition:
+    opacity 320ms ease,
+    transform 320ms ease;
+
+  will-change: opacity, transform;
+}
+
+.hero-copy.is-hidden {
+  opacity: 0;
+  transform: translateY(-12px);
+  pointer-events: none;
+}
+@media (max-width: 767px) {
+  .home-hero {
+    padding-top: 16px;
+  }
+
+  .hero-copy {
+    margin-top: 20px;
+  }
+}
+
+
 
 
