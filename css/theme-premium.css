@@ -1,432 +1,81 @@
-/* =================================================
-   THEME PREMIUM – SINGLE SOURCE OF TRUTH
-   고객용 최종 CSS (모바일 퍼스트)
-================================================= */
+/* ===============================
+   HOME HERO
+=============================== */
 
-/* ================= RESET ================= */
-* {
-  box-sizing: border-box;
-  -webkit-tap-highlight-color: transparent;
+.home-hero {
+  position: relative;
+  height: 240px;
+  border-radius: 22px;
+  overflow: hidden;
+  margin-bottom: 24px;
 }
 
-html, body {
-  margin: 0;
-  padding: 0;
-  width: 100%;
-  height: 100%;
-  font-family: -apple-system, BlinkMacSystemFont,
-               "Segoe UI", Roboto, "Noto Sans KR", sans-serif;
-  background: #0f172a;
-  color: #fff;
-  overflow-x: hidden; /* 홈 기준 */
-}
-
-/* ================= HEADER ================= */
-.header {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 56px;
-  padding: 8px 14px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
- background: transparent;   /* 핵심 */
-  color: #fff;               /* 텍스트 흰색 */
-  backdrop-filter: blur(6px); /* 선택 */
-  z-index: 1000;
-}
-
-.header .logo { width: 42px; }
-.header h1 { font-size: 14px; margin: 0; }
-.header .sub { display: none; }
-.header-right { font-size: 11px; text-align: right; }
-
-/* ================= LOGIN ================= */
-.login-hero {
-  position: fixed;
-  inset: 0;
-  background: url("../assets/images/iscposter.jpg") center / cover no-repeat;
-}
-
-.hero-overlay {
+.home-hero::before {
+  content: "";
   position: absolute;
   inset: 0;
-  background: rgba(0,0,0,0.55);
+  background: url("../assets/images/taiwan-hero.jpg")
+              center / cover no-repeat;
+  filter: brightness(0.7);
+}
+
+.home-hero-content {
+  position: relative;
+  z-index: 1;
+  height: 100%;
+  padding: 28px;
   display: flex;
+  flex-direction: column;
   justify-content: center;
-  align-items: center;
-}
-
-.login-box {
-  width: 86%;
-  max-width: 320px;
-  background: rgba(255,255,255,0.95);
-  border-radius: 22px;
-  padding: 28px 24px;
-  text-align: center;
-  color: #111;
-}
-
-.hero-logo {
-  width: 72px;
-  margin-bottom: 12px;
-}
-
-.primary-btn {
-  width: 100%;
-  margin-top: 12px;
-  padding: 12px;
-  border-radius: 12px;
-  border: none;
-  background: #2563eb;
   color: #fff;
-  font-size: 15px;
-  font-weight: 700;
 }
 
-/* ================= MAIN LAYOUT ================= */
-
-#homeArea {
-  min-height: 100%;
-}
-
-/* ================= HOME ================= */
-#homeArea {
-  overflow: hidden;
-}
-
-.premium-home {
-  min-height: 100%;
-}
-
-#mainSection {
-  position: fixed;
-  inset: 0; /* 🔥 56px 없앰 */
-  background: url("../assets/images/photo2.jpg") center / cover no-repeat;
-}
-
-/* 헤더 높이만큼 내용 밀기 */
-.layout {
-  padding-top: 56px;
-}
-
-
-/* ===== HERO ===== */
-.home-hero {
-  margin-bottom: 12px;
-}
-
-.home-hero h1 {
-  margin: 0;
-  font-size: 26px;
+.home-hero-content h2 {
+  font-size: 32px;
   font-weight: 800;
+  margin: 0 0 8px;
 }
 
-.home-hero p {
-  margin-top: 6px;
-  font-size: 14px;
+.home-hero-content p {
+  font-size: 16px;
   opacity: 0.9;
 }
+/* ===============================
+   HOME MENU (side-menu override)
+=============================== */
 
-/* ================= HOME TILE ================= */
-.home-tile {
-  position: relative;
-  border-radius: 18px;
-  padding: 14px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-size: 15px;
-  font-weight: 700;
-  cursor: pointer;
-  background: rgba(255,255,255,0.25);
-  backdrop-filter: blur(8px);
-}
-
-/* WIDE TILE */
-.home-tile.wide {
-  height: 88px;
-  margin: 10px 0;
-}
-
-/* ================= GRID ================= */
-.home-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-}
-
-.home-grid .home-tile {
-  min-height: 64px;
-}
-
-/* COLORS */
-.home-tile.blue { background: rgba(59,130,246,0.55); }
-.home-tile.sky { background: rgba(56,189,248,0.55); }
-.home-tile.pink { background: rgba(236,72,153,0.55); }
-.home-tile.gold { background: rgba(234,179,8,0.55); }
-.home-tile.gray { background: rgba(148,163,184,0.45); }
-
-/* ARROW */
-.home-tile.arrow .chevron {
-  position: absolute;
-  right: 14px;
-  font-size: 20px;
-  opacity: 0.7;
-}
-
-/* ================= DETAIL PAGE ================= */
-#detailPage {
-  position: fixed;
-  inset: 56px 0 0 0;
-  background: #f8fafc;
-  color: #111;
-  display: none;
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
-  z-index: 900;
-}
-
-#detailTitle {
-  padding: 16px;
-  font-size: 18px;
-  font-weight: 800;
-}
-
-#detailContent {
-  padding: 0 16px 80px;
-}
-
-/* ================= MOBILE ONLY ================= */
-@media (max-width: 767px) {
-  .side-menu {
-    display: none !important;
-  }
-}
-
-/* =================================================
-   DETAIL PAGE – DESIGN RECOVERY (CRITICAL)
-================================================= */
-
-/* 디테일 페이지는 완전히 별도 세계 */
-#detailPage {
-  background: #f8fafc;
-  color: #111;
-}
-
-/* 제목 */
-#detailTitle {
-  background: #ffffff;
-  border-bottom: 1px solid #e5e7eb;
-}
-
-/* ================= 카드 공통 ================= */
-#detailPage .card,
-#detailPage .day-card,
-#detailPage .tour-card,
-#detailPage .schedule-card {
-  background: #ffffff;
-  border-radius: 16px;
-  padding: 16px;
-  margin-bottom: 14px;
-  box-shadow: 0 4px 14px rgba(0,0,0,0.06);
-  color: #111;
-}
-
-/* ================= 여행 일정 ================= */
-#detailPage .day-card h3 {
-  margin: 0;
-  font-size: 16px;
-  font-weight: 800;
-}
-
-#detailPage .day-card span {
-  font-size: 13px;
-  color: #64748b;
-  margin-left: 6px;
-}
-
-#detailPage .day-title {
-  margin-top: 6px;
-  font-size: 14px;
-  font-weight: 600;
-  color: #334155;
-}
-
-/* 타임라인 */
-#detailPage .timeline {
-  margin-top: 12px;
-}
-
-#detailPage .schedule-item {
-  display: flex;
-  gap: 12px;
-  margin-bottom: 12px;
-}
-
-/* 점 */
-#detailPage .timeline-dot {
-  width: 10px;
-  height: 10px;
-  margin-top: 18px;
-  border-radius: 50%;
-  background: #2563eb;
-  flex-shrink: 0;
-}
-
-/* 카드 내부 */
-#detailPage .schedule-card {
-  flex: 1;
-  padding: 14px;
-}
-
-#detailPage .schedule-time {
-  font-size: 12px;
-  font-weight: 700;
-  color: #2563eb;
-}
-
-#detailPage .schedule-title {
-  margin-top: 4px;
-  font-size: 14px;
-  font-weight: 700;
-}
-
-#detailPage .schedule-desc {
-  margin-top: 2px;
-  font-size: 13px;
-  color: #475569;
-}
-
-/* ================= 선택 관광 ================= */
-#detailPage .tour-card {
-  border-left: 6px solid #2563eb;
-}
-
-#detailPage .tour-card.green { border-color: #16a34a; }
-#detailPage .tour-card.red   { border-color: #dc2626; }
-
-#detailPage .tour-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-#detailPage .tour-header h3 {
-  margin: 0;
-  font-size: 15px;
-  font-weight: 800;
-}
-
-#detailPage .badge {
-  font-size: 11px;
-  padding: 4px 8px;
-  border-radius: 8px;
-  background: #e5e7eb;
-  font-weight: 700;
-}
-
-/* 중식비 영역 */
-#detailPage .meal-box {
-  margin-top: 10px;
-  padding: 10px;
-  background: #f1f5f9;
-  border-radius: 10px;
-  font-size: 13px;
-}
-
-#detailPage .meal-check {
-  margin-top: 10px;
-  padding: 10px;
-  border-radius: 10px;
-  background: #f8fafc;
-  border: 1px dashed #cbd5f5;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-#detailPage .meal-check .status.pending {
-  color: #dc2626;
-  font-weight: 700;
-}
-
-#detailPage .meal-check .status.done {
-  color: #16a34a;
-  font-weight: 700;
-}
-
-/* ================= 요청사항 ================= */
-#detailPage textarea {
+.side-menu {
+  position: static !important;
+  background: none !important;
+  padding: 0 !important;
   width: 100%;
-  height: 120px;
-  border-radius: 12px;
-  padding: 12px;
-  border: 1px solid #cbd5e1;
-  font-size: 14px;
-  resize: none;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+.side-menu button {
+  height: 96px;
+  border-radius: 20px;
+  border: none;
+  background: rgba(255,255,255,0.75);
+  backdrop-filter: blur(12px);
+  font-size: 18px;
+  font-weight: 700;
+  color: #0f172a;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 22px;
+  cursor: pointer;
+  box-shadow: 0 10px 24px rgba(0,0,0,0.08);
 }
 
-/* ================= 하단 버튼 ================= */
-#detailPage .nav-buttons {
-  background: linear-gradient(
-    to top,
-    rgba(248,250,252,0.95),
-    rgba(248,250,252,0.7),
-    transparent
-  );
+.side-menu button:hover {
+  transform: translateY(-2px);
 }
-
-/* ===== HOME TILE IMAGE BASE ===== */
-.home-tile {
-  background-size: cover;
-  background-position: center;
-  color: #fff;
-}
-
-.tile-taiwan {
-  background-image: url("../assets/images/tile-taiwan.jpg");
-}
-
-.tile-schedule {
-  background-image: url("../assets/images/tile-schedule.jpg");
-}
-
-.tile-flight {
-  background-image: url("../assets/images/tile-flight.jpg");
-}
-
-.tile-tour {
-  background-image: url("../assets/images/tile-tour.jpg");
-}
-
-.tile-dinner {
-  background-image: url("../assets/images/tile-dinner.jpg");
-}
-
-.tile-contact {
-  background-image: url("../assets/images/tile-contact.jpg");
-}
-
-.tile-request {
-  background-image: url("../assets/images/tile-request.jpg");
-}
-/* ================= FIXED POSTER ================= */
-.fixed-poster {
-  position: fixed;
-  right: 0;
-  top: 56px;
-  width: 320px;
-  height: calc(100% - 56px);
-  background: #000;
-}
-
-/* 🔥 모바일에서는 완전 제거 */
-@media (max-width: 767px) {
-  .fixed-poster {
-    display: none !important;
-  }
+.side-menu button:nth-child(3) {
+  grid-column: 1 / -1;
+  height: 110px;
+  font-size: 20px;
 }
 
