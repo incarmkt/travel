@@ -1,39 +1,47 @@
 /* =================================================
    THEME PREMIUM – SINGLE SOURCE OF TRUTH (HOME + SHEET)
+   ✔ 홈 전용 레이아웃 정리
+   ✔ 모바일 카테고리 안 보이던 문제 해결
+   ✔ 데스크탑 ‘대만의 모든 것’ 위치 이상 해결
 ================================================= */
 
 /* ---------- Reset ---------- */
 * { box-sizing: border-box; }
 html, body { height: 100%; }
+
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans KR", sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont,
+               "Segoe UI", Roboto, "Noto Sans KR", sans-serif;
   overflow-x: hidden;
 }
 
 /* ---------- Background rules ---------- */
-/* 로그인 전: main-bg.jpg 유지(너가 지정한 규칙 준수) */
+/* 로그인 전 */
 body:not(.logged-in) {
-  background: url("../assets/images/main-bg.jpg") center / cover no-repeat fixed;
+  background: url("../assets/images/main-bg.jpg")
+              center / cover no-repeat fixed;
 }
 
-/* 로그인 후: 홈부터 전부 photo2로 통일 */
+/* 로그인 후 (홈 + 모든 화면 공통 배경) */
 body.logged-in {
-  background: url("../assets/images/photo2.jpg") center / cover no-repeat fixed;
-  min-height: 100dvh;
+  background: url("../assets/images/photo2.jpg")
+              center / cover no-repeat fixed;
+  min-height: 100vh;
 }
 
-/* mainSection이 배경을 덮지 않게 */
+/* mainSection이 배경 덮지 않도록 */
 #mainSection {
   background: transparent !important;
-  min-height: 100dvh;
+  min-height: 100vh;
 }
 
-/* ---------- Header (너가 쓰는 header 유지, 배경만 투명/가독성 확보) ---------- */
+/* ---------- Header ---------- */
 .header {
   position: fixed;
   top: 0; left: 0; right: 0;
   z-index: 1000;
+
   padding: 10px 14px;
   display: flex;
   justify-content: space-between;
@@ -44,53 +52,70 @@ body.logged-in {
   -webkit-backdrop-filter: blur(10px);
 }
 
-.header .congrats { margin: 0; font-size: 13px; }
-.header .welcome-text { margin: 0; font-size: 14px; }
-
-/* ---------- HOME VIEW ---------- */
-.home-view {
-  /* 헤더 높이만큼 아래에서 시작 */
-  padding-top: 86px;
-  padding-bottom: 22px;
-  min-height: 100dvh;
-
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+.header .congrats {
+  margin: 0;
+  font-size: 13px;
 }
 
-/* “좁은 폭 느낌” 만들기 */
+.header .welcome-text {
+  margin: 0;
+  font-size: 14px;
+}
+
+/* =================================================
+   HOME VIEW (⭐ 핵심 수정 구간)
+================================================= */
+.home-view {
+  padding-top: 86px;   /* 헤더 높이 */
+  padding-bottom: 40px;
+
+  /* ❌ align-items:center 제거 (모바일 grid 안 보이던 원인) */
+  display: block;
+
+  min-height: 100vh;
+}
+
+/* 타이틀 + 메뉴 공통 폭 */
 .home-hero,
 .home-menu {
   width: min(92vw, 560px);
+  margin-left: auto;
+  margin-right: auto;
 }
 
-/* 타이틀 영역(원하는 느낌으로 조절 가능) */
+/* ---------- Hero ---------- */
 .home-hero {
   margin-top: 48px;
-  margin-bottom: 18px;
+  margin-bottom: 22px;
+
   color: #fff;
+  text-align: left;
   text-shadow: 0 8px 22px rgba(0,0,0,0.35);
 }
+
 .home-title {
   margin: 0;
   font-size: 44px;
   letter-spacing: -0.5px;
 }
+
 .home-sub {
   margin: 10px 0 0;
   font-size: 18px;
   opacity: 0.95;
 }
 
-/* 카드 메뉴 레이아웃 */
+/* ---------- Home Menu ---------- */
 .home-menu {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 14px;
+
+  /* ⭐ 모바일에서 안 보이던 문제 해결 핵심 */
+  align-content: start;
 }
 
-/* “대만의 모든 것”만 크게(3번째 버튼) */
+/* “대만의 모든 것”만 크게 (3번째 버튼) */
 .home-menu button:nth-child(3) {
   grid-column: 1 / -1;
   height: 92px;
@@ -102,6 +127,7 @@ body.logged-in {
   border: 0;
   border-radius: 26px;
   padding: 0 18px;
+
   text-align: left;
   font-size: 20px;
   font-weight: 800;
@@ -109,43 +135,48 @@ body.logged-in {
 
   background: rgba(200, 200, 200, 0.40);
   box-shadow: 0 14px 35px rgba(0,0,0,0.18);
+
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
+
   cursor: pointer;
 }
+
 .home-menu button:active {
   transform: scale(0.99);
 }
 
-/* ---------- DETAIL SHEET (Overlay) ---------- */
+/* =================================================
+   DETAIL SHEET (Bottom Sheet)
+================================================= */
 .detail-sheet {
   position: fixed;
-  left: 0; right: 0; bottom: 0;
-  top: 0;
+  inset: 0;
   z-index: 2000;
 
-  /* 뒤 배경 딤 */
   background: rgba(0,0,0,0.32);
   display: none;
 }
 
-/* 실제 내용 패널 */
+/* 실제 패널 */
 .detail-sheet__inner {
   position: absolute;
-  left: 0; right: 0;
+  left: 0;
+  right: 0;
   bottom: 0;
 
-  max-height: 88dvh;
-  border-radius: 22px 22px 0 0;
+  max-height: 88vh;
   background: #ffffff;
-  overflow: auto;
+  border-radius: 22px 22px 0 0;
 
   padding: 18px 16px 20px;
+  overflow-y: auto;
+
   transform: translateY(100%);
   transition: transform 260ms ease;
 }
 
-/* detail-open 상태면 올라오기 */
+/* 열렸을 때 */
 body.detail-open .detail-sheet__inner {
   transform: translateY(0);
 }
@@ -156,7 +187,7 @@ body.detail-open .detail-sheet__inner {
   font-size: 22px;
 }
 
-/* 버튼 영역 */
+/* 버튼 */
 .nav-buttons {
   display: flex;
   gap: 10px;
@@ -167,27 +198,50 @@ body.detail-open .detail-sheet__inner {
   flex: 1;
   height: 44px;
   border-radius: 12px;
+
   border: 1px solid #d7dbe2;
   background: #f7f8fb;
   font-weight: 700;
 }
 
-/* ---------- Desktop tuning ---------- */
+/* =================================================
+   DESKTOP TUNING
+================================================= */
 @media (min-width: 768px) {
-  .home-view { padding-top: 96px; }
-  .home-hero, .home-menu { width: min(86vw, 760px); }
-  .home-title { font-size: 56px; }
+  .home-view {
+    padding-top: 96px;
+  }
 
-  .home-menu { gap: 18px; }
-  .home-menu button { height: 86px; font-size: 22px; }
-  .home-menu button:nth-child(3) { height: 110px; }
+  .home-hero,
+  .home-menu {
+    width: min(86vw, 760px);
+  }
 
+  .home-title {
+    font-size: 56px;
+  }
+
+  .home-menu {
+    gap: 18px;
+  }
+
+  .home-menu button {
+    height: 86px;
+    font-size: 22px;
+  }
+
+  .home-menu button:nth-child(3) {
+    height: 110px;
+  }
+
+  /* 데스크탑 시트 중앙 정렬 */
   .detail-sheet__inner {
     left: 50%;
     transform: translate(-50%, 100%);
     width: min(860px, 92vw);
     border-radius: 22px;
   }
+
   body.detail-open .detail-sheet__inner {
     transform: translate(-50%, 0);
   }
