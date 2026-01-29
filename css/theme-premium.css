@@ -91,17 +91,6 @@ body.logged-in {
   font-size: 22px;
   margin-top: 6px;
 }
-body.scrolled .home-hero {
-  opacity: 0;
-  transform: translateY(-20px);
-  pointer-events: none;
-}
-
-body.scrolled .scroll-hint {
-  opacity: 0;
-  pointer-events: none;
-}
-
 
 @keyframes hintFade {
   0% { opacity: .2; transform: translateY(0); }
@@ -111,27 +100,6 @@ body.scrolled .scroll-hint {
 
 
 
-
-.home-view {
-  padding: 96px 0 40px;
-  min-height: 100vh;
-  min-height: 100dvh;
-}
-@media (max-width: 767px) {
-  .home-view {
-    padding-top: 40px;
-  }
-}
-
-.home-hero {
-  margin: 48px auto 22px;
-  width: min(92vw, 720px);
-  color: #fff;
-  text-shadow: 0 8px 22px rgba(0,0,0,0.35);
-}
-
-.home-title { margin: 0; font-size: 44px; }
-.home-sub { margin-top: 10px; font-size: 18px; }
 
 .home-menu {
   margin: 0 auto;
