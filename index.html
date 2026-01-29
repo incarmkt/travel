@@ -506,7 +506,8 @@ if (type === "flight") {
   const ret = currentUser.flight.return;
 
   t.textContent = "✈️ 항공편 정보";
-  c.innerHTML = `
+ c.innerHTML = `
+  <div class="detail-content-wrap">
     <div class="day-card">
       <h3>출국편</h3>
       <div class="schedule-item">
@@ -540,7 +541,8 @@ if (type === "flight") {
 
 if (type === "myTour") {
   t.textContent = "🎒 나의 선택 관광";
-  c.innerHTML = `
+ c.innerHTML = `
+  <div class="detail-content-wrap">
     <div class="mytour-wrap">
       ${renderMyTour()}
     </div>
@@ -564,7 +566,8 @@ if (type === "myTour") {
 if (type === "taiwan") {
   t.textContent = "🇹🇼 대만의 모든 것";
 
-  c.innerHTML = `
+ c.innerHTML = `
+  <div class="detail-content-wrap">
     <div class="country-compare-grid">
       <!-- 대한민국 -->
       <div class="country-card">
@@ -636,13 +639,19 @@ if (type === "taiwan") {
 
   if (type === "dinner") {
     t.textContent = "🍽 만찬 안내";
-    c.innerHTML = `<div class="card">ISC 공식 만찬</div>`;
+    c.innerHTML = `
+  <div class="detail-content-wrap">
+  <div class="card">ISC 공식 만찬
+  </div>`;
   }
 
   
   if (type === "request") {
   t.textContent = "📝 요청사항";
-  c.innerHTML = `<div class="card">
+  c.innerHTML = 
+    c.innerHTML = `
+  <div class="detail-content-wrap">
+  `<div class="card">
     <textarea id="requestInput" placeholder="요청사항 입력"></textarea>
     <button class="primary-btn" onclick="submitRequest()">제출</button>
   </div>`;
@@ -652,6 +661,7 @@ if (type === "taiwan") {
   t.textContent = "📞 긴급 연락망";
 
   c.innerHTML = `
+  <div class="detail-content-wrap">
     <div class="day-card">
       <h3>비상 연락망</h3>
 
