@@ -868,6 +868,15 @@ function submitRequest() {
   window.addEventListener('scroll', onScroll, { passive: true });
 })();
 </script>
+<script>
+  window.addEventListener("scroll", () => {
+    if (window.scrollY > 40) {
+      document.body.classList.add("scrolled");
+    } else {
+      document.body.classList.remove("scrolled");
+    }
+  });
+</script>
 
 
 </body>
