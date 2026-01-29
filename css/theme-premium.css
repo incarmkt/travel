@@ -1,8 +1,5 @@
 /* =================================================
    THEME PREMIUM – SINGLE SOURCE OF TRUTH (HOME + SHEET)
-   ✔ 홈 전용 레이아웃 정리
-   ✔ 모바일 카테고리 안 보이던 문제 해결
-   ✔ 데스크탑 ‘대만의 모든 것’ 위치 이상 해결
 ================================================= */
 
 /* ---------- Reset ---------- */
@@ -17,23 +14,21 @@ body {
 }
 
 /* ---------- Background rules ---------- */
-/* 로그인 전 */
 body:not(.logged-in) {
   background: url("../assets/images/main-bg.jpg")
               center / cover no-repeat fixed;
 }
 
-/* 로그인 후 (홈 + 모든 화면 공통 배경) */
 body.logged-in {
   background: url("../assets/images/photo2.jpg")
               center / cover no-repeat fixed;
-  min-height: 100vh;
+  min-height: 100dvh;
 }
 
-/* mainSection이 배경 덮지 않도록 */
+/* mainSection 배경 제거 */
 #mainSection {
   background: transparent !important;
-  min-height: 100vh;
+  min-height: 100dvh;
 }
 
 /* ---------- Header ---------- */
@@ -47,49 +42,33 @@ body.logged-in {
   justify-content: space-between;
   align-items: center;
 
-  background: rgba(255,255,255,0.75);
+  background: rgba(255,255,255,0.78);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
 }
 
-.header .congrats {
-  margin: 0;
-  font-size: 13px;
-}
-
-.header .welcome-text {
-  margin: 0;
-  font-size: 14px;
-}
+.header .congrats { margin: 0; font-size: 13px; }
+.header .welcome-text { margin: 0; font-size: 14px; }
 
 /* =================================================
-   HOME VIEW (⭐ 핵심 수정 구간)
+   HOME VIEW (모바일/데스크탑 공통 안정화)
 ================================================= */
+
 .home-view {
-  padding-top: 86px;   /* 헤더 높이 */
+  padding-top: 96px;   /* 헤더 아래 */
   padding-bottom: 40px;
+  min-height: 100dvh;
 
-  /* ❌ align-items:center 제거 (모바일 grid 안 보이던 원인) */
+  /* ❗ 중앙정렬 제거 (모바일 버그 원인) */
   display: block;
-
-  min-height: 100vh;
 }
 
-/* 타이틀 + 메뉴 공통 폭 */
-.home-hero,
-.home-menu {
-  width: min(92vw, 560px);
-  margin-left: auto;
-  margin-right: auto;
-}
-
-/* ---------- Hero ---------- */
+/* 타이틀 */
 .home-hero {
-  margin-top: 48px;
-  margin-bottom: 22px;
+  margin: 48px auto 22px;
+  width: min(92vw, 720px);
 
   color: #fff;
-  text-align: left;
   text-shadow: 0 8px 22px rgba(0,0,0,0.35);
 }
 
@@ -105,37 +84,46 @@ body.logged-in {
   opacity: 0.95;
 }
 
-/* ---------- Home Menu ---------- */
+/* =================================================
+   HOME MENU (문제 핵심 해결 구간)
+================================================= */
+
+.home-menu-wrap {
+  width: 100%;
+}
+
+/* ⚠️ 여기서 모든 문제가 해결됨 */
 .home-menu {
+  margin: 0 auto;
+  width: min(92vw, 720px);
+
   display: grid;
   grid-template-columns: 1fr 1fr;
+  grid-auto-flow: row dense; /* ⬅️ 중요 */
+
   gap: 14px;
 
-  /* ⭐ 모바일에서 안 보이던 문제 해결 핵심 */
-  align-content: start;
+  /* 모바일에서 안 보이던 문제 해결 */
+  align-items: stretch;
 }
 
-/* “대만의 모든 것”만 크게 (3번째 버튼) */
-.home-menu button:nth-child(3) {
-  grid-column: 1 / -1;
-  height: 92px;
-}
-
-/* 버튼 공통 */
+/* ---------- 공통 버튼 ---------- */
 .home-menu button {
   height: 76px;
   border: 0;
   border-radius: 26px;
   padding: 0 18px;
 
+  display: flex;
+  align-items: center;
+
   text-align: left;
   font-size: 20px;
   font-weight: 800;
   color: #fff;
 
-  background: rgba(200, 200, 200, 0.40);
+  background: rgba(200, 200, 200, 0.42);
   box-shadow: 0 14px 35px rgba(0,0,0,0.18);
-
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
 
@@ -143,12 +131,20 @@ body.logged-in {
 }
 
 .home-menu button:active {
-  transform: scale(0.99);
+  transform: scale(0.98);
+}
+
+/* ---------- 대만의 모든 것 (무조건 맨 위 + 크게) ---------- */
+.home-menu button:nth-child(3) {
+  grid-column: 1 / -1;
+  order: -1;              /* 🔥 무조건 최상단 */
+  height: 96px;
 }
 
 /* =================================================
-   DETAIL SHEET (Bottom Sheet)
+   DETAIL SHEET (Overlay)
 ================================================= */
+
 .detail-sheet {
   position: fixed;
   inset: 0;
@@ -158,36 +154,30 @@ body.logged-in {
   display: none;
 }
 
-/* 실제 패널 */
 .detail-sheet__inner {
   position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
+  left: 0; right: 0; bottom: 0;
 
-  max-height: 88vh;
-  background: #ffffff;
+  max-height: 88dvh;
   border-radius: 22px 22px 0 0;
+  background: #fff;
+  overflow-y: auto;
 
   padding: 18px 16px 20px;
-  overflow-y: auto;
 
   transform: translateY(100%);
   transition: transform 260ms ease;
 }
 
-/* 열렸을 때 */
 body.detail-open .detail-sheet__inner {
   transform: translateY(0);
 }
 
-/* 제목 */
 #detailTitle {
   margin: 4px 0 14px;
   font-size: 22px;
 }
 
-/* 버튼 */
 .nav-buttons {
   display: flex;
   gap: 10px;
@@ -198,23 +188,18 @@ body.detail-open .detail-sheet__inner {
   flex: 1;
   height: 44px;
   border-radius: 12px;
-
   border: 1px solid #d7dbe2;
   background: #f7f8fb;
   font-weight: 700;
 }
 
 /* =================================================
-   DESKTOP TUNING
+   Desktop tuning
 ================================================= */
 @media (min-width: 768px) {
-  .home-view {
-    padding-top: 96px;
-  }
 
-  .home-hero,
-  .home-menu {
-    width: min(86vw, 760px);
+  .home-hero {
+    width: min(86vw, 860px);
   }
 
   .home-title {
@@ -222,6 +207,7 @@ body.detail-open .detail-sheet__inner {
   }
 
   .home-menu {
+    width: min(86vw, 860px);
     gap: 18px;
   }
 
@@ -231,10 +217,9 @@ body.detail-open .detail-sheet__inner {
   }
 
   .home-menu button:nth-child(3) {
-    height: 110px;
+    height: 120px;
   }
 
-  /* 데스크탑 시트 중앙 정렬 */
   .detail-sheet__inner {
     left: 50%;
     transform: translate(-50%, 100%);
