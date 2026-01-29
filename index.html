@@ -235,7 +235,8 @@ function renderMyTour() {
 
   return matchedCards.map(t => t.html).join("");
 }
-
+    
+document.body.classList.add("login-lock");
 fetch("people/employees.json?ts=" + Date.now())
   .then(res => res.json())
   .then(data => {
@@ -391,32 +392,36 @@ function login() {
   // 로그인 화면 제거
   document.getElementById("loginSection").style.display = "none";
 
-  document.body.classList.remove("login-lock");
-  
- // 📱 모바일
-if (window.innerWidth <= 767) {
-  const splash = document.getElementById("mobileSplash");
-  splash.style.display = "flex";
+  // 이름 표시
+  document.getElementById("employeeName").textContent = user.name;
 
-  setTimeout(() => {
-    splash.style.display = "none";
+  // 로그인 상태 클래스
+  document.body.classList.add("logged-in");
 
-    const main = document.getElementById("mainSection");
-    main.style.display = "block";
+  // ✅ 여기서는 잠금 해제하지 말고, mainSection이 실제로 뜰 때 해제한다
 
-    // 🔓 여기서 스크롤 잠금 해제 (핵심)
+  // 📱 모바일: 스플래시 2초
+  if (window.innerWidth <= 767) {
+    const splash = document.getElementById("mobileSplash");
+    splash.style.display = "flex";
+
+    setTimeout(() => {
+      splash.style.display = "none";
+      document.getElementById("mainSection").style.display = "block";
+
+      // 🔓 여기서만 해제
+      document.body.classList.remove("login-lock");
+    }, 2000);
+  } 
+  // 🖥 데스크탑: 즉시 진입
+  else {
+    document.getElementById("mainSection").style.display = "block";
+
+    // 🔓 데스크탑은 즉시 해제
     document.body.classList.remove("login-lock");
-
-  }, 2000);
-} 
-// 🖥 데스크탑
-else {
-  const main = document.getElementById("mainSection");
-  main.style.display = "block";
-
-  // 🔓 데스크탑은 즉시 해제
-  document.body.classList.remove("login-lock");
+  }
 }
+
   
 function tryAutoLogin() {
   const params = new URLSearchParams(window.location.search);
