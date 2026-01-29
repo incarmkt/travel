@@ -466,6 +466,41 @@ body.detail-open .detail-sheet__inner {
 .hero-screen + .menu-screen {
   margin-top: 0;
 }
+/* ================= LOGIN FIX ================= */
+#loginSection {
+  position: fixed;
+  inset: 0;
+  height: 100vh;
+  overflow: hidden;
+  z-index: 5000;
+}
+
+body.logged-in #loginSection {
+  display: none !important;
+}
+/* ================= HERO SCREEN ================= */
+.hero-screen {
+  height: 100vh;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  position: relative;
+}
+
+/* hero 안에서만 스크롤 힌트 */
+.hero-screen .scroll-hint {
+  position: absolute;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+/* ================= MENU SCREEN ================= */
+.menu-screen {
+  padding-top: 24px;
+  background: transparent;
+}
+
 
 
 
