@@ -5,9 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>2025 ISC 대만 여행</title>
 
-<link rel="stylesheet" href="css/theme-premium.css">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/desktop.css" media="(min-width: 768px)">
+  <link rel="stylesheet" href="css/mobile.css" media="(max-width: 767px)">
 </head>
-<body class="premium">
+<body>
   
 <!-- ✅ 여기, body 시작하자마자 -->
 <div id="mobileSplash" class="mobile-splash" style="display:none;">
@@ -31,7 +33,7 @@
 </header>
 
 <!-- ================= LOGIN (FINAL / DO NOT TOUCH) ================= -->
-<section id="loginSection" class="login-hero premium-login">
+<section id="loginSection" class="login-hero">
   <div class="hero-overlay">
     <div class="login-box">
       <img src="assets/images/logo.png" class="hero-logo">
@@ -47,64 +49,35 @@
 
 <!-- ================= MAIN (LOGIN AFTER) ================= -->
 <main id="mainSection" class="main-bg" style="display:none;">
+
   <div class="layout">
 
-      
-<!-- ===== RIGHT CONTENT ===== -->
-<section class="content-area">
+    <!-- ===== LEFT MENU ===== -->
+    <aside class="side-menu">
+      <button onclick="openPage('schedule')">🗓 여행 일정</button>
+      <button onclick="openPage('flight')">✈️ 항공편 정보</button>
+      <button onclick="openPage('taiwan')">🇹🇼 대만의 모든 것</button>
+      <button onclick="openPage('myTour')">🎒 나의 선택 관광</button>
+      <button onclick="openPage('dinner')">🍽 만찬 안내</button>
+      <button onclick="openPage('request')">📝 요청사항</button>
+      <button onclick="openPage('contact')">📞 긴급 연락망</button>
+    </aside>
 
-<div id="homeArea" class="premium-home">
+    <!-- ===== RIGHT CONTENT ===== -->
+    <section class="content-area">
 
+  <!-- 🔴 메인 패널 (RED) -->
   <div class="main-panel">
 
-    <!-- HERO -->
-    <section class="home-hero">
-      <h1>ISC Taiwan 2025</h1>
-      <p>지금부터 여정이 시작됩니다</p>
-    </section>
-
-    <!-- 🔵 대만의 모든 것 -->
-    <div class="home-tile wide tile-taiwan" onclick="openPage('taiwan')">
-      <span class="title">🇹🇼 대만의 모든 것</span>
+    <!-- 홈일 때 -->
+    <div id="homeArea" class="home-view">
+      <img src="assets/images/home.jpg" alt="Home Image">
     </div>
 
-    <!-- 2열 카드 -->
-    <div class="home-grid">
-
-      <div class="home-tile tile-schedule" onclick="openPage('schedule')">
-        <span class="title">📅 여행 일정</span>
-      </div>
-
-      <div class="home-tile tile-flight" onclick="openPage('flight')">
-        <span class="title">✈️ 항공편</span>
-      </div>
-
-      <div class="home-tile tile-tour" onclick="openPage('myTour')">
-        <span class="title">🎒 선택 관광</span>
-      </div>
-
-      <div class="home-tile tile-dinner" onclick="openPage('dinner')">
-        <span class="title">🍽 만찬</span>
-      </div>
-
-      <div class="home-tile tile-contact" onclick="openPage('contact')">
-        <span class="title">📞 긴급 연락망</span>
-      </div>
-
-      <div class="home-tile tile-request arrow" onclick="openPage('request')">
-        <span class="title">📝 요청사항</span>
-        <span class="chevron">›</span>
-      </div>
-
-    </div>
-
-  </div>
-</div>
-
-
-<!-- 🔴 여기 추가 -->
-<section id="detailPage">
+    <!-- 상세 페이지 -->
+<section id="detailPage" class="detail" style="display:none;">
   <h2 id="detailTitle"></h2>
+
   <div id="detailContent"></div>
 
   <div class="nav-buttons">
@@ -395,27 +368,21 @@ function login() {
   document.getElementById("loginSection").style.display = "none";
 
   // 📱 모바일: 스플래시 2초
-if (window.innerWidth <= 767) {
-  const splash = document.getElementById("mobileSplash");
-  splash.style.display = "flex";
+  if (window.innerWidth <= 767) {
+    const splash = document.getElementById("mobileSplash");
+    splash.style.display = "flex";
 
-  setTimeout(() => {
-    splash.style.display = "none";
-    document.getElementById("topHeader").style.display = "flex";
-    document.getElementById("mainSection").style.display = "block";
-
-    // 🔥 모바일 홈 전환
-document.getElementById("homeArea").style.display = "block";
-
-
-  }, 2000);
-}
+    setTimeout(() => {
+      splash.style.display = "none";
+      document.getElementById("topHeader").style.display = "flex";
+      document.getElementById("mainSection").style.display = "block";
+    }, 2000);
+  } 
   // 🖥 데스크탑: 즉시 진입
   else {
     document.getElementById("topHeader").style.display = "flex";
     document.getElementById("mainSection").style.display = "block";
-  document.getElementById("homeArea").style.display = "block"; // 🔥 이 줄
-}
+  }
 
   document.getElementById("employeeName").textContent = user.name;
   document.body.classList.add("logged-in");
@@ -506,13 +473,11 @@ document.getElementById("homeArea").style.display = "none";
 document.getElementById("detailPage").style.display = "block";
 
 if (isMobile) {
-  const sideMenu = document.querySelector(".side-menu");
-  if (sideMenu) sideMenu.style.display = "none";
+  document.querySelector(".side-menu").style.display = "none";
 }
 
   const t = document.getElementById("detailTitle");
   const c = document.getElementById("detailContent");
-  c.innerHTML = ""; // 🔥 이전 화면 잔상 제거
 
   if (type === "schedule") {
     t.textContent = "🗓 여행 일정";
@@ -537,16 +502,11 @@ if (isMobile) {
         </div>
       </div>
     `).join("");
-  } 
+  } // ← openPage 끝
 
 if (type === "flight") {
-if (!currentUser.flight) {
-  c.innerHTML = `<div class="card">항공편 정보가 없습니다.</div>`;
-  return;
-}
-
-const dep = currentUser.flight.departure;
-const ret = currentUser.flight.return;
+  const dep = currentUser.flight.departure;
+  const ret = currentUser.flight.return;
 
   t.textContent = "✈️ 항공편 정보";
   c.innerHTML = `
@@ -579,7 +539,7 @@ const ret = currentUser.flight.return;
     </div>
   `;
 }
-
+ // ← openPage 끝
 
 if (type === "myTour") {
   t.textContent = "🎒 나의 선택 관광";
@@ -602,7 +562,7 @@ if (type === "myTour") {
     }
   }
 }
-  // ← openPage 끝 
+  
  async function syncMealStatusFromServer(userId, tour, wrap) {
   const url = `${MEAL_SHEET_URL}?id=${userId}&tour=${encodeURIComponent(tour)}`;
   const res = await fetch(url);
@@ -615,6 +575,7 @@ if (type === "myTour") {
   }
 }
  
+ // ← openPage 끝
 
 if (type === "taiwan") {
   t.textContent = "🇹🇼 대만의 모든 것";
@@ -764,12 +725,13 @@ function goHome() {
   // 🔥 히스토리 완전 초기화
   pageHistory = [];
 
-document.getElementById("homeArea").style.display = "block";
-document.getElementById("detailPage").style.display = "none";
+  document.getElementById("detailPage").style.display = "none";
 
-if (window.innerWidth <= 767) {
-  document.querySelector(".side-menu").style.display = "block";
-}
+  if (isMobile) {
+    document.querySelector(".side-menu").style.display = "block";
+  } else {
+    document.getElementById("homeArea").style.display = "block";
+  }
 }
     /* ================= 뒤로가기 ================= */
 function goBack() {
