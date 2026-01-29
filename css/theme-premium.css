@@ -1,161 +1,194 @@
 /* =================================================
-   THEME PREMIUM – CUSTOMER HOME (FINAL FIXED)
+   THEME PREMIUM – SINGLE SOURCE OF TRUTH (HOME + SHEET)
 ================================================= */
 
-/* =================================================
-   0. 기본 리셋 (상태 흔들림 방지)
-================================================= */
-body.logged-in {
-  min-height: 100dvh;
+/* ---------- Reset ---------- */
+* { box-sizing: border-box; }
+html, body { height: 100%; }
+body {
   margin: 0;
-  background: url("../assets/images/main-bg.jpg")
-              center / cover no-repeat fixed;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans KR", sans-serif;
+  overflow-x: hidden;
 }
 
-/* =================================================
-   1. 로그인 이후 홈/메인 배경 (항상 강제)
-================================================= */
-body.logged-in #mainSection {
+/* ---------- Background rules ---------- */
+/* 로그인 전: main-bg.jpg 유지(너가 지정한 규칙 준수) */
+body:not(.logged-in) {
+  background: url("../assets/images/main-bg.jpg") center / cover no-repeat fixed;
+}
+
+/* 로그인 후: 홈부터 전부 photo2로 통일 */
+body.logged-in {
+  background: url("../assets/images/photo2.jpg") center / cover no-repeat fixed;
   min-height: 100dvh;
-  background: url("../assets/images/photo2.jpg")
-              center / cover no-repeat fixed !important;
 }
 
-/* =================================================
-   2. 홈에서 불필요한 요소 완전 차단
-   (뒤로가기 시 재등장 방지)
-================================================= */
-body.logged-in #mainSection .home-view,
-body.logged-in #mainSection .home-view img,
-body.logged-in #mainSection .fixed-poster,
-body.logged-in #mainSection .poster {
-  display: none !important;
-  height: 0 !important;
-  overflow: hidden !important;
-}
-
-/* =================================================
-   3. 컨텐츠 영역 풀스크린화
-================================================= */
-body.logged-in #mainSection .content-area,
-body.logged-in #mainSection .main-panel {
-  min-height: 100dvh;
+/* mainSection이 배경을 덮지 않게 */
+#mainSection {
   background: transparent !important;
-  box-shadow: none !important;
-  padding: 0 !important;
+  min-height: 100dvh;
 }
 
-/* =================================================
-   4. 홈 상단 타이틀 영역 (3번째 사진 느낌)
-================================================= */
-.home-hero-text {
-  max-width: 720px;
-  margin: 0 auto;
-  padding: 36px 20px 20px;
-  text-align: left;
+/* ---------- Header (너가 쓰는 header 유지, 배경만 투명/가독성 확보) ---------- */
+.header {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 1000;
+  padding: 10px 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  background: rgba(255,255,255,0.75);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.header .congrats { margin: 0; font-size: 13px; }
+.header .welcome-text { margin: 0; font-size: 14px; }
+
+/* ---------- HOME VIEW ---------- */
+.home-view {
+  /* 헤더 높이만큼 아래에서 시작 */
+  padding-top: 86px;
+  padding-bottom: 22px;
+  min-height: 100dvh;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* “좁은 폭 느낌” 만들기 */
+.home-hero,
+.home-menu {
+  width: min(92vw, 560px);
+}
+
+/* 타이틀 영역(원하는 느낌으로 조절 가능) */
+.home-hero {
+  margin-top: 48px;
+  margin-bottom: 18px;
   color: #fff;
+  text-shadow: 0 8px 22px rgba(0,0,0,0.35);
+}
+.home-title {
+  margin: 0;
+  font-size: 44px;
+  letter-spacing: -0.5px;
+}
+.home-sub {
+  margin: 10px 0 0;
+  font-size: 18px;
+  opacity: 0.95;
 }
 
-.home-hero-text h1 {
-  font-size: 34px;
-  font-weight: 800;
-  margin: 0 0 8px;
-}
-
-.home-hero-text p {
-  font-size: 16px;
-  opacity: 0.9;
-}
-
-/* =================================================
-   5. 카드 레이아웃 (좁은 폭 + 중앙)
-================================================= */
-body.logged-in #mainSection .side-menu {
-  max-width: 720px;
-  margin: 0 auto;
-  padding: 0 16px 40px;
-
+/* 카드 메뉴 레이아웃 */
+.home-menu {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  grid-template-areas:
-    "taiwan taiwan"
-    "schedule flight"
-    "tour dinner"
-    "contact request";
+  grid-template-columns: 1fr 1fr;
   gap: 14px;
 }
 
-/* =================================================
-   6. 버튼 위치 고정 (뒤로가도 유지)
-================================================= */
-body.logged-in #mainSection .side-menu button:nth-child(1) { grid-area: schedule; }
-body.logged-in #mainSection .side-menu button:nth-child(2) { grid-area: flight; }
-body.logged-in #mainSection .side-menu button:nth-child(3) { grid-area: taiwan; }
-body.logged-in #mainSection .side-menu button:nth-child(4) { grid-area: tour; }
-body.logged-in #mainSection .side-menu button:nth-child(5) { grid-area: dinner; }
-body.logged-in #mainSection .side-menu button:nth-child(6) { grid-area: request; }
-body.logged-in #mainSection .side-menu button:nth-child(7) { grid-area: contact; }
+/* “대만의 모든 것”만 크게(3번째 버튼) */
+.home-menu button:nth-child(3) {
+  grid-column: 1 / -1;
+  height: 92px;
+}
 
-/* =================================================
-   7. 카드 스타일 (높이 축소, 숨통 확보)
-================================================= */
-body.logged-in #mainSection .side-menu button {
-  height: 82px;
-  border-radius: 22px;
-  border: none;
-
-  background: rgba(255,255,255,0.62);
-  backdrop-filter: blur(18px);
-
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 0 20px;
-
-  font-size: 17px;
-  font-weight: 700;
+/* 버튼 공통 */
+.home-menu button {
+  height: 76px;
+  border: 0;
+  border-radius: 26px;
+  padding: 0 18px;
+  text-align: left;
+  font-size: 20px;
+  font-weight: 800;
   color: #fff;
 
-  box-shadow: 0 12px 26px rgba(0,0,0,0.22);
+  background: rgba(200, 200, 200, 0.40);
+  box-shadow: 0 14px 35px rgba(0,0,0,0.18);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
   cursor: pointer;
-  transition: transform .15s ease;
+}
+.home-menu button:active {
+  transform: scale(0.99);
 }
 
-body.logged-in #mainSection .side-menu button:active {
-  transform: scale(0.96);
+/* ---------- DETAIL SHEET (Overlay) ---------- */
+.detail-sheet {
+  position: fixed;
+  left: 0; right: 0; bottom: 0;
+  top: 0;
+  z-index: 2000;
+
+  /* 뒤 배경 딤 */
+  background: rgba(0,0,0,0.32);
+  display: none;
 }
 
-/* =================================================
-   8. 대만의 모든 것 (메인 카드)
-================================================= */
-body.logged-in #mainSection .side-menu button:nth-child(3) {
-  height: 108px;
-  font-size: 21px;
-  font-weight: 800;
+/* 실제 내용 패널 */
+.detail-sheet__inner {
+  position: absolute;
+  left: 0; right: 0;
+  bottom: 0;
+
+  max-height: 88dvh;
+  border-radius: 22px 22px 0 0;
+  background: #ffffff;
+  overflow: auto;
+
+  padding: 18px 16px 20px;
+  transform: translateY(100%);
+  transition: transform 260ms ease;
 }
 
-/* =================================================
-   9. 모바일 전용 보정
-================================================= */
-@media (max-width: 767px) {
+/* detail-open 상태면 올라오기 */
+body.detail-open .detail-sheet__inner {
+  transform: translateY(0);
+}
 
-  .home-hero-text h1 {
-    font-size: 30px;
+/* 제목 */
+#detailTitle {
+  margin: 4px 0 14px;
+  font-size: 22px;
+}
+
+/* 버튼 영역 */
+.nav-buttons {
+  display: flex;
+  gap: 10px;
+  margin-top: 18px;
+}
+
+.ghost-btn {
+  flex: 1;
+  height: 44px;
+  border-radius: 12px;
+  border: 1px solid #d7dbe2;
+  background: #f7f8fb;
+  font-weight: 700;
+}
+
+/* ---------- Desktop tuning ---------- */
+@media (min-width: 768px) {
+  .home-view { padding-top: 96px; }
+  .home-hero, .home-menu { width: min(86vw, 760px); }
+  .home-title { font-size: 56px; }
+
+  .home-menu { gap: 18px; }
+  .home-menu button { height: 86px; font-size: 22px; }
+  .home-menu button:nth-child(3) { height: 110px; }
+
+  .detail-sheet__inner {
+    left: 50%;
+    transform: translate(-50%, 100%);
+    width: min(860px, 92vw);
+    border-radius: 22px;
   }
-
-  .home-hero-text p {
-    font-size: 15px;
+  body.detail-open .detail-sheet__inner {
+    transform: translate(-50%, 0);
   }
-
-  body.logged-in #mainSection .side-menu {
-    max-width: 100%;
-  }
-}
-
-/* =================================================
-   10. 상세 페이지 영향 완전 차단
-================================================= */
-#detailPage,
-.detail {
-  background: inherit;
 }
