@@ -76,9 +76,7 @@
   </section>
 
   <!-- ================= DETAIL OVERLAY (BOTTOM SHEET) ================= -->
-<section id="detailPage" class="detail-sheet" style="display:none;">
-
-
+<section id="detailPage" class="detail-sheet" onclick="goHome()">
   <div class="detail-sheet__inner" onclick="event.stopPropagation()">
       <h2 id="detailTitle"></h2>
       <div id="detailContent"></div>
@@ -463,14 +461,23 @@ const travelSchedule = [
 /* ================= 페이지 열기 ================= */
 function openPage(type, fromHistory = false) {
 
-
-  // 🔹 사용자 클릭으로 열었을 때만 기록
   if (!fromHistory) {
     pageHistory.push(type);
   }
-// ✅ 홈은 그대로 두고, 상세 오버레이만 올린다
-document.getElementById("detailPage").style.display = "block";
-document.body.classList.add("detail-open");
+
+  /* ================= 핵심 수정 START ================= */
+
+  const detail = document.getElementById("detailPage");
+
+  // 1️⃣ 항상 display 상태 보장
+  detail.style.display = "block";
+
+  // 2️⃣ 다음 프레임에서 애니메이션 시작
+  requestAnimationFrame(() => {
+    document.body.classList.add("detail-open");
+  });
+
+  /* ================= 핵심 수정 END ================= */
 
   const t = document.getElementById("detailTitle");
   const c = document.getElementById("detailContent");
@@ -730,7 +737,6 @@ function goHome() {
   pageHistory = [];
 
   // 상세 닫기
-  document.getElementById("detailPage").style.display = "none";
   document.body.classList.remove("detail-open");
 }
 
