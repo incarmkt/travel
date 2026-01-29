@@ -7,9 +7,10 @@
 
   <link rel="stylesheet" href="css/base.css">
   <link rel="stylesheet" href="css/desktop.css" media="(min-width: 768px)">
-<!-- <link rel="stylesheet" href="css/mobile.css" media="(max-width: 767px)"> -->
+  <!-- <link rel="stylesheet" href="css/mobile.css" media="(max-width: 767px)"> -->
   <link rel="stylesheet" href="css/theme-premium.css">
 </head>
+
 <body>
   
 <!-- ✅ 여기, body 시작하자마자 -->
@@ -17,21 +18,6 @@
   <img src="assets/images/iscposter.jpg" alt="ISC Poster">
 </div>
   
-<!-- ================= HEADER ================= -->
-<header class="header compact" id="topHeader" style="display:none;">
-  <div class="header-left">
-    <img src="assets/images/logo.png" class="logo">
-    <div>
-      <h1>2025 ISC 대만 여행</h1>
-      <p class="sub">2026.03.11 ~ 03.14 | 인카금융서비스</p>
-    </div>
-  </div>
-
-  <div class="header-right">
-    <p class="congrats">ISC 달성을 축하드립니다.</p>
-    <p class="welcome-text"><strong id="employeeName"></strong> 님, 환영합니다</p>
-  </div>
-</header>
 
 <!-- ================= LOGIN (FINAL / DO NOT TOUCH) ================= -->
 <section id="loginSection" class="login-hero">
@@ -55,10 +41,36 @@
   <section id="homeView" class="home-view">
 
     <!-- (선택) 헤더 아래에 “ISC Taiwan 2025 / 지금부터 여정이 시작됩니다” 같은 영역을 넣고 싶으면 여기 -->
-    <div class="home-hero">
-      <h2 class="home-title">ISC Taiwan 2025</h2>
-      <p class="home-sub">지금부터 여정이 시작됩니다</p>
-    </div>
+<div class="home-hero">
+
+  <!-- 브랜드 / 정보 영역 -->
+  <div class="hero-info">
+    <img src="assets/images/logo.png"
+         style="width:120px; margin-bottom:14px;">
+
+    <h2 class="home-title">2025 ISC 대만 여행</h2>
+
+    <p class="home-sub">
+      2026.03.11 ~ 03.14 | 인카금융서비스
+    </p>
+
+    <p class="home-sub" style="margin-top:8px; font-weight:600;">
+      <strong id="employeeName"></strong> 님, 환영합니다
+    </p>
+
+    <p class="home-sub" style="opacity:.85;">
+      ISC 달성을 축하드립니다
+    </p>
+  </div>
+
+  <!-- 감성 카피 영역 -->
+  <div class="hero-copy">
+    <h2 class="home-title">ISC Taiwan 2025</h2>
+    <p class="home-sub">지금부터 여정이 시작됩니다</p>
+  </div>
+
+</div>
+
 
     <!-- 홈 메뉴(기존 side-menu 버튼을 그대로 이쪽으로 옮김) -->
       <div class="home-menu-wrap">
@@ -372,13 +384,11 @@ function login() {
 
     setTimeout(() => {
       splash.style.display = "none";
-      document.getElementById("topHeader").style.display = "flex";
       document.getElementById("mainSection").style.display = "block";
     }, 2000);
   } 
   // 🖥 데스크탑: 즉시 진입
   else {
-    document.getElementById("topHeader").style.display = "flex";
     document.getElementById("mainSection").style.display = "block";
   }
 
