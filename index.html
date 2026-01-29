@@ -545,15 +545,6 @@ if (type === "myTour") {
       ${renderMyTour()}
     </div>
   `;
-}
-
-else if (type === "myTour") {
-  t.textContent = "🎒 나의 선택 관광";
-  c.innerHTML = `
-    <div class="mytour-wrap">
-      ${renderMyTour()}
-    </div>
-  `;
 
   setTimeout(() => {
     const wrap = document.querySelector('.meal-check[data-tour="자유일정"]');
