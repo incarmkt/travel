@@ -76,9 +76,8 @@
   </section>
 
   <!-- ================= DETAIL OVERLAY (BOTTOM SHEET) ================= -->
-<section id="detailPage" class="detail-sheet"
-         style="display:none;"
-         onclick="goHome()">
+<section id="detailPage" class="detail-sheet" style="display:none;">
+
 
   <div class="detail-sheet__inner" onclick="event.stopPropagation()">
       <h2 id="detailTitle"></h2>
@@ -476,10 +475,10 @@ document.body.classList.add("detail-open");
   const t = document.getElementById("detailTitle");
   const c = document.getElementById("detailContent");
 
-  if (type === "schedule") {
-    t.textContent = "🗓 여행 일정";
-    c.innerHTML = travelSchedule.map(day => `
-      <div class="day-card">
+    c.innerHTML = `
+    <div class="detail-content-wrap">
+      ${travelSchedule.map(day => `
+        <div class="day-card">
         <h3>${day.day} <span>${day.date}</span></h3>
         <p class="day-title">${day.title}</p>
 
@@ -637,24 +636,26 @@ if (type === "taiwan") {
 }
  
 
-  if (type === "dinner") {
-    t.textContent = "🍽 만찬 안내";
-    c.innerHTML = `
-  <div class="detail-content-wrap">
-  <div class="card">ISC 공식 만찬
-  </div>`;
-  }
+if (type === "dinner") {
+  t.textContent = "🍽 만찬 안내";
+  c.innerHTML = `
+    <div class="detail-content-wrap">
+      <div class="card">ISC 공식 만찬</div>
+    </div>
+  `;
+}
 
   
-  if (type === "request") {
+ if (type === "request") {
   t.textContent = "📝 요청사항";
-  c.innerHTML = 
-    c.innerHTML = `
-  <div class="detail-content-wrap">
-  `<div class="card">
-    <textarea id="requestInput" placeholder="요청사항 입력"></textarea>
-    <button class="primary-btn" onclick="submitRequest()">제출</button>
-  </div>`;
+  c.innerHTML = `
+    <div class="detail-content-wrap">
+      <div class="card">
+        <textarea id="requestInput" placeholder="요청사항 입력"></textarea>
+        <button class="primary-btn" onclick="submitRequest()">제출</button>
+      </div>
+    </div>
+  `;
 }
   /* ================= 담당자 0000000저부분 수정직접하면 바뀜 ================= */
  if (type === "contact") {
