@@ -482,10 +482,10 @@ function openPage(type, fromHistory = false) {
   const t = document.getElementById("detailTitle");
   const c = document.getElementById("detailContent");
 
-    c.innerHTML = `
-    <div class="detail-content-wrap">
-      ${travelSchedule.map(day => `
-        <div class="day-card">
+  c.innerHTML = `
+  <div class="detail-content-wrap">
+    ${travelSchedule.map(day => `
+      <div class="day-card">
         <h3>${day.day} <span>${day.date}</span></h3>
         <p class="day-title">${day.title}</p>
 
@@ -504,8 +504,10 @@ function openPage(type, fromHistory = false) {
           `).join("")}
         </div>
       </div>
-    `).join("");
-  } 
+    `).join("")}
+  </div>
+`;
+
 
 if (type === "flight") {
   const dep = currentUser.flight.departure;
