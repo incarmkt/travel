@@ -509,11 +509,12 @@ body.logged-in #loginSection {
 /* 1) 로그인 중엔 페이지 자체 스크롤을 완전 잠금 */
 html, body { height: 100%; }
 
-body.login-lock,
-body.login-lock html {
+body.login-lock {
   overflow: hidden !important;
-  overscroll-behavior: none !important;
-  touch-action: none !important;
+}
+
+body.login-lock #loginSection {
+  touch-action: none;
 }
 
 /* 로그인 섹션도 확실히 풀스크린 고정 */
@@ -558,6 +559,16 @@ body.login-lock html {
   .hero-screen { z-index: 1 !important; }
   .menu-screen { position: relative !important; z-index: 2 !important; }
   .home-menu, .home-menu * { pointer-events: auto !important; }
+}
+@media (max-width: 767px) {
+  body.logged-in {
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .home-view {
+    min-height: 100dvh;
+  }
 }
 
 
