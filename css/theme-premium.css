@@ -18,7 +18,7 @@ html, body {
                "Segoe UI", Roboto, "Noto Sans KR", sans-serif;
   background: #0f172a;
   color: #fff;
-  overflow: hidden; /* 홈 기준 */
+  overflow-x: hidden; /* 홈 기준 */
 }
 
 /* ================= HEADER ================= */
@@ -32,8 +32,9 @@ html, body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: rgba(255,255,255,0.95);
-  color: #111;
+ background: transparent;   /* 핵심 */
+  color: #fff;               /* 텍스트 흰색 */
+  backdrop-filter: blur(6px); /* 선택 */
   z-index: 1000;
 }
 
@@ -92,10 +93,8 @@ html, body {
   display: block;
 }
 
-.layout,
-.content-area,
 #homeArea {
-  height: 100%;
+  min-height: 100%;
 }
 
 /* ================= HOME ================= */
@@ -136,11 +135,11 @@ html, body {
 .home-tile {
   position: relative;
   border-radius: 18px;
-  padding: 18px;
+  padding: 14px;
   display: flex;
   align-items: center;
   gap: 10px;
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 700;
   cursor: pointer;
   background: rgba(255,255,255,0.25);
@@ -149,8 +148,8 @@ html, body {
 
 /* WIDE TILE */
 .home-tile.wide {
-  height: 80px;
-  margin: 14px 0;
+  height: 88px;
+  margin: 10px 0;
 }
 
 /* ================= GRID ================= */
@@ -158,7 +157,6 @@ html, body {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 12px;
-  flex: 1; /* 🔥 남은 영역 전부 사용 */
 }
 
 .home-grid .home-tile {
@@ -415,77 +413,4 @@ html, body {
 
 .tile-request {
   background-image: url("../assets/images/tile-request.jpg");
-}
-/* =================================================
-   DETAIL PAGE – PREMIUM CARD DESIGN
-================================================= */
-
-#detailPage {
-  background: #f4f6fb;
-}
-
-.day-card {
-  background: #fff;
-  border-radius: 16px;
-  padding: 18px;
-  margin-bottom: 16px;
-  box-shadow: 0 6px 18px rgba(0,0,0,0.08);
-}
-
-.day-card h3 {
-  font-size: 16px;
-  font-weight: 800;
-  margin-bottom: 6px;
-}
-
-.day-card .day-title {
-  font-size: 14px;
-  color: #475569;
-  margin-bottom: 14px;
-}
-
-/* 타임라인 */
-.timeline {
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-}
-
-.schedule-item {
-  display: flex;
-  gap: 12px;
-}
-
-.timeline-dot {
-  width: 8px;
-  height: 8px;
-  background: #2563eb;
-  border-radius: 50%;
-  margin-top: 6px;
-  flex-shrink: 0;
-}
-
-.schedule-card {
-  background: #f8fafc;
-  border-radius: 12px;
-  padding: 12px 14px;
-  width: 100%;
-}
-
-.schedule-time {
-  font-size: 12px;
-  font-weight: 700;
-  color: #2563eb;
-}
-
-.schedule-title {
-  font-size: 14px;
-  font-weight: 700;
-  margin-top: 4px;
-}
-
-.schedule-desc {
-  font-size: 13px;
-  color: #64748b;
-  margin-top: 2px;
 }
