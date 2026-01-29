@@ -501,6 +501,64 @@ body.logged-in #loginSection {
   background: transparent;
 }
 
+/* =================================================
+   ✅ FIX PACK (LOGIN SCROLL + HERO HINT + DESKTOP CLICK)
+   이 블록은 theme-premium.css 맨 아래에 그대로 붙여넣기
+================================================= */
+
+/* 1) 로그인 중엔 페이지 자체 스크롤을 완전 잠금 */
+html, body { height: 100%; }
+
+body.login-lock,
+body.login-lock html {
+  overflow: hidden !important;
+  overscroll-behavior: none !important;
+  touch-action: none !important;
+}
+
+/* 로그인 섹션도 확실히 풀스크린 고정 */
+#loginSection {
+  position: fixed !important;
+  inset: 0 !important;
+  height: 100dvh !important;
+  overflow: hidden !important;
+  z-index: 99999 !important;
+}
+
+/* 2) HERO는 “첫 화면 한 장”으로 고정 + scroll-hint 항상 노출 */
+.hero-screen {
+  min-height: 100dvh !important;
+  height: 100dvh !important;
+
+  display: flex !important;
+  flex-direction: column !important;
+
+  /* ✅ 가운데정렬 금지: 위/아래 영역을 나눠야 힌트가 항상 보임 */
+  justify-content: space-between !important;
+
+  /* 위/아래 안전영역 고려 */
+  padding: env(safe-area-inset-top, 24px) 0 calc(18px + env(safe-area-inset-bottom, 0px)) !important;
+
+  position: relative !important;
+}
+
+/* scroll-hint는 hero 안에서 항상 화면 하단에 보이게 */
+.hero-screen .scroll-hint {
+  position: relative !important;  /* absolute 제거 */
+  bottom: auto !important;
+  left: auto !important;
+  transform: none !important;
+
+  margin: 0 auto !important;
+  padding-bottom: 6px !important;
+}
+
+/* 3) 데스크탑: 메뉴 클릭 안 되는 문제(겹침) 해결 */
+@media (min-width: 768px) {
+  .hero-screen { z-index: 1 !important; }
+  .menu-screen { position: relative !important; z-index: 2 !important; }
+  .home-menu, .home-menu * { pointer-events: auto !important; }
+}
 
 
 
