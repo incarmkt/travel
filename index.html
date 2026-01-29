@@ -414,7 +414,8 @@ document.getElementById("homeArea").style.display = "block";
   else {
     document.getElementById("topHeader").style.display = "flex";
     document.getElementById("mainSection").style.display = "block";
-  }
+  document.getElementById("homeArea").style.display = "block"; // 🔥 이 줄
+}
 
   document.getElementById("employeeName").textContent = user.name;
   document.body.classList.add("logged-in");
@@ -538,6 +539,7 @@ if (isMobile) {
     `).join("");
   } 
 
+if (type === "flight") {
 if (!currentUser.flight) {
   c.innerHTML = `<div class="card">항공편 정보가 없습니다.</div>`;
   return;
