@@ -51,10 +51,17 @@
 <!-- ================= MAIN (LOGIN AFTER) ================= -->
 <main id="mainSection" class="main-bg" style="display:none;">
 
-  <div class="layout">
+  <!-- ================= HOME VIEW ================= -->
+  <section id="homeView" class="home-view">
 
-    <!-- ===== LEFT MENU ===== -->
-    <aside class="side-menu">
+    <!-- (선택) 헤더 아래에 “ISC Taiwan 2025 / 지금부터 여정이 시작됩니다” 같은 영역을 넣고 싶으면 여기 -->
+    <div class="home-hero">
+      <h2 class="home-title">ISC Taiwan 2025</h2>
+      <p class="home-sub">지금부터 여정이 시작됩니다</p>
+    </div>
+
+    <!-- 홈 메뉴(기존 side-menu 버튼을 그대로 이쪽으로 옮김) -->
+    <nav class="home-menu">
       <button onclick="openPage('schedule')">🗓 여행 일정</button>
       <button onclick="openPage('flight')">✈️ 항공편 정보</button>
       <button onclick="openPage('taiwan')">🇹🇼 대만의 모든 것</button>
@@ -62,40 +69,25 @@
       <button onclick="openPage('dinner')">🍽 만찬 안내</button>
       <button onclick="openPage('request')">📝 요청사항</button>
       <button onclick="openPage('contact')">📞 긴급 연락망</button>
-    </aside>
+    </nav>
 
-    <!-- ===== RIGHT CONTENT ===== -->
-    <section class="content-area">
+  </section>
 
-  <!-- 🔴 메인 패널 (RED) -->
-  <div class="main-panel">
+  <!-- ================= DETAIL OVERLAY (BOTTOM SHEET) ================= -->
+  <section id="detailPage" class="detail-sheet" style="display:none;">
+    <div class="detail-sheet__inner">
+      <h2 id="detailTitle"></h2>
+      <div id="detailContent"></div>
 
-    <!-- 홈일 때 -->
-    <div id="homeArea" class="home-view">
-      <img src="assets/images/home.jpg" alt="Home Image">
+      <div class="nav-buttons">
+        <button class="ghost-btn" onclick="goHome()">홈으로</button>
+        <button class="ghost-btn" onclick="goBack()">뒤로가기</button>
+      </div>
     </div>
+  </section>
 
-    <!-- 상세 페이지 -->
-<section id="detailPage" class="detail" style="display:none;">
-  <h2 id="detailTitle"></h2>
+</main>
 
-  <div id="detailContent"></div>
-
-  <div class="nav-buttons">
-    <button class="ghost-btn" onclick="goHome()">홈으로</button>
-    <button class="ghost-btn" onclick="goBack()">뒤로가기</button>
-  </div>
-</section>
-
-
-  </div>
-
-  <!-- 🟨 고정 포스터 패널 (YELLOW) -->
-  <aside class="fixed-poster">
-    <img src="assets/images/iscposter.jpg" alt="Fixed Poster">
-  </aside>
-
-  </div>
 </main>
   <script>
 /* ================= 공통 ================= */
@@ -469,13 +461,9 @@ function openPage(type, fromHistory = false) {
   if (!fromHistory) {
     pageHistory.push(type);
   }
-
-document.getElementById("homeArea").style.display = "none";
+// ✅ 홈은 그대로 두고, 상세 오버레이만 올린다
 document.getElementById("detailPage").style.display = "block";
-
-if (isMobile) {
-  document.querySelector(".side-menu").style.display = "none";
-}
+document.body.classList.add("detail-open");
 
   const t = document.getElementById("detailTitle");
   const c = document.getElementById("detailContent");
@@ -721,23 +709,16 @@ if (type === "taiwan") {
 
 /* ================= 홈으로 ================= */
 function goHome() {
-  const isMobile = window.innerWidth <= 767;
-
-  // 🔥 히스토리 완전 초기화
+  // 히스토리 초기화
   pageHistory = [];
 
+  // 상세 닫기
   document.getElementById("detailPage").style.display = "none";
-
-  if (isMobile) {
-    document.querySelector(".side-menu").style.display = "block";
-  } else {
-    document.getElementById("homeArea").style.display = "block";
-  }
+  document.body.classList.remove("detail-open");
 }
+
     /* ================= 뒤로가기 ================= */
 function goBack() {
-  const isMobile = window.innerWidth <= 767;
-
   // 현재 페이지 제거
   pageHistory.pop();
 
@@ -749,9 +730,10 @@ function goBack() {
 
   const prevType = pageHistory[pageHistory.length - 1];
 
-  // 🔥 history에 다시 쌓지 않고 렌더만
+  // history에 다시 쌓지 않고 렌더만
   openPage(prevType, true);
 }
+
   /* ================= 요청사항 전송 (여기에 추가) ================= */
 function submitRequest() {
   const requestText = document.getElementById("requestInput").value.trim();
