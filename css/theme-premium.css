@@ -545,14 +545,15 @@ body.login-lock #loginSection {
 
 /* scroll-hint는 hero 안에서 항상 화면 하단에 보이게 */
 .hero-screen .scroll-hint {
-  position: relative !important;  /* absolute 제거 */
-  bottom: auto !important;
-  left: auto !important;
-  transform: none !important;
+  position: absolute !important;
+  bottom: 24px !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
 
-  margin: 0 auto !important;
-  padding-bottom: 6px !important;
+  margin: 0 !important;
+  padding: 0 !important;
 }
+
 
 /* 3) 데스크탑: 메뉴 클릭 안 되는 문제(겹침) 해결 */
 @media (min-width: 768px) {
