@@ -87,11 +87,6 @@ html, body {
 }
 
 /* ================= MAIN LAYOUT ================= */
-#mainSection {
-  position: fixed;
-  inset: 56px 0 0 0;
-  display: block;
-}
 
 #homeArea {
   min-height: 100%;
@@ -103,16 +98,20 @@ html, body {
 }
 
 .premium-home {
-  height: 100%;
+  min-height: 100%;
 }
 
-.main-panel {
-  height: 100%;
-  padding: 18px;
+#mainSection {
+  position: fixed;
+  inset: 0; /* 🔥 56px 없앰 */
   background: url("../assets/images/photo2.jpg") center / cover no-repeat;
-  display: flex;
-  flex-direction: column;
 }
+
+/* 헤더 높이만큼 내용 밀기 */
+.layout {
+  padding-top: 56px;
+}
+
 
 /* ===== HERO ===== */
 .home-hero {
@@ -414,3 +413,20 @@ html, body {
 .tile-request {
   background-image: url("../assets/images/tile-request.jpg");
 }
+/* ================= FIXED POSTER ================= */
+.fixed-poster {
+  position: fixed;
+  right: 0;
+  top: 56px;
+  width: 320px;
+  height: calc(100% - 56px);
+  background: #000;
+}
+
+/* 🔥 모바일에서는 완전 제거 */
+@media (max-width: 767px) {
+  .fixed-poster {
+    display: none !important;
+  }
+}
+
