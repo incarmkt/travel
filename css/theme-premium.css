@@ -386,21 +386,7 @@ body.detail-open .detail-sheet__inner {
     font-size: 13px;
   }
 }
-/* ================= HERO AS HEADER ================= */
 
-.home-view {
-  padding-top: 0;              /* 🔥 상단 여백 제거 */
-}
-
-.home-hero {
-  position: relative;
-  z-index: 5;
-
-  padding: 24px 20px 32px;
-  margin: 0 auto 24px;
-
-  width: min(100%, 860px);
-}
 
 .hero-info {
   display: grid;
@@ -432,6 +418,53 @@ body.detail-open .detail-sheet__inner {
   .hero-copy {
     margin-top: 20px;
   }
+}
+/* =================================================
+   HERO SCREEN / MENU SCREEN SPLIT (핵심)
+================================================= */
+
+/* 홈 전체 */
+.home-view {
+  padding: 0;
+}
+
+/* 첫 화면 (무조건 한 화면) */
+.hero-screen {
+  min-height: 100vh;
+  min-height: 100dvh;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+
+  padding: env(safe-area-inset-top, 24px) 0 32px;
+}
+
+/* hero 내용 정렬 */
+.hero-screen .home-hero {
+  margin: 0 auto;
+  width: min(92vw, 860px);
+}
+
+/* 스크롤 힌트는 hero-screen 안에서만 */
+.hero-screen .scroll-hint {
+  margin-top: 32px;
+}
+
+/* 메뉴 화면 (스크롤 내려야만 등장) */
+.menu-screen {
+  padding: 32px 0 48px;
+  background: transparent;
+}
+
+/* 메뉴는 중앙 정렬 */
+.menu-screen .home-menu {
+  margin-top: 0;
+}
+
+/* 어떤 경우에도 hero 위에 메뉴 안 뜨게 */
+.hero-screen + .menu-screen {
+  margin-top: 0;
 }
 
 
