@@ -34,64 +34,69 @@
   </div>
 </section>
 
-<!-- ================= MAIN (LOGIN AFTER) ================= -->
-<main id="mainSection" class="main-bg" style="display:none;">
+<!-- ================= HOME VIEW ================= -->
+<section id="homeView" class="home-view">
 
-  <!-- ================= HOME VIEW ================= -->
-  <section id="homeView" class="home-view">
+  <!-- ================= HERO SCREEN (첫 화면 전용) ================= -->
+  <section class="hero-screen">
 
-    <!-- (선택) 헤더 아래에 “ISC Taiwan 2025 / 지금부터 여정이 시작됩니다” 같은 영역을 넣고 싶으면 여기 -->
-<div class="home-hero">
+    <div class="home-hero">
 
-  <!-- 브랜드 / 정보 영역 -->
-  <div class="hero-info">
-    <img src="assets/images/logo.png"
-         style="width:120px; margin-bottom:14px;">
+      <!-- 브랜드 / 정보 영역 -->
+      <div class="hero-info">
+        <img src="assets/images/logo.png"
+             style="width:120px; margin-bottom:14px;">
 
-    <h2 class="home-title">2025 ISC 대만 여행</h2>
+        <h2 class="home-title">2025 ISC 대만 여행</h2>
 
-    <p class="home-sub">
-      2026.03.11 ~ 03.14 | 인카금융서비스
-    </p>
+        <p class="home-sub">
+          2026.03.11 ~ 03.14 | 인카금융서비스
+        </p>
 
-    <p class="home-sub" style="margin-top:8px; font-weight:600;">
-      <strong id="employeeName"></strong> 님, 환영합니다
-    </p>
+        <p class="home-sub" style="margin-top:8px; font-weight:600;">
+          <strong id="employeeName"></strong> 님, 환영합니다
+        </p>
 
-    <p class="home-sub" style="opacity:.85;">
-      ISC 달성을 축하드립니다
-    </p>
-  </div>
+        <p class="home-sub" style="opacity:.85;">
+          ISC 달성을 축하드립니다
+        </p>
+      </div>
 
-  <!-- 감성 카피 영역 -->
-  <div class="hero-copy">
-    <h2 class="home-title">ISC Taiwan 2025</h2>
-    <p class="home-sub">지금부터 여정이 시작됩니다</p>
-  </div>
+      <!-- 감성 카피 영역 -->
+      <div class="hero-copy">
+        <h2 class="home-title">ISC Taiwan 2025</h2>
+        <p class="home-sub">지금부터 여정이 시작됩니다</p>
+      </div>
 
-  <!-- 스크롤 유도 -->
-<div class="scroll-hint">
-  <span>아래로 스크롤하세요</span>
-  <div class="arrow">↓</div>
-</div>
+    </div>
 
-</div>
-
-
-    <!-- 홈 메뉴(기존 side-menu 버튼을 그대로 이쪽으로 옮김) -->
-      <div class="home-menu-wrap">
-    <nav class="home-menu">
-      <button onclick="openPage('taiwan')">🇹🇼 대만의 모든 것</button>
-      <button onclick="openPage('schedule')">🗓 여행 일정</button>
-      <button onclick="openPage('flight')">✈️ 항공편 정보</button>
-      <button onclick="openPage('myTour')">🎒 나의 선택 관광</button>
-      <button onclick="openPage('dinner')">🍽 만찬 안내</button>
-      <button onclick="openPage('request')">📝 요청사항</button>
-      <button onclick="openPage('contact')">📞 긴급 연락망</button>
-    </nav>
- </div>
+    <!-- 스크롤 유도 (첫 화면 전용) -->
+    <div class="scroll-hint">
+      <span>아래로 스크롤하세요</span>
+      <div class="arrow">↓</div>
+    </div>
 
   </section>
+
+  <!-- ================= MENU SCREEN (카테고리 화면) ================= -->
+  <section class="menu-screen">
+
+    <div class="home-menu-wrap">
+      <nav class="home-menu">
+        <button onclick="openPage('flight')">✈️ 항공편 정보</button>
+        <button onclick="openPage('taiwan')">🇹🇼 대만의 모든 것</button>
+        <button onclick="openPage('schedule')">🗓 여행 일정</button>
+        <button onclick="openPage('myTour')">🎒 나의 선택 관광</button>
+        <button onclick="openPage('dinner')">🍽 만찬 안내</button>
+        <button onclick="openPage('request')">📝 요청사항</button>
+        <button onclick="openPage('contact')">📞 긴급 연락망</button>
+      </nav>
+    </div>
+
+  </section>
+
+</section>
+
 
   <!-- ================= DETAIL OVERLAY (BOTTOM SHEET) ================= -->
 <section id="detailPage" class="detail-sheet" onclick="goHome()">
