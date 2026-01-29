@@ -41,6 +41,11 @@ body.logged-in {
   min-height: 100vh;
   min-height: 100dvh;
 }
+@media (max-width: 767px) {
+  .home-view {
+    padding-top: 40px;
+  }
+}
 
 .home-hero {
   margin: 48px auto 22px;
@@ -105,7 +110,9 @@ body.detail-open .detail-sheet {
   opacity: 1;
   pointer-events: auto;
 }
-
+body.detail-open {
+  overflow: hidden;
+}
 /* ===== Sheet Body ===== */
 .detail-sheet__inner {
   position: fixed;
@@ -116,7 +123,6 @@ body.detail-open .detail-sheet {
   background: #fff;
   border-radius: 22px 22px 0 0;
 
-  max-height: 88dvh;
   overflow: hidden;
 
   display: flex;
@@ -230,11 +236,6 @@ body.detail-open .detail-sheet__inner {
 
   .home-menu button:nth-child(3) {
     height: 120px;
-  }
-
-
-  body.detail-open .detail-sheet__inner {
-    transform: translate(-50%, 0);
   }
 }
 /* =================================================
