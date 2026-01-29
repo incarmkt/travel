@@ -1,81 +1,124 @@
+/* =================================================
+   THEME PREMIUM – HOME ONLY
+   고객용 홈 화면 전용 (최종본)
+================================================= */
+
 /* ===============================
-   HOME HERO
+   공통 전제
 =============================== */
-
-.home-hero {
-  position: relative;
-  height: 240px;
-  border-radius: 22px;
-  overflow: hidden;
-  margin-bottom: 24px;
+body.logged-in {
+  background: url("../assets/images/main-bg.jpg")
+              center / cover no-repeat fixed;
 }
 
-.home-hero::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: url("../assets/images/taiwan-hero.jpg")
-              center / cover no-repeat;
-  filter: brightness(0.7);
-}
-
-.home-hero-content {
-  position: relative;
-  z-index: 1;
-  height: 100%;
-  padding: 28px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  color: #fff;
-}
-
-.home-hero-content h2 {
-  font-size: 32px;
-  font-weight: 800;
-  margin: 0 0 8px;
-}
-
-.home-hero-content p {
-  font-size: 16px;
-  opacity: 0.9;
-}
-/* ===============================
-   HOME MENU (side-menu override)
-=============================== */
-
+/* 홈에서만 사용 */
 .side-menu {
   position: static !important;
-  background: none !important;
-  padding: 0 !important;
   width: 100%;
+  padding: 0 !important;
+  margin-top: 16px;
+
   display: grid;
   grid-template-columns: repeat(2, 1fr);
+  grid-template-areas:
+    "taiwan taiwan"
+    "schedule flight"
+    "tour dinner"
+    "contact request";
   gap: 16px;
 }
+
+/* ===============================
+   버튼 위치 강제 매핑
+   (HTML 순서 절대 변경 없음)
+=============================== */
+.side-menu button:nth-child(1) { grid-area: schedule; }
+.side-menu button:nth-child(2) { grid-area: flight; }
+.side-menu button:nth-child(3) { grid-area: taiwan; }
+.side-menu button:nth-child(4) { grid-area: tour; }
+.side-menu button:nth-child(5) { grid-area: dinner; }
+.side-menu button:nth-child(6) { grid-area: request; }
+.side-menu button:nth-child(7) { grid-area: contact; }
+
+/* ===============================
+   카드 공통 스타일 (사진 그대로)
+=============================== */
 .side-menu button {
   height: 96px;
-  border-radius: 20px;
+  border-radius: 22px;
   border: none;
-  background: rgba(255,255,255,0.75);
-  backdrop-filter: blur(12px);
-  font-size: 18px;
-  font-weight: 700;
-  color: #0f172a;
+
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(16px);
+
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 14px;
   padding: 0 22px;
+
+  font-size: 18px;
+  font-weight: 700;
+  color: #ffffff;
+
+  box-shadow: 0 12px 30px rgba(0,0,0,0.18);
   cursor: pointer;
-  box-shadow: 0 10px 24px rgba(0,0,0,0.08);
+
+  transition: transform .15s ease,
+              box-shadow .15s ease,
+              background .15s ease;
 }
 
-.side-menu button:hover {
-  transform: translateY(-2px);
+/* 눌림 / 터치 피드백 */
+.side-menu button:active {
+  transform: scale(0.97);
+  box-shadow: 0 8px 18px rgba(0,0,0,0.22);
 }
+
+/* ===============================
+   🔥 대만의 모든 것 (최상단·최대)
+=============================== */
 .side-menu button:nth-child(3) {
-  grid-column: 1 / -1;
-  height: 110px;
-  font-size: 20px;
+  height: 128px;
+  font-size: 22px;
+  font-weight: 800;
 }
 
+/* ===============================
+   아이콘 크기 통일
+=============================== */
+.side-menu button span,
+.side-menu button img,
+.side-menu button svg {
+  font-size: 22px;
+}
+
+/* ===============================
+   모바일 전용 보정
+=============================== */
+@media (max-width: 767px) {
+
+  .side-menu {
+    padding: 0 12px !important;
+    gap: 14px;
+  }
+
+  .side-menu button {
+    font-size: 17px;
+    height: 92px;
+  }
+
+  .side-menu button:nth-child(3) {
+    height: 120px;
+    font-size: 21px;
+  }
+}
+
+/* ===============================
+   홈 이외 화면 영향 차단
+=============================== */
+#detailPage,
+.detail,
+.main-panel,
+.fixed-poster {
+  /* 기존 CSS 그대로 사용 */
+}
