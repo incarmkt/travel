@@ -391,6 +391,8 @@ function login() {
   // 로그인 화면 제거
   document.getElementById("loginSection").style.display = "none";
 
+  document.body.classList.remove("login-lock");
+  
   // 📱 모바일: 스플래시 2초
   if (window.innerWidth <= 767) {
     const splash = document.getElementById("mobileSplash");
@@ -408,6 +410,9 @@ function login() {
 
   document.getElementById("employeeName").textContent = user.name;
   document.body.classList.add("logged-in");
+  // ✅ 처음엔 로그인 상태니까 스크롤 잠금
+document.body.classList.add("login-lock");
+
 }
 function tryAutoLogin() {
   const params = new URLSearchParams(window.location.search);
