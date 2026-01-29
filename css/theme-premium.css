@@ -1,52 +1,79 @@
 /* =================================================
-   THEME PREMIUM – CUSTOMER HOME FINAL
+   THEME PREMIUM – CUSTOMER HOME (FINAL FIXED)
 ================================================= */
 
 /* =================================================
-   0. 로그인 화면 배경 (기존 유지)
+   0. 기본 리셋 (상태 흔들림 방지)
 ================================================= */
 body.logged-in {
+  min-height: 100dvh;
+  margin: 0;
   background: url("../assets/images/main-bg.jpg")
               center / cover no-repeat fixed;
 }
 
 /* =================================================
-   1. 로그인 이후 HOME / MAIN 배경
-   → photo2.jpg 로 덮어씀
+   1. 로그인 이후 홈/메인 배경 (항상 강제)
 ================================================= */
 body.logged-in #mainSection {
+  min-height: 100dvh;
   background: url("../assets/images/photo2.jpg")
               center / cover no-repeat fixed !important;
 }
 
 /* =================================================
-   2. 홈에서 불필요한 이미지/포스터 제거
+   2. 홈에서 불필요한 요소 완전 차단
+   (뒤로가기 시 재등장 방지)
 ================================================= */
 body.logged-in #mainSection .home-view,
 body.logged-in #mainSection .home-view img,
 body.logged-in #mainSection .fixed-poster,
 body.logged-in #mainSection .poster {
   display: none !important;
+  height: 0 !important;
+  overflow: hidden !important;
 }
 
 /* =================================================
-   3. 홈 컨테이너 투명화
+   3. 컨텐츠 영역 풀스크린화
 ================================================= */
 body.logged-in #mainSection .content-area,
 body.logged-in #mainSection .main-panel {
+  min-height: 100dvh;
   background: transparent !important;
   box-shadow: none !important;
+  padding: 0 !important;
 }
 
 /* =================================================
-   4. 홈 카드 레이아웃 (사진 기준)
+   4. 홈 상단 타이틀 영역 (3번째 사진 느낌)
+================================================= */
+.home-hero-text {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 36px 20px 20px;
+  text-align: left;
+  color: #fff;
+}
+
+.home-hero-text h1 {
+  font-size: 34px;
+  font-weight: 800;
+  margin: 0 0 8px;
+}
+
+.home-hero-text p {
+  font-size: 16px;
+  opacity: 0.9;
+}
+
+/* =================================================
+   5. 카드 레이아웃 (좁은 폭 + 중앙)
 ================================================= */
 body.logged-in #mainSection .side-menu {
-  position: static !important;
-  width: 100%;
-  max-width: 960px;
+  max-width: 720px;
   margin: 0 auto;
-  padding: 0 !important;
+  padding: 0 16px 40px;
 
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -55,11 +82,11 @@ body.logged-in #mainSection .side-menu {
     "schedule flight"
     "tour dinner"
     "contact request";
-  gap: 18px;
+  gap: 14px;
 }
 
 /* =================================================
-   5. 버튼 위치 매핑 (HTML 순서 유지)
+   6. 버튼 위치 고정 (뒤로가도 유지)
 ================================================= */
 body.logged-in #mainSection .side-menu button:nth-child(1) { grid-area: schedule; }
 body.logged-in #mainSection .side-menu button:nth-child(2) { grid-area: flight; }
@@ -70,85 +97,65 @@ body.logged-in #mainSection .side-menu button:nth-child(6) { grid-area: request;
 body.logged-in #mainSection .side-menu button:nth-child(7) { grid-area: contact; }
 
 /* =================================================
-   6. 카드 공통 스타일 (반투명 + 블러)
+   7. 카드 스타일 (높이 축소, 숨통 확보)
 ================================================= */
 body.logged-in #mainSection .side-menu button {
-  height: 96px;
-  border-radius: 24px;
+  height: 82px;
+  border-radius: 22px;
   border: none;
 
-  background: rgba(255, 255, 255, 0.65);
+  background: rgba(255,255,255,0.62);
   backdrop-filter: blur(18px);
 
   display: flex;
   align-items: center;
-  gap: 14px;
-  padding: 0 24px;
+  gap: 12px;
+  padding: 0 20px;
 
-  font-size: 18px;
+  font-size: 17px;
   font-weight: 700;
-  color: #ffffff;
+  color: #fff;
 
-  box-shadow: 0 14px 34px rgba(0,0,0,0.22);
+  box-shadow: 0 12px 26px rgba(0,0,0,0.22);
   cursor: pointer;
-
-  transition:
-    transform .15s ease,
-    box-shadow .15s ease,
-    background .15s ease;
+  transition: transform .15s ease;
 }
 
-/* 눌림 피드백 */
 body.logged-in #mainSection .side-menu button:active {
-  transform: scale(0.97);
-  box-shadow: 0 8px 20px rgba(0,0,0,0.28);
+  transform: scale(0.96);
 }
 
 /* =================================================
-   7. 🔥 대만의 모든 것 (최상단 · 최대)
+   8. 대만의 모든 것 (메인 카드)
 ================================================= */
 body.logged-in #mainSection .side-menu button:nth-child(3) {
-  height: 128px;
-  font-size: 22px;
+  height: 108px;
+  font-size: 21px;
   font-weight: 800;
 }
 
 /* =================================================
-   8. 아이콘 크기 통일
-================================================= */
-body.logged-in #mainSection .side-menu button span,
-body.logged-in #mainSection .side-menu button img,
-body.logged-in #mainSection .side-menu button svg {
-  font-size: 22px;
-}
-
-/* =================================================
-   9. 모바일 전용 튜닝
+   9. 모바일 전용 보정
 ================================================= */
 @media (max-width: 767px) {
 
+  .home-hero-text h1 {
+    font-size: 30px;
+  }
+
+  .home-hero-text p {
+    font-size: 15px;
+  }
+
   body.logged-in #mainSection .side-menu {
-    padding: 0 12px !important;
-    gap: 14px;
-  }
-
-  body.logged-in #mainSection .side-menu button {
-    height: 92px;
-    font-size: 17px;
-    border-radius: 22px;
-  }
-
-  body.logged-in #mainSection .side-menu button:nth-child(3) {
-    height: 120px;
-    font-size: 21px;
+    max-width: 100%;
   }
 }
 
 /* =================================================
-   10. 상세 페이지 영향 차단
+   10. 상세 페이지 영향 완전 차단
 ================================================= */
 #detailPage,
-.detail,
-.fixed-poster {
-  /* 기존 CSS 그대로 */
+.detail {
+  background: inherit;
 }
