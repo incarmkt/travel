@@ -231,3 +231,41 @@ body.detail-open .detail-sheet__inner {
     transform: translate(-50%, 0);
   }
 }
+/* =================================================
+   FORCE OVERRIDE MOBILE HOME (mobile.css 무력화)
+================================================= */
+@media (max-width: 767px) {
+
+  /* mobile.css가 만든 flex/center 구조 제거 */
+  .home-view {
+    display: block !important;
+    align-items: initial !important;
+    justify-content: initial !important;
+    height: auto !important;
+    min-height: 100dvh !important;
+  }
+
+  /* 메뉴 래퍼/메뉴 높이 강제 해제 */
+  .home-menu-wrap,
+  .home-menu {
+    position: static !important;
+    height: auto !important;
+    min-height: unset !important;
+    transform: none !important;
+  }
+
+  /* grid 강제 복구 */
+  .home-menu {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    grid-auto-flow: row dense !important;
+    gap: 14px !important;
+  }
+
+  /* ‘대만의 모든 것’ 최상단 고정 */
+  .home-menu button:nth-child(3) {
+    order: -1 !important;
+    grid-column: 1 / -1 !important;
+  }
+}
+
