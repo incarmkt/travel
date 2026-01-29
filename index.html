@@ -505,7 +505,8 @@ document.getElementById("homeArea").style.display = "none";
 document.getElementById("detailPage").style.display = "block";
 
 if (isMobile) {
-  document.querySelector(".side-menu").style.display = "none";
+  const sideMenu = document.querySelector(".side-menu");
+  if (sideMenu) sideMenu.style.display = "none";
 }
 
   const t = document.getElementById("detailTitle");
@@ -535,11 +536,15 @@ if (isMobile) {
         </div>
       </div>
     `).join("");
-  } // ← openPage 끝
+  } 
 
-if (type === "flight") {
-  const dep = currentUser.flight.departure;
-  const ret = currentUser.flight.return;
+if (!currentUser.flight) {
+  c.innerHTML = `<div class="card">항공편 정보가 없습니다.</div>`;
+  return;
+}
+
+const dep = currentUser.flight.departure;
+const ret = currentUser.flight.return;
 
   t.textContent = "✈️ 항공편 정보";
   c.innerHTML = `
@@ -572,7 +577,7 @@ if (type === "flight") {
     </div>
   `;
 }
- // ← openPage 끝
+
 
 if (type === "myTour") {
   t.textContent = "🎒 나의 선택 관광";
