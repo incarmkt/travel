@@ -228,3 +228,23 @@ body.detail-open .detail-sheet {
     right: auto !important;
   }
 }
+/* =================================================
+   DETAIL CONTENT NORMALIZE (깨짐 해결 핵심)
+================================================= */
+
+.detail-content-wrap {
+  width: 100%;
+  max-width: 920px;
+  margin: 0 auto;
+
+  /* 기존 카드들이 숨 쉴 공간 */
+  padding: 0 16px 24px;
+}
+
+/* 데스크탑 */
+@media (min-width: 768px) {
+  .detail-content-wrap {
+    max-width: 960px;
+    padding: 0 24px 40px;
+  }
+}
