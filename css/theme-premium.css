@@ -294,3 +294,34 @@ body.detail-open .detail-sheet__inner {
     padding: 0 24px 40px;
   }
 }
+
+/* =================================================
+   MOBILE – HEADER 제거 (중요)
+================================================= */
+@media (max-width: 767px) {
+  header.header {
+    display: none !important;
+  }
+}
+
+.hero-logo-mobile {
+  width: 120px;
+  margin-bottom: 16px;
+}
+
+.welcome-mobile {
+  margin-top: 8px;
+  font-size: 15px;
+  opacity: .9;
+}
+/* =================================================
+   MOBILE – DETAIL FULL SCREEN FIX
+================================================= */
+@media (max-width: 767px) {
+  .detail-sheet__inner {
+    height: 100dvh;      /* 🔥 무조건 풀스크린 */
+    max-height: none;   /* 🔥 기존 제한 제거 */
+    border-radius: 0;   /* 풀페이지 느낌 */
+  }
+}
+
