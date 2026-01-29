@@ -37,6 +37,80 @@ body.logged-in {
 }
 
 /* ================= HOME ================= */
+.home-hero {
+  margin: 0 auto 32px;
+  padding-top: env(safe-area-inset-top, 24px);
+  width: min(92vw, 720px);
+
+  color: #fff;
+  text-shadow: 0 6px 18px rgba(0,0,0,.35);
+
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+
+  transition: opacity .4s ease, transform .4s ease;
+}
+.hero-info {
+  max-width: 520px;
+}
+
+.hero-info img {
+  width: clamp(80px, 22vw, 120px);
+}
+
+.hero-info .home-title {
+  font-size: clamp(22px, 5.5vw, 32px);
+  line-height: 1.25;
+}
+
+.hero-info .home-sub {
+  font-size: clamp(13px, 3.8vw, 16px);
+  opacity: .92;
+}
+.hero-copy .home-title {
+  font-size: clamp(34px, 9vw, 56px);
+  font-weight: 800;
+  line-height: 1.1;
+}
+
+.hero-copy .home-sub {
+  font-size: clamp(15px, 4.5vw, 18px);
+  opacity: .9;
+}
+.scroll-hint {
+  margin-top: 24px;
+  text-align: center;
+  font-size: 14px;
+  opacity: .9;
+
+  animation: hintFade 2.2s ease-in-out infinite;
+}
+
+.scroll-hint .arrow {
+  font-size: 22px;
+  margin-top: 6px;
+}
+body.scrolled .home-hero {
+  opacity: 0;
+  transform: translateY(-20px);
+  pointer-events: none;
+}
+
+body.scrolled .scroll-hint {
+  opacity: 0;
+  pointer-events: none;
+}
+
+
+@keyframes hintFade {
+  0% { opacity: .2; transform: translateY(0); }
+  50% { opacity: .9; transform: translateY(6px); }
+  100% { opacity: .2; transform: translateY(0); }
+}
+
+
+
 
 .home-view {
   padding: 96px 0 40px;
