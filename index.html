@@ -61,6 +61,7 @@
     </div>
 
     <!-- 홈 메뉴(기존 side-menu 버튼을 그대로 이쪽으로 옮김) -->
+      <div class="home-menu-wrap">
     <nav class="home-menu">
       <button onclick="openPage('schedule')">🗓 여행 일정</button>
       <button onclick="openPage('flight')">✈️ 항공편 정보</button>
@@ -70,23 +71,30 @@
       <button onclick="openPage('request')">📝 요청사항</button>
       <button onclick="openPage('contact')">📞 긴급 연락망</button>
     </nav>
+ </div>
 
   </section>
 
   <!-- ================= DETAIL OVERLAY (BOTTOM SHEET) ================= -->
-  <section id="detailPage" class="detail-sheet" style="display:none;">
-    <div class="detail-sheet__inner">
+<section id="detailPage" class="detail-sheet"
+         style="display:none;"
+         onclick="goHome()">
+
+  <div class="detail-sheet__inner" onclick="event.stopPropagation()">
       <h2 id="detailTitle"></h2>
       <div id="detailContent"></div>
 
       <div class="nav-buttons">
-        <button class="ghost-btn" onclick="goHome()">홈으로</button>
+        <!-- 🔥 onclick 제거 -->
+        <button class="ghost-btn">홈으로</button>
+
+        <!-- 뒤로가기는 그대로 유지 -->
         <button class="ghost-btn" onclick="goBack()">뒤로가기</button>
       </div>
-    </div>
-  </section>
+  </div>
 
-</main>
+</section>
+
 
 </main>
   <script>
@@ -455,7 +463,7 @@ const travelSchedule = [
 
 /* ================= 페이지 열기 ================= */
 function openPage(type, fromHistory = false) {
-  const isMobile = window.innerWidth <= 767;
+
 
   // 🔹 사용자 클릭으로 열었을 때만 기록
   if (!fromHistory) {
@@ -491,7 +499,7 @@ document.body.classList.add("detail-open");
         </div>
       </div>
     `).join("");
-  } // ← openPage 끝
+  } 
 
 if (type === "flight") {
   const dep = currentUser.flight.departure;
@@ -528,7 +536,7 @@ if (type === "flight") {
     </div>
   `;
 }
- // ← openPage 끝
+ 
 
 if (type === "myTour") {
   t.textContent = "🎒 나의 선택 관광";
@@ -537,34 +545,30 @@ if (type === "myTour") {
       ${renderMyTour()}
     </div>
   `;
+}
 
-  const wrap = document.querySelector('.meal-check[data-tour="자유일정"]');
-  if (wrap && currentUser) {
+else if (type === "myTour") {
+  t.textContent = "🎒 나의 선택 관광";
+  c.innerHTML = `
+    <div class="mytour-wrap">
+      ${renderMyTour()}
+    </div>
+  `;
 
-    // 🔥 서버 기준
+  setTimeout(() => {
+    const wrap = document.querySelector('.meal-check[data-tour="자유일정"]');
+    if (!wrap) return;
+
     syncMealStatusFromServer(currentUser.id, "자유일정", wrap);
 
-    // (선택) 서버 실패 대비용 보조
     const saved = loadMealPaid(currentUser.id, "자유일정");
     if (!wrap.classList.contains("done") && saved?.time) {
       setMealUI(wrap, "DONE", saved.time);
     }
-  }
+  }, 0);
 }
-  
- async function syncMealStatusFromServer(userId, tour, wrap) {
-  const url = `${MEAL_SHEET_URL}?id=${userId}&tour=${encodeURIComponent(tour)}`;
-  const res = await fetch(url);
-  const data = await res.json();
 
-  if (data.paid) {
-    setMealUI(wrap, "DONE", data.time);
-  } else {
-    setMealUI(wrap, "PENDING");
-  }
-}
- 
- // ← openPage 끝
+
 
 if (type === "taiwan") {
   t.textContent = "🇹🇼 대만의 모든 것";
@@ -637,13 +641,13 @@ if (type === "taiwan") {
 
   startWorldClock();
 }
- // ← openPage 끝
+ 
 
   if (type === "dinner") {
     t.textContent = "🍽 만찬 안내";
     c.innerHTML = `<div class="card">ISC 공식 만찬</div>`;
   }
- // ← openPage 끝
+
   
   if (type === "request") {
   t.textContent = "📝 요청사항";
@@ -706,6 +710,17 @@ if (type === "taiwan") {
 }
 }
 
+     async function syncMealStatusFromServer(userId, tour, wrap) {
+  const url = `${MEAL_SHEET_URL}?id=${userId}&tour=${encodeURIComponent(tour)}`;
+  const res = await fetch(url);
+  const data = await res.json();
+
+  if (data.paid) {
+    setMealUI(wrap, "DONE", data.time);
+  } else {
+    setMealUI(wrap, "PENDING");
+  }
+}
 
 /* ================= 홈으로 ================= */
 function goHome() {
