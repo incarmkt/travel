@@ -86,8 +86,7 @@ body.logged-in {
 }
 
 /* 대만의 모든 것 */
-.home-menu button:nth-child(3) {
-  order: -1;
+.home-menu button:first-child {
   grid-column: 1 / -1;
   height: 96px;
 }
