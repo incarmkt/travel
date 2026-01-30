@@ -162,6 +162,7 @@
 let pageHistory = [];
 let employees = [];
 let currentUser = null;
+    let savedScrollY = 0;
 const ADMIN_PASSWORD = "0000";
     
     /* ================= 선택관광 템플릿 ================= */
@@ -533,9 +534,15 @@ const travelSchedule = [
     ]
   }
 ];
+    
 
 /* ================= 페이지 열기 ================= */
 function openPage(type, fromHistory = false) {
+  savedScrollY = window.scrollY;
+
+document.body.style.position = "fixed";
+document.body.style.top = `-${savedScrollY}px`;
+document.body.style.width = "100%";
 
   if (!fromHistory) {
     pageHistory.push(type);
@@ -811,12 +818,17 @@ if (type === "dinner") {
 
 /* ================= 홈으로 ================= */
 function goHome() {
-  // 히스토리 초기화
   pageHistory = [];
 
-  // 상세 닫기
   document.body.classList.remove("detail-open");
+
+  document.body.style.position = "";
+  document.body.style.top = "";
+  document.body.style.width = "";
+
+  window.scrollTo(0, savedScrollY);
 }
+
 
     /* ================= 뒤로가기 ================= */
 function goBack() {
