@@ -894,3 +894,120 @@ body.intro-passed .intro-stage {
 .detail-sheet .ghost-btn {
   color: #111 !
 
+   /* ===============================
+   HOME INTRO – LAYOUT FIX (FINAL)
+   =============================== */
+
+/* 전체 인트로 기준 */
+.home-intro {
+  position: relative;
+  min-height: 100vh;
+  padding: 0;
+}
+
+/* ───────── 🟥 + 🟨 TOP BAR ───────── */
+.top-bar {
+  position: absolute;
+  top: 24px;
+  left: 20px;
+  right: 20px;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+
+  z-index: 20;
+}
+
+/* 🟥 좌측 정보 */
+.top-info {
+  max-width: 65%;
+}
+
+.top-logo {
+  width: 72px;           /* 🔥 로고 크기 강제 */
+  height: auto;
+  display: block;
+  margin-bottom: 8px;
+}
+
+.top-info h1 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+.top-info p {
+  margin: 6px 0 0;
+  font-size: 13px;
+  opacity: 0.9;
+}
+
+/* 🟨 우측 프로필 */
+.profile-box {
+  max-width: 35%;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  background: rgba(0,0,0,0.35);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+
+  padding: 10px 14px;
+  border-radius: 16px;
+
+  font-size: 12px;
+  line-height: 1.35;
+  text-align: left;
+}
+
+.profile-icon {
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.profile-text span {
+  font-size: 11px;
+  opacity: 0.85;
+}
+
+/* ───────── (의도적 큰 여백) ───────── */
+.hero-copy {
+  margin-top: 260px;   /* 🔥 핵심: 위 영역과 분리 */
+  text-align: center;
+  z-index: 10;
+}
+
+.hero-copy h2 {
+  font-size: 26px;
+  font-weight: 800;
+  margin-bottom: 6px;
+}
+
+.hero-copy p {
+  font-size: 15px;
+  opacity: 0.9;
+}
+
+/* 🟫 스크롤 힌트 */
+.scroll-hint {
+  margin-top: 32px;
+  font-size: 13px;
+  opacity: 0.8;
+  text-align: center;
+}
+
+/* ───────── 모바일 안전장치 ───────── */
+@media (max-width: 360px) {
+  .top-info h1 {
+    font-size: 18px;
+  }
+
+  .top-logo {
+    width: 64px;
+  }
+}
+
+
