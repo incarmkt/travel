@@ -732,18 +732,19 @@ if (type === "dinner") {
 }
 }
 
-     async function syncMealStatusFromServer(userId, tour, wrap) {
-  const url = `${MEAL_SHEET_URL}?id=${userId}&tour=${encodeURIComponent(tour)}`;
+async function syncMealStatusFromServer(userId, tour, wrap) {
+  const url = `${MEAL_SHEET_URL}?mode=customerAdmin&id=${userId}`;
   const res = await fetch(url);
   const data = await res.json();
 
-  if (data.paid) {
-    setMealUI(wrap, "DONE", data.time);
+  const status = data.mealMap?.[tour]; // "APPROVE" | "CANCEL" | undefined
+
+  if (status === "APPROVE") {
+    setMealUI(wrap, "DONE", "서버 기준");
   } else {
     setMealUI(wrap, "PENDING");
   }
 }
-
 /* ================= 홈으로 ================= */
 function goHome() {
   // 히스토리 초기화
