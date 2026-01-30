@@ -94,11 +94,9 @@
       <h2 id="detailTitle"></h2>
       <div id="detailContent"></div>
 
-      <div class="nav-buttons">
-        <!-- 🔥 onclick 제거 -->
-        <button class="ghost-btn">홈으로</button>
 
         <!-- 뒤로가기는 그대로 유지 -->
+    <button class="ghost-btn" onclick="goHome()">홈으로</button>
         <button class="ghost-btn" onclick="goBack()">뒤로가기</button>
       </div>
   </div>
@@ -471,14 +469,18 @@ const travelSchedule = [
 
 /* ================= 페이지 열기 ================= */
 function openPage(type, fromHistory = false) {
+  const detail = document.getElementById("detailPage");
+
+  // 🔥 항상 초기 상태에서 시작
+  detail.style.pointerEvents = "none";
+  document.body.classList.remove("detail-open");
+
 
   if (!fromHistory) {
     pageHistory.push(type);
   }
 
   /* ================= 핵심 수정 START ================= */
-
-  const detail = document.getElementById("detailPage");
 
   // 1️⃣ 항상 display 상태 보장
   detail.style.display = "block";
@@ -746,14 +748,24 @@ function goHome() {
 
   // 상세 닫기
   document.body.classList.remove("detail-open");
+
+  const detail = document.getElementById("detailPage");
+
+  // 🔥 핵심: 상태 완전 리셋
+  detail.style.opacity = "0";
+  detail.style.pointerEvents = "none";
+  detail.style.display = "flex"; // display는 유지 (CSS 전략 유지)
+
+  // 콘텐츠 제거 (중요)
+  document.getElementById("detailTitle").textContent = "";
+  document.getElementById("detailContent").innerHTML = "";
 }
+
 
     /* ================= 뒤로가기 ================= */
 function goBack() {
-  // 현재 페이지 제거
   pageHistory.pop();
 
-  // 이전 기록 없으면 홈
   if (pageHistory.length === 0) {
     goHome();
     return;
@@ -761,9 +773,10 @@ function goBack() {
 
   const prevType = pageHistory[pageHistory.length - 1];
 
-  // history에 다시 쌓지 않고 렌더만
+  // 🔥 열려 있는 상태에서 다시 렌더
   openPage(prevType, true);
 }
+
 
   /* ================= 요청사항 전송 (여기에 추가) ================= */
 function submitRequest() {
