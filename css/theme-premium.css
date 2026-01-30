@@ -112,6 +112,11 @@ body.logged-in {
   height: 90px;
   font-size: 18px;
   background: rgba(255, 255, 255, 0.3);
+
+   display: flex;              /* ❗ 항상 존재 */
+  opacity: 0;
+  pointer-events: none;       /* ❗ 닫혀 있을 땐 클릭 차단 */
+   
 }
 
 /* 4. [DETAIL] 상세 페이지 (모바일 풀스크린 / 데스크탑 모달) */
@@ -120,14 +125,17 @@ body.logged-in {
   inset: 0;
   z-index: 3000;
   background: rgba(0,0,0,0.5);
-  display: none; /* JS에서 제어 */
+
+  display: flex;              /* ❗ 항상 존재 */
   opacity: 0;
-  transition: opacity 0.3s;
+  pointer-events: none;       /* ❗ 닫혀 있을 땐 클릭 차단 */
+
+  transition: opacity 0.3s ease;
 }
 
 body.detail-open .detail-sheet {
-  display: flex;
   opacity: 1;
+  pointer-events: auto;       /* ❗ 열렸을 때만 클릭 가능 */
 }
 
 .detail-sheet__inner {
