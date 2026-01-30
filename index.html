@@ -42,7 +42,7 @@
   
  <!-- 1️⃣ INTRO (글씨 화면) -->
   <section class="home-intro">
-    <div class="home-hero">
+   <div class="intro-stage">
       
     <img src="assets/images/logo.png"
          style="width:120px; margin-bottom:14px;">
@@ -841,28 +841,17 @@ function submitRequest() {
 
 </script>
 <script>
-/* ================= HERO COPY SCROLL FADE ================= */
-
 (function () {
-  const heroCopy = document.querySelector('.hero-copy');
-  if (!heroCopy) return;
-
-  let lastScrollY = 0;
+  let passed = false;
 
   function onScroll() {
-    const y = window.scrollY || document.documentElement.scrollTop;
-
-    // 0 ~ 120px 사이에서 서서히 사라짐
-    if (y > 60) {
-      heroCopy.classList.add('is-hidden');
-    } else {
-      heroCopy.classList.remove('is-hidden');
+    if (window.scrollY > 40 && !passed) {
+      passed = true;
+      document.body.classList.add("intro-passed");
     }
-
-    lastScrollY = y;
   }
 
-  window.addEventListener('scroll', onScroll, { passive: true });
+  window.addEventListener("scroll", onScroll, { passive: true });
 })();
 </script>
 
