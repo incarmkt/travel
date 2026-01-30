@@ -892,7 +892,8 @@ body.intro-passed .intro-stage {
 
 /* 버튼은 기존 디자인 유지(흰배경에서 안보이면 테두리만 보강) */
 .detail-sheet .ghost-btn {
-  color: #111 !
+  color: #111 !important;
+}
 
    /* ===============================
    HOME INTRO – LAYOUT FIX (FINAL)
@@ -1029,106 +1030,7 @@ body.intro-passed .intro-stage {
 
   object-fit: contain;  /* 🔥 절대 확대 금지 */
 }
-  <script>
-  .home-intro {
-  min-height: 100vh;
-  position: relative;
-  padding: 120px 20px 60px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-  .top-bar {
-  position: absolute;
-  top: 24px;
-  left: 20px;
-  right: 20px;
 
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 12px;
-
-  z-index: 20;
-}
-
-.top-logo {
-  width: 88px;
-}
-
-.top-info h1 {
-  margin: 0;
-  font-size: 22px;
-  font-weight: 800;
-  letter-spacing: -0.5px;
-}
-
-.top-info p {
-  margin: 6px 0 0;
-  font-size: 13px;
-  opacity: .9;
-}
-  .profile-box {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-
-  background: rgba(0,0,0,0.35);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-
-  padding: 10px 14px;
-  border-radius: 18px;
-  color: #fff;
-
-  font-size: 13px;
-  line-height: 1.4;
-}
-
-.profile-icon {
-  font-size: 20px;
-}
-
-.profile-text span {
-  font-size: 12px;
-  opacity: .85;
-}
-.hero-copy {
-  margin-top: 160px;
-  text-align: center;
-}
-
-.hero-copy h2 {
-  font-size: 26px;
-  font-weight: 800;
-  margin-bottom: 6px;
-}
-
-.hero-copy p {
-  font-size: 15px;
-  opacity: .9;
-}
-.scroll-hint {
-  margin-top: 40px;
-  text-align: center;
-  font-size: 13px;
-  opacity: .8;
-}
-.home-menu-section {
-  margin-top: 140px;   /* 🔥 인트로와 거리 */
-  padding-bottom: 140px;
-}
-.detail-sheet__inner,
-.detail-sheet__inner * {
-  color: #111;
-}
-
-  body.intro-passed .hero-copy {
-  opacity: .7;
-  transform: translateY(-10px);
-  transition: .3s;
-}
-</script>
 
 /* ===============================
    FORCE LAYOUT OVERRIDE (FINAL)
