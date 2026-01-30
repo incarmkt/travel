@@ -1,3 +1,7 @@
+html, body, button, input, textarea, p, span, h1, h2, h3, h4 {
+  -webkit-text-size-adjust: 100% !important;
+  text-size-adjust: 100% !important;
+}
 /* =================================================
    THEME PREMIUM – FINAL (HOME + FULL PAGE DETAIL)
 ================================================= */
@@ -609,7 +613,7 @@ body.login-lock #loginSection {
   line-height: 1.2;
 
   /* ✅ 핵심: 텍스트는 줄바꿈 허용 + 중앙 정렬 */
-  white-space: normal;
+  white-space: nowrap;   /* 🔥 다시 고정 */
   text-align: center;
 }
 
