@@ -681,4 +681,58 @@ html, body {
   margin-top: 120px;
   padding-bottom: 120px;
 }
+/* ===============================
+   HOME – BASE LINE (기준)
+=============================== */
+
+.home-intro {
+  position: relative;
+  min-height: 100vh;
+}
+
+.top-bar {
+  position: absolute;
+  top: 24px;
+  left: 20px;
+  right: 20px;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+
+  z-index: 20;
+}
+
+.hero-copy {
+  margin-top: 280px;   /* ✅ 카카오톡 기준 */
+  text-align: center;
+}
+
+.home-menu-section {
+  margin-top: 120px;
+}
+/* ===============================
+   BROWSER ADJUSTMENT
+=============================== */
+
+/* 카카오톡 (기준) */
+.ua-kakao .hero-copy {
+  margin-top: 280px;
+}
+
+/* 네이버 앱 */
+.ua-naver .hero-copy {
+  margin-top: 260px;
+}
+
+/* 아이폰 사파리 */
+.ua-ios .hero-copy {
+  margin-top: 300px;
+}
+
+/* 크롬 모바일 (카톡/네이버 제외) */
+body:not(.ua-kakao):not(.ua-naver) .hero-copy {
+  margin-top: 240px;
+}
+
 
