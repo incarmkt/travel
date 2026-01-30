@@ -376,11 +376,6 @@ body.detail-open .detail-sheet__inner {
   will-change: opacity, transform;
 }
 
-.hero-copy.is-hidden {
-  opacity: 0;
-  transform: translateY(-12px);
-  pointer-events: none;
-}
 @media (max-width: 767px) {
   .home-hero {
     padding-top: 16px;
