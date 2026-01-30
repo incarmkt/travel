@@ -570,11 +570,8 @@ if (type === "myTour") {
   setTimeout(() => {
     const wrap = document.querySelector('.meal-check[data-tour="자유일정"]');
     if (!wrap) return;
-
     syncMealStatusFromServer(currentUser.id, "자유일정", wrap);
-
-    }
-  }, 0);
+    }, 0);
 }
 
 
