@@ -423,4 +423,58 @@ body {
     overflow-y: auto !important;
   }
 }
+/* =================================================
+   HOME INTRO → MENU SCROLL FLOW (FINAL)
+   반드시 theme-premium.css 맨 아래
+================================================= */
+
+/* 글씨 화면: 1스크린 고정 */
+.home-intro {
+  height: 100vh;
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  position: relative;
+}
+
+/* 아래로 스크롤 안내 */
+.scroll-hint {
+  position: absolute;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 14px;
+  color: #fff;
+  opacity: .85;
+  letter-spacing: -0.2px;
+  animation: scrollHint 1.6s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes scrollHint {
+  0%   { transform: translate(-50%, 0); }
+  50%  { transform: translate(-50%, -8px); }
+  100% { transform: translate(-50%, 0); }
+}
+
+/* 카테고리 섹션 */
+.home-menu-section {
+  padding: 48px 0 96px;
+}
+
+/* 홈 전체는 스크롤 허용 */
+.home-view {
+  overflow: visible;
+}
+
+/* 데스크탑에서도 스크롤 차단 금지 */
+body {
+  overflow-y: auto !important;
+}
+
+/* 디테일 열릴 때만 잠금 */
+body.detail-open {
+  overflow: hidden !important;
+}
 
