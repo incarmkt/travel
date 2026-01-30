@@ -390,3 +390,37 @@ body.detail-open .detail-sheet__inner {
     margin-top: 20px;
   }
 }
+/* =========================================
+   DESKTOP SCROLL UNLOCK (최우선 강제)
+   theme-premium.css 맨 아래에 추가
+========================================= */
+
+html, body {
+  height: auto !important;
+  min-height: 100% !important;
+  overflow-y: auto !important;
+}
+
+body {
+  position: static !important;
+}
+
+/* 메인이 100vh로 고정돼 있으면 스크롤이 죽음 → 해제 */
+#mainSection {
+  height: auto !important;
+  min-height: 100vh !important;
+  overflow: visible !important;
+}
+
+/* 어떤 상위 래퍼가 overflow hidden이면 페이지 스크롤이 막힘 → 해제 */
+.main-bg, .home-view, #homeView {
+  overflow: visible !important;
+}
+
+/* (혹시라도) 데스크탑에서만 잠금 걸린 경우 대비 */
+@media (min-width: 768px) {
+  body.logged-in {
+    overflow-y: auto !important;
+  }
+}
+
