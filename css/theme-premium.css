@@ -473,4 +473,40 @@ body {
 body.detail-open {
   overflow: hidden !important;
 }
+/* =========================================
+   INTRO STAGE – PREMIUM LAYOUT PRESERVE
+========================================= */
+
+.home-intro {
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* 기존 레이아웃 보존용 스테이지 */
+.intro-stage {
+  height: 100vh;
+  position: sticky;
+  top: 0;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+
+  padding: 48px 32px;
+  box-sizing: border-box;
+
+  transition: transform 0.9s cubic-bezier(.25,.8,.25,1);
+}
+
+/* 스크롤 시 통째로 위로 밀림 */
+body.intro-passed .intro-stage {
+  transform: translateY(-100%);
+}
+
+/* 메뉴는 자연스럽게 뒤에서 등장 */
+.home-menu-section {
+  position: relative;
+  z-index: 1;
+  margin-top: 100vh;
+}
 
