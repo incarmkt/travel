@@ -847,5 +847,21 @@ function submitRequest() {
   window.addEventListener("scroll", onScroll, { passive: true });
 })();
 </script>
+  <script>
+(function () {
+  const ua = navigator.userAgent;
+
+  if (/KAKAOTALK/i.test(ua)) {
+    document.body.classList.add('ua-kakao');
+  }
+  if (/NAVER/i.test(ua)) {
+    document.body.classList.add('ua-naver');
+  }
+  if (/iPhone|iPad|iPod/i.test(ua)) {
+    document.body.classList.add('ua-ios');
+  }
+})();
+</script>
+
 </body>
 </html>
