@@ -573,9 +573,6 @@ if (type === "myTour") {
 
     syncMealStatusFromServer(currentUser.id, "자유일정", wrap);
 
-    const saved = loadMealPaid(currentUser.id, "자유일정");
-    if (!wrap.classList.contains("done") && saved?.time) {
-      setMealUI(wrap, "DONE", saved.time);
     }
   }, 0);
 }
