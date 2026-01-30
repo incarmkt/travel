@@ -417,173 +417,7 @@ html, body {
     overflow-y: auto !important;
   }
 }
-/* =================================================
-   HOME INTRO → MENU SCROLL FLOW (FINAL)
-   반드시 theme-premium.css 맨 아래
-================================================= */
 
-/* 글씨 화면: 1스크린 고정 */
-.home-intro {
-  height: 100vh;
-  min-height: 100svh;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  position: relative;
-}
-
-/* 아래로 스크롤 안내 */
-.scroll-hint {
-  position: absolute;
-  bottom: 24px;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 14px;
-  color: #fff;
-  opacity: .85;
-  letter-spacing: -0.2px;
-  animation: scrollHint 1.6s ease-in-out infinite;
-  pointer-events: none;
-}
-
-@keyframes scrollHint {
-  0%   { transform: translate(-50%, 0); }
-  50%  { transform: translate(-50%, -8px); }
-  100% { transform: translate(-50%, 0); }
-}
-
-/* 카테고리 섹션 */
-.home-menu-section {
-  padding: 48px 0 96px;
-}
-
-/* 홈 전체는 스크롤 허용 */
-.home-view {
-  overflow: visible;
-}
-
-/* 데스크탑에서도 스크롤 차단 금지 */
-body {
-  position: static !important;
-  overflow-y: auto !important;
-}
-
-/* 디테일 열릴 때만 잠금 */
-body.detail-open {
-  overflow: hidden !important;
-}
-/* =========================================
-   INTRO STAGE – PREMIUM LAYOUT PRESERVE
-========================================= */
-
-.home-intro {
-  height: 100vh;
-  overflow: hidden;
-}
-
-/* 기존 레이아웃 보존용 스테이지 */
-.intro-stage {
-  height: 100vh;
-  position: sticky;
-  top: 0;
-
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-
-  padding: 48px 32px;
-  box-sizing: border-box;
-
-  transition: transform 0.9s cubic-bezier(.25,.8,.25,1);
-}
-
-/* 스크롤 시 통째로 위로 밀림 */
-body.intro-passed .intro-stage {
-  transform: translateY(-100%);
-}
-
-/* 메뉴는 자연스럽게 뒤에서 등장 */
-.home-menu-section {
-  position: relative;
-  z-index: 1;
-  margin-top: 100vh;
-}
-
-/* =================================================
-   MOBILE FIX – INTRO(1화면) → MENU(1화면) 스냅 + 플래시/글씨색 방지
-   (theme-premium.css 맨 아래에 추가)
-================================================= */
-@media (max-width: 767px) {
-
-  /* ✅ 모바일은 body가 아니라 mainSection이 스크롤 담당 */
-  body.logged-in {
-    overflow: hidden !important;          /* 바디 스크롤 잠금 */
-    color: #fff !important;               /* 글씨 검정으로 바뀌는거 방지 */
-    background: url("../assets/images/photo2.jpg") center/cover no-repeat fixed !important;
-  }
-
-  /* ✅ 흰 배경(플래시) 만드는 상위 배경들 투명화 */
-  #mainSection,
-  .main-bg,
-  #homeView,
-  .home-view {
-    background: transparent !important;
-  }
-
-  /* ✅ 스크롤은 mainSection에서만 */
-  #mainSection {
-    height: 100dvh !important;
-    overflow-y: auto !important;
-    -webkit-overflow-scrolling: touch;
-    scroll-snap-type: y mandatory;        /* 🔥 1화면씩 “확” 넘어가게 */
-  }
-
-  /* ✅ 인트로/메뉴를 각각 한 화면으로 고정 */
-  .home-intro,
-  .home-menu-section {
-    min-height: 100dvh !important;
-    scroll-snap-align: start;
-    scroll-snap-stop: always;
-  }
-
-  /* ✅ 인트로 영역은 중앙 정렬 + 글씨 흰색 유지 */
-  .home-intro {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    padding: 64px 20px 24px !important;
-    color: #fff !important;
-    text-shadow: 0 8px 22px rgba(0,0,0,0.35);
-  }
-
-  .home-intro .home-hero,
-  .home-intro .hero-copy {
-    color: #fff !important;
-  }
-
-  /* ✅ “아래로 스크롤”은 인트로 하단에 고정 (메뉴로 따라오지 않게) */
-  .home-intro .scroll-hint {
-    position: absolute;
-    left: 50%;
-    bottom: 18px;
-    transform: translateX(-50%);
-    margin: 0 !important;
-    z-index: 10;
-    color: rgba(255,255,255,0.9) !important;
-    pointer-events: none;
-  }
-
-  /* ✅ 메뉴 화면은 위에서 시작 (인트로 일부가 보이는 중간상태 방지) */
-  .home-menu-section {
-    padding: 24px 0 80px !important;
-  }
-
-  /* 혹시 base.css/desktop.css가 텍스트색을 덮으면 방지 */
-  .home-menu,
-  .home-menu button {
-    color: #fff !important;
-  }
-}
 /* =================================================
    MOBILE TYPOGRAPHY TUNING (INTRO TEXT)
 ================================================= */
@@ -629,121 +463,6 @@ body.intro-passed .intro-stage {
 
 }
 
-/* =================================================
-   HOME – INTRO LAYOUT (FINAL)
-================================================= */
-
-/* 전체 홈 뷰 */
-.home-view {
-  overflow: visible;
-}
-
-/* ---------- INTRO 영역 ---------- */
-.home-intro {
-  height: 100dvh;
-  min-height: 100svh;
-  position: relative;
-}
-
-/* 실제 콘텐츠 스테이지 */
-.intro-stage {
-  height: 100%;
-  padding: 56px 20px 72px;
-
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-
-  text-align: center;
-  color: #fff;
-  text-shadow: 0 8px 22px rgba(0,0,0,0.35);
-}
-
-/* 로고 */
-.hero-logo {
-  width: 120px;
-  margin-bottom: 18px;
-}
-
-/* 메인 타이틀 */
-.home-title {
-  font-size: clamp(30px, 6.5vw, 42px);
-  margin: 0 0 6px;
-  font-weight: 800;
-}
-
-/* 날짜 */
-.home-sub.date {
-  font-size: 14px;
-  opacity: 0.85;
-  margin-bottom: 24px;
-}
-
-/* ---------- WELCOME CARD ---------- */
-.welcome-card {
-  margin-top: 8px;
-  padding: 14px 22px;
-
-  background: rgba(0,0,0,0.35);
-  backdrop-filter: blur(8px);
-  border-radius: 18px;
-
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 6px;
-}
-
-.welcome-name {
-  margin: 0;
-  font-size: 16px;
-  font-weight: 700;
-}
-
-.welcome-msg {
-  margin: 0;
-  font-size: 14px;
-  opacity: 0.9;
-}
-
-/* ---------- 감성 카피 ---------- */
-.hero-copy {
-  margin-top: 36px;
-}
-
-.hero-copy h2 {
-  margin: 0 0 6px;
-  font-size: 22px;
-  font-weight: 700;
-}
-
-.hero-copy p {
-  margin: 0;
-  font-size: 14px;
-  opacity: 0.9;
-}
-
-/* ---------- 스크롤 힌트 ---------- */
-.scroll-hint {
-  position: absolute;
-  left: 50%;
-  bottom: 22px;
-  transform: translateX(-50%);
-
-  font-size: 14px;
-  opacity: 0.9;
-  letter-spacing: -0.2px;
-
-  animation: scrollHint 1.6s ease-in-out infinite;
-  pointer-events: none;
-}
-
-@keyframes scrollHint {
-  0%   { transform: translate(-50%, 0); }
-  50%  { transform: translate(-50%, -8px); }
-  100% { transform: translate(-50%, 0); }
-}
 
 /* =================================================
    HOME – MENU SECTION
@@ -895,121 +614,6 @@ body.intro-passed .intro-stage {
   color: #111 !important;
 }
 
-   /* ===============================
-   HOME INTRO – LAYOUT FIX (FINAL)
-   =============================== */
-
-/* 전체 인트로 기준 */
-.home-intro {
-  position: relative;
-  min-height: 100vh;
-  padding: 0;
-}
-
-/* ───────── 🟥 + 🟨 TOP BAR ───────── */
-.top-bar {
-  position: absolute;
-  top: 24px;
-  left: 20px;
-  right: 20px;
-
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-
-  z-index: 20;
-}
-
-/* 🟥 좌측 정보 */
-.top-info {
-  max-width: 65%;
-}
-
-.top-logo {
-  width: 72px;           /* 🔥 로고 크기 강제 */
-  height: auto;
-  display: block;
-  margin-bottom: 8px;
-}
-
-.top-info h1 {
-  margin: 0;
-  font-size: 20px;
-  font-weight: 800;
-  line-height: 1.2;
-}
-
-.top-info p {
-  margin: 6px 0 0;
-  font-size: 13px;
-  opacity: 0.9;
-}
-
-/* 🟨 우측 프로필 */
-.profile-box {
-  max-width: 35%;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-
-  background: rgba(0,0,0,0.35);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-
-  padding: 10px 14px;
-  border-radius: 16px;
-
-  font-size: 12px;
-  line-height: 1.35;
-  text-align: left;
-}
-
-.profile-icon {
-  font-size: 18px;
-  flex-shrink: 0;
-}
-
-.profile-text span {
-  font-size: 11px;
-  opacity: 0.85;
-}
-
-/* ───────── (의도적 큰 여백) ───────── */
-.hero-copy {
-  margin-top: 260px;   /* 🔥 핵심: 위 영역과 분리 */
-  text-align: center;
-  z-index: 10;
-}
-
-.hero-copy h2 {
-  font-size: 26px;
-  font-weight: 800;
-  margin-bottom: 6px;
-}
-
-.hero-copy p {
-  font-size: 15px;
-  opacity: 0.9;
-}
-
-/* 🟫 스크롤 힌트 */
-.scroll-hint {
-  margin-top: 32px;
-  font-size: 13px;
-  opacity: 0.8;
-  text-align: center;
-}
-
-/* ───────── 모바일 안전장치 ───────── */
-@media (max-width: 360px) {
-  .top-info h1 {
-    font-size: 18px;
-  }
-
-  .top-logo {
-    width: 64px;
-  }
-}
 
 /* =========================================
    MOBILE SPLASH IMAGE SIZE FIX (ONLY)
@@ -1032,31 +636,49 @@ body.intro-passed .intro-stage {
 }
 
 
+
 /* ===============================
-   FORCE LAYOUT OVERRIDE (FINAL)
+   HOME LAYOUT – SINGLE SOURCE
    =============================== */
 
+/* 전체 인트로 */
 .home-intro {
-  height: auto !important;
-  min-height: 100vh !important;
-  padding: 120px 20px 60px !important;
+  position: relative;
+  min-height: 100vh;
 }
 
+/* 상단 바 (로고 + 정보 + 프로필) */
 .top-bar {
-  position: absolute !important;
-  top: 24px !important;
-  left: 20px !important;
-  right: 20px !important;
-  display: flex !important;
-  justify-content: space-between !important;
-  align-items: flex-start !important;
+  position: absolute;
+  top: 24px;
+  left: 20px;
+  right: 20px;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+
+  z-index: 20;
 }
 
+/* 감성 카피 영역 */
 .hero-copy {
-  margin-top: 200px !important;
-  text-align: center !important;
+  margin-top: 260px;   /* 🟥🟨 영역과 분리되는 핵심 값 */
+  text-align: center;
+  color: #fff;
 }
 
-.home-menu-section {
-  margin-top: 140px !important;
+/* 스크롤 힌트 */
+.scroll-hint {
+  margin-top: 32px;
+  text-align: center;
+  font-size: 13px;
+  opacity: .85;
 }
+
+/* 메뉴 섹션은 인트로 아래 */
+.home-menu-section {
+  margin-top: 120px;
+  padding-bottom: 120px;
+}
+
