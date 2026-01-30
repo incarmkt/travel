@@ -56,6 +56,10 @@ body.logged-in {
 
 .home-title { margin: 0; font-size: 44px; }
 .home-sub { margin-top: 10px; font-size: 18px; }
+.hero-copy.is-hidden {
+  opacity: 0;
+  transform: translateY(-12px);
+}
 
 .home-menu {
   margin: 0 auto;
