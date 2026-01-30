@@ -833,10 +833,20 @@ body.intro-passed .intro-stage {
 ================================ */
 
 /* 상세 시트 자체 기본 글자색 */
-.detail-sheet,
-.detail-sheet__inner,
-.detail-sheet__inner * {
-  color: #111 !important;
+.detail-sheet__inner {
+  color: #111;
+}
+#detailContent,
+#detailContent p,
+#detailContent li {
+  color: #111;
+}
+.meal-paid {
+  color: #16a34a !important;   /* 초록 */
+}
+
+.meal-unpaid {
+  color: #dc2626 !important;   /* 빨강 */
 }
 
 /* 제목/헤더/섹션 타이틀 */
