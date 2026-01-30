@@ -1,3 +1,5 @@
+고객용
+
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -7,10 +9,8 @@
 
   <link rel="stylesheet" href="css/base.css">
   <link rel="stylesheet" href="css/desktop.css" media="(min-width: 768px)">
-  <!-- <link rel="stylesheet" href="css/mobile.css" media="(max-width: 767px)"> -->
-  <link rel="stylesheet" href="css/theme-premium.css">
+  <link rel="stylesheet" href="css/mobile.css" media="(max-width: 767px)">
 </head>
-
 <body>
   
 <!-- ✅ 여기, body 시작하자마자 -->
@@ -18,6 +18,21 @@
   <img src="assets/images/iscposter.jpg" alt="ISC Poster">
 </div>
   
+<!-- ================= HEADER ================= -->
+<header class="header compact" id="topHeader" style="display:none;">
+  <div class="header-left">
+    <img src="assets/images/logo.png" class="logo">
+    <div>
+      <h1>2025 ISC 대만 여행</h1>
+      <p class="sub">2026.03.11 ~ 03.14 | 인카금융서비스</p>
+    </div>
+  </div>
+
+  <div class="header-right">
+    <p class="congrats">ISC 달성을 축하드립니다.</p>
+    <p class="welcome-text"><strong id="employeeName"></strong> 님, 환영합니다</p>
+  </div>
+</header>
 
 <!-- ================= LOGIN (FINAL / DO NOT TOUCH) ================= -->
 <section id="loginSection" class="login-hero">
@@ -37,75 +52,51 @@
 <!-- ================= MAIN (LOGIN AFTER) ================= -->
 <main id="mainSection" class="main-bg" style="display:none;">
 
-  <!-- ================= HOME VIEW ================= -->
-<section id="homeView" class="home-view">
-  
- <!-- 1️⃣ INTRO (글씨 화면) -->
-  <section class="home-intro">
-   <div class="intro-stage">
-      <div class="top-bar">
-<img src="assets/images/logo.png" class="top-logo">
+  <div class="layout">
 
-<div class="top-info">
-    <h1>2025 ISC 대만 여행</h1>
-    <p>2026.03.11 ~ 03.14 | 인카금융서비스</p>
-  </div>
-
-  <div class="profile-box">
-    <div class="profile-icon">👤</div>
-    <div class="profile-text">
-      <strong id="employeeName"></strong> 님, 환영합니다<br>
-      <span>ISC 달성을 축하드립니다</span>
-    </div>
-  </div>
-</div>
-
-  <!-- 감성 카피 영역 -->
-<div class="hero-copy">
-  <h2>ISC Taiwan 2025</h2>
-  <p>지금부터 여정이 시작됩니다</p>
-</div>
-
- <div class="scroll-hint">
-      ↓ 아래로 스크롤 하세요
-    </div>
-  </section>
-
-  <!-- 2️⃣ MENU (카테고리 화면) -->
-  <section class="home-menu-section">
-    <div class="home-menu-wrap">
-      <nav class="home-menu">
-      <button onclick="openPage('taiwan')">🇹🇼 대만의 모든 것</button>
+    <!-- ===== LEFT MENU ===== -->
+    <aside class="side-menu">
       <button onclick="openPage('schedule')">🗓 여행 일정</button>
       <button onclick="openPage('flight')">✈️ 항공편 정보</button>
+      <button onclick="openPage('taiwan')">🇹🇼 대만의 모든 것</button>
       <button onclick="openPage('myTour')">🎒 나의 선택 관광</button>
       <button onclick="openPage('dinner')">🍽 만찬 안내</button>
       <button onclick="openPage('request')">📝 요청사항</button>
       <button onclick="openPage('contact')">📞 긴급 연락망</button>
-    </nav>
- </div>
- </section>
+    </aside>
 
-  </section>
+    <!-- ===== RIGHT CONTENT ===== -->
+    <section class="content-area">
 
-  <!-- ================= DETAIL OVERLAY (BOTTOM SHEET) ================= -->
-<section id="detailPage" class="detail-sheet" onclick="goHome()">
-  <div class="detail-sheet__inner" onclick="event.stopPropagation()">
-      <h2 id="detailTitle"></h2>
-      <div id="detailContent"></div>
+  <!-- 🔴 메인 패널 (RED) -->
+  <div class="main-panel">
 
-      <div class="nav-buttons">
-        <!-- 🔥 onclick 제거 -->
-        <button class="ghost-btn">홈으로</button>
+    <!-- 홈일 때 -->
+    <div id="homeArea" class="home-view">
+      <img src="assets/images/home.jpg" alt="Home Image">
+    </div>
 
-        <!-- 뒤로가기는 그대로 유지 -->
-        <button class="ghost-btn" onclick="goBack()">뒤로가기</button>
-      </div>
+    <!-- 상세 페이지 -->
+<section id="detailPage" class="detail" style="display:none;">
+  <h2 id="detailTitle"></h2>
+
+  <div id="detailContent"></div>
+
+  <div class="nav-buttons">
+    <button class="ghost-btn" onclick="goHome()">홈으로</button>
+    <button class="ghost-btn" onclick="goBack()">뒤로가기</button>
   </div>
-
 </section>
 
 
+  </div>
+
+  <!-- 🟨 고정 포스터 패널 (YELLOW) -->
+  <aside class="fixed-poster">
+    <img src="assets/images/iscposter.jpg" alt="Fixed Poster">
+  </aside>
+
+  </div>
 </main>
   <script>
 /* ================= 공통 ================= */
@@ -385,11 +376,13 @@ function login() {
 
     setTimeout(() => {
       splash.style.display = "none";
+      document.getElementById("topHeader").style.display = "flex";
       document.getElementById("mainSection").style.display = "block";
     }, 2000);
   } 
   // 🖥 데스크탑: 즉시 진입
   else {
+    document.getElementById("topHeader").style.display = "flex";
     document.getElementById("mainSection").style.display = "block";
   }
 
@@ -471,31 +464,26 @@ const travelSchedule = [
 
 /* ================= 페이지 열기 ================= */
 function openPage(type, fromHistory = false) {
+  const isMobile = window.innerWidth <= 767;
 
+  // 🔹 사용자 클릭으로 열었을 때만 기록
   if (!fromHistory) {
     pageHistory.push(type);
   }
 
-  /* ================= 핵심 수정 START ================= */
+document.getElementById("homeArea").style.display = "none";
+document.getElementById("detailPage").style.display = "block";
 
-  const detail = document.getElementById("detailPage");
-
-  // 1️⃣ 항상 display 상태 보장
-  detail.style.display = "block";
-
-  // 2️⃣ 다음 프레임에서 애니메이션 시작
-  requestAnimationFrame(() => {
-    document.body.classList.add("detail-open");
-  });
-
-  /* ================= 핵심 수정 END ================= */
+if (isMobile) {
+  document.querySelector(".side-menu").style.display = "none";
+}
 
   const t = document.getElementById("detailTitle");
   const c = document.getElementById("detailContent");
 
-  c.innerHTML = `
-  <div class="detail-content-wrap">
-    ${travelSchedule.map(day => `
+  if (type === "schedule") {
+    t.textContent = "🗓 여행 일정";
+    c.innerHTML = travelSchedule.map(day => `
       <div class="day-card">
         <h3>${day.day} <span>${day.date}</span></h3>
         <p class="day-title">${day.title}</p>
@@ -515,18 +503,15 @@ function openPage(type, fromHistory = false) {
           `).join("")}
         </div>
       </div>
-    `).join("")}
-  </div>
-`;
-
+    `).join("");
+  } // ← openPage 끝
 
 if (type === "flight") {
   const dep = currentUser.flight.departure;
   const ret = currentUser.flight.return;
 
   t.textContent = "✈️ 항공편 정보";
- c.innerHTML = `
-  <div class="detail-content-wrap">
+  c.innerHTML = `
     <div class="day-card">
       <h3>출국편</h3>
       <div class="schedule-item">
@@ -556,31 +541,48 @@ if (type === "flight") {
     </div>
   `;
 }
- 
+ // ← openPage 끝
 
 if (type === "myTour") {
   t.textContent = "🎒 나의 선택 관광";
- c.innerHTML = `
-  <div class="detail-content-wrap">
+  c.innerHTML = `
     <div class="mytour-wrap">
       ${renderMyTour()}
     </div>
   `;
 
-  setTimeout(() => {
-    const wrap = document.querySelector('.meal-check[data-tour="자유일정"]');
-    if (!wrap) return;
+  const wrap = document.querySelector('.meal-check[data-tour="자유일정"]');
+  if (wrap && currentUser) {
+
+    // 🔥 서버 기준
     syncMealStatusFromServer(currentUser.id, "자유일정", wrap);
-    }, 0);
+
+    // (선택) 서버 실패 대비용 보조
+    const saved = loadMealPaid(currentUser.id, "자유일정");
+    if (!wrap.classList.contains("done") && saved?.time) {
+      setMealUI(wrap, "DONE", saved.time);
+    }
+  }
 }
+  
+ async function syncMealStatusFromServer(userId, tour, wrap) {
+  const url = `${MEAL_SHEET_URL}?id=${userId}&tour=${encodeURIComponent(tour)}`;
+  const res = await fetch(url);
+  const data = await res.json();
 
-
+  if (data.paid) {
+    setMealUI(wrap, "DONE", data.time);
+  } else {
+    setMealUI(wrap, "PENDING");
+  }
+}
+ 
+ // ← openPage 끝
 
 if (type === "taiwan") {
   t.textContent = "🇹🇼 대만의 모든 것";
 
- c.innerHTML = `
-  <div class="detail-content-wrap">
+  c.innerHTML = `
     <div class="country-compare-grid">
       <!-- 대한민국 -->
       <div class="country-card">
@@ -648,35 +650,26 @@ if (type === "taiwan") {
 
   startWorldClock();
 }
- 
+ // ← openPage 끝
 
-if (type === "dinner") {
-  t.textContent = "🍽 만찬 안내";
-  c.innerHTML = `
-    <div class="detail-content-wrap">
-      <div class="card">ISC 공식 만찬</div>
-    </div>
-  `;
-}
-
+  if (type === "dinner") {
+    t.textContent = "🍽 만찬 안내";
+    c.innerHTML = `<div class="card">ISC 공식 만찬</div>`;
+  }
+ // ← openPage 끝
   
- if (type === "request") {
+  if (type === "request") {
   t.textContent = "📝 요청사항";
-  c.innerHTML = `
-    <div class="detail-content-wrap">
-      <div class="card">
-        <textarea id="requestInput" placeholder="요청사항 입력"></textarea>
-        <button class="primary-btn" onclick="submitRequest()">제출</button>
-      </div>
-    </div>
-  `;
+  c.innerHTML = `<div class="card">
+    <textarea id="requestInput" placeholder="요청사항 입력"></textarea>
+    <button class="primary-btn" onclick="submitRequest()">제출</button>
+  </div>`;
 }
   /* ================= 담당자 0000000저부분 수정직접하면 바뀜 ================= */
  if (type === "contact") {
   t.textContent = "📞 긴급 연락망";
 
   c.innerHTML = `
-  <div class="detail-content-wrap">
     <div class="day-card">
       <h3>비상 연락망</h3>
 
@@ -726,30 +719,26 @@ if (type === "dinner") {
 }
 }
 
-async function syncMealStatusFromServer(userId, tour, wrap) {
-  const url = `${MEAL_SHEET_URL}?mode=customerAdmin&id=${userId}`;
-  const res = await fetch(url);
-  const data = await res.json();
 
-  const status = data.mealMap?.[tour]; // "APPROVE" | "CANCEL" | undefined
-
-  if (status === "APPROVE") {
-    setMealUI(wrap, "DONE", "서버 기준");
-  } else {
-    setMealUI(wrap, "PENDING");
-  }
-}
 /* ================= 홈으로 ================= */
 function goHome() {
-  // 히스토리 초기화
+  const isMobile = window.innerWidth <= 767;
+
+  // 🔥 히스토리 완전 초기화
   pageHistory = [];
 
-  // 상세 닫기
-  document.body.classList.remove("detail-open");
-}
+  document.getElementById("detailPage").style.display = "none";
 
+  if (isMobile) {
+    document.querySelector(".side-menu").style.display = "block";
+  } else {
+    document.getElementById("homeArea").style.display = "block";
+  }
+}
     /* ================= 뒤로가기 ================= */
 function goBack() {
+  const isMobile = window.innerWidth <= 767;
+
   // 현재 페이지 제거
   pageHistory.pop();
 
@@ -761,10 +750,9 @@ function goBack() {
 
   const prevType = pageHistory[pageHistory.length - 1];
 
-  // history에 다시 쌓지 않고 렌더만
+  // 🔥 history에 다시 쌓지 않고 렌더만
   openPage(prevType, true);
 }
-
   /* ================= 요청사항 전송 (여기에 추가) ================= */
 function submitRequest() {
   const requestText = document.getElementById("requestInput").value.trim();
@@ -833,37 +821,7 @@ function submitRequest() {
 }
 
 </script>
-<script>
-(function () {
-  let passed = false;
 
-  function onScroll() {
-    if (window.scrollY > 40 && !passed) {
-      passed = true;
-      document.body.classList.add("intro-passed");
-    }
-  }
-
-  window.addEventListener("scroll", onScroll, { passive: true });
-})();
-</script>
-  <script>
-(function () {
-  const ua = navigator.userAgent;
-
-  if (/KAKAOTALK/i.test(ua)) {
-    document.body.classList.add('ua-kakao');
-  }
-  if (/NAVER/i.test(ua)) {
-    document.body.classList.add('ua-naver');
-  }
-  if (/iPhone|iPad|iPod/i.test(ua)) {
-    document.body.classList.add('ua-ios');
-  }
-})();
-</script>
 
 </body>
 </html>
-
-잠깐임시
