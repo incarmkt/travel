@@ -1,4 +1,3 @@
-흐름좋아
 /* =================================================
    THEME PREMIUM – FINAL (HOME + FULL PAGE DETAIL)
 ================================================= */
@@ -65,13 +64,6 @@ body.logged-in {
   grid-template-columns: 1fr 1fr;
   grid-auto-flow: row dense;
   gap: 14px;
-}
-
-.hero-screen {
-  height: 100vh;        /* 딱 첫 화면 */
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
 }
 
 
