@@ -2,15 +2,7 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <meta
-  name="viewport"
-  content="width=device-width,
-           initial-scale=1,
-           minimum-scale=1,
-           maximum-scale=1,
-           viewport-fit=cover,
-           user-scalable=no">
-
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>2025 ISC 대만 여행</title>
 
   <link rel="stylesheet" href="css/base.css">
@@ -41,101 +33,59 @@
     </div>
   </div>
 </section>
-  
+
 <!-- ================= MAIN (LOGIN AFTER) ================= -->
-<main id="mainSection" style="display:none;">
-  
-<!-- ================= HOME VIEW ================= -->
-<section id="homeView" class="home-view">
+<main id="mainSection" class="main-bg" style="display:none;">
 
-  <!-- ================= HERO SCREEN (첫 화면 전용) ================= -->
-  <section class="hero-screen">
+  <!-- ================= HOME VIEW ================= -->
+  <section id="homeView" class="home-view">
 
-    <div class="home-hero">
+    <!-- (선택) 헤더 아래에 “ISC Taiwan 2025 / 지금부터 여정이 시작됩니다” 같은 영역을 넣고 싶으면 여기 -->
+<div class="home-hero">
 
-      <!-- 브랜드 / 정보 영역 -->
-      <div class="hero-info">
-        <img src="assets/images/logo.png"
-             style="width:120px; margin-bottom:14px;">
+  <!-- 브랜드 / 정보 영역 -->
+  <div class="hero-info">
+    <img src="assets/images/logo.png"
+         style="width:120px; margin-bottom:14px;">
 
-        <h2 class="home-title">2025 ISC 대만 여행</h2>
+    <h2 class="home-title">2025 ISC 대만 여행</h2>
 
-        <p class="home-sub">
-          2026.03.11 ~ 03.14 | 인카금융서비스
-        </p>
+    <p class="home-sub">
+      2026.03.11 ~ 03.14 | 인카금융서비스
+    </p>
 
-        <p class="home-sub" style="margin-top:8px; font-weight:600;">
-          <strong id="employeeName"></strong> 님, 환영합니다
-        </p>
+    <p class="home-sub" style="margin-top:8px; font-weight:600;">
+      <strong id="employeeName"></strong> 님, 환영합니다
+    </p>
 
-        <p class="home-sub" style="opacity:.85;">
-          ISC 달성을 축하드립니다
-        </p>
-      </div>
+    <p class="home-sub" style="opacity:.85;">
+      ISC 달성을 축하드립니다
+    </p>
+  </div>
 
-      <!-- 감성 카피 영역 -->
-      <div class="hero-copy">
-        <h2 class="home-title">ISC Taiwan 2025</h2>
-        <p class="home-sub">지금부터 여정이 시작됩니다</p>
-      </div>
+  <!-- 감성 카피 영역 -->
+  <div class="hero-copy">
+    <h2 class="home-title">ISC Taiwan 2025</h2>
+    <p class="home-sub">지금부터 여정이 시작됩니다</p>
+  </div>
 
-    </div>
+</div>
 
-    <!-- 스크롤 유도 (첫 화면 전용) -->
-    <div class="scroll-hint">
-      <span>아래로 스크롤하세요</span>
-      <div class="arrow">↓</div>
-    </div>
 
-  </section>
-
-  <!-- ================= MENU SCREEN (카테고리 화면) ================= -->
-  <section class="menu-screen">
-
-    <div class="home-menu-wrap">
-      <nav class="home-menu">
-       <button onclick="openPage('flight')">
-  <span class="m-ico">✈️</span>
-  <span class="m-txt">항공편 정보</span>
-</button>
-
-<button onclick="openPage('taiwan')">
-  <span class="m-ico">🇹🇼</span>
-  <span class="m-txt">대만의 모든 것</span>
-</button>
-
-<button onclick="openPage('schedule')">
-  <span class="m-ico">🗓</span>
-  <span class="m-txt">여행 일정</span>
-</button>
-
-<button onclick="openPage('myTour')">
-  <span class="m-ico">🎒</span>
-  <span class="m-txt">나의 선택 관광</span>
-</button>
-
-<button onclick="openPage('dinner')">
-  <span class="m-ico">🍽</span>
-  <span class="m-txt">만찬 안내</span>
-</button>
-
-<button onclick="openPage('request')">
-  <span class="m-ico">📝</span>
-  <span class="m-txt">요청사항</span>
-</button>
-
-<button onclick="openPage('contact')">
-  <span class="m-ico">📞</span>
-  <span class="m-txt">긴급 연락망</span>
-</button>
-
-      </nav>
-    </div>
+    <!-- 홈 메뉴(기존 side-menu 버튼을 그대로 이쪽으로 옮김) -->
+      <div class="home-menu-wrap">
+    <nav class="home-menu">
+      <button onclick="openPage('taiwan')">🇹🇼 대만의 모든 것</button>
+      <button onclick="openPage('schedule')">🗓 여행 일정</button>
+      <button onclick="openPage('flight')">✈️ 항공편 정보</button>
+      <button onclick="openPage('myTour')">🎒 나의 선택 관광</button>
+      <button onclick="openPage('dinner')">🍽 만찬 안내</button>
+      <button onclick="openPage('request')">📝 요청사항</button>
+      <button onclick="openPage('contact')">📞 긴급 연락망</button>
+    </nav>
+ </div>
 
   </section>
-
-</section>
-
 
   <!-- ================= DETAIL OVERLAY (BOTTOM SHEET) ================= -->
 <section id="detailPage" class="detail-sheet" onclick="goHome()">
@@ -162,7 +112,6 @@
 let pageHistory = [];
 let employees = [];
 let currentUser = null;
-    let savedScrollY = 0;
 const ADMIN_PASSWORD = "0000";
     
     /* ================= 선택관광 템플릿 ================= */
@@ -272,8 +221,7 @@ function renderMyTour() {
 
   return matchedCards.map(t => t.html).join("");
 }
-    
-document.body.classList.add("login-lock");
+
 fetch("people/employees.json?ts=" + Date.now())
   .then(res => res.json())
   .then(data => {
@@ -429,14 +377,6 @@ function login() {
   // 로그인 화면 제거
   document.getElementById("loginSection").style.display = "none";
 
-  // 이름 표시
-  document.getElementById("employeeName").textContent = user.name;
-
-  // 로그인 상태 클래스
-  document.body.classList.add("logged-in");
-
-  // ✅ 여기서는 잠금 해제하지 말고, mainSection이 실제로 뜰 때 해제한다
-
   // 📱 모바일: 스플래시 2초
   if (window.innerWidth <= 767) {
     const splash = document.getElementById("mobileSplash");
@@ -445,23 +385,16 @@ function login() {
     setTimeout(() => {
       splash.style.display = "none";
       document.getElementById("mainSection").style.display = "block";
-
-      // 🔓 여기서만 해제
-      document.body.classList.remove("login-lock");
     }, 2000);
   } 
   // 🖥 데스크탑: 즉시 진입
   else {
     document.getElementById("mainSection").style.display = "block";
-
-    // 🔓 데스크탑은 즉시 해제
-    document.body.classList.remove("login-lock");
-     // ✅🔥 무조건 스크롤 잠금 해제 (보험용)
-  document.body.classList.remove("login-lock");
   }
-}
 
-  
+  document.getElementById("employeeName").textContent = user.name;
+  document.body.classList.add("logged-in");
+}
 function tryAutoLogin() {
   const params = new URLSearchParams(window.location.search);
   const eid = params.get("eid");
@@ -534,15 +467,9 @@ const travelSchedule = [
     ]
   }
 ];
-    
 
 /* ================= 페이지 열기 ================= */
 function openPage(type, fromHistory = false) {
-  savedScrollY = window.scrollY;
-
-document.body.style.position = "fixed";
-document.body.style.top = `-${savedScrollY}px`;
-document.body.style.width = "100%";
 
   if (!fromHistory) {
     pageHistory.push(type);
@@ -818,17 +745,12 @@ if (type === "dinner") {
 
 /* ================= 홈으로 ================= */
 function goHome() {
+  // 히스토리 초기화
   pageHistory = [];
 
+  // 상세 닫기
   document.body.classList.remove("detail-open");
-
-  document.body.style.position = "";
-  document.body.style.top = "";
-  document.body.style.width = "";
-
-  window.scrollTo(0, savedScrollY);
 }
-
 
     /* ================= 뒤로가기 ================= */
 function goBack() {
@@ -915,7 +837,31 @@ function submitRequest() {
 }
 
 </script>
-  
+<script>
+/* ================= HERO COPY SCROLL FADE ================= */
+
+(function () {
+  const heroCopy = document.querySelector('.hero-copy');
+  if (!heroCopy) return;
+
+  let lastScrollY = 0;
+
+  function onScroll() {
+    const y = window.scrollY || document.documentElement.scrollTop;
+
+    // 0 ~ 120px 사이에서 서서히 사라짐
+    if (y > 60) {
+      heroCopy.classList.add('is-hidden');
+    } else {
+      heroCopy.classList.remove('is-hidden');
+    }
+
+    lastScrollY = y;
+  }
+
+  window.addEventListener('scroll', onScroll, { passive: true });
+})();
+</script>
 
 
 </body>
