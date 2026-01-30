@@ -15,7 +15,8 @@ html {
 }
 
 body {
-  height: 100%;
+  min-height: 100%;
+  height: auto;   /* 🔥 이 줄이 핵심 */
   margin: 0;
 
   font-family: -apple-system, BlinkMacSystemFont,
@@ -76,13 +77,13 @@ body.logged-in #loginSection {
 }
 
 .mobile-splash img {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  object-position: center;
-
   max-width: 100vw;
-  max-height: 100svh;
+  max-height: 100dvh;
+
+  width: auto;
+  height: auto;
+
+  object-fit: contain;
 }
 
 /* ================= HOME VIEW ================= */
@@ -360,8 +361,8 @@ body {
 
 /* ✅ hero는 "첫 섹션"일 뿐, 스크롤을 막지 않음 */
 .hero-screen {
-  height: 100vh;
   min-height: 100vh;
+  height: auto;
   flex-shrink: 0;
 }
 
