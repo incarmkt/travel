@@ -510,3 +510,58 @@ body.intro-passed .intro-stage {
   margin-top: 100vh;
 }
 
+/* =========================================
+   MOBILE ONLY – INTRO → MENU SNAP
+========================================= */
+@media (max-width: 767px) {
+
+  /* 모바일은 기본 배경 유지 */
+  html, body {
+    background: transparent !important;
+    overflow-x: hidden;
+  }
+
+  /* 인트로는 한 화면 고정 */
+  .home-intro {
+    position: relative;
+    height: 100vh;
+    overflow: hidden;
+  }
+
+  /* 인트로 글씨 영역 */
+  .home-hero,
+  .hero-copy {
+    color: #fff !important; /* 🔥 글씨 흰색 강제 */
+  }
+
+  /* 스크롤 안내는 인트로 안에서만 */
+  .scroll-hint {
+    position: absolute;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: #fff;
+    z-index: 5;
+  }
+
+  /* 메뉴 영역은 처음에 화면 아래에 숨김 */
+  .home-menu-section {
+    position: fixed;
+    inset: 0;
+    top: 100vh;
+    background: transparent;
+    z-index: 10;
+
+    transition: transform 0.5s ease;
+  }
+
+  /* 인트로 통과 후 */
+  body.mobile-menu-open .home-menu-section {
+    transform: translateY(-100vh);
+  }
+
+  /* 인트로는 사라짐 */
+  body.mobile-menu-open .home-intro {
+    display: none;
+  }
+}
