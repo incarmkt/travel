@@ -238,7 +238,7 @@ body.detail-open .detail-sheet__inner {
     font-size: 22px;
   }
 
-  .home-menu button:nth-child(3) {
+  .home-menu button:first-child {
     height: 120px;
   }
 }
@@ -265,10 +265,10 @@ body.detail-open .detail-sheet__inner {
   }
 
   /* ‘대만의 모든 것’ 최상단 고정 */
-  .home-menu button:nth-child(3) {
-    order: -1 !important;
-    grid-column: 1 / -1 !important;
-  }
+  .home-menu button:first-child {
+    grid-column: 1 / -1;
+  height: 96px;
+}
 }
 @media (max-width: 767px) {
   .home-menu,
