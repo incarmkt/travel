@@ -38,13 +38,12 @@
 <main id="mainSection" class="main-bg" style="display:none;">
 
   <!-- ================= HOME VIEW ================= -->
-  <section id="homeView" class="home-view">
-
-    <!-- (선택) 헤더 아래에 “ISC Taiwan 2025 / 지금부터 여정이 시작됩니다” 같은 영역을 넣고 싶으면 여기 -->
-<div class="home-hero">
-
-  <!-- 브랜드 / 정보 영역 -->
-  <div class="hero-info">
+<section id="homeView" class="home-view">
+  
+ <!-- 1️⃣ INTRO (글씨 화면) -->
+  <section class="home-intro">
+    <div class="home-hero">
+      
     <img src="assets/images/logo.png"
          style="width:120px; margin-bottom:14px;">
 
@@ -69,12 +68,15 @@
     <p class="home-sub">지금부터 여정이 시작됩니다</p>
   </div>
 
-</div>
+ <div class="scroll-hint">
+      ↓ 아래로 스크롤 하세요
+    </div>
+  </section>
 
-
-    <!-- 홈 메뉴(기존 side-menu 버튼을 그대로 이쪽으로 옮김) -->
-      <div class="home-menu-wrap">
-    <nav class="home-menu">
+  <!-- 2️⃣ MENU (카테고리 화면) -->
+  <section class="home-menu-section">
+    <div class="home-menu-wrap">
+      <nav class="home-menu">
       <button onclick="openPage('taiwan')">🇹🇼 대만의 모든 것</button>
       <button onclick="openPage('schedule')">🗓 여행 일정</button>
       <button onclick="openPage('flight')">✈️ 항공편 정보</button>
@@ -84,6 +86,7 @@
       <button onclick="openPage('contact')">📞 긴급 연락망</button>
     </nav>
  </div>
+ </section>
 
   </section>
 
