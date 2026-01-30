@@ -183,7 +183,8 @@ body.detail-open .detail-sheet {
   pointer-events: auto;
 }
 body.detail-open {
-  overflow: hidden;
+  overflow: hidden !important;
+    touch-action: none;   /* 🔥 이게 핵심 */
 }
 /* ===== Sheet Body ===== */
 .detail-sheet__inner {
