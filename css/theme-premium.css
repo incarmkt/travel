@@ -585,4 +585,48 @@ body.intro-passed .intro-stage {
     color: #fff !important;
   }
 }
+/* =================================================
+   MOBILE TYPOGRAPHY TUNING (INTRO TEXT)
+================================================= */
+@media (max-width: 767px) {
+
+  /* 메인 타이틀 */
+  .home-title {
+    font-size: 32px;          /* 🔥 44 → 32 */
+    line-height: 1.25;
+    letter-spacing: -0.5px;
+    word-break: keep-all;     /* 한글 단어 보호 */
+    text-align: center;
+  }
+
+  /* 서브 문구 */
+  .home-sub {
+    font-size: 15px;          /* 18 → 15 */
+    line-height: 1.55;
+    letter-spacing: -0.2px;
+    word-break: keep-all;
+    text-align: center;
+  }
+
+  /* 날짜 / 회사명 줄 */
+  .home-sub + .home-sub {
+    margin-top: 6px;
+  }
+
+  /* 감성 카피 영역 간격 정리 */
+  .hero-copy {
+    margin-top: 18px;
+    text-align: center;
+  }
+
+  .hero-copy .home-title {
+    font-size: 30px;          /* 감성 카피는 살짝 작게 */
+  }
+
+  .hero-copy .home-sub {
+    font-size: 14px;
+    opacity: 0.9;
+  }
+
+}
 
