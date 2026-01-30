@@ -1010,4 +1010,24 @@ body.intro-passed .intro-stage {
   }
 }
 
+/* =========================================
+   MOBILE SPLASH IMAGE SIZE FIX (ONLY)
+========================================= */
+#mobileSplash {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #000; /* 여백 생겨도 검정 */
+}
+
+#mobileSplash img {
+  width: auto;
+  height: auto;
+
+  max-width: 90vw;   /* 🔥 화면 너비 기준 */
+  max-height: 80vh;  /* 🔥 화면 높이 기준 */
+
+  object-fit: contain;  /* 🔥 절대 확대 금지 */
+}
+
 
