@@ -565,3 +565,79 @@ body.intro-passed .intro-stage {
     display: none;
   }
 }
+/* =================================================
+   MOBILE FIX – INTRO(1화면) → MENU(1화면) 스냅 + 플래시/글씨색 방지
+   (theme-premium.css 맨 아래에 추가)
+================================================= */
+@media (max-width: 767px) {
+
+  /* ✅ 모바일은 body가 아니라 mainSection이 스크롤 담당 */
+  body.logged-in {
+    overflow: hidden !important;          /* 바디 스크롤 잠금 */
+    color: #fff !important;               /* 글씨 검정으로 바뀌는거 방지 */
+    background: url("../assets/images/photo2.jpg") center/cover no-repeat fixed !important;
+  }
+
+  /* ✅ 흰 배경(플래시) 만드는 상위 배경들 투명화 */
+  #mainSection,
+  .main-bg,
+  #homeView,
+  .home-view {
+    background: transparent !important;
+  }
+
+  /* ✅ 스크롤은 mainSection에서만 */
+  #mainSection {
+    height: 100dvh !important;
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch;
+    scroll-snap-type: y mandatory;        /* 🔥 1화면씩 “확” 넘어가게 */
+  }
+
+  /* ✅ 인트로/메뉴를 각각 한 화면으로 고정 */
+  .home-intro,
+  .home-menu-section {
+    min-height: 100dvh !important;
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+  }
+
+  /* ✅ 인트로 영역은 중앙 정렬 + 글씨 흰색 유지 */
+  .home-intro {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 64px 20px 24px !important;
+    color: #fff !important;
+    text-shadow: 0 8px 22px rgba(0,0,0,0.35);
+  }
+
+  .home-intro .home-hero,
+  .home-intro .hero-copy {
+    color: #fff !important;
+  }
+
+  /* ✅ “아래로 스크롤”은 인트로 하단에 고정 (메뉴로 따라오지 않게) */
+  .home-intro .scroll-hint {
+    position: absolute;
+    left: 50%;
+    bottom: 18px;
+    transform: translateX(-50%);
+    margin: 0 !important;
+    z-index: 10;
+    color: rgba(255,255,255,0.9) !important;
+    pointer-events: none;
+  }
+
+  /* ✅ 메뉴 화면은 위에서 시작 (인트로 일부가 보이는 중간상태 방지) */
+  .home-menu-section {
+    padding: 24px 0 80px !important;
+  }
+
+  /* 혹시 base.css/desktop.css가 텍스트색을 덮으면 방지 */
+  .home-menu,
+  .home-menu button {
+    color: #fff !important;
+  }
+}
+
