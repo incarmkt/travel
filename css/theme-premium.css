@@ -629,3 +629,200 @@ body.intro-passed .intro-stage {
 
 }
 
+/* =================================================
+   HOME – INTRO LAYOUT (FINAL)
+================================================= */
+
+/* 전체 홈 뷰 */
+.home-view {
+  overflow: visible;
+}
+
+/* ---------- INTRO 영역 ---------- */
+.home-intro {
+  height: 100dvh;
+  min-height: 100svh;
+  position: relative;
+}
+
+/* 실제 콘텐츠 스테이지 */
+.intro-stage {
+  height: 100%;
+  padding: 56px 20px 72px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  text-align: center;
+  color: #fff;
+  text-shadow: 0 8px 22px rgba(0,0,0,0.35);
+}
+
+/* 로고 */
+.hero-logo {
+  width: 120px;
+  margin-bottom: 18px;
+}
+
+/* 메인 타이틀 */
+.home-title {
+  font-size: clamp(30px, 6.5vw, 42px);
+  margin: 0 0 6px;
+  font-weight: 800;
+}
+
+/* 날짜 */
+.home-sub.date {
+  font-size: 14px;
+  opacity: 0.85;
+  margin-bottom: 24px;
+}
+
+/* ---------- WELCOME CARD ---------- */
+.welcome-card {
+  margin-top: 8px;
+  padding: 14px 22px;
+
+  background: rgba(0,0,0,0.35);
+  backdrop-filter: blur(8px);
+  border-radius: 18px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.welcome-name {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.welcome-msg {
+  margin: 0;
+  font-size: 14px;
+  opacity: 0.9;
+}
+
+/* ---------- 감성 카피 ---------- */
+.hero-copy {
+  margin-top: 36px;
+}
+
+.hero-copy h2 {
+  margin: 0 0 6px;
+  font-size: 22px;
+  font-weight: 700;
+}
+
+.hero-copy p {
+  margin: 0;
+  font-size: 14px;
+  opacity: 0.9;
+}
+
+/* ---------- 스크롤 힌트 ---------- */
+.scroll-hint {
+  position: absolute;
+  left: 50%;
+  bottom: 22px;
+  transform: translateX(-50%);
+
+  font-size: 14px;
+  opacity: 0.9;
+  letter-spacing: -0.2px;
+
+  animation: scrollHint 1.6s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes scrollHint {
+  0%   { transform: translate(-50%, 0); }
+  50%  { transform: translate(-50%, -8px); }
+  100% { transform: translate(-50%, 0); }
+}
+
+/* =================================================
+   HOME – MENU SECTION
+================================================= */
+
+.home-menu-section {
+  padding: 48px 0 96px;
+}
+
+/* 메뉴 래퍼 */
+.home-menu-wrap {
+  width: 100%;
+}
+
+/* 메뉴 그리드 */
+.home-menu {
+  margin: 0 auto;
+  width: min(92vw, 720px);
+
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+/* 메뉴 버튼 */
+.home-menu button {
+  height: 76px;
+  border: 0;
+  border-radius: 26px;
+  padding: 0 18px;
+
+  display: flex;
+  align-items: center;
+
+  font-size: 18px;
+  font-weight: 700;
+  color: #fff;
+
+  background: rgba(255,255,255,0.22);
+  backdrop-filter: blur(14px);
+}
+
+/* 🔥 첫 번째 버튼 = 대장 카드 */
+.home-menu button:first-child {
+  grid-column: 1 / -1;
+  height: 96px;
+  font-size: 20px;
+}
+
+/* =================================================
+   DESKTOP TUNING
+================================================= */
+
+@media (min-width: 768px) {
+
+  .intro-stage {
+    padding-top: 72px;
+  }
+
+  .home-title {
+    font-size: 56px;
+  }
+
+  .hero-copy h2 {
+    font-size: 26px;
+  }
+
+  .home-menu {
+    width: min(86vw, 860px);
+    gap: 18px;
+  }
+
+  .home-menu button {
+    height: 86px;
+    font-size: 20px;
+  }
+
+  .home-menu button:first-child {
+    height: 120px;
+    font-size: 24px;
+  }
+}
