@@ -641,32 +641,6 @@ html, body {
    HOME LAYOUT – SINGLE SOURCE
    =============================== */
 
-/* 전체 인트로 */
-.home-intro {
-  position: relative;
-  min-height: 100vh;
-}
-
-/* 상단 바 (로고 + 정보 + 프로필) */
-.top-bar {
-  position: absolute;
-  top: 24px;
-  left: 20px;
-  right: 20px;
-
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-
-  z-index: 20;
-}
-
-/* 감성 카피 영역 */
-.hero-copy {
-  margin-top: 260px;   /* 🟥🟨 영역과 분리되는 핵심 값 */
-  text-align: center;
-  color: #fff;
-}
 
 /* 스크롤 힌트 */
 .scroll-hint {
@@ -685,28 +659,6 @@ html, body {
    HOME – BASE LINE (기준)
 =============================== */
 
-.home-intro {
-  position: relative;
-  min-height: 100vh;
-}
-
-.top-bar {
-  position: absolute;
-  top: 24px;
-  left: 20px;
-  right: 20px;
-
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-
-  z-index: 20;
-}
-
-.hero-copy {
-  margin-top: 280px;   /* ✅ 카카오톡 기준 */
-  text-align: center;
-}
 
 .home-menu-section {
   margin-top: 120px;
@@ -733,6 +685,42 @@ html, body {
 /* 크롬 모바일 (카톡/네이버 제외) */
 body:not(.ua-kakao):not(.ua-naver) .hero-copy {
   margin-top: 240px;
+}
+/* ===============================
+   HOME – CHROME BASELINE (FINAL)
+   =============================== */
+
+/* 인트로 전체 */
+.home-intro {
+  position: relative;
+  min-height: 100vh;
+  padding: 0;
+}
+
+/* 🟥 + 🟨 상단 바 */
+.top-bar {
+  position: absolute;
+  top: 24px;
+  left: 20px;
+  right: 20px;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+
+  z-index: 20;
+}
+
+/* 🟫 감성 카피 */
+.hero-copy {
+  margin-top: 260px;   /* 🔥 크롬 기준 핵심값 */
+  text-align: center;
+  color: #fff;
+}
+
+/* 메뉴는 인트로 이후 */
+.home-menu-section {
+  margin-top: 140px;
 }
 
 
