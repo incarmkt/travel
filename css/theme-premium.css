@@ -602,4 +602,40 @@ body.intro-passed .intro-stage {
   background: #fff;
 }
 
+.home-intro {
+  height: 100dvh;
+}
+
+.intro-stage {
+  position: relative;
+  height: 100%;
+  padding: 24px 20px;
+}
+
+/* 상단 */
+.intro-top {
+  position: absolute;
+  top: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
+}
+
+/* 중앙 */
+.intro-center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+}
+
+/* 하단 */
+.intro-bottom {
+  position: absolute;
+  bottom: 32px;
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
+}
 
