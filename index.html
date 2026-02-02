@@ -90,8 +90,13 @@
 
   </section>
 
-  <!-- ================= DETAIL OVERLAY (BOTTOM SHEET) ================= -->
-<section id="detailPage" class="detail-sheet" onclick="goHome()">
+<!-- ================= DETAIL OVERLAY ================= -->
+<section id="detailPage" class="detail-sheet">
+
+  <!-- 🔹 dim 영역 (여기만 홈으로) -->
+  <div class="detail-dim" onclick="goHome()"></div>
+
+  <!-- 🔹 실제 시트 -->
   <div class="detail-sheet__inner" onclick="event.stopPropagation()">
     
        <!-- ✅ 상단 헤더 -->
