@@ -93,17 +93,16 @@
   <!-- ================= DETAIL OVERLAY (BOTTOM SHEET) ================= -->
 <section id="detailPage" class="detail-sheet" onclick="goHome()">
   <div class="detail-sheet__inner" onclick="event.stopPropagation()">
-      <h2 id="detailTitle"></h2>
-      <div id="detailContent"></div>
-
-      <div class="nav-buttons">
-        <!-- 🔥 onclick 제거 -->
-        <button class="ghost-btn">홈으로</button>
-
-        <!-- 뒤로가기는 그대로 유지 -->
-        <button class="ghost-btn" onclick="goBack()">뒤로가기</button>
-      </div>
+     <div class="detail-header">
+  <div class="detail-title">
+    📅 여행 일정
   </div>
+
+  <div class="detail-actions">
+    <button class="btn-home">홈으로</button>
+    <button class="btn-back">뒤로가기</button>
+  </div>
+</div>
 
 </section>
 
