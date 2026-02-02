@@ -521,3 +521,24 @@ body.intro-passed .intro-stage {
     color: inherit;
   }
 }
+/* =================================================
+   MOBILE FIX – HOME FIRST SCREEN 깨짐 해결 (핵심)
+   ✔ 기능 유지 / ✔ 구조 유지
+================================================= */
+@media (max-width: 767px) {
+
+  /* 1️⃣ 모바일에서는 sticky 해제 (snap과 충돌 방지) */
+  .intro-stage {
+    position: relative !important;
+    height: auto !important;
+    transform: none !important;
+  }
+
+  /* 2️⃣ 첫 화면 잘림 방지 */
+  .home-intro {
+    overflow: visible !important;
+    height: 100dvh !important;
+    min-height: 100dvh !important;
+  }
+}
+
