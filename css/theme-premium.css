@@ -1,8 +1,9 @@
 /* =================================================
    THEME PREMIUM – FINAL (HOME + FULL PAGE DETAIL)
+   ✅ 기능 유지 / 중복·충돌 정리본
 ================================================= */
 
-/* Reset */
+/* ================= RESET / BASE ================= */
 * { box-sizing: border-box; }
 
 body {
@@ -12,7 +13,7 @@ body {
   overflow-x: hidden;
 }
 
-/* Background */
+/* ================= BACKGROUND ================= */
 body:not(.logged-in) {
   background: url("../assets/images/main-bg.jpg") center / cover no-repeat fixed;
 }
@@ -20,6 +21,7 @@ body.logged-in {
   background: url("../assets/images/photo2.jpg") center / cover no-repeat fixed;
 }
 
+/* ================= HEADER ================= */
 .header {
   position: relative;          /* fixed ❌ */
   inset: auto;
@@ -31,33 +33,88 @@ body.logged-in {
   justify-content: space-between;
   align-items: flex-start;
 
-  background: transparent;     /* 🔥 핵심 */
-  backdrop-filter: none;       /* 🔥 제거 */
+  background: transparent;
+  backdrop-filter: none;
 }
 
-/* ================= HOME ================= */
-
-
 @media (max-width: 767px) {
-  .home-view {
-    padding-top: 40px;
+  .header {
+    flex-direction: row;
+    align-items: flex-start;
+  }
+  .header-left h1 {
+    font-size: 18px;
+    margin: 6px 0 4px;
+  }
+  .header-left .sub {
+    font-size: 13px;
+    opacity: .9;
+  }
+  .header-right {
+    text-align: right;
+    font-size: 13px;
   }
 }
 
+/* =================================================
+   HOME (INTRO + MENU)
+================================================= */
+
+/* 홈 뷰 기본 */
+.home-view {
+  padding-top: 0;
+  overflow: visible;
+  background: transparent;
+}
+
+@media (max-width: 767px) {
+  /* 기존에 있던 모바일 상단 여백 유지 */
+  .home-view { padding-top: 40px; }
+}
+
+/* HERO */
 .home-hero {
   margin: 48px auto 22px;
   width: min(92vw, 720px);
   color: #fff;
   text-shadow: 0 8px 22px rgba(0,0,0,0.35);
+
+  /* HERO AS HEADER에서 쓰던 값 유지 */
+  position: relative;
+  z-index: 5;
+  padding: 24px 20px 32px;
 }
 
+@media (max-width: 767px) {
+  .home-hero { padding-top: 16px; }
+}
+
+/* 타이포 */
 .home-title { margin: 0; font-size: 44px; }
 .home-sub { margin-top: 10px; font-size: 18px; }
+
+.hero-copy {
+  margin-top: 28px;
+  transition: opacity 320ms ease, transform 320ms ease;
+  will-change: opacity, transform;
+}
 .hero-copy.is-hidden {
   opacity: 0;
   transform: translateY(-12px);
 }
+@media (max-width: 767px) {
+  .hero-copy { margin-top: 20px; }
+}
 
+/* HERO 내부 레이아웃 */
+.hero-info {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 12px 20px;
+  align-items: start;
+}
+
+/* MENU GRID */
 .home-menu {
   margin: 0 auto;
   width: min(92vw, 720px);
@@ -67,7 +124,6 @@ body.logged-in {
   gap: 14px;
 }
 
-
 .home-menu button {
   height: 76px;
   border: 0;
@@ -75,46 +131,48 @@ body.logged-in {
   padding: 0 18px;
   display: flex;
   align-items: center;
+
   font-size: 20px;
   font-weight: 800;
   color: #fff;
+
   background: rgba(200,200,200,.42);
   backdrop-filter: blur(14px);
 }
 
-/* 대만의 모든 것 */
+/* ‘대만의 모든 것’ */
 .home-menu button:first-child {
   grid-column: 1 / -1;
   height: 96px;
 }
 
 /* =================================================
-   DETAIL SHEET – FINAL SINGLE VERSION
-   (Mobile Bottom Sheet + Desktop Center Modal)
+   DETAIL SHEET (MOBILE BOTTOM SHEET + DESKTOP MODAL)
 ================================================= */
 
-/* ===== Overlay (dim background) ===== */
+/* Overlay */
 .detail-sheet {
   position: fixed;
   inset: 0;
   z-index: 2000;
 
-  background: rgba(0,0,0,0.35); /* dim */
+  background: rgba(0,0,0,0.35);
   opacity: 0;
   pointer-events: none;
 
   transition: opacity 280ms ease;
 }
 
-/* 열렸을 때 */
 body.detail-open .detail-sheet {
   opacity: 1;
   pointer-events: auto;
 }
+
 body.detail-open {
   overflow: hidden;
 }
-/* ===== Sheet Body ===== */
+
+/* Sheet body */
 .detail-sheet__inner {
   position: fixed;
   left: 0;
@@ -133,12 +191,11 @@ body.detail-open {
   transition: transform 360ms cubic-bezier(.25,.8,.25,1);
 }
 
-/* 열렸을 때 올라옴 */
 body.detail-open .detail-sheet__inner {
   transform: translateY(0);
 }
 
-/* ===== 내부 스크롤 영역 ===== */
+/* 내부 영역 */
 #detailTitle {
   margin: 0;
   padding: 20px 20px 12px;
@@ -153,7 +210,7 @@ body.detail-open .detail-sheet__inner {
   -webkit-overflow-scrolling: touch;
 }
 
-/* 하단 버튼 영역 */
+/* 하단 버튼 */
 .nav-buttons {
   padding: 14px 20px 20px;
   border-top: 1px solid #eee;
@@ -161,8 +218,34 @@ body.detail-open .detail-sheet__inner {
   gap: 10px;
 }
 
+/* ✅ 모바일 풀스크린 디테일 유지 */
+@media (max-width: 767px) {
+  .detail-sheet__inner {
+    height: 100dvh;
+    max-height: none;
+    border-radius: 0;
+  }
+}
+
 /* =================================================
-   DESKTOP MODE
+   DETAIL CONTENT NORMALIZE
+================================================= */
+.detail-content-wrap {
+  width: 100%;
+  max-width: 920px;
+  margin: 0 auto;
+  padding: 0 16px 24px;
+}
+
+@media (min-width: 768px) {
+  .detail-content-wrap {
+    max-width: 960px;
+    padding: 0 24px 40px;
+  }
+}
+
+/* =================================================
+   DESKTOP MODE (DETAIL MODAL)
 ================================================= */
 @media (min-width: 768px) {
 
@@ -201,29 +284,17 @@ body.detail-open .detail-sheet__inner {
     padding: 24px 28px 14px;
   }
 
-  #detailContent {
-    padding: 0 28px 32px;
-  }
-
-  .nav-buttons {
-    padding: 16px 28px 24px;
-  }
+  #detailContent { padding: 0 28px 32px; }
+  .nav-buttons  { padding: 16px 28px 24px; }
 }
 
-
-
 /* =================================================
-   Desktop tuning
+   DESKTOP TUNING (HOME)
 ================================================= */
 @media (min-width: 768px) {
 
-  .home-hero {
-    width: min(86vw, 860px);
-  }
-
-  .home-title {
-    font-size: 56px;
-  }
+  .home-hero { width: min(86vw, 860px); }
+  .home-title { font-size: 56px; }
 
   .home-menu {
     width: min(86vw, 860px);
@@ -235,25 +306,27 @@ body.detail-open .detail-sheet__inner {
     font-size: 22px;
   }
 
-  .home-menu button:first-child {
-    height: 120px;
-  }
+  .home-menu button:first-child { height: 120px; }
 }
+
 /* =================================================
    FORCE OVERRIDE MOBILE HOME (mobile.css 무력화)
+   ✅ 홈 메뉴 위치/높이만 강제 복구 (기능 유지)
 ================================================= */
 @media (max-width: 767px) {
 
-  /* 메뉴 래퍼/메뉴 높이 강제 해제 */
   .home-menu-wrap,
   .home-menu {
     position: static !important;
     height: auto !important;
     min-height: unset !important;
     transform: none !important;
+    top: auto !important;
+    bottom: auto !important;
+    left: auto !important;
+    right: auto !important;
   }
 
-  /* grid 강제 복구 */
   .home-menu {
     display: grid !important;
     grid-template-columns: 1fr 1fr !important;
@@ -261,162 +334,43 @@ body.detail-open .detail-sheet__inner {
     gap: 14px !important;
   }
 
-  /* ‘대만의 모든 것’ 최상단 고정 */
   .home-menu button:first-child {
-    grid-column: 1 / -1;
-  height: 96px;
-}
-}
-@media (max-width: 767px) {
-  .home-menu,
-  .home-menu-wrap {
-    top: auto !important;
-    bottom: auto !important;
-    left: auto !important;
-    right: auto !important;
+    grid-column: 1 / -1 !important;
+    height: 96px !important;
   }
 }
+
 /* =================================================
-   DETAIL CONTENT NORMALIZE (깨짐 해결 핵심)
+   DESKTOP SCROLL UNLOCK
+   ✅ 데스크탑에서만 적용 (모바일 스냅/스크롤 충돌 방지)
 ================================================= */
-
-.detail-content-wrap {
-  width: 100%;
-  max-width: 920px;
-  margin: 0 auto;
-
-  /* 기존 카드들이 숨 쉴 공간 */
-  padding: 0 16px 24px;
-}
-
-/* 데스크탑 */
 @media (min-width: 768px) {
-  .detail-content-wrap {
-    max-width: 960px;
-    padding: 0 24px 40px;
-  }
-}
-
-/* =================================================
-   MOBILE – HEADER 제거 (중요)
-================================================= */
-
-
-.hero-logo-mobile {
-  width: 120px;
-  margin-bottom: 16px;
-}
-
-.welcome-mobile {
-  margin-top: 8px;
-  font-size: 15px;
-  opacity: .9;
-}
-/* =================================================
-   MOBILE – DETAIL FULL SCREEN FIX
-================================================= */
-@media (max-width: 767px) {
-  .detail-sheet__inner {
-    height: 100dvh;      /* 🔥 무조건 풀스크린 */
-    max-height: none;   /* 🔥 기존 제한 제거 */
-    border-radius: 0;   /* 풀페이지 느낌 */
-  }
-}
-@media (max-width: 767px) {
-  .header {
-    flex-direction: row;
-    align-items: flex-start;
+  html, body {
+    height: auto !important;
+    min-height: 100% !important;
+    overflow-y: auto !important;
   }
 
-  .header-left h1 {
-    font-size: 18px;
-    margin: 6px 0 4px;
+  #mainSection {
+    height: auto !important;
+    min-height: 100vh !important;
+    overflow: visible !important;
   }
 
-  .header-left .sub {
-    font-size: 13px;
-    opacity: .9;
+  .main-bg, .home-view, #homeView {
+    overflow: visible !important;
   }
 
-  .header-right {
-    text-align: right;
-    font-size: 13px;
-  }
-}
-/* ================= HERO AS HEADER ================= */
-
-
-.home-hero {
-  position: relative;
-  z-index: 5;
-
-  padding: 24px 20px 32px;
-  margin: 0 auto 24px;
-
-  width: min(100%, 860px);
-}
-
-.hero-info {
-  display: grid;
-  grid-template-columns: auto 1fr;
-  gap: 12px 20px;
-  align-items: start;
-}
-
-.hero-copy {
-  margin-top: 28px;
-
-  transition:
-    opacity 320ms ease,
-    transform 320ms ease;
-
-  will-change: opacity, transform;
-}
-
-@media (max-width: 767px) {
-  .home-hero {
-    padding-top: 16px;
-  }
-
-  .hero-copy {
-    margin-top: 20px;
-  }
-}
-/* =========================================
-   DESKTOP SCROLL UNLOCK (최우선 강제)
-   theme-premium.css 맨 아래에 추가
-========================================= */
-
-html, body {
-  height: auto !important;
-  min-height: 100% !important;
-  overflow-y: auto !important;
-}
-
-/* 메인이 100vh로 고정돼 있으면 스크롤이 죽음 → 해제 */
-#mainSection {
-  height: auto !important;
-  min-height: 100vh !important;
-  overflow: visible !important;
-}
-
-/* 어떤 상위 래퍼가 overflow hidden이면 페이지 스크롤이 막힘 → 해제 */
-.main-bg, .home-view, #homeView {
-  overflow: visible !important;
-}
-
-/* (혹시라도) 데스크탑에서만 잠금 걸린 경우 대비 */
-@media (min-width: 768px) {
   body.logged-in {
     overflow-y: auto !important;
   }
 }
+
 /* =================================================
-   HOME INTRO → MENU SCROLL FLOW (FINAL)
-   반드시 theme-premium.css 맨 아래
+   HOME INTRO → MENU SCROLL FLOW (스냅)
 ================================================= */
 
-/* 글씨 화면: 1스크린 고정 */
+/* 인트로 */
 .home-intro {
   height: 100vh;
   min-height: 100svh;
@@ -424,9 +378,39 @@ html, body {
   flex-direction: column;
   justify-content: center;
   position: relative;
+
+  overflow: hidden;
 }
 
-/* 아래로 스크롤 안내 */
+/* 스테이지 */
+.intro-stage {
+  height: 100vh;
+  position: sticky;
+  top: 0;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+
+  padding: 48px 32px;
+  box-sizing: border-box;
+
+  transition: transform 0.9s cubic-bezier(.25,.8,.25,1);
+}
+
+body.intro-passed .intro-stage {
+  transform: translateY(-100%);
+}
+
+/* 메뉴 섹션 */
+.home-menu-section {
+  position: relative;
+  z-index: 1;
+  margin-top: 100vh;
+  padding: 48px 0 96px;
+}
+
+/* 스크롤 힌트 */
 .scroll-hint {
   position: absolute;
   bottom: 24px;
@@ -446,67 +430,9 @@ html, body {
   100% { transform: translate(-50%, 0); }
 }
 
-/* 카테고리 섹션 */
-.home-menu-section {
-  padding: 48px 0 96px;
-}
-
-/* 홈 전체는 스크롤 허용 */
-
-/* 데스크탑에서도 스크롤 차단 금지 */
-body {
-  position: static !important;
-  overflow-y: auto !important;
-}
-
-/* 디테일 열릴 때만 잠금 */
-body.detail-open {
-  overflow: hidden !important;
-}
-/* =========================================
-   INTRO STAGE – PREMIUM LAYOUT PRESERVE
-========================================= */
-
-.home-intro {
-  height: 100vh;
-  overflow: hidden;
-}
-
-/* 기존 레이아웃 보존용 스테이지 */
-.intro-stage {
-  height: 100vh;
-  position: sticky;
-  top: 0;
-
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-
-  padding: 48px 32px;
-  box-sizing: border-box;
-
-  transition: transform 0.9s cubic-bezier(.25,.8,.25,1);
-}
-
-/* 스크롤 시 통째로 위로 밀림 */
-body.intro-passed .intro-stage {
-  transform: translateY(-100%);
-}
-
-/* 메뉴는 자연스럽게 뒤에서 등장 */
-.home-menu-section {
-  position: relative;
-  z-index: 1;
-  margin-top: 100vh;
-}
-
-/* =================================================
-   MOBILE FIX – INTRO(1화면) → MENU(1화면) 스냅 + 플래시/글씨색 방지
-   (theme-premium.css 맨 아래에 추가)
-================================================= */
+/* 모바일 스냅: mainSection 스크롤 담당 유지 */
 @media (max-width: 767px) {
 
-  /* ✅ 스크롤은 mainSection에서만 */
   #mainSection {
     height: 100dvh !important;
     overflow-y: auto !important;
@@ -514,7 +440,6 @@ body.intro-passed .intro-stage {
     scroll-snap-type: y mandatory;
   }
 
-  /* ✅ 인트로/메뉴를 각각 한 화면으로 고정 */
   .home-intro,
   .home-menu-section {
     min-height: 100dvh !important;
@@ -522,33 +447,17 @@ body.intro-passed .intro-stage {
     scroll-snap-stop: always;
   }
 
-  /* ✅ 인트로 영역 */
   .home-intro {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
     padding: 64px 20px 24px !important;
     color: #fff !important;
     text-shadow: 0 8px 22px rgba(0,0,0,0.35);
   }
 
-  .home-intro .home-hero,
-  .home-intro .hero-copy {
-    color: #fff !important;
-  }
-
-  /* 스크롤 힌트 */
   .home-intro .scroll-hint {
-    position: absolute;
-    left: 50%;
     bottom: 18px;
-    transform: translateX(-50%);
-    z-index: 10;
     color: rgba(255,255,255,0.9) !important;
-    pointer-events: none;
   }
 
-  /* 메뉴 화면 */
   .home-menu-section {
     padding: 24px 0 80px !important;
   }
@@ -564,256 +473,42 @@ body.intro-passed .intro-stage {
 ================================================= */
 @media (max-width: 767px) {
 
-  /* 메인 타이틀 */
   .home-title {
-    font-size: 32px;          /* 🔥 44 → 32 */
+    font-size: 32px;
     line-height: 1.25;
     letter-spacing: -0.5px;
-    word-break: keep-all;     /* 한글 단어 보호 */
+    word-break: keep-all;
     text-align: center;
   }
 
-  /* 서브 문구 */
   .home-sub {
-    font-size: 15px;          /* 18 → 15 */
+    font-size: 15px;
     line-height: 1.55;
     letter-spacing: -0.2px;
     word-break: keep-all;
     text-align: center;
   }
 
-  /* 날짜 / 회사명 줄 */
-  .home-sub + .home-sub {
-    margin-top: 6px;
-  }
+  .home-sub + .home-sub { margin-top: 6px; }
 
-  /* 감성 카피 영역 간격 정리 */
   .hero-copy {
     margin-top: 18px;
     text-align: center;
   }
 
-  .hero-copy .home-title {
-    font-size: 30px;          /* 감성 카피는 살짝 작게 */
-  }
-
-  .hero-copy .home-sub {
-    font-size: 14px;
-    opacity: 0.9;
-  }
-
+  .hero-copy .home-title { font-size: 30px; }
+  .hero-copy .home-sub { font-size: 14px; opacity: 0.9; }
 }
 
 /* =================================================
-   HOME – INTRO LAYOUT (FINAL)
-================================================= */
-
-
-/* ---------- INTRO 영역 ---------- */
-.home-intro {
-  height: 100dvh;
-  min-height: 100svh;
-  position: relative;
-}
-
-/* 실제 콘텐츠 스테이지 */
-.intro-stage {
-  height: 100%;
-  padding: 56px 20px 72px;
-
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-
-  text-align: center;
-  color: #fff;
-  text-shadow: 0 8px 22px rgba(0,0,0,0.35);
-}
-
-/* 로고 */
-.hero-logo {
-  width: 120px;
-  margin-bottom: 18px;
-}
-
-/* 메인 타이틀 */
-.home-title {
-  font-size: clamp(30px, 6.5vw, 42px);
-  margin: 0 0 6px;
-  font-weight: 800;
-}
-
-/* 날짜 */
-.home-sub.date {
-  font-size: 14px;
-  opacity: 0.85;
-  margin-bottom: 24px;
-}
-
-/* ---------- WELCOME CARD ---------- */
-.welcome-card {
-  margin-top: 8px;
-  padding: 14px 22px;
-
-  background: rgba(0,0,0,0.35);
-  backdrop-filter: blur(8px);
-  border-radius: 18px;
-
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 6px;
-}
-
-.welcome-name {
-  margin: 0;
-  font-size: 16px;
-  font-weight: 700;
-}
-
-.welcome-msg {
-  margin: 0;
-  font-size: 14px;
-  opacity: 0.9;
-}
-
-/* ---------- 감성 카피 ---------- */
-.hero-copy {
-  margin-top: 36px;
-}
-
-.hero-copy h2 {
-  margin: 0 0 6px;
-  font-size: 22px;
-  font-weight: 700;
-}
-
-.hero-copy p {
-  margin: 0;
-  font-size: 14px;
-  opacity: 0.9;
-}
-
-/* ---------- 스크롤 힌트 ---------- */
-.scroll-hint {
-  position: absolute;
-  left: 50%;
-  bottom: 22px;
-  transform: translateX(-50%);
-
-  font-size: 14px;
-  opacity: 0.9;
-  letter-spacing: -0.2px;
-
-  animation: scrollHint 1.6s ease-in-out infinite;
-  pointer-events: none;
-}
-
-@keyframes scrollHint {
-  0%   { transform: translate(-50%, 0); }
-  50%  { transform: translate(-50%, -8px); }
-  100% { transform: translate(-50%, 0); }
-}
-
-/* =================================================
-   HOME – MENU SECTION
-================================================= */
-
-.home-menu-section {
-  padding: 48px 0 96px;
-}
-
-/* 메뉴 래퍼 */
-.home-menu-wrap {
-  width: 100%;
-}
-
-/* 메뉴 그리드 */
-.home-menu {
-  margin: 0 auto;
-  width: min(92vw, 720px);
-
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 14px;
-}
-
-/* 메뉴 버튼 */
-.home-menu button {
-  height: 76px;
-  border: 0;
-  border-radius: 26px;
-  padding: 0 18px;
-
-  display: flex;
-  align-items: center;
-
-  font-size: 18px;
-  font-weight: 700;
-  color: #fff;
-
-  background: rgba(255,255,255,0.22);
-  backdrop-filter: blur(14px);
-}
-
-/* 🔥 첫 번째 버튼 = 대장 카드 */
-.home-menu button:first-child {
-  grid-column: 1 / -1;
-  height: 96px;
-  font-size: 20px;
-}
-
-/* =================================================
-   DESKTOP TUNING
-================================================= */
-
-@media (min-width: 768px) {
-
-  .intro-stage {
-    padding-top: 72px;
-  }
-
-  .home-title {
-    font-size: 56px;
-  }
-
-  .hero-copy h2 {
-    font-size: 26px;
-  }
-
-  .home-menu {
-    width: min(86vw, 860px);
-    gap: 18px;
-  }
-
-  .home-menu button {
-    height: 86px;
-    font-size: 20px;
-  }
-
-  .home-menu button:first-child {
-    height: 120px;
-    font-size: 24px;
-  }
-}
-
-/* =================================================
-   MOBILE – DETAIL RESET (기존 모바일 CSS 복구)
+   MOBILE – DETAIL RESET (기존 모바일 느낌 복구)
+   ✅ 디테일 열릴 때 글씨/배경 흰색/검정으로 복귀
 ================================================= */
 @media (max-width: 767px) {
-   /* ================= HOME (PREMIUM ONLY) ================= */
-
-.home-view {
-  padding-top: 0;
-  overflow: visible;
-  background: transparent;
-}
-
 
   body.detail-open {
-    color: #111;              /* 글씨 복구 */
-    background: #f6f7fb;      /* 기존 모바일 배경 */
+    color: #111;
+    background: #f6f7fb;
   }
 
   .detail-sheet__inner {
