@@ -541,4 +541,46 @@ body.intro-passed .intro-stage {
     min-height: 100dvh !important;
   }
 }
+/* 하단 네비 버튼 완전 제거 */
+.nav-buttons {
+  display: none !important;
+}
+/* 디테일 상단 헤더 */
+.detail-header {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 14px 16px;
+  background: #fff;
+
+  border-bottom: 1px solid #eee;
+}
+
+/* 제목 */
+.detail-title {
+  font-size: 18px;
+  font-weight: 800;
+}
+
+/* 버튼 영역 */
+.detail-actions {
+  display: flex;
+  gap: 8px;
+}
+
+/* 버튼 스타일 */
+.detail-actions button {
+  padding: 6px 12px;
+  border-radius: 14px;
+  border: 1px solid #ddd;
+  background: #fff;
+  font-size: 13px;
+  font-weight: 600;
+}
+
 
