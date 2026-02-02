@@ -506,20 +506,13 @@ body.intro-passed .intro-stage {
 ================================================= */
 @media (max-width: 767px) {
 
-
-  /* ❌ 이 둘은 삭제 */
-  /* #mainSection */
-  /* .main-bg */
-
   /* ✅ 스크롤은 mainSection에서만 */
   #mainSection {
     height: 100dvh !important;
     overflow-y: auto !important;
     -webkit-overflow-scrolling: touch;
-    scroll-snap-type: y mandatory;        /* 🔥 1화면씩 “확” 넘어가게 */
+    scroll-snap-type: y mandatory;
   }
-}
-   
 
   /* ✅ 인트로/메뉴를 각각 한 화면으로 고정 */
   .home-intro,
@@ -529,7 +522,7 @@ body.intro-passed .intro-stage {
     scroll-snap-stop: always;
   }
 
-  /* ✅ 인트로 영역은 중앙 정렬 + 글씨 흰색 유지 */
+  /* ✅ 인트로 영역 */
   .home-intro {
     display: flex;
     flex-direction: column;
@@ -544,29 +537,28 @@ body.intro-passed .intro-stage {
     color: #fff !important;
   }
 
-  /* ✅ “아래로 스크롤”은 인트로 하단에 고정 (메뉴로 따라오지 않게) */
+  /* 스크롤 힌트 */
   .home-intro .scroll-hint {
     position: absolute;
     left: 50%;
     bottom: 18px;
     transform: translateX(-50%);
-    margin: 0 !important;
     z-index: 10;
     color: rgba(255,255,255,0.9) !important;
     pointer-events: none;
   }
 
-  /* ✅ 메뉴 화면은 위에서 시작 (인트로 일부가 보이는 중간상태 방지) */
+  /* 메뉴 화면 */
   .home-menu-section {
     padding: 24px 0 80px !important;
   }
 
-  /* 혹시 base.css/desktop.css가 텍스트색을 덮으면 방지 */
   .home-menu,
   .home-menu button {
     color: #fff !important;
   }
 }
+
 /* =================================================
    MOBILE TYPOGRAPHY TUNING (INTRO TEXT)
 ================================================= */
