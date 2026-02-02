@@ -626,3 +626,48 @@ body.logged-in {
   gap: 8px;
   font-size: 12px;
 }
+
+/* =================================================
+   ⭐ 자동 레이아웃 최적화 (가장 하단에 추가)
+   ================================================= */
+@media (max-width: 767px) {
+
+  /* 1. 모든 그리드 요소를 '자동 칸 맞춤'으로 변경 */
+  .country-compare-grid, .mytour-grid, .mytour-wrap, .tour-wrap {
+    display: grid !important;
+    /* 최소 140px 공간을 확보하고, 모자라면 자동으로 줄바꿈 */
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 140px), 1fr)) !important;
+    gap: 10px !important;
+    width: 100% !important;
+  }
+
+  /* 2. 상세 페이지(빨간 박스 등) 높이와 너비 자동화 */
+  #detailPage[style*="display: block"] {
+    display: flex !important;
+    flex-direction: column !important;
+    /* 화면 너비에 맞춰 여백 자동 조절 */
+    left: 10px !important;
+    right: 10px !important;
+    top: 60px !important;
+    bottom: 10px !important;
+    width: calc(100% - 20px) !important;
+    height: auto !important;
+    max-height: calc(100dvh - 75px) !important; /* 모바일 주소창 높이 고려 */
+  }
+
+  /* 3. 내용물(글자, 카드)이 삐져나가지 않게 강제 고정 */
+  #detailContent, .day-card, .schedule-card {
+    flex: 1;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    overflow-wrap: break-word !important; /* 긴 글자 자동 줄바꿈 */
+  }
+
+  /* 4. 표(Table)가 있다면 화면 밖으로 안 나가게 스크롤 생성 */
+  table {
+    display: block !important;
+    width: 100% !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch;
+  }
+}
