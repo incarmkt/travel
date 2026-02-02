@@ -582,5 +582,24 @@ body.intro-passed .intro-stage {
   font-size: 13px;
   font-weight: 600;
 }
+.detail-sheet {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+}
+
+.detail-dim {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.35);
+}
+
+.detail-sheet__inner {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: #fff;
+}
 
 
