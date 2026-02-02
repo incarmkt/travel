@@ -515,21 +515,15 @@ body.intro-passed .intro-stage {
 ================================================= */
 @media (max-width: 767px) {
 
-  /* ✅ 모바일은 body가 아니라 mainSection이 스크롤 담당 */
-  body.logged-in {
-    overflow: hidden !important;          /* 바디 스크롤 잠금 */
-    color: #fff !important;               /* 글씨 검정으로 바뀌는거 방지 */
-    background: url("../assets/images/photo2.jpg") center/cover no-repeat fixed !important;
-  }
-
-  /* ✅ 흰 배경(플래시) 만드는 상위 배경들 투명화 */
-  #mainSection,
-  .main-bg,
-  #homeView,
+  /* 홈만 투명 */
   .home-view {
     background: transparent !important;
   }
 
+  /* ❌ 이 둘은 삭제 */
+  /* #mainSection */
+  /* .main-bg */
+}
   /* ✅ 스크롤은 mainSection에서만 */
   #mainSection {
     height: 100dvh !important;
@@ -824,5 +818,26 @@ body.intro-passed .intro-stage {
   .home-menu button:first-child {
     height: 120px;
     font-size: 24px;
+  }
+}
+
+/* =================================================
+   MOBILE – DETAIL RESET (기존 모바일 CSS 복구)
+================================================= */
+@media (max-width: 767px) {
+
+  body.detail-open {
+    color: #111;              /* 글씨 복구 */
+    background: #f6f7fb;      /* 기존 모바일 배경 */
+  }
+
+  .detail-sheet__inner {
+    background: #fff;
+    color: #111;
+  }
+
+  #detailTitle,
+  #detailContent {
+    color: inherit;
   }
 }
