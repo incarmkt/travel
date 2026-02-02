@@ -37,9 +37,6 @@ body.logged-in {
 
 /* ================= HOME ================= */
 
-.home-view {
-  padding-top: 0;
-}
 
 @media (max-width: 767px) {
   .home-view {
@@ -348,9 +345,6 @@ body.detail-open .detail-sheet__inner {
 }
 /* ================= HERO AS HEADER ================= */
 
-.home-view {
-  padding-top: 0;              /* 🔥 상단 여백 제거 */
-}
 
 .home-hero {
   position: relative;
@@ -458,9 +452,6 @@ html, body {
 }
 
 /* 홈 전체는 스크롤 허용 */
-.home-view {
-  overflow: visible;
-}
 
 /* 데스크탑에서도 스크롤 차단 금지 */
 body {
@@ -515,15 +506,11 @@ body.intro-passed .intro-stage {
 ================================================= */
 @media (max-width: 767px) {
 
-  /* 홈만 투명 */
-  .home-view {
-    background: transparent !important;
-  }
 
   /* ❌ 이 둘은 삭제 */
   /* #mainSection */
   /* .main-bg */
-}
+
   /* ✅ 스크롤은 mainSection에서만 */
   #mainSection {
     height: 100dvh !important;
@@ -531,6 +518,8 @@ body.intro-passed .intro-stage {
     -webkit-overflow-scrolling: touch;
     scroll-snap-type: y mandatory;        /* 🔥 1화면씩 “확” 넘어가게 */
   }
+}
+   
 
   /* ✅ 인트로/메뉴를 각각 한 화면으로 고정 */
   .home-intro,
@@ -627,10 +616,6 @@ body.intro-passed .intro-stage {
    HOME – INTRO LAYOUT (FINAL)
 ================================================= */
 
-/* 전체 홈 뷰 */
-.home-view {
-  overflow: visible;
-}
 
 /* ---------- INTRO 영역 ---------- */
 .home-intro {
@@ -825,6 +810,14 @@ body.intro-passed .intro-stage {
    MOBILE – DETAIL RESET (기존 모바일 CSS 복구)
 ================================================= */
 @media (max-width: 767px) {
+   /* ================= HOME (PREMIUM ONLY) ================= */
+
+.home-view {
+  padding-top: 0;
+  overflow: visible;
+  background: transparent;
+}
+
 
   body.detail-open {
     color: #111;              /* 글씨 복구 */
