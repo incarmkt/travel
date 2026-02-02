@@ -1,3 +1,4 @@
+2차좋아
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -43,21 +44,23 @@
  <!-- 1️⃣ INTRO (글씨 화면) -->
   <section class="home-intro">
    <div class="intro-stage">
-      <div class="top-bar">
-<img src="assets/images/logo.png" class="top-logo">
+      
+   <img src="assets/images/logo.png" class="hero-logo">
 
-<div class="top-info">
-    <h1>2025 ISC 대만 여행</h1>
-    <p>2026.03.11 ~ 03.14 | 인카금융서비스</p>
-  </div>
+<h1 class="home-title">2025 ISC 대만 여행</h1>
 
-  <div class="profile-box">
-    <div class="profile-icon">👤</div>
-    <div class="profile-text">
-      <strong id="employeeName"></strong> 님, 환영합니다<br>
-      <span>ISC 달성을 축하드립니다</span>
-    </div>
-  </div>
+<p class="home-sub date">
+  2026.03.11 ~ 03.14 | 인카금융서비스
+</p>
+
+   <div class="welcome-card">
+  <p class="welcome-name">
+    <strong id="employeeName"></strong> 님, 환영합니다
+  </p>
+
+  <p class="welcome-msg">
+    ISC 달성을 축하드립니다
+  </p>
 </div>
 
   <!-- 감성 카피 영역 -->
@@ -570,8 +573,14 @@ if (type === "myTour") {
   setTimeout(() => {
     const wrap = document.querySelector('.meal-check[data-tour="자유일정"]');
     if (!wrap) return;
+
     syncMealStatusFromServer(currentUser.id, "자유일정", wrap);
-    }, 0);
+
+    const saved = loadMealPaid(currentUser.id, "자유일정");
+    if (!wrap.classList.contains("done") && saved?.time) {
+      setMealUI(wrap, "DONE", saved.time);
+    }
+  }, 0);
 }
 
 
@@ -726,19 +735,18 @@ if (type === "dinner") {
 }
 }
 
-async function syncMealStatusFromServer(userId, tour, wrap) {
-  const url = `${MEAL_SHEET_URL}?mode=customerAdmin&id=${userId}`;
+     async function syncMealStatusFromServer(userId, tour, wrap) {
+  const url = `${MEAL_SHEET_URL}?id=${userId}&tour=${encodeURIComponent(tour)}`;
   const res = await fetch(url);
   const data = await res.json();
 
-  const status = data.mealMap?.[tour]; // "APPROVE" | "CANCEL" | undefined
-
-  if (status === "APPROVE") {
-    setMealUI(wrap, "DONE", "서버 기준");
+  if (data.paid) {
+    setMealUI(wrap, "DONE", data.time);
   } else {
     setMealUI(wrap, "PENDING");
   }
 }
+
 /* ================= 홈으로 ================= */
 function goHome() {
   // 히스토리 초기화
@@ -847,23 +855,7 @@ function submitRequest() {
   window.addEventListener("scroll", onScroll, { passive: true });
 })();
 </script>
-  <script>
-(function () {
-  const ua = navigator.userAgent;
 
-  if (/KAKAOTALK/i.test(ua)) {
-    document.body.classList.add('ua-kakao');
-  }
-  if (/NAVER/i.test(ua)) {
-    document.body.classList.add('ua-naver');
-  }
-  if (/iPhone|iPad|iPod/i.test(ua)) {
-    document.body.classList.add('ua-ios');
-  }
-})();
-</script>
 
 </body>
 </html>
-
-잠깐임시
