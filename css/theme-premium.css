@@ -859,3 +859,135 @@ body.intro-passed .intro-stage {
   background: linear-gradient(135deg, #1e63c6 0%, #174ea6 100%) !important;
   color: #fff !important;
 }
+/* =================================================
+   🔥 [긴급 수정] 2번 사진 디자인 강제 적용
+   핵심: 배경 하나로 통일 + 메뉴 박스 제거 + 버튼 투명화
+================================================= */
+
+/* 1. 배경 고정 (스크롤 내려도 배경은 가만히, 내용만 흐르도록) */
+body.logged-in {
+  /* 배경 이미지가 스크롤 따라 올라가지 않고 고정됨 */
+  background-attachment: fixed !important;
+  background-position: center !important;
+  background-size: cover !important;
+}
+
+/* 2. 인트로 화면 레이아웃 (1번 사진처럼 깨지는 것 방지) */
+.home-intro {
+  height: 100vh !important;
+  height: 100dvh !important; /* 모바일 주소창 대응 */
+  
+  /* 절대 위치(absolute) 제거하고 Flex로 자동 정렬 */
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: center !important;
+  
+  /* 불필요한 여백/오버플로우 제거 */
+  padding: 0 !important;
+  margin: 0 !important;
+  overflow: hidden !important;
+}
+
+.intro-stage {
+  width: 100% !important;
+  height: 100% !important;
+  
+  /* 상단(로고) - 중단(이름) - 하단(리본) 균등 배치 */
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  
+  padding: 50px 20px 40px 20px !important;
+  box-sizing: border-box !important;
+  
+  /* 기존 애니메이션 충돌 방지 */
+  position: static !important;
+  transform: none !important;
+}
+
+/* 요소별 위치 강제 지정 (absolute 무시) */
+.intro-top, .intro-center, .intro-bottom {
+  position: static !important;
+  transform: none !important;
+  width: 100% !important;
+  text-align: center !important;
+}
+
+/* 3. 이름 및 텍스트 디자인 (2번 사진 스타일) */
+.welcome-main {
+  font-size: 22px !important;
+  color: #fff !important;
+  font-weight: 400 !important;
+  margin-bottom: 10px !important;
+  text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+}
+
+/* 이름 (가장 크게) */
+#employeeName {
+  display: block;
+  font-size: 40px !important;
+  font-weight: 900 !important;
+  color: #fff !important; /* 2번 사진처럼 흰색 or 골드 */
+  margin: 5px 0 15px 0 !important;
+}
+
+.welcome-sub {
+  font-size: 16px !important;
+  color: rgba(255,255,255,0.8) !important;
+}
+
+/* 4. [핵심] 메뉴 섹션 배경 투명화 (배경 끊김 해결) */
+.home-menu-section {
+  /* 배경색, 그림자, 테두리, 겹침 전부 삭제 */
+  background: transparent !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+  margin-top: 0 !important;
+  
+  /* 위치만 인트로 아래로 */
+  padding: 20px 20px 100px 20px !important;
+}
+
+/* 5. 메뉴 버튼 글래스 모피즘 (유리처럼 투명하게) */
+.home-menu {
+  display: grid !important;
+  grid-template-columns: 1fr 1fr !important;
+  gap: 12px !important;
+}
+
+.home-menu button {
+  /* 배경을 반투명 검정/흰색으로 처리하여 뒤 배경이 비치게 함 */
+  background: rgba(255, 255, 255, 0.15) !important;
+  backdrop-filter: blur(10px) !important; /* 흐림 효과 */
+  -webkit-backdrop-filter: blur(10px) !important;
+  
+  border: 1px solid rgba(255, 255, 255, 0.3) !important; /* 얇은 테두리 */
+  color: #fff !important; /* 글씨 흰색 */
+  border-radius: 16px !important;
+  
+  /* 크기 및 정렬 */
+  height: auto !important;
+  min-height: 110px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: center !important;
+  align-items: center !important;
+  font-size: 16px !important;
+  font-weight: 600 !important;
+  box-shadow: none !important;
+}
+
+/* '대만의 모든 것' 큰 버튼 */
+.home-menu button:first-child {
+  grid-column: span 2 !important;
+  background: rgba(255, 255, 255, 0.25) !important; /* 조금 더 밝게 */
+  font-size: 18px !important;
+  font-weight: 800 !important;
+}
+
+/* 6. 기타 불필요한 요소 숨김 */
+.scroll-hint {
+  color: rgba(255,255,255,0.7) !important;
+  margin-bottom: 10px;
+}
