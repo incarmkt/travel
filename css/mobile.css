@@ -367,11 +367,6 @@ body.logged-in {
         -webkit-overflow-scrolling: touch;
         padding: 16px 14px 18px !important;
     }
-
-    body {
-        overflow: hidden !important;
-        overscroll-behavior: none;
-    }
 }
 
 /* ================================================= 
@@ -626,3 +621,81 @@ body.logged-in {
   gap: 8px;
   font-size: 12px;
 }
+
+/* =================================================
+   ✅ QR 화면 전용 카드 레이아웃 (모바일 최종 고정)
+   - 모든 QR 화면을 1번 이미지처럼 통일
+================================================= */
+@media (max-width: 767px) {
+
+  /* 🔒 QR 모드에서만 body 스크롤 잠금 */
+  body.qr-lock {
+    overflow: hidden !important;
+    overscroll-behavior: none;
+  }
+
+  /* 🔲 QR 화면 카드 */
+  body.qr-lock #detailPage {
+    display: grid !important;
+    position: fixed !important;
+
+    top: 60px !important;
+    left: 12px !important;
+    right: 12px !important;
+    bottom: 16px !important;
+
+    grid-template-columns: 1fr auto;
+    grid-template-rows: auto 1fr;
+
+    background: #ffffff !important;
+    border-radius: 20px !important;
+    box-shadow: 0 10px 28px rgba(0,0,0,0.12);
+
+    z-index: 999 !important;
+    overflow: hidden !important;
+  }
+
+  /* 제목 영역 */
+  body.qr-lock #detailPage > h2#detailTitle {
+    grid-column: 1 / 2;
+    grid-row: 1 / 2;
+
+    margin: 0 !important;
+    padding: 12px 14px !important;
+
+    font-size: 16px !important;
+    font-weight: 800 !important;
+
+    background: #fff !important;
+    border-bottom: 1px solid #e5e7eb !important;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* 상단 버튼 */
+  body.qr-lock #detailPage > .nav-buttons {
+    grid-column: 2 / 3;
+    grid-row: 1 / 2;
+
+    display: flex !important;
+    gap: 8px !important;
+
+    padding: 10px 12px 10px 0 !important;
+    background: #fff !important;
+    border-bottom: 1px solid #e5e7eb !important;
+  }
+
+  /* 내용 영역 */
+  body.qr-lock #detailContent {
+    grid-column: 1 / 3;
+    grid-row: 2 / 3;
+
+    padding: 16px 14px !important;
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch;
+
+    background: #ffffff !important;
+  }
+}
+
