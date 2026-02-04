@@ -991,3 +991,108 @@ body.logged-in {
   color: rgba(255,255,255,0.7) !important;
   margin-bottom: 10px;
 }
+/* =================================================
+   🚀 2번 사진 레이아웃 완벽 재현 (최종 보정)
+================================================= */
+
+/* 1. 전체 배경 일체화 (배경 끊김 절대 방지) */
+#mainSection {
+  background: url("../assets/images/photo2.jpg") center / cover no-repeat fixed !important;
+}
+.home-menu-section {
+  background: transparent !important; /* 흰 배경 제거 */
+  margin-top: 0 !important;
+  padding-top: 20px !important;
+}
+
+/* 2. 인트로 구성 요소 수직 정렬 (2번 사진 순서) */
+.intro-stage {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: flex-start !important; /* 위에서부터 차례대로 */
+  padding-top: 80px !important; /* 상단 여백 */
+}
+
+/* [상단] 로고 & 브랜드 문구 */
+.intro-top {
+  margin-bottom: 40px !important;
+}
+.intro-top .hero-logo {
+  width: 80px !important;
+  margin-bottom: 10px !important;
+}
+.intro-brand {
+  font-size: 12px !important;
+  letter-spacing: 3px !important;
+  color: rgba(255,255,255,0.7) !important;
+}
+
+/* [중앙] 이름 & 환영인사 (폰트 크기 조절) */
+.intro-center {
+  margin-bottom: 30px !important;
+}
+#employeeName {
+  display: block !important;
+  font-size: 46px !important; /* 이름 아주 크게 */
+  font-weight: 800 !important;
+  color: #fff !important;
+  margin-bottom: 8px !important;
+  letter-spacing: -1px;
+}
+.welcome-main {
+  font-size: 18px !important;
+  font-weight: 300 !important;
+  color: #fff !important;
+  opacity: 0.9;
+}
+
+/* [하단] 🔥 평행사변형 배지 (핵심 디자인) */
+.intro-bottom {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.intro-date {
+  position: relative !important;
+  background: rgba(255, 255, 255, 0.9) !important; /* 흰색 반투명 */
+  color: #111 !important; /* 글씨는 진하게 */
+  padding: 8px 30px !important;
+  font-size: 14px !important;
+  font-weight: 700 !important;
+  
+  /* 평행사변형 만들기 */
+  transform: skewX(-15deg) !important; 
+  border-radius: 4px !important; /* 살짝만 둥글게 */
+  margin-bottom: 40px !important;
+}
+
+/* 배지 안의 글씨는 다시 똑바로 세우기 */
+.intro-date span, 
+.intro-date em {
+  display: inline-block;
+  transform: skewX(15deg) !important;
+}
+
+/* 3. 메뉴 버튼 디자인 (투명 유리 스타일) */
+.home-menu button {
+  background: rgba(255, 255, 255, 0.1) !important;
+  backdrop-filter: blur(8px) !important;
+  -webkit-backdrop-filter: blur(8px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  border-radius: 15px !important;
+  color: #fff !important;
+  height: 100px !important;
+  box-shadow: none !important;
+}
+
+.home-menu button:first-child {
+  background: rgba(255, 255, 255, 0.2) !important;
+}
+
+/* 삐쭉 튀어나온 디자인 요소들 완전 제거 */
+.home-menu-section::before,
+.home-menu-section::after {
+  display: none !important;
+}
