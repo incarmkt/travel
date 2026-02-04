@@ -1110,6 +1110,7 @@ function goBack(){
   switch (currentView){
 
     case "travelQR":
+        cleanupQR(); 
       openTravelList(currentCategory);
       break;
 
@@ -1118,10 +1119,15 @@ function goBack(){
       break;
 
     case "mealQR":
+        cleanupQR(); 
       openPage("mealRoot", true);
       break;
 
     case "customer":
+            cleanupQR();          // ✅ 여기 추가
+      openHome();
+      break;
+      
     case "report":
       openHome();
       break;
