@@ -380,7 +380,6 @@ document.getElementById("adminLoginError").textContent = "";
    ✅ 홈: 모바일에서도 3개 카테고리 버튼이 보여야 함
 ========================================================= */
 function openHome(){
-  cleanupQR();
   currentView = "home";
   
   document.getElementById("detailPage").style.display = "none";
@@ -396,7 +395,6 @@ function openHome(){
    ✅ 페이지 열기
 ========================================================= */
 function openPage(type, fromHistory=false){
-  cleanupQR();
 
   document.getElementById("homeArea").style.display = "none";
   document.getElementById("detailPage").style.display = "block";
@@ -690,6 +688,9 @@ async function startQR(){
 }
   
 function cleanupQR(){
+  // 🔥 QR 모드 아닐 때는 아무것도 하지 마
+  if (!qrMode) return;
+
   document.body.classList.remove("qr-lock");
   qrMode = "";
 
@@ -703,6 +704,7 @@ function cleanupQR(){
     }
   }
 }
+
 
 /* =========================================================
    ✅ QR 처리
@@ -1105,8 +1107,6 @@ function loadAdminReport(){
    ✅ 뒤로가기
 ========================================================= */
 function goBack(){
-  cleanupQR();
-
   switch (currentView){
 
     case "travelQR":
