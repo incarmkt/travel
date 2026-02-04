@@ -639,3 +639,223 @@ body.intro-passed .intro-stage {
   text-align: center;
 }
 
+/* =================================================
+   🔥 1번 사진 스타일 강제 적용 (레이아웃 자동 보정)
+   - 기기별 높이 깨짐 방지 (100dvh 사용)
+   - 텍스트/로고 위치 자동 중앙 정렬
+================================================= */
+
+/* 1. 인트로 화면: 전체 배경 및 틀 잡기 */
+.home-intro {
+  /* 모바일 주소창 포함한 실제 화면 높이 계산 */
+  height: 100vh; 
+  height: 100dvh; 
+  min-height: 600px; /* 너무 작은 화면 대응 */
+  
+  /* 배경 이미지 (어둡게 처리하여 글씨 잘 보이게) */
+  background: linear-gradient(to bottom, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.6) 100%),
+              url("../assets/images/main-bg.jpg") center/cover no-repeat fixed;
+  
+  /* 배치 초기화 (기존 absolute 무시) */
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: center !important;
+  align-items: center !important;
+  
+  position: relative !important;
+  overflow: hidden !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+/* 2. 내부 요소 배치 컨테이너 (Top - Center - Bottom 분리) */
+.intro-stage {
+  width: 100%;
+  height: 100%;
+  
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: space-between !important; /* 위, 중간, 아래 균등 배치 */
+  align-items: center !important;
+  
+  padding: 40px 20px 50px 20px !important; /* 상우하좌 여백 */
+  box-sizing: border-box !important;
+  
+  /* 기존 transform 애니메이션 충돌 방지 */
+  position: static !important; 
+  transform: none !important;
+}
+
+/* 3. 상단 (로고 영역) */
+.intro-top {
+  position: static !important; /* 절대 위치 해제 */
+  transform: none !important;
+  text-align: center;
+  margin-top: env(safe-area-inset-top); /* 아이폰 노치 여백 */
+}
+
+.intro-top .hero-logo {
+  width: 100px !important; /* 로고 크기 적절히 조정 */
+  height: auto;
+  margin-bottom: 8px;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+}
+
+.intro-brand {
+  font-size: 13px !important;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.8) !important;
+  margin: 0 !important;
+}
+
+/* 4. 중앙 (환영 메시지 & 이름) - 1번 사진 핵심 포인트 */
+.intro-center {
+  position: static !important;
+  transform: none !important;
+  text-align: center;
+  width: 100%;
+}
+
+.welcome-main {
+  font-size: 24px !important; /* 기본 글씨 크기 */
+  font-weight: 400 !important;
+  color: #fff !important;
+  line-height: 1.4 !important;
+  margin-bottom: 12px !important;
+  text-shadow: 0 4px 10px rgba(0,0,0,0.5);
+}
+
+/* 🔥 이름 강조 (JSON에서 불러온 이름) */
+#employeeName {
+  display: block; /* 줄바꿈하여 이름만 크게 */
+  font-size: 42px !important; /* 1번 사진처럼 매우 크게 */
+  font-weight: 800 !important;
+  color: #FFD700 !important; /* 고급스러운 골드 컬러 */
+  margin-top: 5px;
+  margin-bottom: 5px;
+  text-shadow: 0 4px 15px rgba(255, 215, 0, 0.4); /* 금색 빛남 효과 */
+}
+
+.welcome-sub {
+  font-size: 16px !important;
+  font-weight: 300 !important;
+  color: rgba(255,255,255,0.9) !important;
+  margin-bottom: 20px !important;
+}
+
+.intro-date {
+  display: inline-block;
+  padding: 8px 16px;
+  border: 1px solid rgba(255,255,255,0.3);
+  border-radius: 50px;
+  font-size: 14px !important;
+  color: #fff !important;
+  background: rgba(0,0,0,0.2);
+  backdrop-filter: blur(4px);
+}
+
+/* 5. 하단 (리본 & 스크롤 유도) */
+.intro-bottom {
+  position: static !important;
+  transform: none !important;
+  text-align: center;
+  margin-bottom: env(safe-area-inset-bottom); /* 아이폰 하단 바 여백 */
+  width: 100%;
+}
+
+/* 파란색 리본 배지 스타일 */
+.ribbon {
+  display: inline-block;
+  background: #2563EB !important; /* 쨍한 블루 */
+  color: #fff !important;
+  font-size: 13px !important;
+  font-weight: 700 !important;
+  padding: 6px 18px !important;
+  border-radius: 20px !important;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.4);
+  margin-bottom: 15px !important;
+  letter-spacing: 0.5px;
+}
+
+.intro-copy {
+  font-size: 15px !important;
+  color: rgba(255,255,255,0.9) !important;
+  margin-bottom: 20px !important;
+  font-weight: 300;
+}
+
+/* 아래로 스크롤 화살표 애니메이션 */
+.scroll-hint {
+  font-size: 13px !important;
+  color: rgba(255,255,255,0.6) !important;
+  animation: bounceArrow 2s infinite ease-in-out !important;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+}
+.scroll-hint::after {
+  content: '⌄'; /* 화살표 아이콘 */
+  font-size: 20px;
+  line-height: 10px;
+}
+
+@keyframes bounceArrow {
+  0%, 100% { transform: translateY(0); opacity: 0.6; }
+  50% { transform: translateY(6px); opacity: 1; }
+}
+
+/* =================================================
+   메뉴 섹션 (스크롤하면 슥 올라오는 부분)
+================================================= */
+.home-menu-section {
+  position: relative !important;
+  z-index: 10 !important;
+  background: #F6F7FB !important; /* 배경색 확실하게 지정 */
+  
+  /* 둥근 모서리로 덮어씌우는 느낌 */
+  border-top-left-radius: 30px !important;
+  border-top-right-radius: 30px !important;
+  
+  /* 인트로랑 살짝 겹치게 위로 올림 */
+  margin-top: -30px !important; 
+  padding: 40px 20px 80px 20px !important;
+  
+  box-shadow: 0 -10px 30px rgba(0,0,0,0.1); /* 그림자 효과 */
+}
+
+/* 기존 모바일 CSS 무력화 및 그리드 복구 */
+.home-menu {
+  display: grid !important;
+  grid-template-columns: 1fr 1fr !important;
+  gap: 12px !important;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.home-menu button {
+  background: #fff !important;
+  color: #333 !important;
+  border: none !important;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05) !important;
+  height: auto !important;
+  min-height: 100px !important;
+  border-radius: 20px !important;
+  
+  /* 내용 정렬 */
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: center !important;
+  align-items: center !important;
+  text-align: center !important;
+  font-size: 16px !important;
+  font-weight: 700 !important;
+}
+
+/* '대만의 모든 것' 큰 버튼 처리 */
+.home-menu button:first-child {
+  grid-column: span 2 !important;
+  background: linear-gradient(135deg, #1e63c6 0%, #174ea6 100%) !important;
+  color: #fff !important;
+}
