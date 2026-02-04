@@ -859,240 +859,134 @@ body.intro-passed .intro-stage {
   background: linear-gradient(135deg, #1e63c6 0%, #174ea6 100%) !important;
   color: #fff !important;
 }
+
 /* =================================================
-   🔥 [긴급 수정] 2번 사진 디자인 강제 적용
-   핵심: 배경 하나로 통일 + 메뉴 박스 제거 + 버튼 투명화
+   🔥 [최종] 2번 사진 디자인 1:1 매칭 오버라이드
 ================================================= */
 
-/* 1. 배경 고정 (스크롤 내려도 배경은 가만히, 내용만 흐르도록) */
+/* 1. 배경 통합 및 불필요한 레이어 제거 */
 body.logged-in {
-  /* 배경 이미지가 스크롤 따라 올라가지 않고 고정됨 */
-  background-attachment: fixed !important;
-  background-position: center !important;
-  background-size: cover !important;
+  background: url("../assets/images/photo2.jpg") center / cover no-repeat fixed !important;
 }
 
-/* 2. 인트로 화면 레이아웃 (1번 사진처럼 깨지는 것 방지) */
+/* 하단 카테고리 뒤의 흰색 판(삐쭉 튀어나온 것) 완전 제거 */
+.home-menu-section {
+  background: transparent !important;
+  box-shadow: none !important;
+  border: none !important;
+  margin-top: 0 !important;
+  padding: 20px 20px 80px 20px !important;
+}
+
+/* 2. 인트로 레이아웃 (위에서 아래로 차례대로 배치) */
 .home-intro {
-  height: 100vh !important;
-  height: 100dvh !important; /* 모바일 주소창 대응 */
-  
-  /* 절대 위치(absolute) 제거하고 Flex로 자동 정렬 */
+  height: auto !important; /* 고정 높이 해제 */
+  min-height: 100dvh;
   display: flex !important;
   flex-direction: column !important;
-  justify-content: center !important;
-  
-  /* 불필요한 여백/오버플로우 제거 */
+  align-items: center !important;
   padding: 0 !important;
-  margin: 0 !important;
-  overflow: hidden !important;
 }
 
 .intro-stage {
-  width: 100% !important;
-  height: 100% !important;
-  
-  /* 상단(로고) - 중단(이름) - 하단(리본) 균등 배치 */
+  position: relative !important;
   display: flex !important;
   flex-direction: column !important;
-  justify-content: space-between !important;
   align-items: center !important;
-  
-  padding: 50px 20px 40px 20px !important;
-  box-sizing: border-box !important;
-  
-  /* 기존 애니메이션 충돌 방지 */
-  position: static !important;
+  justify-content: flex-start !important;
+  height: auto !important;
+  padding-top: 60px !important; /* 상단 로고 여백 */
   transform: none !important;
 }
 
-/* 요소별 위치 강제 지정 (absolute 무시) */
-.intro-top, .intro-center, .intro-bottom {
+/* [상단] 로고와 브랜드명 */
+.intro-top {
   position: static !important;
   transform: none !important;
-  width: 100% !important;
-  text-align: center !important;
+  margin-bottom: 50px !important;
+}
+.hero-logo { width: 90px !important; margin-bottom: 8px !important; }
+.intro-brand { 
+  font-size: 11px !important; 
+  letter-spacing: 4px !important; 
+  color: rgba(255,255,255,0.7) !important; 
 }
 
-/* 3. 이름 및 텍스트 디자인 (2번 사진 스타일) */
-.welcome-main {
-  font-size: 22px !important;
-  color: #fff !important;
-  font-weight: 400 !important;
-  margin-bottom: 10px !important;
-  text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+/* [중앙] 이름과 환영 문구 - 2번 사진 폰트 반영 */
+.intro-center {
+  position: static !important;
+  transform: none !important;
+  margin-bottom: 20px !important;
 }
-
-/* 이름 (가장 크게) */
 #employeeName {
-  display: block;
-  font-size: 40px !important;
+  display: block !important;
+  font-size: 48px !important; /* 이름 아주 크게 */
   font-weight: 900 !important;
-  color: #fff !important; /* 2번 사진처럼 흰색 or 골드 */
-  margin: 5px 0 15px 0 !important;
+  color: #fff !important;
+  margin-bottom: 5px !important;
+  text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+}
+.welcome-main {
+  font-size: 20px !important;
+  font-weight: 300 !important;
+  color: #fff !important;
+  margin: 0 !important;
 }
 
-.welcome-sub {
-  font-size: 16px !important;
-  color: rgba(255,255,255,0.8) !important;
+/* [하단] 🔥 흰색 평행사변형 배지 (핵심 포인트) */
+.intro-bottom {
+  position: static !important;
+  transform: none !important;
+  margin-bottom: 60px !important; /* 메뉴와의 간격 */
 }
 
-/* 4. [핵심] 메뉴 섹션 배경 투명화 (배경 끊김 해결) */
-.home-menu-section {
-  /* 배경색, 그림자, 테두리, 겹침 전부 삭제 */
-  background: transparent !important;
-  box-shadow: none !important;
-  border-radius: 0 !important;
-  margin-top: 0 !important;
-  
-  /* 위치만 인트로 아래로 */
-  padding: 20px 20px 100px 20px !important;
+/* 기존 리본/데코 숨기기 */
+.ribbon { display: none !important; } 
+
+/* 평행사변형 배지 구현 */
+.intro-date {
+  display: inline-block !important;
+  position: relative !important;
+  background: rgba(255, 255, 255, 0.95) !important;
+  color: #111 !important;
+  padding: 6px 35px !important;
+  font-weight: 800 !important;
+  font-size: 14px !important;
+  transform: skewX(-20deg) !important; /* 평행사변형 각도 */
+  border-radius: 2px !important;
+}
+/* 글씨는 다시 똑바로 */
+#displayDate, .intro-date span {
+  display: inline-block !important;
+  transform: skewX(20deg) !important;
 }
 
-/* 5. 메뉴 버튼 글래스 모피즘 (유리처럼 투명하게) */
+/* 3. 메뉴 버튼 디자인 (투명한 유리 느낌) */
 .home-menu {
   display: grid !important;
   grid-template-columns: 1fr 1fr !important;
   gap: 12px !important;
+  width: 100% !important;
+  max-width: 500px !important;
 }
 
 .home-menu button {
-  /* 배경을 반투명 검정/흰색으로 처리하여 뒤 배경이 비치게 함 */
-  background: rgba(255, 255, 255, 0.15) !important;
-  backdrop-filter: blur(10px) !important; /* 흐림 효과 */
+  background: rgba(255, 255, 255, 0.12) !important;
+  backdrop-filter: blur(10px) !important;
   -webkit-backdrop-filter: blur(10px) !important;
-  
-  border: 1px solid rgba(255, 255, 255, 0.3) !important; /* 얇은 테두리 */
-  color: #fff !important; /* 글씨 흰색 */
-  border-radius: 16px !important;
-  
-  /* 크기 및 정렬 */
-  height: auto !important;
-  min-height: 110px !important;
-  display: flex !important;
-  flex-direction: column !important;
-  justify-content: center !important;
-  align-items: center !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  border-radius: 18px !important;
+  color: #fff !important;
+  height: 90px !important;
   font-size: 16px !important;
-  font-weight: 600 !important;
-  box-shadow: none !important;
+  font-weight: 700 !important;
 }
 
-/* '대만의 모든 것' 큰 버튼 */
+/* 첫 번째 큰 버튼 전용 색상 */
 .home-menu button:first-child {
   grid-column: span 2 !important;
-  background: rgba(255, 255, 255, 0.25) !important; /* 조금 더 밝게 */
-  font-size: 18px !important;
-  font-weight: 800 !important;
+  background: rgba(255, 255, 255, 0.22) !important;
 }
 
-/* 6. 기타 불필요한 요소 숨김 */
-.scroll-hint {
-  color: rgba(255,255,255,0.7) !important;
-  margin-bottom: 10px;
-}
-/* =================================================
-   🚀 2번 사진 레이아웃 완벽 재현 (최종 보정)
-================================================= */
-
-/* 1. 전체 배경 일체화 (배경 끊김 절대 방지) */
-#mainSection {
-  background: url("../assets/images/photo2.jpg") center / cover no-repeat fixed !important;
-}
-.home-menu-section {
-  background: transparent !important; /* 흰 배경 제거 */
-  margin-top: 0 !important;
-  padding-top: 20px !important;
-}
-
-/* 2. 인트로 구성 요소 수직 정렬 (2번 사진 순서) */
-.intro-stage {
-  display: flex !important;
-  flex-direction: column !important;
-  align-items: center !important;
-  justify-content: flex-start !important; /* 위에서부터 차례대로 */
-  padding-top: 80px !important; /* 상단 여백 */
-}
-
-/* [상단] 로고 & 브랜드 문구 */
-.intro-top {
-  margin-bottom: 40px !important;
-}
-.intro-top .hero-logo {
-  width: 80px !important;
-  margin-bottom: 10px !important;
-}
-.intro-brand {
-  font-size: 12px !important;
-  letter-spacing: 3px !important;
-  color: rgba(255,255,255,0.7) !important;
-}
-
-/* [중앙] 이름 & 환영인사 (폰트 크기 조절) */
-.intro-center {
-  margin-bottom: 30px !important;
-}
-#employeeName {
-  display: block !important;
-  font-size: 46px !important; /* 이름 아주 크게 */
-  font-weight: 800 !important;
-  color: #fff !important;
-  margin-bottom: 8px !important;
-  letter-spacing: -1px;
-}
-.welcome-main {
-  font-size: 18px !important;
-  font-weight: 300 !important;
-  color: #fff !important;
-  opacity: 0.9;
-}
-
-/* [하단] 🔥 평행사변형 배지 (핵심 디자인) */
-.intro-bottom {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.intro-date {
-  position: relative !important;
-  background: rgba(255, 255, 255, 0.9) !important; /* 흰색 반투명 */
-  color: #111 !important; /* 글씨는 진하게 */
-  padding: 8px 30px !important;
-  font-size: 14px !important;
-  font-weight: 700 !important;
-  
-  /* 평행사변형 만들기 */
-  transform: skewX(-15deg) !important; 
-  border-radius: 4px !important; /* 살짝만 둥글게 */
-  margin-bottom: 40px !important;
-}
-
-/* 배지 안의 글씨는 다시 똑바로 세우기 */
-.intro-date span, 
-.intro-date em {
-  display: inline-block;
-  transform: skewX(15deg) !important;
-}
-
-/* 3. 메뉴 버튼 디자인 (투명 유리 스타일) */
-.home-menu button {
-  background: rgba(255, 255, 255, 0.1) !important;
-  backdrop-filter: blur(8px) !important;
-  -webkit-backdrop-filter: blur(8px) !important;
-  border: 1px solid rgba(255, 255, 255, 0.2) !important;
-  border-radius: 15px !important;
-  color: #fff !important;
-  height: 100px !important;
-  box-shadow: none !important;
-}
-
-.home-menu button:first-child {
-  background: rgba(255, 255, 255, 0.2) !important;
-}
-
-/* 삐쭉 튀어나온 디자인 요소들 완전 제거 */
-.home-menu-section::before,
-.home-menu-section::after {
-  display: none !important;
-}
+/* 스크롤 유도 화살표 숨기기 (깔끔하게) */
+.scroll-hint { display: none !important; }
