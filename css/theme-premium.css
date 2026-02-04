@@ -980,3 +980,113 @@ body.logged-in {
 .ribbon, .scroll-hint, .intro-copy {
   display: none !important;
 }
+
+/* =================================================
+   🚀 [긴급] 2번 사진 1:1 매칭 (레이아웃 & 배경 통합)
+   - 하단에 튀어나오던 흰색 판(.home-menu-section) 완전 투명화
+   - 이름은 크게, 배지는 평행사변형으로
+================================================= */
+
+/* 1. 배경을 하나로 통일 (스크롤 내려도 배경 고정) */
+body.logged-in {
+  background: url("../assets/images/photo2.jpg") center / cover no-repeat fixed !important;
+}
+
+/* 2. [핵심] 하단에 삐쭉 튀어나오던 흰색 판 없애기 */
+.home-menu-section {
+  background: transparent !important; /* 배경 투명하게 */
+  box-shadow: none !important;        /* 그림자 제거 */
+  border-radius: 0 !important;        /* 둥근 모서리 제거 */
+  margin-top: 0 !important;           /* 위로 겹치기 금지 */
+  padding: 10px 20px 100px 20px !important;
+  position: relative !important;
+  z-index: 1 !important;
+}
+
+/* 3. 홈 화면 레이아웃 (2번 사진처럼 위에서 아래로 정렬) */
+.home-intro {
+  height: auto !important;
+  min-height: 85dvh !important; /* 인트로 높이 확보 */
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: flex-end !important; /* 아래쪽(이름/배지)으로 몰기 */
+  padding-bottom: 40px !important;
+}
+
+.intro-stage {
+  position: static !important;
+  transform: none !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+}
+
+/* 4. 폰트 및 이름 (2번 사진처럼 아주 크게) */
+.intro-center { margin-bottom: 20px !important; }
+
+#employeeName {
+  display: block !important;
+  font-size: 50px !important; /* 이름 압도적으로 크게 */
+  font-weight: 900 !important;
+  color: #fff !important;
+  margin-bottom: 5px !important;
+  letter-spacing: -2px !important;
+}
+
+.welcome-main {
+  font-size: 20px !important;
+  font-weight: 300 !important;
+  color: #fff !important;
+}
+
+/* 5. 🔥 평행사변형 배지 (흰색 바) */
+.intro-bottom { margin-bottom: 30px !important; }
+
+.intro-date {
+  display: inline-block !important;
+  background: rgba(255, 255, 255, 0.95) !important; /* 흰색 반투명 */
+  color: #000 !important; /* 글씨는 검정 */
+  padding: 8px 45px !important;
+  font-weight: 800 !important;
+  font-size: 15px !important;
+  transform: skewX(-20deg) !important; /* 평행사변형 모양 */
+  border-radius: 2px !important;
+}
+
+/* 배지 안의 글씨는 다시 똑바로 */
+#displayDate, .intro-date span {
+  display: inline-block !important;
+  transform: skewX(20deg) !important;
+}
+
+/* 6. 카테고리 버튼 (투명 유리 스타일) */
+.home-menu {
+  display: grid !important;
+  grid-template-columns: 1fr 1fr !important;
+  gap: 12px !important;
+}
+
+.home-menu button {
+  background: rgba(255, 255, 255, 0.15) !important; /* 배경 비치는 투명 */
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  border-radius: 18px !important;
+  color: #fff !important;
+  height: 90px !important;
+  font-size: 16px !important;
+  font-weight: 700 !important;
+  box-shadow: none !important;
+}
+
+/* 첫 번째 큰 버튼 전용 */
+.home-menu button:first-child {
+  grid-column: span 2 !important;
+  background: rgba(255, 255, 255, 0.25) !important;
+}
+
+/* 7. 기존에 방해되는 요소들 완전 삭제 */
+.ribbon, .scroll-hint, .intro-copy, .home-menu-section::before {
+  display: none !important;
+}
