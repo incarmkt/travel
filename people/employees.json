@@ -5,19 +5,19 @@
     "flight": {
       "departure": {
         "date": "2026.03.11",
-        "time": "08:00",
+        "time": "09:00",
         "from": "인천",
         "to": "타이베이",
-        "airline": "아시아나항공",
-        "flightNo": "OZ 711"
+        "airline": "대한항공",
+        "flightNo": "KE 2021"
       },
       "return": {
         "date": "2026.03.14",
-        "time": "11:40",
+        "time": "12:25",
         "from": "타이베이",
         "to": "인천",
-        "airline": "아시아나항공",
-        "flightNo": "OZ 712"
+        "airline": "대한항공",
+        "flightNo": "KE 2022"
       }
     },
 "myTour": [
