@@ -433,8 +433,8 @@ const travelSchedule = [
       { time:"13:30/14:30", icon:"🏛️", title:"단수이 옛거리/홍마오청/진리대학", desc:"홍마오청·옛거리 관광" },
       { time:"16:30/17:30", icon:"🏨", title:"호텔 체크인", desc:"타이베이 메리어트 호텔[5성급]" },
       { time:"18:00/18:30", icon:"🍽️", title:"석식 | 타카오 샤브샤브", desc:"무제한 샤브샤브" },
-      { time:"19:00/19:30", icon:"🌃", title:"타이베이 101 전망대", desc:"야경 관람" },
-      { time:"21:30", icon:"🏨", title:"호텔복귀", desc:"타이베이 메리어트 호텔[5성급]" }
+      { time:"19:30/20:00", icon:"🌃", title:"타이베이 101 전망대", desc:"야경 관람" },
+      { time:"21:00/21:30", icon:"🏨", title:"호텔복귀", desc:"타이베이 메리어트 호텔[5성급]" }
     ]
   },
   {
@@ -443,6 +443,11 @@ const travelSchedule = [
     title: "선택 관광 / 만찬",
     items: [
       { time:"08:30/9:00", icon:"🚌", title:"선택 관광", desc:"개인 선택 일정" },
+      { time:"08:30", icon:"🚌", title:"티엔라이 온천", desc:"선택 1안" },
+      { time:"9:00", icon:"🏛️", title:"고궁박물관", desc:"선택 2안" },
+      { time:"13:00", icon:"🍽️", title:"중식", desc:"베이징덕" },
+      { time:"14:30", icon:"🛍️", title:"서문정", desc:"개인 선택 일정" },
+      { time:"08:30/9:00", icon:"🧭", title:"자유시간", desc:"중식비 지급" },
       { time:"18:00", icon:"🎉", title:"ISC 만찬", desc:"필수 참석" }
     ]
   },
@@ -492,6 +497,63 @@ function pickTimeByAirline(timeStr, airline) {
   // ✅ 룰: 아시아나 = 앞(빠른 시간), 대한항공 = 뒤(느린 시간)
   return isKoreanAir ? parts[parts.length - 1] : parts[0];
 }
+function buildDay2ItemsForUser(user, userAirline) {
+  const tours = user?.myTour || [];
+  const hasTienlai = tours.some(v => String(v).includes("티엔라이"));
+  const hasGugung  = tours.some(v => String(v).includes("고궁박물관"));
+  const hasFree    = tours.some(v => String(v).includes("자유일정"));
+
+  // ✅ travelSchedule 안에서 DAY2 객체 찾기
+  const day2 = travelSchedule.find(d => d.day === "DAY 2");
+  const items = day2?.items || [];
+
+  // ✅ DAY2 items에서 title로 빠르게 찾기
+  const byTitle = (title) => items.find(x => x.title === title);
+
+  const itemTienlai = byTitle("티엔라이 온천");
+  const itemGugung  = byTitle("고궁박물관");
+  const itemLunch   = byTitle("중식");
+  const itemXimen   = byTitle("서문정");
+  const itemFree    = byTitle("자유시간");
+  const itemDinner  = byTitle("ISC 만찬");
+
+  // ✅ 3안: 자유일정(자유시간)만 + 만찬
+  if (hasFree && !hasTienlai && !hasGugung) {
+    return [
+      ...(itemFree ? [itemFree] : []),
+      ...(itemDinner ? [itemDinner] : [])
+    ];
+  }
+
+  // ✅ 1안: 티엔라이 + 중식 + 서문정 + 만찬
+  if (hasTienlai) {
+    return [
+      ...(itemTienlai ? [itemTienlai] : []),
+      ...(itemLunch ? [itemLunch] : []),
+      ...(itemXimen ? [itemXimen] : []),
+      ...(itemDinner ? [itemDinner] : [])
+    ];
+  }
+
+  // ✅ 2안: 고궁 + 중식 + 서문정 + 만찬
+  if (hasGugung) {
+    return [
+      ...(itemGugung ? [itemGugung] : []),
+      ...(itemLunch ? [itemLunch] : []),
+      ...(itemXimen ? [itemXimen] : []),
+      ...(itemDinner ? [itemDinner] : [])
+    ];
+  }
+
+  // ✅ 안전망: 선택정보가 이상하면 "선택 관광" + 만찬만
+  const itemSelect = byTitle("선택 관광");
+  return [
+    ...(itemSelect ? [itemSelect] : []),
+    ...(itemDinner ? [itemDinner] : [])
+  ];
+}
+
+
 function pickFlightDescByAirline(desc, airline) {
   const s = String(desc || "");
   if (!s.includes("/")) return s;
@@ -538,22 +600,25 @@ function openPage(type, fromHistory = false) {
         <p class="day-title">${day.title}</p>
 
         <div class="timeline">
-          ${day.items.map(i => `
-            <div class="schedule-item">
-              <div class="timeline-dot"></div>
-              <div class="schedule-card">
-                <div class="schedule-time">${pickTimeByAirline(i.time, userAirline)}</div>
-                <div class="schedule-body">
-                  <div class="schedule-title">${i.icon} ${i.title}</div>
-                 ${i.desc ? `<div class="schedule-desc">${pickFlightDescByAirline(i.desc, userAirline)}</div>` : ""}
-                </div>
-              </div>
-            </div>
-          `).join("")}
+  ${(() => {
+    const items = (day.day === "DAY 2")
+      ? buildDay2ItemsForUser(currentUser, userAirline)
+      : day.items;
+
+    return items.map(i => `
+      <div class="schedule-item">
+        <div class="timeline-dot"></div>
+        <div class="schedule-card">
+          <div class="schedule-time">${pickTimeByAirline(i.time, userAirline)}</div>
+          <div class="schedule-body">
+            <div class="schedule-title">${i.icon} ${i.title}</div>
+            ${i.desc ? `<div class="schedule-desc">${pickFlightDescByAirline(i.desc, userAirline)}</div>` : ""}
+          </div>
         </div>
       </div>
-    `).join("")}
-  </div>
+    `).join("");
+  })()}
+</div>
 `;
 
 
