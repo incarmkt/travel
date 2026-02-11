@@ -72,6 +72,7 @@
     <div class="home-menu-wrap">
       <nav class="home-menu">
       <button onclick="openPage('taiwan')">🇹🇼 대만의 모든 것</button>
+         <button onclick="openPage('exchange')">💱 환율 계산기</button>  <!-- ✅ 추가 -->
       <button onclick="openPage('schedule')">🗓 여행 일정</button>
       <button onclick="openPage('flight')">✈️ 항공편 정보</button>
       <button onclick="openPage('myTour')">🎒 나의 선택 관광</button>
@@ -657,6 +658,47 @@ if (type === "taiwan") {
 
   startWorldClock();
 }
+  if (type === "exchange") {
+  t.textContent = "💱 대만 환율 계산기";
+
+  c.innerHTML = `
+    <div class="detail-content-wrap">
+      <div class="day-card">
+        <h3 class="section-title">TWD ↔ KRW 계산</h3>
+
+        <div class="exchange-tool">
+          <div class="rate-row">
+            <span>기준 환율</span>
+            <div class="rate-input">
+              <input id="rateKRW" type="number" inputmode="decimal" step="0.01" value="42">
+              <em>KRW / 1 TWD</em>
+            </div>
+          </div>
+
+          <div class="fx-grid">
+            <div class="fx-box">
+              <label>대만달러 (TWD)</label>
+              <input id="inputTWD" type="text" inputmode="decimal" placeholder="예: 1000">
+            </div>
+
+            <div class="fx-eq">⇄</div>
+
+            <div class="fx-box">
+              <label>원화 (KRW)</label>
+              <input id="inputKRW" type="text" inputmode="decimal" placeholder="예: 42000">
+            </div>
+          </div>
+
+          <p class="fx-note">※ 숫자 입력 시 자동으로 반대 통화가 계산됩니다. (콤마 입력/붙여넣기 지원)</p>
+        </div>
+      </div>
+    </div>
+  `;
+
+  // ✅ 렌더 후 이벤트 연결
+  initExchangeCalculator();
+}
+
  
 
 if (type === "dinner") {
@@ -849,6 +891,88 @@ function submitRequest() {
   updateTime();
   setInterval(updateTime, 1000);
 }
+    function initExchangeCalculator() {
+  const rateEl = document.getElementById("rateKRW");
+  const twdEl = document.getElementById("inputTWD");
+  const krwEl = document.getElementById("inputKRW");
+
+  if (!rateEl || !twdEl || !krwEl) return;
+
+  // 무한루프 방지 플래그
+  let syncing = false;
+
+  const parseNum = (v) => {
+    if (v == null) return NaN;
+    const x = String(v).replace(/,/g, "").trim();
+    if (x === "") return NaN;
+    return Number(x);
+  };
+
+  const fmt = (n) => {
+    if (!isFinite(n)) return "";
+    // 소수는 필요할 때만 보여주기
+    const isInt = Math.abs(n - Math.round(n)) < 1e-10;
+    return (isInt ? Math.round(n) : n).toLocaleString("ko-KR", {
+      maximumFractionDigits: 2
+    });
+  };
+
+  const getRate = () => {
+    const r = Number(rateEl.value);
+    return r > 0 ? r : 42; // 기본값
+  };
+
+  const updateFromTWD = () => {
+    if (syncing) return;
+    syncing = true;
+
+    const twd = parseNum(twdEl.value);
+    const rate = getRate();
+
+    if (!isFinite(twd)) {
+      krwEl.value = "";
+      syncing = false;
+      return;
+    }
+
+    const krw = twd * rate;
+    krwEl.value = fmt(krw);
+    syncing = false;
+  };
+
+  const updateFromKRW = () => {
+    if (syncing) return;
+    syncing = true;
+
+    const krw = parseNum(krwEl.value);
+    const rate = getRate();
+
+    if (!isFinite(krw)) {
+      twdEl.value = "";
+      syncing = false;
+      return;
+    }
+
+    const twd = krw / rate;
+    twdEl.value = fmt(twd);
+    syncing = false;
+  };
+
+  // 입력 이벤트
+  twdEl.addEventListener("input", updateFromTWD);
+  krwEl.addEventListener("input", updateFromKRW);
+
+  // 환율 변경 시: 마지막으로 입력된 값 기준으로 재계산
+  rateEl.addEventListener("input", () => {
+    // 둘 다 값이 있으면 TWD 우선, 없으면 KRW
+    const hasT = String(twdEl.value).trim() !== "";
+    const hasK = String(krwEl.value).trim() !== "";
+
+    if (hasT) updateFromTWD();
+    else if (hasK) updateFromKRW();
+  });
+}
+
 
 </script>
 <script>
