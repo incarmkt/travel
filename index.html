@@ -756,6 +756,14 @@ function goHome() {
 
   // 상세 닫기
   document.body.classList.remove("detail-open");
+// 🔥 추가된 부분: 잠금이 풀리면서 스크롤이 위로 튕기는 것을 방지
+  setTimeout(() => {
+    const menuSection = document.querySelector('.home-menu-section');
+    if (menuSection) {
+      // 메뉴 영역으로 부드럽고 찰칵하게 스크롤 고정
+      menuSection.scrollIntoView({ behavior: 'auto', block: 'start' });
+    }
+  }, 10); // 10ms의 미세한 딜레이를 주어 브라우저 렌더링 충돌을 막음
 }
 
     /* ================= 뒤로가기 ================= */
