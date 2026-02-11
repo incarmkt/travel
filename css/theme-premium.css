@@ -278,12 +278,12 @@ button {
 }
 
 /* =========================================
-   3-2. MENU SECTION (파스텔톤 그리드 UI)
+   3-2. MENU SECTION (프리미엄 클린 UI)
    ========================================= */
 .home-menu-section {
   position: relative;
   z-index: 10;
-  scroll-snap-align: start; /* 위에서 수정한 스크롤 자석 효과 유지 */
+  scroll-snap-align: start; 
   background: var(--bg-color);
   border-radius: 30px 30px 0 0;
   padding: 40px 20px 80px;
@@ -297,53 +297,44 @@ button {
 
 .home-menu {
   display: grid;
-  grid-template-columns: 1fr 1fr; /* 2열 바둑판 레이아웃 */
-  gap: 16px; /* 버튼 사이 여백 */
+  grid-template-columns: 1fr 1fr; /* 모바일 2열 고정 */
+  gap: 14px; /* 버튼 사이 여백 */
 }
 
-/* 카테고리 카드 (애플 iOS 스타일) */
+/* 프리미엄 화이트 카드 스타일 (파스텔 배경 완전 제거) */
 .home-menu button {
-  background: white; /* 혹시 모를 기본값 방지 */
-  border: none;
-  border-radius: 24px; /* 앱 스타일의 부드러운 둥근 모서리 */
-  padding: 24px 12px;
-  box-shadow: 0 4px 16px rgba(0,0,0,0.06); /* 미세하고 고급스러운 입체감 */
+  background: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.03);
+  border-radius: 20px;
+  padding: 24px 12px 20px;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.04);
   font-size: 15px;
   font-weight: 700;
-  color: #374151; /* 텍스트를 진한 회색으로 가독성 확보 */
+  color: #111827;
   
   /* 이모지와 글자를 위아래 중앙 정렬 */
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 10px;
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  gap: 8px;
+  transition: all 0.2s ease;
 }
 
-/* 터치했을 때 살짝 들어가는 효과 */
+/* 터치했을 때 부드럽게 눌리는 효과 */
 .home-menu button:active {
   transform: scale(0.96);
-  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+  background: #f9fafb;
 }
 
-/* JS로 넣은 첫 글자(이모지)만 인식해서 폰트 대폭 키우기 */
+/* 첫 글자(이모지)에만 은은한 입체감 추가 */
 .home-menu button::first-letter {
-  font-size: 38px;
+  font-size: 34px;
   line-height: 1.2;
   display: block;
-}
-
-/* 🔥 HTML 수정 없이 순서대로 파스텔 배경색 자동 적용 */
-.home-menu button:nth-child(1) { background-color: #e0f2fe; } /* 1. 대만 (연파랑) */
-.home-menu button:nth-child(2) { background-color: #dcfce7; } /* 2. 일정 (연초록) */
-.home-menu button:nth-child(3) { background-color: #fef08a; } /* 3. 항공 (연노랑) */
-.home-menu button:nth-child(4) { background-color: #fce7f3; } /* 4. 관광 (연분홍) */
-.home-menu button:nth-child(5) { background-color: #f3e8ff; } /* 5. 만찬 (연보라) */
-.home-menu button:nth-child(6) { background-color: #ffedd5; } /* 6. 요청 (연주황) */
-.home-menu button:nth-child(7) { 
-  background-color: #f3f4f6; /* 7. 연락망 (연회색) */
-  grid-column: span 2;       /* 마지막 버튼은 혼자 남으므로 가로 2칸 꽉 채우기 */
+  margin-bottom: 4px;
+  text-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
 }
 
 /* =========================================
@@ -527,14 +518,21 @@ body.detail-open .detail-sheet__inner {
    ========================================= */
 @media (min-width: 768px) {
   body { background-color: #eef2f6; }
-  #mainSection { margin-top: 40px; margin-bottom: 40px; border-radius: 30px; overflow: hidden; min-height: calc(100vh - 80px); }
-  .home-menu { grid-template-columns: 1fr 1fr 1fr; }
+  #mainSection { 
+    margin-top: 40px; 
+    margin-bottom: 40px; 
+    border-radius: 30px; 
+    overflow: hidden; 
+    min-height: calc(100vh - 80px); 
+  }
+  
+  /* 🔥 데스크탑에서는 8개 버튼이 4열 2행으로 깔끔하게 나오도록 수정 */
+  .home-menu { 
+    grid-template-columns: repeat(4, 1fr); 
+    gap: 16px; 
+  }
+  
   .detail-sheet__inner { border-radius: 24px 24px 0 0; }
-}
-
-/* 🔥 카테고리(상세창)가 열렸을 때 배경(body) 스크롤 잠금 */
-body.detail-open {
-  overflow: hidden;
 }
 
 /* ===============================
@@ -592,55 +590,5 @@ body.detail-open {
   }
   .fx-eq {
     text-align: center;
-  }
-}
-
-/* =================================================
-   🚀 카테고리 메뉴 프리미엄 디자인 오버라이드 (추가됨)
-   ================================================= */
-
-/* 1. 알록달록한 파스텔 배경 제거 & 클린 화이트 톤으로 통일 */
-.home-menu button,
-.home-menu button:nth-child(n) { /* 기존 nth-child 색상을 강력하게 덮어쓰기 위함 */
-  background: #ffffff !important;
-  border: 1px solid rgba(0, 0, 0, 0.03) !important;
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.04) !important;
-  color: #111827 !important;
-  border-radius: 20px !important;
-  padding: 24px 12px 20px !important;
-}
-
-/* 2. 이모지(첫 글자)를 앱 아이콘처럼 깔끔하고 입체감 있게 연출 */
-.home-menu button::first-letter {
-  font-size: 34px !important;
-  line-height: 1.2 !important;
-  display: block !important;
-  margin-bottom: 6px !important;
-  text-shadow: 0 4px 10px rgba(0, 0, 0, 0.08); /* 이모지에 은은한 그림자 */
-}
-
-/* 3. 터치 시 들어가는 애니메이션 고급화 */
-.home-menu button:active {
-  transform: scale(0.95) !important;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04) !important;
-  background: #f9fafb !important; /* 터치 시 아주 살짝 회색빛 */
-}
-
-/* 4. 8개 아이템에 맞춘 완벽한 대칭 그리드 정렬 */
-.home-menu {
-  grid-template-columns: repeat(2, 1fr) !important; /* 모바일: 깔끔한 2열 고정 */
-  gap: 14px !important; /* 간격을 살짝 넓혀서 여백 확보 */
-}
-
-/* 5. 기존 7번째 버튼 혼자 2칸 차지하던 것 취소 (8개니까 짝수 정렬) */
-.home-menu button:nth-child(7) {
-  grid-column: auto !important;
-}
-
-/* 6. 데스크탑 대응 (8개이므로 4열로 넓게 배치) */
-@media (min-width: 768px) {
-  .home-menu {
-    grid-template-columns: repeat(4, 1fr) !important;
-    gap: 16px !important;
   }
 }
