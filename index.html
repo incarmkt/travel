@@ -658,46 +658,52 @@ if (type === "taiwan") {
 
   startWorldClock();
 }
-  if (type === "exchange") {
-  t.textContent = "💱 대만 환율 계산기";
+if (type === "exchange") {
+  t.textContent = "💱 환율 계산기";
 
   c.innerHTML = `
     <div class="detail-content-wrap">
+
+      <!-- ✅ 너 CSS에 이미 있는 exchange-row 활용 -->
+      <div class="exchange-row">
+        환율: <strong>1 TWD ≈ <span id="fxRateText">불러오는 중…</span>원</strong><br>
+        <span style="font-size:12px; color:#6b7280;">
+          업데이트: <span id="fxUpdatedText">-</span>
+        </span>
+        <div style="margin-top:10px;">
+          <button class="primary-btn" id="fxRefreshBtn" style="max-width:220px;">
+            환율 새로고침
+          </button>
+        </div>
+      </div>
+
       <div class="day-card">
         <h3 class="section-title">TWD ↔ KRW 계산</h3>
 
-        <div class="exchange-tool">
-          <div class="rate-row">
-            <span>기준 환율</span>
-            <div class="rate-input">
-              <input id="rateKRW" type="number" inputmode="decimal" step="0.01" value="42">
-              <em>KRW / 1 TWD</em>
-            </div>
+        <div class="fx-grid">
+          <div class="fx-box">
+            <label>대만달러 (TWD)</label>
+            <input id="inputTWD" type="text" inputmode="decimal" placeholder="예: 1000">
           </div>
 
-          <div class="fx-grid">
-            <div class="fx-box">
-              <label>대만달러 (TWD)</label>
-              <input id="inputTWD" type="text" inputmode="decimal" placeholder="예: 1000">
-            </div>
+          <div class="fx-eq">⇄</div>
 
-            <div class="fx-eq">⇄</div>
-
-            <div class="fx-box">
-              <label>원화 (KRW)</label>
-              <input id="inputKRW" type="text" inputmode="decimal" placeholder="예: 42000">
-            </div>
+          <div class="fx-box">
+            <label>원화 (KRW)</label>
+            <input id="inputKRW" type="text" inputmode="decimal" placeholder="예: 42000">
           </div>
-
-          <p class="fx-note">※ 숫자 입력 시 자동으로 반대 통화가 계산됩니다. (콤마 입력/붙여넣기 지원)</p>
         </div>
+
+        <p class="fx-note">
+          ※ 숫자 입력 시 자동 계산됩니다. (콤마 붙여넣기 가능)
+        </p>
       </div>
     </div>
   `;
 
-  // ✅ 렌더 후 이벤트 연결
-  initExchangeCalculator();
+  initExchangeCalculatorAuto(); // ✅ 새 로직
 }
+
 
  
 
@@ -971,6 +977,152 @@ function submitRequest() {
     if (hasT) updateFromTWD();
     else if (hasK) updateFromKRW();
   });
+}
+const FX_CACHE_KEY = "fx_twd_krw_cache_v1";
+const FX_CACHE_MS = 6 * 60 * 60 * 1000; // ✅ 6시간 캐시 (원하면 24시간으로)
+
+function fxParse(v) {
+  if (v == null) return NaN;
+  const x = String(v).replace(/,/g, "").trim();
+  if (x === "") return NaN;
+  return Number(x);
+}
+
+function fxFmt(n) {
+  if (!isFinite(n)) return "";
+  const isInt = Math.abs(n - Math.round(n)) < 1e-10;
+  return (isInt ? Math.round(n) : n).toLocaleString("ko-KR", {
+    maximumFractionDigits: 2
+  });
+}
+
+/**
+ * ✅ USD 기준 공개 환율표를 받아서 TWD↔KRW 환율 산출
+ * 1 TWD = (KRW/USD) / (TWD/USD)
+ */
+async function fetchTwdToKrwRate() {
+  const url = "https://open.er-api.com/v6/latest/USD"; // 키 없음
+  const res = await fetch(url, { cache: "no-store" });
+  if (!res.ok) throw new Error("환율 API 실패: " + res.status);
+
+  const data = await res.json();
+  const krwPerUsd = data?.rates?.KRW;
+  const twdPerUsd = data?.rates?.TWD;
+
+  if (!isFinite(krwPerUsd) || !isFinite(twdPerUsd)) {
+    throw new Error("KRW/TWD 환율 데이터 없음");
+  }
+
+  return {
+    rate: krwPerUsd / twdPerUsd, // 1 TWD -> KRW
+    updatedUtc: data.time_last_update_utc || ""
+  };
+}
+
+function loadFxCache() {
+  const raw = localStorage.getItem(FX_CACHE_KEY);
+  if (!raw) return null;
+  try {
+    const v = JSON.parse(raw);
+    if (!v.rate || !v.savedAt) return null;
+    if (Date.now() - v.savedAt > FX_CACHE_MS) return null; // 만료
+    return v;
+  } catch {
+    return null;
+  }
+}
+
+function saveFxCache(payload) {
+  localStorage.setItem(FX_CACHE_KEY, JSON.stringify({
+    rate: payload.rate,
+    updatedUtc: payload.updatedUtc,
+    savedAt: Date.now()
+  }));
+}
+
+async function getFxRate({ force = false } = {}) {
+  if (!force) {
+    const cached = loadFxCache();
+    if (cached) return cached;
+  }
+  const fresh = await fetchTwdToKrwRate();
+  saveFxCache(fresh);
+  return loadFxCache() || fresh;
+}
+
+function initExchangeCalculatorAuto() {
+  const twdEl = document.getElementById("inputTWD");
+  const krwEl = document.getElementById("inputKRW");
+
+  const rateText = document.getElementById("fxRateText");
+  const updatedText = document.getElementById("fxUpdatedText");
+  const refreshBtn = document.getElementById("fxRefreshBtn");
+
+  if (!twdEl || !krwEl || !rateText || !updatedText) return;
+
+  let syncing = false;
+  let rate = NaN; // 1 TWD -> KRW
+
+  function updateFromTWD() {
+    if (syncing) return;
+    syncing = true;
+
+    const twd = fxParse(twdEl.value);
+    if (!isFinite(twd) || !isFinite(rate)) {
+      krwEl.value = "";
+      syncing = false;
+      return;
+    }
+    krwEl.value = fxFmt(twd * rate);
+    syncing = false;
+  }
+
+  function updateFromKRW() {
+    if (syncing) return;
+    syncing = true;
+
+    const krw = fxParse(krwEl.value);
+    if (!isFinite(krw) || !isFinite(rate) || rate === 0) {
+      twdEl.value = "";
+      syncing = false;
+      return;
+    }
+    twdEl.value = fxFmt(krw / rate);
+    syncing = false;
+  }
+
+  twdEl.addEventListener("input", updateFromTWD);
+  krwEl.addEventListener("input", updateFromKRW);
+
+  async function renderRate(force = false) {
+    rateText.textContent = "불러오는 중…";
+    try {
+      const fx = await getFxRate({ force });
+      rate = Number(fx.rate);
+
+      rateText.textContent = fxFmt(rate);
+      updatedText.textContent = fx.updatedUtc || "-";
+
+      // 이미 입력값이 있으면 재계산
+      const hasT = String(twdEl.value).trim() !== "";
+      const hasK = String(krwEl.value).trim() !== "";
+      if (hasT) updateFromTWD();
+      else if (hasK) updateFromKRW();
+
+    } catch (e) {
+      console.error(e);
+      rateText.textContent = "실패";
+      updatedText.textContent = "-";
+      alert("환율을 불러오지 못했습니다. 네트워크 상태를 확인해주세요.");
+    }
+  }
+
+  if (refreshBtn) {
+    refreshBtn.addEventListener("click", () => renderRate(true));
+  }
+
+  // ✅ 최초 1회 로딩 (캐시 있으면 캐시)
+  renderRate(false);
 }
 
 
