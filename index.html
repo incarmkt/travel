@@ -72,7 +72,7 @@
     <div class="home-menu-wrap">
       <nav class="home-menu">
       <button onclick="openPage('taiwan')">🇹🇼 대만의 모든 것</button>
-         <button onclick="openPage('exchange')">💱 환율 계산기</button>  <!-- ✅ 추가 -->
+      <button onclick="openPage('exchange')">💱 환율 계산기</button>  <!-- ✅ 추가 -->
       <button onclick="openPage('schedule')">🗓 여행 일정</button>
       <button onclick="openPage('flight')">✈️ 항공편 정보</button>
       <button onclick="openPage('myTour')">🎒 나의 선택 관광</button>
@@ -526,6 +526,10 @@ function openPage(type, fromHistory = false) {
 
   const t = document.getElementById("detailTitle");
   const c = document.getElementById("detailContent");
+
+  if (type === "schedule") {
+    t.textContent = "🗓 여행 일정";
+  }
 
   c.innerHTML = `
   <div class="detail-content-wrap">
