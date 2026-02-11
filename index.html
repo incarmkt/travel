@@ -590,36 +590,43 @@ function openPage(type, fromHistory = false) {
   const c = document.getElementById("detailContent");
 
   if (type === "schedule") {
-    t.textContent = "🗓 여행 일정";
-  }
+  t.textContent = "🗓 여행 일정";
+
   c.innerHTML = `
-  <div class="detail-content-wrap">
-    ${travelSchedule.map(day => `
-      <div class="day-card">
-        <h3>${day.day} <span>${day.date}</span></h3>
-        <p class="day-title">${day.title}</p>
+    <div class="detail-content-wrap">
+      ${travelSchedule.map(day => `
+        <div class="day-card">
+          <h3>${day.day} <span>${day.date}</span></h3>
+          <p class="day-title">${day.title}</p>
 
-        <div class="timeline">
-  ${(() => {
-    const items = (day.day === "DAY 2")
-      ? buildDay2ItemsForUser(currentUser, userAirline)
-      : day.items;
+          <div class="timeline">
+            ${(() => {
+              const items = (day.day === "DAY 2")
+                ? buildDay2ItemsForUser(currentUser, userAirline)
+                : day.items;
 
-    return items.map(i => `
-      <div class="schedule-item">
-        <div class="timeline-dot"></div>
-        <div class="schedule-card">
-          <div class="schedule-time">${pickTimeByAirline(i.time, userAirline)}</div>
-          <div class="schedule-body">
-            <div class="schedule-title">${i.icon} ${i.title}</div>
-            ${i.desc ? `<div class="schedule-desc">${pickFlightDescByAirline(i.desc, userAirline)}</div>` : ""}
+              return items.map(i => `
+                <div class="schedule-item">
+                  <div class="timeline-dot"></div>
+                  <div class="schedule-card">
+                    <div class="schedule-time">${pickTimeByAirline(i.time, userAirline)}</div>
+                    <div class="schedule-body">
+                      <div class="schedule-title">${i.icon} ${i.title}</div>
+                      ${i.desc ? `<div class="schedule-desc">${pickFlightDescByAirline(i.desc, userAirline)}</div>` : ""}
+                    </div>
+                  </div>
+                </div>
+              `).join("");
+            })()}
           </div>
         </div>
-      </div>
-    `).join("");
-  })()}
-</div>
-`;
+      `).join("")}
+    </div>
+  `;
+
+  return; // ✅ schedule 처리 끝. 아래 다른 type 렌더링 막기
+}
+
 
 
 if (type === "flight") {
