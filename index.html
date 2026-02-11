@@ -510,6 +510,7 @@ function buildDay2ItemsForUser(user, userAirline) {
   // ✅ DAY2 items에서 title로 빠르게 찾기
   const byTitle = (title) => items.find(x => x.title === title);
 
+  const itemSelect = byTitle("선택 관광");
   const itemTienlai = byTitle("티엔라이 온천");
   const itemGugung  = byTitle("고궁박물관");
   const itemLunch   = byTitle("중식");
@@ -517,6 +518,17 @@ function buildDay2ItemsForUser(user, userAirline) {
   const itemFree    = byTitle("자유시간");
   const itemDinner  = byTitle("ISC 만찬");
 
+  // ✅ 예외: 3개 다 들어있으면(데이터가 애매한 상태)
+  // -> 선택관광 + 중식 + 서문정 + 만찬만 보여주기
+  if (hasTienlai && hasGugung && hasFree) {
+    return [
+      ...(itemSelect ? [itemSelect] : []),
+      ...(itemLunch ? [itemLunch] : []),
+      ...(itemXimen ? [itemXimen] : []),
+      ...(itemDinner ? [itemDinner] : [])
+    ];
+  }
+  
   // ✅ 3안: 자유일정(자유시간)만 + 만찬
   if (hasFree && !hasTienlai && !hasGugung) {
     return [
