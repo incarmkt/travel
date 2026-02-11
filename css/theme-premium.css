@@ -54,7 +54,11 @@ button {
   left: 0;
   width: 100%;
   height: 100%;
-  background: url('../assets/images/iscposter.jpg') center/cover no-repeat; /* 배경 이미지 경로 확인 필요 */
+  background-color: #222; /* 이미지 로딩 전/실패 시 백업 */
+  background-image: url('../assets/images/iscposter.jpg'); 
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
   z-index: 9999;
 }
 
@@ -165,9 +169,15 @@ button {
 /* 3-1. INTRO (스크롤 전 화면) */
 .home-intro {
   height: 100vh; /* 화면 꽉 채움 */
-  position: relative;
+  position: sticky; /* 🔥 스크롤 시 화면에 고정 */
+  top: 0;
   overflow: hidden;
-  background: url('../assets/images/iscposter.jpg') center/cover no-repeat; /* 배경 */
+  background-color: #222; /* 🔥 백업 배경 */
+  background-image: url('../assets/images/iscposter.jpg'); 
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  z-index: 1;
 }
 
 /* 배경 어둡게 처리 */
@@ -266,12 +276,12 @@ button {
 /* 3-2. MENU SECTION (스크롤 후 나타나는 메뉴) */
 .home-menu-section {
   position: relative;
-  z-index: 3;
-  margin-top: -20px; /* 인트로 위로 살짝 겹치게 */
+  z-index: 10; /* 🔥 인트로보다 확실히 위로 */
+  margin-top: -30px; /* 인트로 위로 살짝 겹치게 */
   background: var(--bg-color);
-  border-radius: 24px 24px 0 0;
-  padding: 30px 20px 60px;
-  min-height: 50vh;
+  border-radius: 30px 30px 0 0;
+  padding: 40px 20px 80px;
+  min-height: 100vh; /* 🔥 메뉴가 화면을 완전히 덮도록 높이 확장 */
 }
 
 .home-menu-wrap {
@@ -306,7 +316,6 @@ button {
   border-color: var(--primary-color);
 }
 
-/* 아이콘(이모지) 스타일링 - JS에서 텍스트로 넣었으므로 크기만 조정 */
 .home-menu button::first-letter {
   font-size: 24px;
   margin-bottom: 4px;
@@ -318,10 +327,21 @@ button {
    ========================================= */
 /* 오버레이 (Dim Background) */
 .detail-sheet {
-  display: none; /* JS 제어 */
   position: fixed;
   inset: 0;
   z-index: 5000;
+  
+  /* 🔥 터치 문제 완벽 해결: 닫혀있을 땐 숨기고 클릭 통과 */
+  visibility: hidden;
+  pointer-events: none;
+  transition: visibility 0s 0.3s;
+}
+
+/* JS 활성화 클래스 (.detail-open) */
+body.detail-open .detail-sheet {
+  visibility: visible;
+  pointer-events: auto; /* 🔥 열렸을 때 클릭 차단(정상화) */
+  transition: visibility 0s 0s;
 }
 
 .detail-dim {
@@ -333,35 +353,33 @@ button {
   transition: opacity 0.3s ease;
 }
 
+body.detail-open .detail-dim {
+  opacity: 1;
+}
+
 /* 실제 콘텐츠 시트 */
 .detail-sheet__inner {
   position: absolute;
   bottom: 0;
   left: 0;
   width: 100%;
-  height: 90%; /* 화면의 90% 높이 */
+  height: 90%;
   background: var(--bg-color);
   border-radius: 24px 24px 0 0;
-  transform: translateY(100%); /* 처음엔 아래에 숨김 */
+  transform: translateY(100%);
   transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  max-width: 600px; /* 데스크탑 대응 */
+  max-width: 600px;
   left: 50%;
-  margin-left: -50%; /* 가운데 정렬 트릭 (width 100%일 때) */
+  margin-left: -50%;
 }
 
-/* 데스크탑에서 중앙 정렬 보정 */
 @media (min-width: 600px) {
   .detail-sheet__inner {
-    margin-left: -300px; /* max-width 절반 */
+    margin-left: -300px;
   }
-}
-
-/* JS 활성화 클래스 (.detail-open) */
-body.detail-open .detail-dim {
-  opacity: 1;
 }
 
 body.detail-open .detail-sheet__inner {
@@ -376,7 +394,7 @@ body.detail-open .detail-sheet__inner {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  flex-shrink: 0; /* 헤더 크기 고정 */
+  flex-shrink: 0;
 }
 
 .detail-title {
@@ -392,20 +410,13 @@ body.detail-open .detail-sheet__inner {
   margin-left: 4px;
 }
 
-.btn-home {
-  background: #f3f4f6;
-  color: var(--text-sub);
-}
-
-.btn-back {
-  background: var(--primary-color);
-  color: white;
-}
+.btn-home { background: #f3f4f6; color: var(--text-sub); }
+.btn-back { background: var(--primary-color); color: white; }
 
 /* 4-2. DETAIL CONTENT AREA */
 #detailContent {
   flex: 1;
-  overflow-y: auto; /* 내부 스크롤 */
+  overflow-y: auto;
   padding: 20px;
   padding-bottom: calc(20px + var(--safe-area-bottom));
 }
@@ -417,10 +428,8 @@ body.detail-open .detail-sheet__inner {
 }
 
 /* =========================================
-   5. COMPONENT STYLES (내부 콘텐츠)
+   5. COMPONENT STYLES (내부 콘텐츠 - 기존 유지)
    ========================================= */
-
-/* 카드 공통 */
 .day-card, .card, .country-card, .info-card {
   background: white;
   padding: 20px;
@@ -428,7 +437,6 @@ body.detail-open .detail-sheet__inner {
   box-shadow: var(--shadow-sm);
 }
 
-/* 제목 스타일 */
 .day-card h3, .tour-header h3 {
   margin: 0 0 12px;
   font-size: 18px;
@@ -437,275 +445,65 @@ body.detail-open .detail-sheet__inner {
   align-items: center;
   color: var(--primary-color);
 }
-.day-card h3 span {
-  font-size: 14px;
-  color: var(--text-sub);
-  font-weight: normal;
-}
-.day-title {
-  font-size: 16px;
-  font-weight: 700;
-  margin-bottom: 20px;
-  padding-bottom: 10px;
-  border-bottom: 1px solid #f3f4f6;
-}
+.day-card h3 span { font-size: 14px; color: var(--text-sub); font-weight: normal; }
+.day-title { font-size: 16px; font-weight: 700; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 1px solid #f3f4f6; }
 
-/* 5-1. TIMELINE (일정표) */
-.timeline {
-  display: flex;
-  flex-direction: column;
-  gap: 0;
-  position: relative;
-}
+/* 5-1. TIMELINE */
+.timeline { display: flex; flex-direction: column; gap: 0; position: relative; }
+.timeline::before { content: ''; position: absolute; top: 15px; left: 7px; width: 2px; height: calc(100% - 30px); background: #e5e7eb; z-index: 0; }
+.schedule-item { display: flex; gap: 16px; position: relative; padding-bottom: 24px; }
+.schedule-item:last-child { padding-bottom: 0; }
+.timeline-dot { width: 16px; height: 16px; background: white; border: 4px solid var(--primary-color); border-radius: 50%; z-index: 1; flex-shrink: 0; margin-top: 4px; }
+.schedule-card { flex: 1; }
+.schedule-time { font-size: 12px; color: var(--primary-color); font-weight: 700; margin-bottom: 4px; }
+.schedule-title { font-size: 15px; font-weight: 600; margin-bottom: 4px; }
+.schedule-desc { font-size: 13px; color: var(--text-sub); line-height: 1.4; }
 
-/* 세로선 */
-.timeline::before {
-  content: '';
-  position: absolute;
-  top: 15px;
-  left: 7px;
-  width: 2px;
-  height: calc(100% - 30px);
-  background: #e5e7eb;
-  z-index: 0;
-}
-
-.schedule-item {
-  display: flex;
-  gap: 16px;
-  position: relative;
-  padding-bottom: 24px;
-}
-.schedule-item:last-child {
-  padding-bottom: 0;
-}
-
-.timeline-dot {
-  width: 16px;
-  height: 16px;
-  background: white;
-  border: 4px solid var(--primary-color);
-  border-radius: 50%;
-  z-index: 1;
-  flex-shrink: 0;
-  margin-top: 4px;
-}
-
-.schedule-card {
-  flex: 1;
-}
-
-.schedule-time {
-  font-size: 12px;
-  color: var(--primary-color);
-  font-weight: 700;
-  margin-bottom: 4px;
-}
-
-.schedule-title {
-  font-size: 15px;
-  font-weight: 600;
-  margin-bottom: 4px;
-}
-
-.schedule-desc {
-  font-size: 13px;
-  color: var(--text-sub);
-  line-height: 1.4;
-}
-
-/* 5-2. TOUR CARD (선택관광) */
-.mytour-wrap {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-.tour-card {
-  background: white;
-  border-radius: var(--radius-lg);
-  padding: 20px;
-  border: 1px solid #e5e7eb;
-  position: relative;
-  overflow: hidden;
-}
-
+/* 5-2. TOUR CARD */
+.mytour-wrap { display: flex; flex-direction: column; gap: 16px; }
+.tour-card { background: white; border-radius: var(--radius-lg); padding: 20px; border: 1px solid #e5e7eb; position: relative; overflow: hidden; }
 .tour-card.green { border-left: 5px solid #10b981; }
 .tour-card.red { border-left: 5px solid #ef4444; }
-
-.badge {
-  background: #f3f4f6;
-  font-size: 11px;
-  padding: 4px 8px;
-  border-radius: 4px;
-  color: var(--text-sub);
-}
-
-.tour-desc {
-  font-size: 14px;
-  color: #4b5563;
-  margin: 10px 0;
-  line-height: 1.5;
-}
-
-.meal-box {
-  background: #f9fafb;
-  padding: 12px;
-  border-radius: 8px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-size: 13px;
-  margin-bottom: 12px;
-}
-
+.badge { background: #f3f4f6; font-size: 11px; padding: 4px 8px; border-radius: 4px; color: var(--text-sub); }
+.tour-desc { font-size: 14px; color: #4b5563; margin: 10px 0; line-height: 1.5; }
+.meal-box { background: #f9fafb; padding: 12px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; font-size: 13px; margin-bottom: 12px; }
 .meal-box em.included { color: #10b981; font-weight: bold; }
 .meal-box em.cash { color: #ef4444; font-weight: bold; }
-
-.tour-footer {
-  display: flex;
-  gap: 10px;
-  font-size: 12px;
-  color: var(--text-sub);
-}
+.tour-footer { display: flex; gap: 10px; font-size: 12px; color: var(--text-sub); }
 .tour-footer span::before { content: "• "; }
 
-/* 중식비 버튼 */
-.meal-check {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-top: 10px;
-  padding-top: 10px;
-  border-top: 1px dashed #e5e7eb;
-}
-
-.meal-check .status {
-  font-size: 13px;
-  font-weight: bold;
-}
+.meal-check { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; padding-top: 10px; border-top: 1px dashed #e5e7eb; }
+.meal-check .status { font-size: 13px; font-weight: bold; }
 .meal-check .status.pending { color: #dc2626; }
 .meal-check .status.done { color: #10b981; }
+.meal-check button { background: var(--text-main); color: white; font-size: 12px; padding: 6px 12px; border-radius: 6px; }
 
-.meal-check button {
-  background: var(--text-main);
-  color: white;
-  font-size: 12px;
-  padding: 6px 12px;
-  border-radius: 6px;
-}
-
-/* 5-3. COUNTRY INFO (대만 정보) */
-.country-compare-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
-}
-
-.country-card {
-  padding: 16px;
-  text-align: center;
-}
-
-.country-header {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin-bottom: 10px;
-}
-
-.flag-img {
-  width: 40px;
-  height: auto;
-  border-radius: 4px;
-  box-shadow: 0 0 4px rgba(0,0,0,0.1);
-  margin-bottom: 6px;
-}
-
-.time-box {
-  background: #f3f4f6;
-  padding: 8px;
-  border-radius: 8px;
-  margin-bottom: 12px;
-}
+/* 5-3. COUNTRY INFO */
+.country-compare-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.country-card { padding: 16px; text-align: center; }
+.country-header { display: flex; flex-direction: column; align-items: center; margin-bottom: 10px; }
+.flag-img { width: 40px; height: auto; border-radius: 4px; box-shadow: 0 0 4px rgba(0,0,0,0.1); margin-bottom: 6px; }
+.time-box { background: #f3f4f6; padding: 8px; border-radius: 8px; margin-bottom: 12px; }
 .time-label { font-size: 11px; color: var(--text-sub); display: block; }
 .time-box strong { font-size: 16px; color: var(--primary-color); display: block; }
-
-.country-list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  text-align: left;
-}
-.country-list li {
-  display: flex;
-  justify-content: space-between;
-  font-size: 12px;
-  padding: 4px 0;
-  border-bottom: 1px solid #f3f4f6;
-}
+.country-list { list-style: none; padding: 0; margin: 0; text-align: left; }
+.country-list li { display: flex; justify-content: space-between; font-size: 12px; padding: 4px 0; border-bottom: 1px solid #f3f4f6; }
 .country-list li:last-child { border: none; }
-
-.exchange-row {
-  background: #fff;
-  padding: 16px;
-  text-align: center;
-  border-radius: var(--radius-lg);
-  font-size: 15px;
-  box-shadow: var(--shadow-sm);
-}
-
-.info-card-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  gap: 8px;
-}
-.info-card {
-  padding: 12px;
-  text-align: center;
-}
+.exchange-row { background: #fff; padding: 16px; text-align: center; border-radius: var(--radius-lg); font-size: 15px; box-shadow: var(--shadow-sm); }
+.info-card-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+.info-card { padding: 12px; text-align: center; }
 .info-card h4 { font-size: 12px; margin: 0 0 4px; color: var(--text-sub); }
 .info-card p { font-size: 13px; margin: 0; font-weight: 600; }
 
-/* 5-4. REQUEST & INPUTS */
-#requestInput {
-  width: 100%;
-  height: 120px;
-  padding: 12px;
-  border: 1px solid #d1d5db;
-  border-radius: var(--radius-md);
-  resize: none;
-  margin-bottom: 12px;
-  font-family: inherit;
-}
+/* 5-4. REQUEST */
+#requestInput { width: 100%; height: 120px; padding: 12px; border: 1px solid #d1d5db; border-radius: var(--radius-md); resize: none; margin-bottom: 12px; font-family: inherit; }
 
 /* =========================================
    6. RESPONSIVE (DESKTOP TWEAKS)
    ========================================= */
 @media (min-width: 768px) {
-  
-  /* 배경을 좀 더 고급스럽게 */
-  body {
-    background-color: #eef2f6; 
-  }
-
-  /* 메인 섹션을 폰 모양처럼 유지하되 중앙 정렬 */
-  #mainSection {
-    margin-top: 40px;
-    margin-bottom: 40px;
-    border-radius: 30px;
-    overflow: hidden;
-    min-height: calc(100vh - 80px);
-  }
-
-  /* 메뉴 그리드 확장 */
-  .home-menu {
-    grid-template-columns: 1fr 1fr 1fr; /* 데스크탑에선 3열 */
-  }
-
-  /* 상세 페이지가 떴을 때도 중앙 정렬 유지 */
-  .detail-sheet__inner {
-    border-radius: 24px 24px 0 0;
-    /* 데스크탑에서 너무 꽉 차지 않게 */
-  }
+  body { background-color: #eef2f6; }
+  #mainSection { margin-top: 40px; margin-bottom: 40px; border-radius: 30px; overflow: hidden; min-height: calc(100vh - 80px); }
+  .home-menu { grid-template-columns: 1fr 1fr 1fr; }
+  .detail-sheet__inner { border-radius: 24px 24px 0 0; }
 }
