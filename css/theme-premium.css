@@ -595,3 +595,52 @@ body.detail-open {
   }
 }
 
+/* =================================================
+   🚀 카테고리 메뉴 프리미엄 디자인 오버라이드 (추가됨)
+   ================================================= */
+
+/* 1. 알록달록한 파스텔 배경 제거 & 클린 화이트 톤으로 통일 */
+.home-menu button,
+.home-menu button:nth-child(n) { /* 기존 nth-child 색상을 강력하게 덮어쓰기 위함 */
+  background: #ffffff !important;
+  border: 1px solid rgba(0, 0, 0, 0.03) !important;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.04) !important;
+  color: #111827 !important;
+  border-radius: 20px !important;
+  padding: 24px 12px 20px !important;
+}
+
+/* 2. 이모지(첫 글자)를 앱 아이콘처럼 깔끔하고 입체감 있게 연출 */
+.home-menu button::first-letter {
+  font-size: 34px !important;
+  line-height: 1.2 !important;
+  display: block !important;
+  margin-bottom: 6px !important;
+  text-shadow: 0 4px 10px rgba(0, 0, 0, 0.08); /* 이모지에 은은한 그림자 */
+}
+
+/* 3. 터치 시 들어가는 애니메이션 고급화 */
+.home-menu button:active {
+  transform: scale(0.95) !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04) !important;
+  background: #f9fafb !important; /* 터치 시 아주 살짝 회색빛 */
+}
+
+/* 4. 8개 아이템에 맞춘 완벽한 대칭 그리드 정렬 */
+.home-menu {
+  grid-template-columns: repeat(2, 1fr) !important; /* 모바일: 깔끔한 2열 고정 */
+  gap: 14px !important; /* 간격을 살짝 넓혀서 여백 확보 */
+}
+
+/* 5. 기존 7번째 버튼 혼자 2칸 차지하던 것 취소 (8개니까 짝수 정렬) */
+.home-menu button:nth-child(7) {
+  grid-column: auto !important;
+}
+
+/* 6. 데스크탑 대응 (8개이므로 4열로 넓게 배치) */
+@media (min-width: 768px) {
+  .home-menu {
+    grid-template-columns: repeat(4, 1fr) !important;
+    gap: 16px !important;
+  }
+}
