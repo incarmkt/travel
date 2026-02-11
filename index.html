@@ -472,10 +472,40 @@ const travelSchedule = [
     ]
   }
 ];
+    
+    function normalizeTime(t) {
+  // "9:00" -> "09:00" 같은 표준화
+  const s = String(t).trim();
+  const m = s.match(/^(\d{1,2}):(\d{2})$/);
+  if (!m) return s;
+  return `${String(m[1]).padStart(2, "0")}:${m[2]}`;
+}
+
+function pickTimeByAirline(timeStr, airline) {
+  // timeStr: "08:00/9:00" or "11:40/12:25" or "21:30"
+  const parts = String(timeStr).split("/").map(s => normalizeTime(s));
+
+  // 슬래시 없는 값이면 그대로
+  if (parts.length === 1) return parts[0];
+
+  const isKoreanAir = String(airline || "").includes("대한항공");
+  // ✅ 룰: 아시아나 = 앞(빠른 시간), 대한항공 = 뒤(느린 시간)
+  return isKoreanAir ? parts[parts.length - 1] : parts[0];
+}
+function pickFlightDescByAirline(desc, airline) {
+  const s = String(desc || "");
+  if (!s.includes("/")) return s;
+
+  const isKoreanAir = String(airline || "").includes("대한항공");
+  const parts = s.split("/").map(v => v.trim()); // ["OZ 711", "KE 2021"]
+  return isKoreanAir ? (parts[1] || s) : (parts[0] || s);
+}
+
 
 /* ================= 페이지 열기 ================= */
 function openPage(type, fromHistory = false) {
-
+  const userAirline = currentUser?.flight?.departure?.airline || ""; // ✅ 추가
+  
   if (!fromHistory) {
     pageHistory.push(type);
   }
@@ -509,10 +539,10 @@ function openPage(type, fromHistory = false) {
             <div class="schedule-item">
               <div class="timeline-dot"></div>
               <div class="schedule-card">
-                <div class="schedule-time">${i.time}</div>
+                <div class="schedule-time">${pickTimeByAirline(i.time, userAirline)}</div>
                 <div class="schedule-body">
                   <div class="schedule-title">${i.icon} ${i.title}</div>
-                  ${i.desc ? `<div class="schedule-desc">${i.desc}</div>` : ""}
+                 ${i.desc ? `<div class="schedule-desc">${pickFlightDescByAirline(i.desc, userAirline)}</div>` : ""}
                 </div>
               </div>
             </div>
