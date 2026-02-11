@@ -507,3 +507,8 @@ body.detail-open .detail-sheet__inner {
   .home-menu { grid-template-columns: 1fr 1fr 1fr; }
   .detail-sheet__inner { border-radius: 24px 24px 0 0; }
 }
+
+/* 🔥 카테고리(상세창)가 열렸을 때 배경(body) 스크롤 잠금 */
+body.detail-open {
+  overflow: hidden;
+}
