@@ -536,3 +536,62 @@ body.detail-open .detail-sheet__inner {
 body.detail-open {
   overflow: hidden;
 }
+
+/* ===============================
+   FX (환율 계산기) - 최소 스타일
+   =============================== */
+
+.fx-grid {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  gap: 12px;
+  align-items: center;
+}
+
+.fx-box label {
+  display: block;
+  font-size: 13px;
+  color: var(--text-sub);
+  margin-bottom: 6px;
+  font-weight: 600;
+}
+
+.fx-box input {
+  width: 100%;
+  padding: 14px;
+  border: 1px solid #d1d5db;
+  border-radius: var(--radius-md);
+  font-size: 16px;
+  outline: none;
+  transition: border-color 0.2s;
+  background: white;
+}
+
+.fx-box input:focus {
+  border-color: var(--primary-color);
+}
+
+.fx-eq {
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--primary-color);
+  opacity: 0.9;
+}
+
+.fx-note {
+  margin-top: 12px;
+  font-size: 12px;
+  color: var(--text-sub);
+  text-align: center;
+}
+
+/* 모바일에서는 1열로 */
+@media (max-width: 480px) {
+  .fx-grid {
+    grid-template-columns: 1fr;
+  }
+  .fx-eq {
+    text-align: center;
+  }
+}
+
