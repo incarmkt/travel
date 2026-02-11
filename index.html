@@ -530,7 +530,6 @@ function openPage(type, fromHistory = false) {
   if (type === "schedule") {
     t.textContent = "🗓 여행 일정";
   }
-
   c.innerHTML = `
   <div class="detail-content-wrap">
     ${travelSchedule.map(day => `
