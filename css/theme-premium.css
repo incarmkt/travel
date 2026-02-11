@@ -1,1304 +1,711 @@
-/* =================================================
-   THEME PREMIUM – FINAL (HOME + FULL PAGE DETAIL)
-   ✅ 기능 유지 / 중복·충돌 정리본
-================================================= */
+@charset "UTF-8";
 
-/* ================= RESET / BASE ================= */
-* { box-sizing: border-box; }
+/* =========================================
+   1. RESET & VARIABLES (기본 설정)
+   ========================================= */
+:root {
+  --primary-color: #1e63c6;      /* 인카 블루 */
+  --primary-dark: #154a96;
+  --accent-color: #f59e0b;       /* 강조색 (오렌지/골드) */
+  --bg-color: #f8f9fa;
+  --text-main: #111827;
+  --text-sub: #6b7280;
+  --white: #ffffff;
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  --radius-lg: 16px;
+  --radius-md: 12px;
+  --safe-area-bottom: env(safe-area-inset-bottom);
+}
+
+* {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
 
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont,
-               "Segoe UI", Roboto, "Noto Sans KR", sans-serif;
-  overflow-x: hidden;
+  font-family: -apple-system, BlinkMacSystemFont, "Pretendard", "Malgun Gothic", sans-serif;
+  background-color: var(--bg-color);
+  color: var(--text-main);
+  line-height: 1.5;
+  overflow-x: hidden; /* 가로 스크롤 방지 */
 }
 
-/* ================= BACKGROUND ================= */
-body:not(.logged-in) {
-  background: url("../assets/images/main-bg.jpg") center / cover no-repeat fixed;
-}
-body.logged-in {
-  background: url("../assets/images/photo2.jpg") center / cover no-repeat fixed;
+/* 이미지 반응형 기본 */
+img {
+  max-width: 100%;
+  display: block;
 }
 
-/* ================= HEADER ================= */
-.header {
-  position: relative;          /* fixed ❌ */
-  inset: auto;
-  z-index: 10;
+/* 버튼 공통 */
+button {
+  cursor: pointer;
+  border: none;
+  font-family: inherit;
+}
 
-  padding: 24px 20px 12px;
+/* =========================================
+   2. LOGIN SECTION (로그인)
+   ========================================= */
+.login-hero {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: url('../assets/images/iscposter.jpg') center/cover no-repeat; /* 배경 이미지 경로 확인 필요 */
+  z-index: 9999;
+}
 
+.hero-overlay {
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6); /* 어두운 오버레이 */
   display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-
-  background: transparent;
-  backdrop-filter: none;
+  justify-content: center;
+  align-items: center;
+  backdrop-filter: blur(5px);
 }
 
-@media (max-width: 767px) {
-  .header {
-    flex-direction: row;
-    align-items: flex-start;
-  }
-  .header-left h1 {
-    font-size: 18px;
-    margin: 6px 0 4px;
-  }
-  .header-left .sub {
-    font-size: 13px;
-    opacity: .9;
-  }
-  .header-right {
-    text-align: right;
-    font-size: 13px;
-  }
+.login-box {
+  background: rgba(255, 255, 255, 0.95);
+  padding: 40px 30px;
+  border-radius: 24px;
+  width: 90%;
+  max-width: 360px;
+  text-align: center;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2);
 }
 
-/* =================================================
-   HOME (INTRO + MENU)
-================================================= */
-
-/* 홈 뷰 기본 */
-.home-view {
-  padding-top: 0;
-  overflow: visible;
-  background: transparent;
+.hero-logo {
+  width: 100px; /* 로고 크기 */
+  margin: 0 auto 16px;
 }
 
-@media (max-width: 767px) {
-  /* 기존에 있던 모바일 상단 여백 유지 */
-  .home-view { padding-top: 40px; }
+.login-box h2 {
+  font-size: 22px;
+  font-weight: 700;
+  margin: 0 0 8px;
+  color: var(--primary-color);
 }
 
-/* HERO */
-.home-hero {
-  margin: 48px auto 22px;
-  width: min(92vw, 720px);
-  color: #fff;
-  text-shadow: 0 8px 22px rgba(0,0,0,0.35);
-
-  /* HERO AS HEADER에서 쓰던 값 유지 */
-  position: relative;
-  z-index: 5;
-  padding: 24px 20px 32px;
+.hero-desc {
+  font-size: 14px;
+  color: var(--text-sub);
+  margin-bottom: 24px;
 }
 
-@media (max-width: 767px) {
-  .home-hero { padding-top: 16px; }
+.login-box input {
+  width: 100%;
+  padding: 14px;
+  border: 1px solid #d1d5db;
+  border-radius: var(--radius-md);
+  margin-bottom: 12px;
+  font-size: 16px;
+  outline: none;
+  transition: border-color 0.2s;
 }
 
-/* 타이포 */
-.home-title { margin: 0; font-size: 44px; }
-.home-sub { margin-top: 10px; font-size: 18px; }
-
-.hero-copy {
-  margin-top: 28px;
-  transition: opacity 320ms ease, transform 320ms ease;
-  will-change: opacity, transform;
-}
-.hero-copy.is-hidden {
-  opacity: 0;
-  transform: translateY(-12px);
-}
-@media (max-width: 767px) {
-  .hero-copy { margin-top: 20px; }
+.login-box input:focus {
+  border-color: var(--primary-color);
 }
 
-/* HERO 내부 레이아웃 */
-.hero-info {
-  display: grid;
-  grid-template-columns: auto 1fr;
-  gap: 12px 20px;
-  align-items: start;
+.primary-btn {
+  width: 100%;
+  background: var(--primary-color);
+  color: white;
+  padding: 14px;
+  border-radius: var(--radius-md);
+  font-size: 16px;
+  font-weight: 600;
+  transition: background 0.2s;
 }
 
-/* MENU GRID */
-.home-menu {
+.primary-btn:active, .primary-btn:hover {
+  background: var(--primary-dark);
+}
+
+.error {
+  color: #dc2626;
+  font-size: 13px;
+  margin-top: 10px;
+  min-height: 20px;
+}
+
+/* 모바일 스플래시 */
+.mobile-splash {
+  position: fixed;
+  inset: 0;
+  background: #fff;
+  z-index: 10000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.mobile-splash img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* =========================================
+   3. MAIN - HOME VIEW (인트로 + 메뉴)
+   ========================================= */
+/* 전체 컨테이너: 모바일처럼 보이게 중앙 정렬 (데스크탑 대응) */
+#mainSection {
+  max-width: 600px;
   margin: 0 auto;
-  width: min(92vw, 720px);
+  background: var(--bg-color);
+  min-height: 100vh;
+  position: relative;
+  box-shadow: 0 0 40px rgba(0,0,0,0.1);
+}
+
+/* 3-1. INTRO (스크롤 전 화면) */
+.home-intro {
+  height: 100vh; /* 화면 꽉 채움 */
+  position: relative;
+  overflow: hidden;
+  background: url('../assets/images/iscposter.jpg') center/cover no-repeat; /* 배경 */
+}
+
+/* 배경 어둡게 처리 */
+.home-intro::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, rgba(0,0,0,0.3), rgba(0,0,0,0.7));
+  z-index: 1;
+}
+
+.intro-stage {
+  position: relative;
+  z-index: 2;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 40px 24px 60px;
+  color: white;
+  text-align: center;
+}
+
+.intro-top .hero-logo {
+  width: 80px;
+  filter: brightness(0) invert(1); /* 로고 흰색으로 */
+  margin-bottom: 10px;
+}
+
+.intro-brand {
+  font-size: 12px;
+  opacity: 0.8;
+  letter-spacing: 1px;
+}
+
+.intro-center {
+  margin-top: -40px; /* 시각적 중앙 보정 */
+}
+
+.welcome-main {
+  font-size: 26px;
+  font-weight: 300;
+  margin: 0 0 8px;
+}
+
+.welcome-main strong {
+  font-weight: 700;
+  font-size: 32px;
+  display: block;
+  margin-bottom: 4px;
+}
+
+.welcome-sub {
+  font-size: 16px;
+  opacity: 0.9;
+  margin: 0 0 16px;
+}
+
+.intro-date {
+  display: inline-block;
+  padding: 6px 16px;
+  border: 1px solid rgba(255,255,255,0.4);
+  border-radius: 20px;
+  font-size: 13px;
+  background: rgba(0,0,0,0.2);
+}
+
+.intro-bottom .ribbon {
+  display: inline-block;
+  background: var(--primary-color);
+  padding: 4px 12px;
+  font-size: 11px;
+  font-weight: bold;
+  border-radius: 4px;
+  margin-bottom: 8px;
+}
+
+.intro-copy {
+  font-size: 14px;
+  opacity: 0.8;
+  margin-bottom: 20px;
+}
+
+.scroll-hint {
+  font-size: 12px;
+  animation: bounce 2s infinite;
+  opacity: 0.7;
+}
+
+@keyframes bounce {
+  0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+  40% { transform: translateY(-10px); }
+  60% { transform: translateY(-5px); }
+}
+
+/* 3-2. MENU SECTION (스크롤 후 나타나는 메뉴) */
+.home-menu-section {
+  position: relative;
+  z-index: 3;
+  margin-top: -20px; /* 인트로 위로 살짝 겹치게 */
+  background: var(--bg-color);
+  border-radius: 24px 24px 0 0;
+  padding: 30px 20px 60px;
+  min-height: 50vh;
+}
+
+.home-menu-wrap {
+  max-width: 100%;
+}
+
+.home-menu {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  grid-auto-flow: row dense;
-  gap: 14px;
+  grid-template-columns: 1fr 1fr; /* 2열 배치 */
+  gap: 12px;
 }
 
 .home-menu button {
-  height: 76px;
-  border: 0;
-  border-radius: 26px;
-  padding: 0 18px;
-  display: flex;
-  align-items: center;
-
-  font-size: 20px;
-  font-weight: 800;
-  color: #fff;
-
-  background: rgba(200,200,200,.42);
-  backdrop-filter: blur(14px);
-}
-
-/* ‘대만의 모든 것’ */
-.home-menu button:first-child {
-  grid-column: 1 / -1;
-  height: 96px;
-}
-
-/* =================================================
-   DETAIL SHEET (MOBILE BOTTOM SHEET + DESKTOP MODAL)
-================================================= */
-
-/* Overlay */
-.detail-sheet {
-  position: fixed;
-  inset: 0;
-  z-index: 2000;
-
-  background: rgba(0,0,0,0.35);
-  opacity: 0;
-  pointer-events: none;
-
-  transition: opacity 280ms ease;
-}
-
-body.detail-open .detail-sheet {
-  opacity: 1;
-  pointer-events: auto;
-}
-
-body.detail-open {
-  overflow: hidden;
-}
-
-/* Sheet body */
-.detail-sheet__inner {
-  position: fixed;
-  left: 0;
-  right: 0;
-  bottom: 0;
-
-  background: #fff;
-  border-radius: 22px 22px 0 0;
-
-  overflow: hidden;
-
+  background: white;
+  padding: 20px 16px;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  text-align: left;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-main);
+  transition: transform 0.2s, box-shadow 0.2s;
   display: flex;
   flex-direction: column;
+  gap: 8px;
+  border: 1px solid transparent;
+}
 
-  transform: translateY(100%);
-  transition: transform 360ms cubic-bezier(.25,.8,.25,1);
+.home-menu button:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+  border-color: var(--primary-color);
+}
+
+/* 아이콘(이모지) 스타일링 - JS에서 텍스트로 넣었으므로 크기만 조정 */
+.home-menu button::first-letter {
+  font-size: 24px;
+  margin-bottom: 4px;
+  display: inline-block;
+}
+
+/* =========================================
+   4. DETAIL PAGE (상세 모달/바텀시트)
+   ========================================= */
+/* 오버레이 (Dim Background) */
+.detail-sheet {
+  display: none; /* JS 제어 */
+  position: fixed;
+  inset: 0;
+  z-index: 5000;
+}
+
+.detail-dim {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(2px);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+/* 실제 콘텐츠 시트 */
+.detail-sheet__inner {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 90%; /* 화면의 90% 높이 */
+  background: var(--bg-color);
+  border-radius: 24px 24px 0 0;
+  transform: translateY(100%); /* 처음엔 아래에 숨김 */
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  max-width: 600px; /* 데스크탑 대응 */
+  left: 50%;
+  margin-left: -50%; /* 가운데 정렬 트릭 (width 100%일 때) */
+}
+
+/* 데스크탑에서 중앙 정렬 보정 */
+@media (min-width: 600px) {
+  .detail-sheet__inner {
+    margin-left: -300px; /* max-width 절반 */
+  }
+}
+
+/* JS 활성화 클래스 (.detail-open) */
+body.detail-open .detail-dim {
+  opacity: 1;
 }
 
 body.detail-open .detail-sheet__inner {
   transform: translateY(0);
 }
 
-/* 내부 영역 */
-#detailTitle {
-  margin: 0;
-  padding: 20px 20px 12px;
-  font-size: 20px;
-  font-weight: 800;
+/* 4-1. DETAIL HEADER */
+.detail-header {
+  padding: 16px 20px;
+  background: white;
+  border-bottom: 1px solid #e5e7eb;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-shrink: 0; /* 헤더 크기 고정 */
 }
 
+.detail-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.detail-actions button {
+  font-size: 13px;
+  padding: 6px 12px;
+  border-radius: 6px;
+  margin-left: 4px;
+}
+
+.btn-home {
+  background: #f3f4f6;
+  color: var(--text-sub);
+}
+
+.btn-back {
+  background: var(--primary-color);
+  color: white;
+}
+
+/* 4-2. DETAIL CONTENT AREA */
 #detailContent {
   flex: 1;
-  overflow-y: auto;
-  padding: 0 20px 24px;
-  -webkit-overflow-scrolling: touch;
+  overflow-y: auto; /* 내부 스크롤 */
+  padding: 20px;
+  padding-bottom: calc(20px + var(--safe-area-bottom));
 }
 
-/* 하단 버튼 */
-.nav-buttons {
-  padding: 14px 20px 20px;
-  border-top: 1px solid #eee;
-  display: flex;
-  gap: 10px;
-}
-
-/* ✅ 모바일 풀스크린 디테일 유지 */
-@media (max-width: 767px) {
-  .detail-sheet__inner {
-    height: 100dvh;
-    max-height: none;
-    border-radius: 0;
-  }
-}
-
-/* =================================================
-   DETAIL CONTENT NORMALIZE
-================================================= */
 .detail-content-wrap {
-  width: 100%;
-  max-width: 920px;
-  margin: 0 auto;
-  padding: 0 16px 24px;
-}
-
-@media (min-width: 768px) {
-  .detail-content-wrap {
-    max-width: 960px;
-    padding: 0 24px 40px;
-  }
-}
-
-/* =================================================
-   DESKTOP MODE (DETAIL MODAL)
-================================================= */
-@media (min-width: 768px) {
-
-  .detail-sheet {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .detail-sheet__inner {
-    position: relative;
-    left: auto;
-    right: auto;
-    bottom: auto;
-
-    width: min(960px, 92vw);
-    max-height: 86vh;
-
-    border-radius: 24px;
-
-    transform: translateY(40px);
-    opacity: 0;
-
-    transition:
-      transform 360ms cubic-bezier(.25,.8,.25,1),
-      opacity 280ms ease;
-  }
-
-  body.detail-open .detail-sheet__inner {
-    transform: translateY(0);
-    opacity: 1;
-  }
-
-  #detailTitle {
-    font-size: 24px;
-    padding: 24px 28px 14px;
-  }
-
-  #detailContent { padding: 0 28px 32px; }
-  .nav-buttons  { padding: 16px 28px 24px; }
-}
-
-/* =================================================
-   DESKTOP TUNING (HOME)
-================================================= */
-@media (min-width: 768px) {
-
-  .home-hero { width: min(86vw, 860px); }
-  .home-title { font-size: 56px; }
-
-  .home-menu {
-    width: min(86vw, 860px);
-    gap: 18px;
-  }
-
-  .home-menu button {
-    height: 86px;
-    font-size: 22px;
-  }
-
-  .home-menu button:first-child { height: 120px; }
-}
-
-/* =================================================
-   FORCE OVERRIDE MOBILE HOME (mobile.css 무력화)
-   ✅ 홈 메뉴 위치/높이만 강제 복구 (기능 유지)
-================================================= */
-@media (max-width: 767px) {
-
-  .home-menu-wrap,
-  .home-menu {
-    position: static !important;
-    height: auto !important;
-    min-height: unset !important;
-    transform: none !important;
-    top: auto !important;
-    bottom: auto !important;
-    left: auto !important;
-    right: auto !important;
-  }
-
-  .home-menu {
-    display: grid !important;
-    grid-template-columns: 1fr 1fr !important;
-    grid-auto-flow: row dense !important;
-    gap: 14px !important;
-  }
-
-  .home-menu button:first-child {
-    grid-column: 1 / -1 !important;
-    height: 96px !important;
-  }
-}
-
-/* =================================================
-   DESKTOP SCROLL UNLOCK
-   ✅ 데스크탑에서만 적용 (모바일 스냅/스크롤 충돌 방지)
-================================================= */
-@media (min-width: 768px) {
-  html, body {
-    height: auto !important;
-    min-height: 100% !important;
-    overflow-y: auto !important;
-  }
-
-  #mainSection {
-    height: auto !important;
-    min-height: 100vh !important;
-    overflow: visible !important;
-  }
-
-  .main-bg, .home-view, #homeView {
-    overflow: visible !important;
-  }
-
-  body.logged-in {
-    overflow-y: auto !important;
-  }
-}
-
-/* =================================================
-   HOME INTRO → MENU SCROLL FLOW (스냅)
-================================================= */
-
-/* 인트로 */
-.home-intro {
-  height: 100vh;
-  min-height: 100svh;
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  position: relative;
+  gap: 20px;
+}
 
+/* =========================================
+   5. COMPONENT STYLES (내부 콘텐츠)
+   ========================================= */
+
+/* 카드 공통 */
+.day-card, .card, .country-card, .info-card {
+  background: white;
+  padding: 20px;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+}
+
+/* 제목 스타일 */
+.day-card h3, .tour-header h3 {
+  margin: 0 0 12px;
+  font-size: 18px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: var(--primary-color);
+}
+.day-card h3 span {
+  font-size: 14px;
+  color: var(--text-sub);
+  font-weight: normal;
+}
+.day-title {
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+/* 5-1. TIMELINE (일정표) */
+.timeline {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  position: relative;
+}
+
+/* 세로선 */
+.timeline::before {
+  content: '';
+  position: absolute;
+  top: 15px;
+  left: 7px;
+  width: 2px;
+  height: calc(100% - 30px);
+  background: #e5e7eb;
+  z-index: 0;
+}
+
+.schedule-item {
+  display: flex;
+  gap: 16px;
+  position: relative;
+  padding-bottom: 24px;
+}
+.schedule-item:last-child {
+  padding-bottom: 0;
+}
+
+.timeline-dot {
+  width: 16px;
+  height: 16px;
+  background: white;
+  border: 4px solid var(--primary-color);
+  border-radius: 50%;
+  z-index: 1;
+  flex-shrink: 0;
+  margin-top: 4px;
+}
+
+.schedule-card {
+  flex: 1;
+}
+
+.schedule-time {
+  font-size: 12px;
+  color: var(--primary-color);
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.schedule-title {
+  font-size: 15px;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.schedule-desc {
+  font-size: 13px;
+  color: var(--text-sub);
+  line-height: 1.4;
+}
+
+/* 5-2. TOUR CARD (선택관광) */
+.mytour-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.tour-card {
+  background: white;
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  border: 1px solid #e5e7eb;
+  position: relative;
   overflow: hidden;
 }
 
-/* 스테이지 */
-.intro-stage {
-  height: 100vh;
-  position: sticky;
-  top: 0;
+.tour-card.green { border-left: 5px solid #10b981; }
+.tour-card.red { border-left: 5px solid #ef4444; }
 
+.badge {
+  background: #f3f4f6;
+  font-size: 11px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  color: var(--text-sub);
+}
+
+.tour-desc {
+  font-size: 14px;
+  color: #4b5563;
+  margin: 10px 0;
+  line-height: 1.5;
+}
+
+.meal-box {
+  background: #f9fafb;
+  padding: 12px;
+  border-radius: 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 13px;
+  margin-bottom: 12px;
+}
+
+.meal-box em.included { color: #10b981; font-weight: bold; }
+.meal-box em.cash { color: #ef4444; font-weight: bold; }
+
+.tour-footer {
+  display: flex;
+  gap: 10px;
+  font-size: 12px;
+  color: var(--text-sub);
+}
+.tour-footer span::before { content: "• "; }
+
+/* 중식비 버튼 */
+.meal-check {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px dashed #e5e7eb;
+}
+
+.meal-check .status {
+  font-size: 13px;
+  font-weight: bold;
+}
+.meal-check .status.pending { color: #dc2626; }
+.meal-check .status.done { color: #10b981; }
+
+.meal-check button {
+  background: var(--text-main);
+  color: white;
+  font-size: 12px;
+  padding: 6px 12px;
+  border-radius: 6px;
+}
+
+/* 5-3. COUNTRY INFO (대만 정보) */
+.country-compare-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.country-card {
+  padding: 16px;
+  text-align: center;
+}
+
+.country-header {
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-
-  padding: 48px 32px;
-  box-sizing: border-box;
-
-  transition: transform 0.9s cubic-bezier(.25,.8,.25,1);
-}
-
-body.intro-passed .intro-stage {
-  transform: translateY(-100%);
-}
-
-/* 메뉴 섹션 */
-.home-menu-section {
-  position: relative;
-  z-index: 1;
-  margin-top: 100vh;
-  padding: 48px 0 96px;
-}
-
-/* 스크롤 힌트 */
-.scroll-hint {
-  position: absolute;
-  bottom: 24px;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 14px;
-  color: #fff;
-  opacity: .85;
-  letter-spacing: -0.2px;
-  animation: scrollHint 1.6s ease-in-out infinite;
-  pointer-events: none;
-}
-
-@keyframes scrollHint {
-  0%   { transform: translate(-50%, 0); }
-  50%  { transform: translate(-50%, -8px); }
-  100% { transform: translate(-50%, 0); }
-}
-
-/* 모바일 스냅: mainSection 스크롤 담당 유지 */
-@media (max-width: 767px) {
-
-  #mainSection {
-    height: 100dvh !important;
-    overflow-y: auto !important;
-    -webkit-overflow-scrolling: touch;
-    scroll-snap-type: y mandatory;
-  }
-
-  .home-intro,
-  .home-menu-section {
-    min-height: 100dvh !important;
-    scroll-snap-align: start;
-    scroll-snap-stop: always;
-  }
-
-  .home-intro {
-    padding: 64px 20px 24px !important;
-    color: #fff !important;
-    text-shadow: 0 8px 22px rgba(0,0,0,0.35);
-  }
-
-  .home-intro .scroll-hint {
-    bottom: 18px;
-    color: rgba(255,255,255,0.9) !important;
-  }
-
-  .home-menu-section {
-    padding: 24px 0 80px !important;
-  }
-
-  .home-menu,
-  .home-menu button {
-    color: #fff !important;
-  }
-}
-
-/* =================================================
-   MOBILE TYPOGRAPHY TUNING (INTRO TEXT)
-================================================= */
-@media (max-width: 767px) {
-
-  .home-title {
-    font-size: 32px;
-    line-height: 1.25;
-    letter-spacing: -0.5px;
-    word-break: keep-all;
-    text-align: center;
-  }
-
-  .home-sub {
-    font-size: 15px;
-    line-height: 1.55;
-    letter-spacing: -0.2px;
-    word-break: keep-all;
-    text-align: center;
-  }
-
-  .home-sub + .home-sub { margin-top: 6px; }
-
-  .hero-copy {
-    margin-top: 18px;
-    text-align: center;
-  }
-
-  .hero-copy .home-title { font-size: 30px; }
-  .hero-copy .home-sub { font-size: 14px; opacity: 0.9; }
-}
-
-/* =================================================
-   MOBILE – DETAIL RESET (기존 모바일 느낌 복구)
-   ✅ 디테일 열릴 때 글씨/배경 흰색/검정으로 복귀
-================================================= */
-@media (max-width: 767px) {
-
-  body.detail-open {
-    color: #111;
-    background: #f6f7fb;
-  }
-
-  .detail-sheet__inner {
-    background: #fff;
-    color: #111;
-  }
-
-  #detailTitle,
-  #detailContent {
-    color: inherit;
-  }
-}
-/* =================================================
-   MOBILE FIX – HOME FIRST SCREEN 깨짐 해결 (핵심)
-   ✔ 기능 유지 / ✔ 구조 유지
-================================================= */
-@media (max-width: 767px) {
-
-  /* 1️⃣ 모바일에서는 sticky 해제 (snap과 충돌 방지) */
-  .intro-stage {
-    position: relative !important;
-    height: auto !important;
-    transform: none !important;
-  }
-
-  /* 2️⃣ 첫 화면 잘림 방지 */
-  .home-intro {
-    overflow: visible !important;
-    height: 100dvh !important;
-    min-height: 100dvh !important;
-  }
-}
-/* 하단 네비 버튼 완전 제거 */
-.nav-buttons {
-  display: none !important;
-}
-/* 디테일 상단 헤더 */
-.detail-header {
-  position: sticky;
-  top: 0;
-  z-index: 20;
-
-  display: flex;
   align-items: center;
-  justify-content: space-between;
-
-  padding: 14px 16px;
-  background: #fff;
-
-  border-bottom: 1px solid #eee;
+  margin-bottom: 10px;
 }
 
-/* 제목 */
-.detail-title {
-  font-size: 18px;
-  font-weight: 800;
+.flag-img {
+  width: 40px;
+  height: auto;
+  border-radius: 4px;
+  box-shadow: 0 0 4px rgba(0,0,0,0.1);
+  margin-bottom: 6px;
 }
 
-/* 버튼 영역 */
-.detail-actions {
+.time-box {
+  background: #f3f4f6;
+  padding: 8px;
+  border-radius: 8px;
+  margin-bottom: 12px;
+}
+.time-label { font-size: 11px; color: var(--text-sub); display: block; }
+.time-box strong { font-size: 16px; color: var(--primary-color); display: block; }
+
+.country-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  text-align: left;
+}
+.country-list li {
   display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  padding: 4px 0;
+  border-bottom: 1px solid #f3f4f6;
+}
+.country-list li:last-child { border: none; }
+
+.exchange-row {
+  background: #fff;
+  padding: 16px;
+  text-align: center;
+  border-radius: var(--radius-lg);
+  font-size: 15px;
+  box-shadow: var(--shadow-sm);
+}
+
+.info-card-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
   gap: 8px;
 }
-
-/* 버튼 스타일 */
-.detail-actions button {
-  padding: 6px 12px;
-  border-radius: 14px;
-  border: 1px solid #ddd;
-  background: #fff;
-  font-size: 13px;
-  font-weight: 600;
-}
-.detail-sheet {
-  position: fixed;
-  inset: 0;
-  z-index: 2000;
-}
-
-.detail-dim {
-  position: absolute;
-  inset: 0;
-  background: rgba(0,0,0,0.35);
-}
-
-.detail-sheet__inner {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: #fff;
-}
-
-.home-intro {
-  height: 100dvh;
-}
-
-.intro-stage {
-  position: relative;
-  height: 100%;
-  padding: 24px 20px;
-}
-
-/* 상단 */
-.intro-top {
-  position: absolute;
-  top: 24px;
-  left: 50%;
-  transform: translateX(-50%);
+.info-card {
+  padding: 12px;
   text-align: center;
 }
+.info-card h4 { font-size: 12px; margin: 0 0 4px; color: var(--text-sub); }
+.info-card p { font-size: 13px; margin: 0; font-weight: 600; }
 
-/* 중앙 */
-.intro-center {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  text-align: center;
-}
-
-/* 하단 */
-.intro-bottom {
-  position: absolute;
-  bottom: 32px;
-  left: 50%;
-  transform: translateX(-50%);
-  text-align: center;
-}
-
-/* =================================================
-   🔥 1번 사진 스타일 강제 적용 (레이아웃 자동 보정)
-   - 기기별 높이 깨짐 방지 (100dvh 사용)
-   - 텍스트/로고 위치 자동 중앙 정렬
-================================================= */
-
-/* 1. 인트로 화면: 전체 배경 및 틀 잡기 */
-.home-intro {
-  /* 모바일 주소창 포함한 실제 화면 높이 계산 */
-  height: 100vh; 
-  height: 100dvh; 
-  min-height: 600px; /* 너무 작은 화면 대응 */
-  
-  /* 배경 이미지 (어둡게 처리하여 글씨 잘 보이게) */
-  background: linear-gradient(to bottom, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.6) 100%),
-              url("../assets/images/main-bg.jpg") center/cover no-repeat fixed;
-  
-  /* 배치 초기화 (기존 absolute 무시) */
-  display: flex !important;
-  flex-direction: column !important;
-  justify-content: center !important;
-  align-items: center !important;
-  
-  position: relative !important;
-  overflow: hidden !important;
-  padding: 0 !important;
-  margin: 0 !important;
-}
-
-/* 2. 내부 요소 배치 컨테이너 (Top - Center - Bottom 분리) */
-.intro-stage {
+/* 5-4. REQUEST & INPUTS */
+#requestInput {
   width: 100%;
-  height: 100%;
+  height: 120px;
+  padding: 12px;
+  border: 1px solid #d1d5db;
+  border-radius: var(--radius-md);
+  resize: none;
+  margin-bottom: 12px;
+  font-family: inherit;
+}
+
+/* =========================================
+   6. RESPONSIVE (DESKTOP TWEAKS)
+   ========================================= */
+@media (min-width: 768px) {
   
-  display: flex !important;
-  flex-direction: column !important;
-  justify-content: space-between !important; /* 위, 중간, 아래 균등 배치 */
-  align-items: center !important;
-  
-  padding: 40px 20px 50px 20px !important; /* 상우하좌 여백 */
-  box-sizing: border-box !important;
-  
-  /* 기존 transform 애니메이션 충돌 방지 */
-  position: static !important; 
-  transform: none !important;
-}
-
-/* 3. 상단 (로고 영역) */
-.intro-top {
-  position: static !important; /* 절대 위치 해제 */
-  transform: none !important;
-  text-align: center;
-  margin-top: env(safe-area-inset-top); /* 아이폰 노치 여백 */
-}
-
-.intro-top .hero-logo {
-  width: 100px !important; /* 로고 크기 적절히 조정 */
-  height: auto;
-  margin-bottom: 8px;
-  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
-}
-
-.intro-brand {
-  font-size: 13px !important;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  color: rgba(255,255,255,0.8) !important;
-  margin: 0 !important;
-}
-
-/* 4. 중앙 (환영 메시지 & 이름) - 1번 사진 핵심 포인트 */
-.intro-center {
-  position: static !important;
-  transform: none !important;
-  text-align: center;
-  width: 100%;
-}
-
-.welcome-main {
-  font-size: 24px !important; /* 기본 글씨 크기 */
-  font-weight: 400 !important;
-  color: #fff !important;
-  line-height: 1.4 !important;
-  margin-bottom: 12px !important;
-  text-shadow: 0 4px 10px rgba(0,0,0,0.5);
-}
-
-/* 🔥 이름 강조 (JSON에서 불러온 이름) */
-#employeeName {
-  display: block; /* 줄바꿈하여 이름만 크게 */
-  font-size: 42px !important; /* 1번 사진처럼 매우 크게 */
-  font-weight: 800 !important;
-  color: #FFD700 !important; /* 고급스러운 골드 컬러 */
-  margin-top: 5px;
-  margin-bottom: 5px;
-  text-shadow: 0 4px 15px rgba(255, 215, 0, 0.4); /* 금색 빛남 효과 */
-}
-
-.welcome-sub {
-  font-size: 16px !important;
-  font-weight: 300 !important;
-  color: rgba(255,255,255,0.9) !important;
-  margin-bottom: 20px !important;
-}
-
-.intro-date {
-  display: inline-block;
-  padding: 8px 16px;
-  border: 1px solid rgba(255,255,255,0.3);
-  border-radius: 50px;
-  font-size: 14px !important;
-  color: #fff !important;
-  background: rgba(0,0,0,0.2);
-  backdrop-filter: blur(4px);
-}
-
-/* 5. 하단 (리본 & 스크롤 유도) */
-.intro-bottom {
-  position: static !important;
-  transform: none !important;
-  text-align: center;
-  margin-bottom: env(safe-area-inset-bottom); /* 아이폰 하단 바 여백 */
-  width: 100%;
-}
-
-/* 파란색 리본 배지 스타일 */
-.ribbon {
-  display: inline-block;
-  background: #2563EB !important; /* 쨍한 블루 */
-  color: #fff !important;
-  font-size: 13px !important;
-  font-weight: 700 !important;
-  padding: 6px 18px !important;
-  border-radius: 20px !important;
-  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.4);
-  margin-bottom: 15px !important;
-  letter-spacing: 0.5px;
-}
-
-.intro-copy {
-  font-size: 15px !important;
-  color: rgba(255,255,255,0.9) !important;
-  margin-bottom: 20px !important;
-  font-weight: 300;
-}
-
-/* 아래로 스크롤 화살표 애니메이션 */
-.scroll-hint {
-  font-size: 13px !important;
-  color: rgba(255,255,255,0.6) !important;
-  animation: bounceArrow 2s infinite ease-in-out !important;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 5px;
-}
-.scroll-hint::after {
-  content: '⌄'; /* 화살표 아이콘 */
-  font-size: 20px;
-  line-height: 10px;
-}
-
-@keyframes bounceArrow {
-  0%, 100% { transform: translateY(0); opacity: 0.6; }
-  50% { transform: translateY(6px); opacity: 1; }
-}
-
-/* =================================================
-   메뉴 섹션 (스크롤하면 슥 올라오는 부분)
-================================================= */
-.home-menu-section {
-  position: relative !important;
-  z-index: 10 !important;
-  background: #F6F7FB !important; /* 배경색 확실하게 지정 */
-  
-  /* 둥근 모서리로 덮어씌우는 느낌 */
-  border-top-left-radius: 30px !important;
-  border-top-right-radius: 30px !important;
-  
-  /* 인트로랑 살짝 겹치게 위로 올림 */
-  margin-top: -30px !important; 
-  padding: 40px 20px 80px 20px !important;
-  
-  box-shadow: 0 -10px 30px rgba(0,0,0,0.1); /* 그림자 효과 */
-}
-
-/* 기존 모바일 CSS 무력화 및 그리드 복구 */
-.home-menu {
-  display: grid !important;
-  grid-template-columns: 1fr 1fr !important;
-  gap: 12px !important;
-  max-width: 600px;
-  margin: 0 auto;
-}
-
-.home-menu button {
-  background: #fff !important;
-  color: #333 !important;
-  border: none !important;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.05) !important;
-  height: auto !important;
-  min-height: 100px !important;
-  border-radius: 20px !important;
-  
-  /* 내용 정렬 */
-  display: flex !important;
-  flex-direction: column !important;
-  justify-content: center !important;
-  align-items: center !important;
-  text-align: center !important;
-  font-size: 16px !important;
-  font-weight: 700 !important;
-}
-
-/* '대만의 모든 것' 큰 버튼 처리 */
-.home-menu button:first-child {
-  grid-column: span 2 !important;
-  background: linear-gradient(135deg, #1e63c6 0%, #174ea6 100%) !important;
-  color: #fff !important;
-}
-
-/* =================================================
-   🚀 [홈 화면 전용] 2번 사진 레이아웃 정밀 보정
-   (상세 페이지 및 기타 기능은 영향 없음)
-================================================= */
-
-/* 1. 배경 이미지 일체화 (배경 끊김 해결) */
-body.logged-in {
-  background: url("../assets/images/photo2.jpg") center / cover no-repeat fixed !important;
-}
-
-/* 2. 홈 화면 레이아웃 (위에서 아래로 차례대로 배치) */
-.home-intro {
-  height: 100dvh !important;
-  display: flex !important;
-  flex-direction: column !important;
-  align-items: center !important;
-  justify-content: center !important; /* 중앙 정렬 */
-  padding: 0 !important;
-  text-shadow: 0 4px 15px rgba(0,0,0,0.5);
-}
-
-.intro-stage {
-  position: static !important;
-  display: flex !important;
-  flex-direction: column !important;
-  align-items: center !important;
-  transform: none !important;
-  padding: 0 !important;
-  height: auto !important;
-}
-
-/* [중앙] 이름과 환영 인사 (2번 사진처럼 크게) */
-.intro-center {
-  margin-bottom: 25px !important;
-  text-align: center !important;
-}
-
-#employeeName {
-  display: block !important;
-  font-size: 50px !important; /* 이름 아주 크게 */
-  font-weight: 900 !important;
-  color: #fff !important;
-  margin-bottom: 5px !important;
-  letter-spacing: -1.5px;
-}
-
-.welcome-main {
-  font-size: 20px !important;
-  font-weight: 300 !important;
-  color: #fff !important;
-}
-
-/* [하단] 🔥 흰색 평행사변형 배지 (핵심 포인트) */
-.intro-bottom {
-  margin-bottom: 50px !important;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.intro-date {
-  display: inline-block !important;
-  background: rgba(255, 255, 255, 0.95) !important;
-  color: #000 !important; /* 글씨 검정색 */
-  padding: 8px 40px !important;
-  font-weight: 800 !important;
-  font-size: 15px !important;
-  transform: skewX(-20deg) !important; /* 평행사변형 각도 */
-  border-radius: 2px !important;
-  border: none !important;
-}
-
-/* 배지 안 글씨는 똑바로 세우기 */
-#displayDate, .intro-date span, .intro-date em {
-  display: inline-block !important;
-  transform: skewX(20deg) !important;
-  font-style: normal;
-}
-
-/* 3. 카테고리 메뉴 (배경 끊김 제거 및 버튼 투명화) */
-.home-menu-section {
-  background: transparent !important; /* 삐쭉 튀어나온 흰 판 제거 */
-  box-shadow: none !important;
-  border: none !important;
-  margin-top: 0 !important;
-  padding: 0 20px 100px 20px !important;
-}
-
-.home-menu {
-  display: grid !important;
-  grid-template-columns: 1fr 1fr !important;
-  gap: 12px !important;
-  max-width: 500px;
-  margin: 0 auto;
-}
-
-.home-menu button {
-  /* 투명한 유리 느낌으로 배경과 이어지게 */
-  background: rgba(255, 255, 255, 0.15) !important;
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.2) !important;
-  border-radius: 20px !important;
-  color: #fff !important;
-  height: 96px !important;
-  font-size: 17px !important;
-  font-weight: 700 !important;
-  box-shadow: none !important;
-}
-
-/* '대만의 모든 것' 큰 버튼 */
-.home-menu button:first-child {
-  grid-column: span 2 !important;
-  background: rgba(255, 255, 255, 0.25) !important;
-}
-
-/* 4. 불필요한 기존 요소 숨김 */
-.ribbon, .scroll-hint, .intro-copy {
-  display: none !important;
-}
-
-/* =================================================
-   🚀 [긴급] 2번 사진 1:1 매칭 (레이아웃 & 배경 통합)
-   - 하단에 튀어나오던 흰색 판(.home-menu-section) 완전 투명화
-   - 이름은 크게, 배지는 평행사변형으로
-================================================= */
-
-/* 1. 배경을 하나로 통일 (스크롤 내려도 배경 고정) */
-body.logged-in {
-  background: url("../assets/images/photo2.jpg") center / cover no-repeat fixed !important;
-}
-
-/* 2. [핵심] 하단에 삐쭉 튀어나오던 흰색 판 없애기 */
-.home-menu-section {
-  background: transparent !important; /* 배경 투명하게 */
-  box-shadow: none !important;        /* 그림자 제거 */
-  border-radius: 0 !important;        /* 둥근 모서리 제거 */
-  margin-top: 0 !important;           /* 위로 겹치기 금지 */
-  padding: 10px 20px 100px 20px !important;
-  position: relative !important;
-  z-index: 1 !important;
-}
-
-/* 3. 홈 화면 레이아웃 (2번 사진처럼 위에서 아래로 정렬) */
-.home-intro {
-  height: auto !important;
-  min-height: 85dvh !important; /* 인트로 높이 확보 */
-  display: flex !important;
-  flex-direction: column !important;
-  align-items: center !important;
-  justify-content: flex-end !important; /* 아래쪽(이름/배지)으로 몰기 */
-  padding-bottom: 40px !important;
-}
-
-.intro-stage {
-  position: static !important;
-  transform: none !important;
-  display: flex !important;
-  flex-direction: column !important;
-  align-items: center !important;
-}
-
-/* 4. 폰트 및 이름 (2번 사진처럼 아주 크게) */
-.intro-center { margin-bottom: 20px !important; }
-
-#employeeName {
-  display: block !important;
-  font-size: 50px !important; /* 이름 압도적으로 크게 */
-  font-weight: 900 !important;
-  color: #fff !important;
-  margin-bottom: 5px !important;
-  letter-spacing: -2px !important;
-}
-
-.welcome-main {
-  font-size: 20px !important;
-  font-weight: 300 !important;
-  color: #fff !important;
-}
-
-/* 5. 🔥 평행사변형 배지 (흰색 바) */
-.intro-bottom { margin-bottom: 30px !important; }
-
-.intro-date {
-  display: inline-block !important;
-  background: rgba(255, 255, 255, 0.95) !important; /* 흰색 반투명 */
-  color: #000 !important; /* 글씨는 검정 */
-  padding: 8px 45px !important;
-  font-weight: 800 !important;
-  font-size: 15px !important;
-  transform: skewX(-20deg) !important; /* 평행사변형 모양 */
-  border-radius: 2px !important;
-}
-
-/* 배지 안의 글씨는 다시 똑바로 */
-#displayDate, .intro-date span {
-  display: inline-block !important;
-  transform: skewX(20deg) !important;
-}
-
-/* 6. 카테고리 버튼 (투명 유리 스타일) */
-.home-menu {
-  display: grid !important;
-  grid-template-columns: 1fr 1fr !important;
-  gap: 12px !important;
-}
-
-.home-menu button {
-  background: rgba(255, 255, 255, 0.15) !important; /* 배경 비치는 투명 */
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.2) !important;
-  border-radius: 18px !important;
-  color: #fff !important;
-  height: 90px !important;
-  font-size: 16px !important;
-  font-weight: 700 !important;
-  box-shadow: none !important;
-}
-
-/* 첫 번째 큰 버튼 전용 */
-.home-menu button:first-child {
-  grid-column: span 2 !important;
-  background: rgba(255, 255, 255, 0.25) !important;
-}
-
-/* 7. 기존에 방해되는 요소들 완전 삭제 */
-.ribbon, .scroll-hint, .intro-copy, .home-menu-section::before {
-  display: none !important;
-}
-
-/* =================================================
-   🎯 [최종 보정] 홈 레이아웃 고정 및 스크롤 버그 해결
-================================================= */
-
-/* 1. 홈 화면 레이아웃 (2번 사진 스타일 - 정중앙 배치) */
-.home-intro {
-  height: 100dvh !important;
-  display: flex !important;
-  flex-direction: column !important;
-  justify-content: center !important; /* 위아래 중앙 */
-  align-items: center !important;    /* 좌우 중앙 */
-  position: relative !important;
-  z-index: 5 !important;
-  /* 스크롤 위치에 상관없이 자기 자리를 지키도록 설정 */
-}
-
-.intro-stage {
-  position: static !important;
-  transform: none !important;
-  display: flex !important;
-  flex-direction: column !important;
-  align-items: center !important;
-  padding: 0 !important;
-}
-
-/* 2. 카테고리 섹션 (홈 바로 아래에 자연스럽게 위치) */
-.home-menu-section {
-  position: relative !important;
-  margin-top: 0 !important; /* 인트로 바로 뒤에 붙임 */
-  background: transparent !important;
-  padding: 40px 20px 120px 20px !important;
-  z-index: 10 !important;
-}
-
-/* 3. 🔥 [핵심] 상세 페이지 오픈 시 홈 화면 스크롤 박제 */
-/* 카테고리를 눌러서 .detail-open 상태가 되면 뒷배경 스크롤을 완전히 막음 */
-body.detail-open {
-  overflow: hidden !important; 
-  touch-action: none !important; /* 모바일 터치 스크롤 방지 */
-}
-
-/* 상세 페이지 내부 스크롤만 허용 */
-body.detail-open #detailContent {
-  overflow-y: auto !important;
-  -webkit-overflow-scrolling: touch;
-  touch-action: pan-y !important;
-}
-
-/* 4. 2번 사진용 타이포그래피 재강조 */
-#employeeName {
-  font-size: 50px !important;
-  font-weight: 900 !important;
-  color: #fff !important;
-  margin: 10px 0 !important;
-}
-
-.intro-date {
-  background: rgba(255, 255, 255, 0.95) !important;
-  color: #000 !important;
-  padding: 8px 40px !important;
-  transform: skewX(-20deg) !important;
-  font-weight: 800 !important;
-}
-.intro-date span {
-  display: inline-block !important;
-  transform: skewX(20deg) !important;
-}
-
-/* =================================================
-   🔥 [MASTER] 1번 사진 완벽 재현 (디테일 정밀 수정)
-   1. 상단 로고|ISC 구분선
-   2. 이름 & 인사말 공간감 확보
-   3. 평행사변형 배지 정밀 쉐입
-   4. 100dvh 풀스크린 (카테고리 숨김)
-================================================= */
-
-/* [배경] 2번 사진을 배경으로, 끊김 없이 고정 */
-body.logged-in {
-  background: url("../assets/images/photo2.jpg") center / cover no-repeat fixed !important;
-}
-
-/* [홈 인트로] 화면을 꽉 채워 아래 카테고리가 안 보이게 함 */
-.home-intro {
-  height: 100vh !important;
-  height: 100dvh !important;
-  display: flex !important;
-  flex-direction: column !important;
-  justify-content: space-between !important; /* 위-중간-아래 분산 */
-  align-items: center !important;
-  padding: 60px 20px 40px 20px !important;
-  box-sizing: border-box !important;
-}
-
-/* [상단] 로고 | ISC 구분 레이아웃 */
-.intro-top {
-  display: flex !important;
-  align-items: center !important;
-  gap: 15px !important;
-  position: relative !important;
-  transform: none !important;
-  top: 0 !important;
-}
-
-.intro-top .hero-logo {
-  width: 70px !important; /* 로고 크기 살짝 줄여서 세련되게 */
-  height: auto !important;
-}
-
-/* 로고와 텍스트 사이의 그 '약한 흰색 선' */
-.intro-top::after {
-  content: "";
-  display: block;
-  width: 1px;
-  height: 20px;
-  background: rgba(255, 255, 255, 0.4);
-  order: 1; /* 로고와 ISC 사이 위치 */
-}
-
-.intro-brand {
-  order: 2;
-  font-size: 16px !important;
-  font-weight: 300 !important;
-  letter-spacing: 2px !important;
-  color: #fff !important;
-  margin: 0 !important;
-}
-
-/* [중앙] 이름과 환영인사 (자연스러운 여백) */
-.intro-center {
-  text-align: center !important;
-  margin-top: -50px !important; /* 살짝 위로 올려서 황금비율 유지 */
-}
-
-.welcome-main {
-  font-size: 20px !important;
-  font-weight: 300 !important;
-  letter-spacing: -0.5px !important;
-  color: rgba(255, 255, 255, 0.9) !important;
-  margin-bottom: 10px !important;
-}
-
-#employeeName {
-  display: block !important;
-  font-size: 48px !important; /* 빡! 적힌 게 아니라 여백과 조화롭게 */
-  font-weight: 900 !important;
-  color: #fff !important;
-  margin: 5px 0 15px 0 !important;
-  text-shadow: 0 5px 15px rgba(0,0,0,0.2);
-}
-
-/* [하단] 🔥 흰색 평행사변형 문구 */
-.intro-bottom {
-  width: 100% !important;
-  display: flex !important;
-  flex-direction: column !important;
-  align-items: center !important;
-}
-
-.intro-date {
-  background: rgba(255, 255, 255, 0.95) !important;
-  color: #111 !important;
-  padding: 10px 45px !important;
-  font-size: 14px !important;
-  font-weight: 800 !important;
-  transform: skewX(-20deg) !important; /* 1번 사진 특유의 각도 */
-  border-radius: 2px !important;
-  margin-bottom: 40px !important;
-}
-
-.intro-date span {
-  display: inline-block !important;
-  transform: skewX(20deg) !important; /* 글씨는 똑바로 */
-}
-
-/* [스크롤 안내] 아래로 스크롤 하시오 */
-.scroll-hint {
-  display: flex !important;
-  flex-direction: column !important;
-  align-items: center !important;
-  font-size: 12px !important;
-  color: rgba(255, 255, 255, 0.6) !important;
-  gap: 8px !important;
-  animation: bounce 2s infinite;
-}
-
-.scroll-hint::after {
-  content: "↓";
-  font-size: 16px;
-}
-
-@keyframes bounce {
-  0%, 20%, 50%, 80%, 100% {transform: translateY(0);}
-  40% {transform: translateY(-5px);}
-  60% {transform: translateY(-3px);}
-}
-
-/* [카테고리] 첫 화면에서는 안 보이다가 스크롤 시 등장 */
-.home-menu-section {
-  background: transparent !important;
-  margin-top: 0 !important;
-  padding: 40px 20px 100px 20px !important;
-}
-
-.home-menu button {
-  background: rgba(255, 255, 255, 0.15) !important;
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.2) !important;
-  border-radius: 20px !important;
-  height: 100px !important;
-  color: #fff !important;
+  /* 배경을 좀 더 고급스럽게 */
+  body {
+    background-color: #eef2f6; 
+  }
+
+  /* 메인 섹션을 폰 모양처럼 유지하되 중앙 정렬 */
+  #mainSection {
+    margin-top: 40px;
+    margin-bottom: 40px;
+    border-radius: 30px;
+    overflow: hidden;
+    min-height: calc(100vh - 80px);
+  }
+
+  /* 메뉴 그리드 확장 */
+  .home-menu {
+    grid-template-columns: 1fr 1fr 1fr; /* 데스크탑에선 3열 */
+  }
+
+  /* 상세 페이지가 떴을 때도 중앙 정렬 유지 */
+  .detail-sheet__inner {
+    border-radius: 24px 24px 0 0;
+    /* 데스크탑에서 너무 꽉 차지 않게 */
+  }
 }
