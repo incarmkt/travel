@@ -22,7 +22,10 @@
   box-sizing: border-box;
   -webkit-tap-highlight-color: transparent;
 }
-
+html {
+  scroll-snap-type: y mandatory; /* 스크롤 시 화면에 자석처럼 달라붙게 만듦 */
+  scroll-behavior: smooth;
+}
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, "Pretendard", "Malgun Gothic", sans-serif;
@@ -168,8 +171,9 @@ button {
 
 /* 3-1. INTRO (스크롤 전 화면) */
 .home-intro {
-  height: 100vh; /* 화면 꽉 채움 */
-  position: sticky; /* 🔥 스크롤 시 화면에 고정 */
+  height: 100dvh; /* 화면 꽉 채움 */
+  scroll-snap-align: start; /* 추가: 자석처럼 고정 */
+  position: relative; /* 🔥 스크롤 시 화면에 고정 */
   top: 0;
   overflow: hidden;
   background-color: #222; /* 🔥 백업 배경 */
@@ -277,7 +281,7 @@ button {
 .home-menu-section {
   position: relative;
   z-index: 10; /* 🔥 인트로보다 확실히 위로 */
-  margin-top: -30px; /* 인트로 위로 살짝 겹치게 */
+  scroll-snap-align: start; /* 추가: 자석처럼 고정 */
   background: var(--bg-color);
   border-radius: 30px 30px 0 0;
   padding: 40px 20px 80px;
@@ -363,9 +367,9 @@ body.detail-open .detail-dim {
   bottom: 0;
   left: 0;
   width: 100%;
-  height: 90%;
+  height: 100%;
   background: var(--bg-color);
-  border-radius: 24px 24px 0 0;
+  border-radius: 0;
   transform: translateY(100%);
   transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   display: flex;
