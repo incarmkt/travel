@@ -6,7 +6,7 @@
   <title>2025 ISC 대만 여행</title>
 
   <!-- ✅ [1] 폰트 CDN 추가 (Pretendard) -->
-  <link rel="stylesheet" as="style" crossorigin href="[https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css](https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css)" />
+  <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
 
   <!-- 프리미엄 테마 CSS -->
   <style>
@@ -47,6 +47,7 @@
     /* =========================================================
        [2] 스플래시 & 로그인
     ========================================================= */
+    /* 스플래시 스타일은 유지하되 로직에서만 제거 */
     .mobile-splash {
       position: fixed; inset: 0; z-index: 9999;
       background: var(--primary-color);
@@ -358,20 +359,69 @@
     }
     .fx-eq { font-size: 20px; color: var(--text-sub); }
 
-    /* 선택관광 카드 */
-    .tour-card {
-      background: var(--card-bg); border-radius: 16px; padding: 20px;
-      margin-bottom: 16px; border-left: 4px solid var(--accent-color);
-      box-shadow: 0 2px 10px rgba(0,0,0,0.02);
+    /* 🔥 [수정] 2. 선택관광 사진형 카드 CSS 추가
+       (기존 .tour-card 덮어쓰지 않고 새로운 클래스 사용) 
+    */
+    .tour-card-photo {
+      position: relative;
+      border-radius: 20px;
+      overflow: hidden;
+      margin-bottom: 20px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+      background-color: #000;
+      /* 비율 유지 (높이 지정) */
+      height: 220px; 
+      display: flex; flex-direction: column; justify-content: flex-end;
+      color: #fff;
     }
-    .tour-header { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
-    .badge { background: var(--bg-main); color: var(--primary-color); padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 600; }
-    .tour-header h3 { margin: 0; font-size: 16px; flex: 1; font-weight: 800;}
-    .meal-box { background: #f8fdfa; padding: 12px; border-radius: 8px; margin: 12px 0; font-size: 14px; display: flex; justify-content: space-between;}
-    .meal-check { display: flex; justify-content: space-between; align-items: center; padding-top: 12px; border-top: 1px solid var(--border-light); }
-    .meal-check button { background: var(--accent-color); color: #fff; border: none; padding: 6px 16px; border-radius: 6px; font-weight: 600; }
-    .status.pending { color: #e53e3e; font-weight: 600;}
-    .status.done { color: #38a169; font-weight: 600;}
+    
+    .tour-card-bg {
+      position: absolute; inset: 0;
+      background-size: cover; background-position: center;
+      transition: transform 0.4s;
+    }
+    .tour-card-photo:active .tour-card-bg { transform: scale(1.05); }
+
+    .tour-card-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,0.4) 50%, rgba(0,0,0,0.9) 100%);
+    }
+
+    .tour-info {
+      position: relative; z-index: 2;
+      padding: 20px;
+    }
+
+    .tour-badge {
+      display: inline-block;
+      background: var(--accent-color); color: #fff;
+      font-size: 11px; font-weight: 700;
+      padding: 4px 10px; border-radius: 100px;
+      margin-bottom: 8px; text-transform: uppercase;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
+    .tour-badge.red { background: #e53e3e; } /* 자유일정 */
+
+    .tour-info h3 { margin: 0 0 6px; font-size: 22px; font-weight: 800; line-height: 1.2; text-shadow: 0 2px 4px rgba(0,0,0,0.3); }
+    .tour-desc { font-size: 13px; opacity: 0.9; margin: 0 0 14px; line-height: 1.4; }
+
+    /* 포함/불포함 박스 (카드 내부 하단) */
+    .tour-meta-box {
+      background: rgba(255,255,255,0.15);
+      backdrop-filter: blur(4px);
+      border-radius: 12px;
+      padding: 10px 14px;
+      display: flex; justify-content: space-between; align-items: center;
+      font-size: 13px;
+    }
+    .tour-meta-items { display: flex; gap: 8px; font-size: 12px; }
+    .tour-meta-items span { background: rgba(0,0,0,0.3); padding: 2px 6px; border-radius: 4px; }
+
+    .meal-status-btn {
+      background: #fff; color: #1a233a; border: none;
+      font-size: 12px; font-weight: 700; padding: 6px 12px; border-radius: 8px;
+    }
+    .meal-status-btn.done { background: #38a169; color: #fff; }
 
     #requestInput {
       width: 100%; height: 120px; padding: 16px; border: 1px solid var(--border-light);
@@ -402,11 +452,9 @@
 
 <body>
   
-<!-- ✅ 시작부분 로컬 파일 경로 그대로 유지 -->
-<div id="mobileSplash" class="mobile-splash" style="display:none;">
-  <img src="assets/images/iscposter.jpg" alt="ISC Poster" onerror="this.src='[https://images.unsplash.com/photo-1577717903315-1691ae25ab3f?auto=format&fit=crop&w=800&q=80](https://images.unsplash.com/photo-1577717903315-1691ae25ab3f?auto=format&fit=crop&w=800&q=80)'">
-</div>
-  
+<!-- ✅ 1. 스플래시 HTML 태그는 남겨두되 주석처리하거나, JS에서 제어하지 않음 -->
+<!-- <div id="mobileSplash" class="mobile-splash" style="display:none;">...</div> -->
+
 <!-- ================= LOGIN ================= -->
 <section id="loginSection" class="login-hero">
   <div class="hero-overlay">
@@ -520,11 +568,68 @@ function toggleMenu() {
   document.body.classList.toggle('menu-open');
 }
 
-/* ================= 선택관광 템플릿 ================= */
+/* ================= 선택관광 템플릿 (🔥 수정 2. 사진 카드 디자인 적용) ================= */
+/* 이미지 경로는 assets/images/ 폴더를 기준으로 잡았으며, 없을 경우 Unsplash 이미지가 뜨도록 onerror를 설정했습니다. */
 const myTourTemplates = [
-  { keyword: "티엔라이", html: `<div class="tour-card green"><div class="tour-header"><span class="badge">선택 1안</span><h3>티엔라이 온천 힐링</h3><span class="icon">🌿</span></div><p class="tour-desc">티엔라이 온천욕 & 양명산 국립공원 자락의 최고급 유황 온천</p><div class="meal-box"><strong>🍽 점심 식사</strong><span>베이징덕</span><em class="included">식사 포함</em></div><div class="tour-footer"><span>🎫 입장권</span><span>🚌 전용차량</span><span>🍴 중식</span></div></div>` },
-  { keyword: "고궁박물관", html: `<div class="tour-card green"><div class="tour-header"><span class="badge">선택 2안</span><h3>고궁박물관 역사 기행</h3><span class="icon">🏛️</span></div><p class="tour-desc">중국 역사의 정수, 대만 고궁박물관</p><div class="meal-box"><strong>🍽 점심 식사</strong><span>베이징덕</span><em class="included">식사 포함</em></div><div class="tour-footer"><span>🎫 입장권</span><span>🚌 전용차량</span><span>🍴 중식</span></div></div>` },
-  { keyword: "자유일정", html: `<div class="tour-card red"><div class="tour-header"><span class="badge">선택 3안</span><h3>자유로운 대만 여행</h3><span class="icon">🇹🇼</span></div><p class="tour-desc">자유일정 대만</p><div class="meal-box"><strong>🍽 점심 식사</strong><span>자유식</span><em class="cash">현금 지급</em></div><div class="meal-check" data-tour="자유일정"><span class="status pending">중식비 미지급</span><button onclick="handleMealClick(this)">지급 확인</button></div><div class="tour-footer"><span>🚌 자유일정</span><span>🍜 중식비</span></div></div>` }
+  { 
+    keyword: "티엔라이", 
+    html: `
+      <div class="tour-card-photo">
+        <div class="tour-card-bg" style="background-image: url('assets/images/tour_tienlai.jpg');" onerror="this.style.backgroundImage='url(https://images.unsplash.com/photo-1596483582098-9642e12e84d4?auto=format&fit=crop&w=800&q=80)'"></div>
+        <div class="tour-card-overlay"></div>
+        <div class="tour-info">
+          <span class="tour-badge">선택 1안</span>
+          <h3>티엔라이 온천 힐링</h3>
+          <p class="tour-desc">티엔라이 온천욕 & 양명산 국립공원 자락의 최고급 유황 온천</p>
+          <div class="tour-meta-box">
+            <div class="tour-meta-items">
+              <span>🎫 입장권</span>
+              <span>🚌 전용차량</span>
+              <span>🍽 중식(오리)</span>
+            </div>
+          </div>
+        </div>
+      </div>` 
+  },
+  { 
+    keyword: "고궁박물관", 
+    html: `
+      <div class="tour-card-photo">
+        <div class="tour-card-bg" style="background-image: url('assets/images/tour_museum.jpg');" onerror="this.style.backgroundImage='url(https://images.unsplash.com/photo-1590059390231-fb264f3d47fb?auto=format&fit=crop&w=800&q=80)'"></div>
+        <div class="tour-card-overlay"></div>
+        <div class="tour-info">
+          <span class="tour-badge">선택 2안</span>
+          <h3>고궁박물관 역사 기행</h3>
+          <p class="tour-desc">중국 역사의 정수, 대만 고궁박물관 관람</p>
+          <div class="tour-meta-box">
+            <div class="tour-meta-items">
+              <span>🎫 입장권</span>
+              <span>🚌 전용차량</span>
+              <span>🍽 중식(오리)</span>
+            </div>
+          </div>
+        </div>
+      </div>` 
+  },
+  { 
+    keyword: "자유일정", 
+    html: `
+      <div class="tour-card-photo">
+        <div class="tour-card-bg" style="background-image: url('assets/images/tour_free.jpg');" onerror="this.style.backgroundImage='url(https://images.unsplash.com/photo-1470004914212-05527e49370b?auto=format&fit=crop&w=800&q=80)'"></div>
+        <div class="tour-card-overlay"></div>
+        <div class="tour-info">
+          <span class="tour-badge red">선택 3안</span>
+          <h3>자유로운 대만 여행</h3>
+          <p class="tour-desc">자유일정 대만 (중식비 지급)</p>
+          <div class="tour-meta-box">
+             <div class="meal-check" data-tour="자유일정" style="width:100%; display:flex; justify-content:space-between; align-items:center;">
+                <span class="status pending" style="color:#fff; font-weight:600;">중식비 미지급</span>
+                <button class="meal-status-btn" onclick="handleMealClick(this)">지급 확인</button>
+             </div>
+          </div>
+        </div>
+      </div>` 
+  }
 ];
 
 /* ================= 선택관광 렌더링 함수 ================= */
@@ -786,7 +891,7 @@ function setMealUI(wrap, mode, time = "") {
   const btn = wrap.querySelector("button");
   if (mode === "DONE") {
     wrap.classList.add("done");
-    status.textContent = "중식비 지급 완료";
+    status.textContent = "지급 완료";
     status.classList.remove("pending"); status.classList.add("done");
     wrap.dataset.time = time; btn.textContent = "지급 확인";
   } else {
@@ -820,7 +925,7 @@ function nowKSTString() {
   return new Intl.DateTimeFormat("ko-KR", { timeZone: "Asia/Seoul", year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", second: "2-digit" }).format(new Date());
 }
 
-const MEAL_SHEET_URL = "[https://script.google.com/macros/s/AKfycbx2tVkT00Z8uXQWl6EeTIUUhZ3_NJHx3JDqSCHC5oJWkUCm0OtcTmaV6g20cNKoh0no9w/exec](https://script.google.com/macros/s/AKfycbx2tVkT00Z8uXQWl6EeTIUUhZ3_NJHx3JDqSCHC5oJWkUCm0OtcTmaV6g20cNKoh0no9w/exec)";
+const MEAL_SHEET_URL = "https://script.google.com/macros/s/AKfycbx2tVkT00Z8uXQWl6EeTIUUhZ3_NJHx3JDqSCHC5oJWkUCm0OtcTmaV6g20cNKoh0no9w/exec";
 
 function logMealPaymentToSheet(payload) {
   if (!currentUser) return;
@@ -830,7 +935,7 @@ function logMealPaymentToSheet(payload) {
   }).catch(console.error);
 }
     
-/* ================= 로그인 (원본 100% 동일) ================= */
+/* ================= 로그인 (🔥 수정 1. 스플래시 삭제) ================= */
 function login() {
   const id = document.getElementById("employeeId").value.trim();
   const user = employees.find(e => e.id === id);
@@ -845,20 +950,8 @@ function login() {
   // 로그인 화면 제거
   document.getElementById("loginSection").style.display = "none";
 
-  // 📱 모바일: 스플래시 2초
-  if (window.innerWidth <= 767) {
-    const splash = document.getElementById("mobileSplash");
-    splash.style.display = "flex";
-
-    setTimeout(() => {
-      splash.style.display = "none";
-      document.getElementById("mainSection").style.display = "block";
-    }, 2000);
-  } 
-  // 🖥 데스크탑: 즉시 진입
-  else {
-    document.getElementById("mainSection").style.display = "block";
-  }
+  // 📱 모바일: 스플래시 없이 즉시 메인으로 진입하도록 수정
+  document.getElementById("mainSection").style.display = "block";
 
   document.getElementById("employeeName").textContent = user.name;
   document.body.classList.add("logged-in");
@@ -1133,12 +1226,12 @@ function openPage(type, fromHistory = false) {
     t.textContent = "🍽 만찬 안내";
     c.innerHTML = `<div class="detail-content-wrap"><div class="day-card"><h3>ISC 공식 만찬</h3><p style="margin-top:10px; font-size:14px; color:var(--text-sub);">만찬에 관련된 상세 정보가 추후 업데이트 됩니다.</p></div></div>`;
   }
-  
+   
   if (type === "request") {
     t.textContent = "📝 요청사항";
     c.innerHTML = `<div class="detail-content-wrap"><div class="day-card"><textarea id="requestInput" placeholder="요청사항을 자유롭게 입력해주세요."></textarea><button class="primary-btn" onclick="submitRequest()">제출하기</button></div></div>`;
   }
-  
+   
   if (type === "contact") {
     t.textContent = "📞 긴급 연락망";
     c.innerHTML = `
@@ -1174,12 +1267,12 @@ function goHome() {
 /* ================= 뒤로가기 ================= */
 function goBack() {
   pageHistory.pop();
-  
+   
   if (pageHistory.length === 0) { 
     goHome(); 
     return; 
   }
-  
+   
   const prevType = pageHistory[pageHistory.length - 1];
   openPage(prevType, true);
 }
@@ -1189,7 +1282,7 @@ function submitRequest() {
   const requestText = document.getElementById("requestInput").value.trim();
   if (!requestText) { alert("요청사항을 입력해주세요."); return; }
   if (!currentUser) { alert("로그인 정보가 없습니다."); return; }
-  
+   
   fetch(MEAL_SHEET_URL, {
     method: "POST", mode: "no-cors",
     body: JSON.stringify({ type: "request", id: currentUser.id, name: currentUser.name, request: requestText, time: nowKSTString() })
@@ -1226,7 +1319,7 @@ function fxFmt(n) {
 }
 
 async function fetchTwdToKrwRate() {
-  const url = "[https://open.er-api.com/v6/latest/USD](https://open.er-api.com/v6/latest/USD)";
+  const url = "https://open.er-api.com/v6/latest/USD";
   const res = await fetch(url, { cache: "no-store" });
   if (!res.ok) throw new Error("환율 API 실패: " + res.status);
   const data = await res.json();
