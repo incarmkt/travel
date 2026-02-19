@@ -3,14 +3,15 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>2026 ISC 대만 여행</title>
+  <title>2025 ISC 대만 여행</title>
 
-  <!-- ✅ [1] 프리텐다드 폰트 CDN 추가 (이게 있어야 폰트가 예쁘게 나옵니다) -->
+  <!-- ✅ [1] 폰트 CDN 추가 (Pretendard) -->
   <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
 
+  <!-- 프리미엄 테마 CSS -->
   <style>
     /* =========================================================
-       [2] CSS 변수 & 초기화 (Premium Palette)
+       [1] CSS 변수 & 초기화 (Premium Palette)
     ========================================================= */
     :root {
       --primary-color: #1a233a; 
@@ -27,8 +28,8 @@
     * {
       box-sizing: border-box;
       -webkit-tap-highlight-color: transparent; 
-      /* 폰트 적용 */
-      font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
+      /* ✅ 폰트 적용 */
+      font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     }
 
     html, body {
@@ -36,70 +37,68 @@
       padding: 0;
       background-color: var(--primary-color);
       color: var(--text-main);
-      overscroll-behavior: none; /* 당겨서 새로고침 방지 (앱 느낌) */
+      overscroll-behavior: none; 
+      /* ✅ 모바일 꽉 채우기 핵심 설정 */
       width: 100%;
       height: 100%;
-      overflow: hidden; /* 메인 화면 스크롤 막고 내부 스크롤만 허용 */
+      overflow: hidden; /* 이중 스크롤 방지 */
     }
 
     /* =========================================================
-       [3] 스플래시 & 로그인 (풀스크린 채우기)
+       [2] 스플래시 & 로그인
     ========================================================= */
     .mobile-splash {
       position: fixed; inset: 0; z-index: 9999;
       background: var(--primary-color);
       display: flex; align-items: center; justify-content: center;
     }
-    .mobile-splash img { width: 100%; height: 100%; object-fit: cover; }
+    .mobile-splash img { width: 100%; height: 100%; object-fit: cover; opacity: 0.8; }
 
     .login-hero {
       width: 100%;
-      height: 100vh; /* 구형 브라우저용 */
-      height: 100dvh; /* ✅ 모바일 주소창 대응 풀스크린 */
+      /* ✅ 모바일 주소창 대응 높이 설정 */
+      height: 100vh;
+      height: 100dvh; 
       background: url('assets/images/taiwan.jpg') center/cover no-repeat;
-      position: fixed; /* 고정해서 흔들림 방지 */
+      /* ✅ 배경 고정 (스크롤 시 흔들림 방지) */
+      position: fixed;
       top: 0; left: 0;
       z-index: 2000;
     }
-    
     .hero-overlay {
       position: absolute; inset: 0;
       background: linear-gradient(135deg, rgba(26,35,58,0.85) 0%, rgba(0,0,0,0.6) 100%);
       display: flex; align-items: center; justify-content: center;
       padding: 20px;
-      backdrop-filter: blur(3px);
     }
-
     .login-box {
       background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
       padding: 40px 24px;
-      border-radius: 24px;
+      border-radius: 20px;
       width: 100%;
-      max-width: 340px;
+      max-width: 380px;
       text-align: center;
-      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.2);
     }
-    .login-box h2 { color: var(--primary-color); margin: 0 0 5px; font-weight: 800; letter-spacing: -0.5px; }
+    .login-box h2 { color: var(--primary-color); margin: 0 0 5px; font-weight: 800; }
     .hero-desc { color: var(--text-sub); margin-bottom: 24px; font-size: 14px; }
-    
     .login-box input {
       width: 100%; padding: 14px; border: 1px solid var(--border-light);
-      border-radius: 12px; font-size: 16px; margin-bottom: 12px;
-      text-align: center; transition: all 0.2s; background: #f8fafc;
+      border-radius: 12px; font-size: 16px; margin-bottom: 16px;
+      text-align: center; transition: border 0.3s;
     }
-    .login-box input:focus { border-color: var(--accent-color); outline: none; background: #fff; box-shadow: 0 0 0 3px rgba(197, 160, 89, 0.1); }
-    
+    .login-box input:focus { border-color: var(--accent-color); outline: none; }
     .primary-btn {
       width: 100%; padding: 15px; border: none; border-radius: 12px;
-      background: var(--primary-color); color: #fff; font-size: 16px; font-weight: 700;
-      cursor: pointer; transition: transform 0.1s;
-      box-shadow: 0 4px 6px -1px rgba(26, 35, 58, 0.2);
+      background: var(--primary-color); color: #fff; font-size: 16px; font-weight: 600;
+      cursor: pointer; transition: background 0.3s, transform 0.1s;
     }
     .primary-btn:active { transform: scale(0.98); }
-    .error { color: #e53e3e; font-size: 13px; margin-top: 12px; min-height: 18px; font-weight: 500;}
+    .error { color: #e53e3e; font-size: 13px; margin-top: 12px; min-height: 18px; }
 
     /* =========================================================
-       [4] 홈 화면 (단일 풀스크린 대시보드)
+       [3] 홈 화면 (단일 풀스크린 대시보드 구조)
     ========================================================= */
     .main-bg { 
         width: 100%; 
@@ -109,8 +108,9 @@
     
     .home-view {
       width: 100%;
+      /* ✅ 모바일 주소창 대응 */
       height: 100vh;
-      height: 100dvh; /* ✅ 풀스크린 */
+      height: 100dvh;
       background: url('assets/images/taiwan.jpg') center/cover no-repeat;
       position: relative;
       display: flex;
@@ -119,8 +119,7 @@
     
     .home-overlay {
       position: absolute; inset: 0;
-      /* 배경을 좀 더 고급스럽게 어둡게 처리 */
-      background: linear-gradient(to bottom, rgba(26,35,58,0.4) 0%, rgba(26,35,58,0.95) 90%);
+      background: linear-gradient(180deg, rgba(0,0,0,0.3) 0%, rgba(26,35,58,0.95) 100%);
       z-index: 1;
     }
 
@@ -129,117 +128,121 @@
       position: relative; z-index: 100;
       display: flex; justify-content: space-between; align-items: center;
       padding: 20px 24px;
-      padding-top: max(20px, env(safe-area-inset-top)); /* 노치 대응 */
+      /* ✅ 아이폰 노치 영역 대응 */
+      padding-top: max(20px, env(safe-area-inset-top));
     }
-    .header-logo { height: 28px; filter: brightness(0) invert(1); opacity: 0.9; }
+    .header-logo { height: 32px; filter: brightness(0) invert(1); }
     
-    /* 카테고리 메뉴 버튼 */
-    .menu-wrapper { position: relative; }
+    /* =========================================================
+       [4] 우측 상단 카테고리 (팝업 드롭다운 스타일)
+    ========================================================= */
+    .menu-wrapper { 
+        position: relative; 
+        /* ✅ 로고 유무와 상관없이 메뉴를 우측 끝으로 고정 */
+        margin-left: auto;
+    }
 
     .menu-btn {
-      background: rgba(255,255,255,0.1); 
-      backdrop-filter: blur(8px);
-      border: 1px solid rgba(255,255,255,0.2); 
+      background: rgba(255,255,255,0.15); 
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,0.3); 
       color: #fff;
       padding: 8px 16px; 
       border-radius: 20px; 
       font-weight: 600; 
-      font-size: 13px;
+      font-size: 14px;
       cursor: pointer;
       display: flex; align-items: center; gap: 6px;
+      transition: all 0.2s;
+      position: relative; z-index: 101; 
     }
+    .menu-btn:active { background: rgba(255,255,255,0.3); }
 
-    /* 메뉴 드롭다운 */
+    /* 메뉴 열릴 때 화면 어둡게 해주는 레이어 */
     .menu-dim {
       position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 90;
-      backdrop-filter: blur(4px);
-      opacity: 0; visibility: hidden; transition: all 0.3s;
+      backdrop-filter: blur(3px); -webkit-backdrop-filter: blur(3px);
+      opacity: 0; visibility: hidden; transition: opacity 0.3s;
     }
     body.menu-open .menu-dim { opacity: 1; visibility: visible; }
 
+    /* 카테고리 드롭다운 박스 */
     .category-dropdown {
-      position: absolute; top: calc(100% + 10px); right: 0;
-      width: 220px; background: #fff; border-radius: 16px;
-      box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+      position: absolute; top: calc(100% + 12px); right: 0;
+      width: 250px; background: #fff; border-radius: 20px;
+      box-shadow: 0 12px 40px rgba(0,0,0,0.3);
       padding: 8px; z-index: 100;
-      opacity: 0; visibility: hidden; transform: translateY(-10px) scale(0.95);
-      transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+      opacity: 0; visibility: hidden; transform: translateY(-10px);
+      transition: all 0.3s cubic-bezier(0.32, 0.72, 0, 1);
       transform-origin: top right;
     }
     body.menu-open .category-dropdown {
-      opacity: 1; visibility: visible; transform: translateY(0) scale(1);
+      opacity: 1; visibility: visible; transform: translateY(0);
     }
 
     .dropdown-header {
-      font-size: 11px; font-weight: 700; color: var(--text-sub);
-      text-transform: uppercase; letter-spacing: 0.5px;
-      padding: 8px 12px; border-bottom: 1px solid var(--border-light);
+      font-size: 13px; font-weight: 700; color: var(--text-sub);
+      padding: 12px 14px 8px; border-bottom: 1px solid var(--border-light);
       margin-bottom: 4px;
     }
 
     .drop-nav button {
       width: 100%; text-align: left; background: none; border: none;
-      padding: 12px; font-size: 14px; font-weight: 600; color: var(--text-main);
-      border-radius: 8px; cursor: pointer; transition: background 0.2s;
-      display: flex; align-items: center; gap: 10px;
+      padding: 14px; font-size: 15px; font-weight: 600; color: var(--text-main);
+      border-radius: 12px; cursor: pointer; transition: background 0.2s;
+      display: flex; align-items: center; gap: 12px;
     }
     .drop-nav button span { flex: 1; }
-    .drop-nav button:active { background: #f1f5f9; }
+    .drop-nav button:active { background: #f8fafc; transform: scale(0.98); }
 
-    /* 메인 콘텐츠 (환영문구 & DAY 버튼) */
+    /* =========================================================
+       [5] 메인 콘텐츠 (환영문구 & DAY 버튼들)
+    ========================================================= */
     .home-main-content {
       position: relative; z-index: 10;
       flex: 1; 
-      display: flex; flex-direction: column; justify-content: flex-end; /* 하단 정렬 */
-      padding: 0 24px 40px; 
-      padding-bottom: max(40px, env(safe-area-inset-bottom));
+      display: flex; flex-direction: column; justify-content: flex-end;
+      padding: 0 24px 60px; 
+      /* ✅ 하단 안전영역 대응 */
+      padding-bottom: max(60px, env(safe-area-inset-bottom));
       color: #fff;
     }
     
-    .welcome-text { margin-bottom: 24px; animation: fadeInUp 0.8s ease-out; }
-    .welcome-text p { font-size: 16px; margin: 0; opacity: 0.85; font-weight: 300; }
-    .welcome-text strong { color: var(--accent-color); font-weight: 700; }
-    .welcome-text h2 { font-size: 32px; font-weight: 800; margin: 8px 0 12px; line-height: 1.15; letter-spacing: -0.5px; }
-    .welcome-text .sub-date { 
-        display: inline-block; padding: 4px 12px; 
-        background: rgba(255,255,255,0.15); border-radius: 100px; 
-        font-size: 12px; font-weight: 500; 
-        backdrop-filter: blur(4px); border: 1px solid rgba(255,255,255,0.1);
-    }
+    .welcome-text { margin-bottom: 30px; }
+    .welcome-text p { font-size: 18px; margin: 0; opacity: 0.9; }
+    .welcome-text strong { color: var(--accent-color); font-weight: 800; }
+    .welcome-text h2 { font-size: 34px; font-weight: 800; margin: 5px 0 10px; line-height: 1.2; }
+    .welcome-text .sub-date { display: inline-block; padding: 6px 14px; background: rgba(0,0,0,0.4); border-radius: 20px; font-size: 13px; margin-top: 10px; border: 1px solid rgba(255,255,255,0.1);}
 
-    /* DAY 그리드 버튼 */
+    /* DAY 1~4 그리드 버튼 */
     .day-buttons {
-      display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
-      animation: fadeInUp 0.8s ease-out 0.2s backwards;
+      display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
     }
     .day-btn {
-      background: rgba(255, 255, 255, 0.08);
-      backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      padding: 16px; 
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(15px);
+      -webkit-backdrop-filter: blur(15px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      padding: 20px 16px; 
       border-radius: 16px;
       color: #fff; text-align: left;
-      cursor: pointer; transition: all 0.2s;
+      font-size: 18px; font-weight: 800;
+      transition: all 0.2s; cursor: pointer;
       display: flex; flex-direction: column; justify-content: space-between;
-      min-height: 90px;
+      min-height: 100px;
     }
-    .day-btn:active { background: rgba(255,255,255,0.2); transform: scale(0.98); }
-    .day-btn-header { font-size: 16px; font-weight: 800; color: var(--accent-color); }
-    .day-title { font-size: 12px; font-weight: 400; opacity: 0.8; margin-top: 6px; line-height: 1.35; word-break: keep-all; }
-
-    @keyframes fadeInUp {
-        from { opacity: 0; transform: translateY(20px); }
-        to { opacity: 1; transform: translateY(0); }
-    }
+    .day-btn .day-title { font-size: 13px; font-weight: 400; opacity: 0.7; margin-top: 8px; line-height: 1.4; word-break: keep-all; }
+    .day-btn:active { background: rgba(255,255,255,0.2); transform: scale(0.96); }
 
     /* =========================================================
-       [5] Bottom Sheet (Detail Page) - 부드러운 모달
+       [6] Bottom Sheet (Detail Page)
     ========================================================= */
     #detailPage {
       position: fixed; inset: 0; z-index: 3000;
       display: none; 
     }
     
+    /* pointer-events: none 추가하여 투명할때 클릭 방해 방지 */
     .detail-dim {
       position: absolute; inset: 0;
       background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(4px);
@@ -255,8 +258,7 @@
       border-radius: var(--sheet-radius) var(--sheet-radius) 0 0;
       display: flex; flex-direction: column;
       transform: translateY(100%); 
-      transition: transform 0.4s cubic-bezier(0.19, 1, 0.22, 1);
-      box-shadow: 0 -10px 40px rgba(0,0,0,0.1);
+      transition: transform 0.4s cubic-bezier(0.32, 0.72, 0, 1);
     }
 
     body.detail-open .detail-dim { opacity: 1; pointer-events: auto; }
@@ -264,92 +266,103 @@
 
     .detail-header {
       display: flex; justify-content: space-between; align-items: center;
-      padding: 16px 20px; background: #fff;
+      padding: 20px 24px; background: #fff;
       border-radius: var(--sheet-radius) var(--sheet-radius) 0 0;
       border-bottom: 1px solid var(--border-light); flex-shrink: 0; 
     }
-    .detail-title { font-size: 17px; font-weight: 700; color: var(--primary-color); }
+    .detail-title { font-size: 18px; font-weight: 700; color: var(--primary-color); }
     .detail-actions button {
-      background: #f1f5f9; border: none; font-size: 12px; color: var(--text-sub);
-      padding: 8px 12px; border-radius: 8px; margin-left: 8px; cursor: pointer; font-weight: 600;
+      background: none; border: none; font-size: 14px; color: var(--text-sub);
+      margin-left: 12px; cursor: pointer; font-weight: 600;
     }
-    .detail-actions .btn-back { background: var(--primary-color); color: white; }
-
     #detailContent {
-      flex: 1; overflow-y: auto; padding: 20px;
-      padding-bottom: calc(40px + var(--safe-bottom));
+      flex: 1; overflow-y: auto; padding: 20px 20px calc(20px + var(--safe-bottom));
       -webkit-overflow-scrolling: touch;
     }
 
     /* =========================================================
-       [6] 상세 컨텐츠 스타일 (카드형 UI)
+       [7] 상세 컨텐츠 스타일 (일정, 환율 등)
     ========================================================= */
     .day-card {
       background: var(--card-bg); border-radius: 16px; padding: 20px;
-      margin-bottom: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.03);
-      border: 1px solid rgba(0,0,0,0.02);
+      margin-bottom: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.03);
     }
     .day-card h3 {
-      margin: 0 0 16px; font-size: 18px; color: var(--primary-color);
+      margin: 0 0 10px; font-size: 18px; color: var(--primary-color);
       display: flex; align-items: baseline; gap: 8px; font-weight: 800;
-      border-bottom: 2px solid #f1f5f9; padding-bottom: 12px;
     }
     .day-card h3 span { font-size: 13px; color: var(--text-sub); font-weight: 500; }
-    .day-title-sub { margin: -5px 0 20px; font-weight: 600; color: var(--text-main); font-size: 15px; }
+    .day-title { margin: 0 0 20px; font-weight: 600; color: var(--accent-color); font-size: 15px; }
 
-    /* 타임라인 */
-    .timeline { border-left: 2px solid #e2e8f0; margin-left: 8px; padding-left: 20px; }
+    .timeline { border-left: 2px solid var(--border-light); margin-left: 10px; padding-left: 20px; }
     .schedule-item { position: relative; margin-bottom: 24px; }
     .schedule-item:last-child { margin-bottom: 0; }
-    
     .timeline-dot {
-      position: absolute; left: -27px; top: 4px;
-      width: 12px; height: 12px; border-radius: 50%;
-      background: #fff; border: 3px solid var(--accent-color);
-      box-shadow: 0 0 0 2px #fff;
+      position: absolute; left: -26px; top: 0;
+      width: 10px; height: 10px; border-radius: 50%;
+      background: var(--accent-color); border: 2px solid #fff;
     }
-    
     .schedule-card { display: flex; flex-direction: column; gap: 4px; }
-    .schedule-time { font-size: 13px; font-weight: 700; color: var(--accent-color); }
+    .schedule-time { font-size: 13px; font-weight: 700; color: var(--text-sub); }
     .schedule-title { font-size: 15px; font-weight: 600; color: var(--text-main); }
-    .schedule-desc { font-size: 13px; color: var(--text-sub); margin-top: 2px; line-height: 1.5; }
+    .schedule-desc { font-size: 13px; color: var(--text-sub); margin-top: 4px; line-height: 1.4; }
 
-    /* 기타 컴포넌트 */
-    .country-compare-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
+    /* 환율, 대만의 모든 것 */
+    .country-compare-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
     .country-card { background: var(--card-bg); padding: 16px; border-radius: 16px; text-align: center; }
-    .flag-img { width: 32px; border-radius: 4px; border: 1px solid var(--border-light); margin-bottom: 8px; }
+    .country-header { display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 10px; }
+    .flag-img { width: 30px; border-radius: 4px; border: 1px solid var(--border-light); }
+    .country-card h3 { margin: 0; font-size: 16px; }
+    .time-box { background: var(--bg-main); padding: 10px; border-radius: 10px; margin: 10px 0; }
     .time-box strong { display: block; font-size: 18px; color: var(--primary-color); margin-top: 4px; font-family: monospace; letter-spacing: -1px; }
-    
+    .country-list { list-style: none; padding: 0; margin: 0; text-align: left; font-size: 13px; }
+    .country-list li { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px dashed var(--border-light); }
+    .country-list li:last-child { border: none; }
+
     .exchange-row {
       background: var(--primary-color); color: #fff; padding: 20px;
       border-radius: 16px; text-align: center; margin-bottom: 20px;
     }
-    .fx-grid { display: grid; grid-template-columns: 1fr auto 1fr; gap: 8px; align-items: center; margin-top: 16px;}
+    .fx-grid { display: grid; grid-template-columns: 1fr auto 1fr; gap: 10px; align-items: center; margin-top: 16px;}
     .fx-box input {
       width: 100%; padding: 12px; border: 1px solid var(--border-light);
       border-radius: 10px; text-align: right; font-weight: 600; font-size: 16px;
     }
-    
+    .fx-eq { font-size: 20px; color: var(--text-sub); }
+
+    /* 선택관광 카드 */
     .tour-card {
       background: var(--card-bg); border-radius: 16px; padding: 20px;
       margin-bottom: 16px; border-left: 4px solid var(--accent-color);
+      box-shadow: 0 2px 10px rgba(0,0,0,0.02);
     }
-    .badge { background: #f0fdf4; color: #166534; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 700; }
-    .meal-box { background: #f8fafc; padding: 12px; border-radius: 8px; margin: 12px 0; font-size: 13px; display: flex; justify-content: space-between;}
-    .meal-check { display: flex; justify-content: space-between; align-items: center; padding-top: 12px; border-top: 1px dashed var(--border-light); }
-    .meal-check button { background: var(--text-main); color: #fff; border: none; padding: 6px 12px; border-radius: 6px; font-weight: 600; font-size: 12px;}
+    .tour-header { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
+    .badge { background: var(--bg-main); color: var(--primary-color); padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+    .tour-header h3 { margin: 0; font-size: 16px; flex: 1; font-weight: 800;}
+    .meal-box { background: #f8fdfa; padding: 12px; border-radius: 8px; margin: 12px 0; font-size: 14px; display: flex; justify-content: space-between;}
+    .meal-check { display: flex; justify-content: space-between; align-items: center; padding-top: 12px; border-top: 1px solid var(--border-light); }
+    .meal-check button { background: var(--accent-color); color: #fff; border: none; padding: 6px 16px; border-radius: 6px; font-weight: 600; }
+    .status.pending { color: #e53e3e; font-weight: 600;}
+    .status.done { color: #38a169; font-weight: 600;}
 
-    /* 데스크탑 대응 */
+    #requestInput {
+      width: 100%; height: 120px; padding: 16px; border: 1px solid var(--border-light);
+      border-radius: 12px; resize: none; font-size: 15px; margin-bottom: 12px;
+    }
+
+    /* =========================================================
+       [8] 데스크탑 (PC) 대응 
+    ========================================================= */
     @media (min-width: 768px) {
       .day-buttons { grid-template-columns: repeat(4, 1fr); }
-      .home-main-content { max-width: 800px; margin: 0 auto; width: 100%; }
-      .home-header { max-width: 800px; margin: 0 auto; width: 100%; }
+      .home-main-content { max-width: 1000px; margin: 0 auto; width: 100%; }
+      .home-header { max-width: 1000px; margin: 0 auto; width: 100%; }
       
       .detail-sheet__inner {
         top: 50%; left: 50%;
         transform: translate(-50%, -100%) scale(0.9); 
         bottom: auto; right: auto;
-        width: 100%; max-width: 480px; height: 80vh;
+        width: 100%; max-width: 500px; height: 80vh;
         border-radius: 24px; opacity: 0;
       }
       body.detail-open .detail-sheet__inner {
@@ -361,63 +374,66 @@
 
 <body>
   
-<!-- ================= LOGIN SECTION ================= -->
+<!-- ✅ 시작부분 로컬 파일 경로 그대로 유지 -->
+<div id="mobileSplash" class="mobile-splash" style="display:none;">
+  <img src="assets/images/iscposter.jpg" alt="ISC Poster" onerror="this.src='https://images.unsplash.com/photo-1577717903315-1691ae25ab3f?auto=format&fit=crop&w=800&q=80'">
+</div>
+  
+<!-- ================= LOGIN ================= -->
 <section id="loginSection" class="login-hero">
   <div class="hero-overlay">
     <div class="login-box">
-      <!-- 로고 이미지 (경로 확인 필요) -->
-      <img src="assets/images/logo.png" style="width:100px; margin-bottom:10px;" onerror="this.style.display='none'">
-      <h2>2026 ISC Taiwan</h2>
+      <img src="assets/images/logo.png" class="hero-logo" onerror="this.style.display='none'">
+      <h2>2025 ISC Taiwan</h2>
       <p class="hero-desc">사번으로 로그인하세요</p>
 
-      <input type="text" id="employeeId" placeholder="사번 입력" inputmode="numeric">
+      <input type="text" id="employeeId" placeholder="사번 입력">
       <button class="primary-btn" onclick="login()">로그인</button>
       <p id="loginError" class="error"></p>
     </div>
   </div>
 </section>
 
-<!-- ================= MAIN SECTION ================= -->
+<!-- ================= MAIN ================= -->
 <main id="mainSection" class="main-bg" style="display:none;">
 
-  <!-- HOME VIEW (Full Screen) -->
+  <!-- ================= HOME VIEW ================= -->
   <section id="homeView" class="home-view">
     <div class="home-overlay"></div>
     
-    <!-- 메뉴 열릴 때 Dim -->
+    <!-- 메뉴 열릴 때 전체 화면을 살짝 어둡게 해주는 딤 -->
     <div id="menuDim" class="menu-dim" onclick="toggleMenu()"></div>
     
-    <!-- Header -->
+    <!-- 1️⃣ 상단 헤더 & 메뉴 버튼 -->
     <header class="home-header">
-      <img src="assets/images/logo.png" class="header-logo" alt="LOGO" onerror="this.style.display='none'">
+      <img src="assets/images/logo.png" class="header-logo" alt="INCAR Logo" onerror="this.style.display='none'">
       
+      <!-- 우측 상단 카테고리 묶음 -->
       <div class="menu-wrapper">
-        <button class="menu-btn" onclick="toggleMenu()">
-            <span style="font-size:16px;">☰</span> 메뉴
-        </button>
+        <button class="menu-btn" onclick="toggleMenu()">☰ 카테고리</button>
         
-        <!-- Dropdown Menu -->
+        <!-- 버튼 누르면 아래로 떨어지는 드롭다운 팝업 메뉴 -->
         <div id="categoryDropdown" class="category-dropdown">
-          <div class="dropdown-header">Categories</div>
+          <div class="dropdown-header">카테고리 메뉴</div>
           <nav class="drop-nav">
-            <button onclick="openPage('taiwan')"><span>🇹🇼 대만 정보</span></button>
-            <button onclick="openPage('exchange')"><span>💱 환율 계산</span></button>  
-            <button onclick="openPage('flight')"><span>✈️ 항공편</span></button>
-            <button onclick="openPage('myTour')"><span>🎒 나의 선택관광</span></button>
-            <button onclick="openPage('dinner')"><span>🍽 만찬 안내</span></button>
-            <button onclick="openPage('request')"><span>📝 요청사항</span></button>
-            <button onclick="openPage('contact')"><span>📞 비상 연락</span></button>
+            <button onclick="openPage('taiwan')">🇹🇼 <span>대만의 모든 것</span></button>
+            <button onclick="openPage('exchange')">💱 <span>환율 계산기</span></button>  
+            <button onclick="openPage('flight')">✈️ <span>항공편 정보</span></button>
+            <button onclick="openPage('myTour')">🎒 <span>나의 선택 관광</span></button>
+            <button onclick="openPage('dinner')">🍽 <span>만찬 안내</span></button>
+            <button onclick="openPage('request')">📝 <span>요청사항</span></button>
+            <button onclick="openPage('contact')">📞 <span>긴급 연락망</span></button>
           </nav>
         </div>
       </div>
     </header>
 
-    <!-- Main Content -->
+    <!-- 2️⃣ 메인 중앙 영역 (환영 문구 + DAY 버튼) -->
     <div class="home-main-content">
       <div class="welcome-text">
-        <p><strong id="employeeName">User</strong> 님, 환영합니다</p>
+        <p><strong id="employeeName"></strong> 님, 환영합니다</p>
         <h2>ISC Taiwan<br>여정의 시작</h2>
-        <span class="sub-date">D-25 | 2026.03.11 ~ 14</span>
+        <span class="sub-date">2026.03.11 ~ 03.14</span>
       </div>
 
       <div class="day-buttons">
@@ -441,16 +457,19 @@
     </div>
   </section>
 
-<!-- ================= DETAIL SHEET ================= -->
+<!-- ================= DETAIL OVERLAY ================= -->
 <section id="detailPage" class="detail-sheet">
+  <!-- 🔹 dim 영역 (여기만 홈으로) -->
   <div class="detail-dim" onclick="goHome()"></div>
 
+  <!-- 🔹 실제 시트 -->
   <div class="detail-sheet__inner" onclick="event.stopPropagation()">
+      <!-- ✅ 상단 헤더 -->
       <div class="detail-header">
-        <div class="detail-title" id="detailTitle">상세 정보</div>
+        <div class="detail-title" id="detailTitle"></div>
         <div class="detail-actions">
-          <button class="btn-home" onclick="goHome()">닫기</button>
-          <button class="btn-back" onclick="goBack()">뒤로</button>
+          <button class="btn-home" onclick="goHome()">홈으로</button>
+          <button class="btn-back" onclick="goBack()">뒤로가기</button>
         </div>
       </div>
     <div id="detailContent"></div>
@@ -460,255 +479,798 @@
 </main>
 
 <script>
-/* ================= DATA & LOGIC ================= */
+/* ================= 공통 ================= */
 let pageHistory = [];
 let employees = [];
 let currentUser = null;
-const ADMIN_PASSWORD = "0000"; // 테스트용 비번
+const ADMIN_PASSWORD = "0000";
+    
+/* ================= 카테고리 메뉴 토글 ================= */
+function toggleMenu() {
+  document.body.classList.toggle('menu-open');
+}
 
-// JSON 로드
+/* ================= 선택관광 템플릿 ================= */
+const myTourTemplates = [
+  { keyword: "티엔라이", html: `<div class="tour-card green"><div class="tour-header"><span class="badge">선택 1안</span><h3>티엔라이 온천 힐링</h3><span class="icon">🌿</span></div><p class="tour-desc">티엔라이 온천욕 & 양명산 국립공원 자락의 최고급 유황 온천</p><div class="meal-box"><strong>🍽 점심 식사</strong><span>베이징덕</span><em class="included">식사 포함</em></div><div class="tour-footer"><span>🎫 입장권</span><span>🚌 전용차량</span><span>🍴 중식</span></div></div>` },
+  { keyword: "고궁박물관", html: `<div class="tour-card green"><div class="tour-header"><span class="badge">선택 2안</span><h3>고궁박물관 역사 기행</h3><span class="icon">🏛️</span></div><p class="tour-desc">중국 역사의 정수, 대만 고궁박물관</p><div class="meal-box"><strong>🍽 점심 식사</strong><span>베이징덕</span><em class="included">식사 포함</em></div><div class="tour-footer"><span>🎫 입장권</span><span>🚌 전용차량</span><span>🍴 중식</span></div></div>` },
+  { keyword: "자유일정", html: `<div class="tour-card red"><div class="tour-header"><span class="badge">선택 3안</span><h3>자유로운 대만 여행</h3><span class="icon">🇹🇼</span></div><p class="tour-desc">자유일정 대만</p><div class="meal-box"><strong>🍽 점심 식사</strong><span>자유식</span><em class="cash">현금 지급</em></div><div class="meal-check" data-tour="자유일정"><span class="status pending">중식비 미지급</span><button onclick="handleMealClick(this)">지급 확인</button></div><div class="tour-footer"><span>🚌 자유일정</span><span>🍜 중식비</span></div></div>` }
+];
+
+/* ================= 선택관광 렌더링 함수 ================= */
+function renderMyTour() {
+  const selected = currentUser.myTour || [];
+  const matchedCards = myTourTemplates.filter(t => selected.some(input => input.includes(t.keyword)));
+  if (matchedCards.length === 0) return `<div class="card">선택된 관광이 없습니다.</div>`;
+  return matchedCards.map(t => t.html).join("");
+}
+
+// 🔥 작성해주신 원본 JSON 로직 그대로 유지 (더이상 MOCK_DATA로 덮어쓰지 않음)
+// 테스트용으로 데이터를 직접 주입 (파일이 없을 경우 대비)
+const EMBEDDED_EMPLOYEES = [
+  {
+    "id": "1612156",
+    "name": "박상현",
+    "flight": {
+      "departure": {
+        "date": "2026.03.11",
+        "time": "09:00",
+        "from": "인천",
+        "to": "타이베이",
+        "airline": "대한항공",
+        "flightNo": "KE 2021"
+      },
+      "return": {
+        "date": "2026.03.14",
+        "time": "12:25",
+        "from": "타이베이",
+        "to": "인천",
+        "airline": "대한항공",
+        "flightNo": "KE 2022"
+      }
+    },
+    "myTour": [
+      "티엔라이"
+    ]
+  },
+  {
+    "id": "1612001",
+    "name": "김해빛나",
+    "flight": {
+      "departure": {
+        "date": "2026.03.11",
+        "time": "08:00",
+        "from": "인천",
+        "to": "타이베이",
+        "airline": "아시아나항공",
+        "flightNo": "OZ 711"
+      },
+      "return": {
+        "date": "2026.03.14",
+        "time": "11:40",
+        "from": "타이베이",
+        "to": "인천",
+        "airline": "아시아나항공",
+        "flightNo": "OZ 712"
+      }
+    },
+    "myTour": [
+      "자유일정"
+    ]
+  },
+  {
+    "id": "1612163",
+    "name": "이은지",
+    "flight": {
+      "departure": {
+        "date": "2026.03.11",
+        "time": "08:00",
+        "from": "인천",
+        "to": "타이베이",
+        "airline": "아시아나항공",
+        "flightNo": "OZ 711"
+      },
+      "return": {
+        "date": "2026.03.14",
+        "time": "11:40",
+        "from": "타이베이",
+        "to": "인천",
+        "airline": "아시아나항공",
+        "flightNo": "OZ 712"
+      }
+    },
+    "myTour": [
+      "티엔라이",
+      "고궁박물관",
+      "자유일정"
+    ]
+  },
+  {
+    "id": "1611391",
+    "name": "남욱현",
+    "flight": {
+      "departure": {
+        "date": "2026.03.11",
+        "time": "08:00",
+        "from": "인천",
+        "to": "타이베이",
+        "airline": "아시아나항공",
+        "flightNo": "OZ 711"
+      },
+      "return": {
+        "date": "2026.03.14",
+        "time": "11:40",
+        "from": "타이베이",
+        "to": "인천",
+        "airline": "아시아나항공",
+        "flightNo": "OZ 712"
+      }
+    },
+    "myTour": [
+      "고궁박물관"
+    ]
+  },
+  {
+    "id": "1611499",
+    "name": "최진우",
+    "flight": {
+      "departure": {
+        "date": "2026.03.11",
+        "time": "08:00",
+        "from": "인천",
+        "to": "타이베이",
+        "airline": "아시아나항공",
+        "flightNo": "OZ 711"
+      },
+      "return": {
+        "date": "2026.03.14",
+        "time": "11:40",
+        "from": "타이베이",
+        "to": "인천",
+        "airline": "아시아나항공",
+        "flightNo": "OZ 712"
+      }
+    },
+    "myTour": [
+      "티엔라이",
+      "고궁박물관",
+      "자유일정"
+    ]
+  },
+   {
+    "id": "1612164",
+    "name": "이제훈",
+    "flight": {
+      "departure": {
+        "date": "2026.03.11",
+        "time": "08:00",
+        "from": "인천",
+        "to": "타이베이",
+        "airline": "아시아나항공",
+        "flightNo": "OZ 711"
+      },
+      "return": {
+        "date": "2026.03.14",
+        "time": "11:40",
+        "from": "타이베이",
+        "to": "인천",
+        "airline": "아시아나항공",
+        "flightNo": "OZ 712"
+      }
+    },
+    "myTour": [
+      "티엔라이",
+      "고궁박물관",
+      "자유일정"
+    ]
+  },
+  {
+    "id": "1611836",
+    "name": "신현하",
+    "flight": {
+      "departure": {
+        "date": "2026.03.11",
+        "time": "08:00",
+        "from": "인천",
+        "to": "타이베이",
+        "airline": "아시아나항공",
+        "flightNo": "OZ 711"
+      },
+      "return": {
+        "date": "2026.03.14",
+        "time": "11:40",
+        "from": "타이베이",
+        "to": "인천",
+        "airline": "아시아나항공",
+        "flightNo": "OZ 712"
+      }
+    },
+    "myTour": [
+      "티엔라이",
+      "고궁박물관",
+      "자유일정"
+    ]
+  },
+  {
+    "id": "1612022",
+    "name": "현보라",
+    "flight": {
+      "departure": {
+        "date": "2026.03.11",
+        "time": "08:00",
+        "from": "인천",
+        "to": "타이베이",
+        "airline": "아시아나항공",
+        "flightNo": "OZ 711"
+      },
+      "return": {
+        "date": "2026.03.14",
+        "time": "11:40",
+        "from": "타이베이",
+        "to": "인천",
+        "airline": "아시아나항공",
+        "flightNo": "OZ 712"
+      }
+    },
+    "myTour": [
+      "티엔라이",
+      "고궁박물관",
+      "자유일정"
+    ]
+  }
+];
+
+// 로컬 파일 시도 후 실패하면 위 데이터 사용
 fetch("people/employees.json?ts=" + Date.now())
   .then(res => res.json())
   .then(data => {
     employees = data;
     tryAutoLogin(); 
   })
-  .catch(err => console.log("로컬 테스트 모드: 데이터 로드 실패"));
+  .catch(err => {
+    console.warn("로컬 JSON 로드 실패, 내장 데이터를 사용합니다.");
+    employees = EMBEDDED_EMPLOYEES;
+    tryAutoLogin();
+  });
 
-// 여행 일정 데이터 (원본 유지)
+/* ================= 중식비 지급 로직 ================= */
+function handleMealClick(btn) {
+  const wrap = btn.closest(".meal-check");
+  const tour = wrap.dataset.tour;
+  const isDone = wrap.classList.contains("done");
+  if (isDone) showMealDetail(wrap);
+  else approveMeal(wrap, tour);
+}
+
+function approveMeal(wrap, tour) {
+  const pw = prompt("관리자 비밀번호 입력");
+  if (pw !== ADMIN_PASSWORD) { alert("비밀번호가 올바르지 않습니다."); return; }
+  const time = nowKSTString();
+  setMealUI(wrap, "DONE", time);
+  saveMealPaid(currentUser.id, tour, time);
+  logMealPaymentToSheet({ action: "APPROVE", tour, time });
+}
+
+function setMealUI(wrap, mode, time = "") {
+  const status = wrap.querySelector(".status");
+  const btn = wrap.querySelector("button");
+  if (mode === "DONE") {
+    wrap.classList.add("done");
+    status.textContent = "중식비 지급 완료";
+    status.classList.remove("pending"); status.classList.add("done");
+    wrap.dataset.time = time; btn.textContent = "지급 확인";
+  } else {
+    wrap.classList.remove("done");
+    status.textContent = "중식비 미지급";
+    status.classList.add("pending"); status.classList.remove("done");
+    wrap.dataset.time = ""; btn.textContent = "지급 확인";
+  }
+}
+    
+function mealKey(userId, tour) { return `mealPaid_${userId}_${tour}`; }
+function saveMealPaid(userId, tour, time) { localStorage.setItem(mealKey(userId, tour), JSON.stringify({ time })); }
+function loadMealPaid(userId, tour) { const raw = localStorage.getItem(mealKey(userId, tour)); return raw ? JSON.parse(raw) : null; }
+function removeMealPaid(userId, tour) { localStorage.removeItem(mealKey(userId, tour)); }
+
+function showMealDetail(wrap) {
+  const time = wrap.dataset.time;
+  const pw = prompt(`지급 완료 시각\n${time}\n\n취소하려면 관리자 비밀번호 입력\n(확인만 보려면 취소)`);
+  if (!pw) return;
+  if (pw !== ADMIN_PASSWORD) { alert("비밀번호 오류"); return; }
+  if (confirm("지급을 취소하시겠습니까?")) {
+    const tour = wrap.dataset.tour;
+    const cancelTime = nowKSTString();
+    setMealUI(wrap, "PENDING");
+    removeMealPaid(currentUser.id, tour);
+    logMealPaymentToSheet({ action: "CANCEL", tour, time: cancelTime });
+  }
+}
+
+function nowKSTString() {
+  return new Intl.DateTimeFormat("ko-KR", { timeZone: "Asia/Seoul", year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", second: "2-digit" }).format(new Date());
+}
+
+const MEAL_SHEET_URL = "https://script.google.com/macros/s/AKfycbx2tVkT00Z8uXQWl6EeTIUUhZ3_NJHx3JDqSCHC5oJWkUCm0OtcTmaV6g20cNKoh0no9w/exec";
+
+function logMealPaymentToSheet(payload) {
+  if (!currentUser) return;
+  fetch(MEAL_SHEET_URL, {
+    method: "POST", mode: "no-cors",
+    body: JSON.stringify({ type: "meal", id: currentUser.id, name: currentUser.name, action: payload.action, tour: payload.tour, time: payload.time })
+  }).catch(console.error);
+}
+    
+/* ================= 로그인 (원본 100% 동일) ================= */
+function login() {
+  const id = document.getElementById("employeeId").value.trim();
+  const user = employees.find(e => e.id === id);
+
+  if (!user) {
+    document.getElementById("loginError").textContent = "등록되지 않은 사번입니다.";
+    return;
+  }
+
+  currentUser = user;
+
+  // 로그인 화면 제거
+  document.getElementById("loginSection").style.display = "none";
+
+  // 📱 모바일: 스플래시 2초
+  if (window.innerWidth <= 767) {
+    const splash = document.getElementById("mobileSplash");
+    splash.style.display = "flex";
+
+    setTimeout(() => {
+      splash.style.display = "none";
+      document.getElementById("mainSection").style.display = "block";
+    }, 2000);
+  } 
+  // 🖥 데스크탑: 즉시 진입
+  else {
+    document.getElementById("mainSection").style.display = "block";
+  }
+
+  document.getElementById("employeeName").textContent = user.name;
+  document.body.classList.add("logged-in");
+}
+
+function tryAutoLogin() {
+  const params = new URLSearchParams(window.location.search);
+  const eid = params.get("eid");
+
+  if (!eid) return;
+
+  // input에 사번 주입
+  const input = document.getElementById("employeeId");
+  if (input) input.value = eid;
+
+  const user = employees.find(e => String(e.id) === String(eid));
+  if (!user) {
+    document.getElementById("loginError").textContent = "QR 사번이 유효하지 않습니다.";
+    return;
+  }
+
+  // 🔥 여기서 끝
+  login();
+}
+
+/* ================= 여행 일정 데이터 ================= */
 const travelSchedule = [
   {
     day: "DAY 1", date: "2026.03.11 (수)", title: "인천 → 타이베이 / 시내 하이라이트",
     items: [
       { time:"08:00/9:00", icon:"✈️", title:"인천 국제공항 출발", desc:"OZ 711 / KE 2021" },
       { time:"12:30/13:30", icon:"🍜", title:"중식 | 우육면", desc:"현지 인기 중식당" },
-      { time:"13:30/14:30", icon:"🏛️", title:"단수이 옛거리/홍마오청", desc:"홍마오청·옛거리 관광" },
-      { time:"16:30/17:30", icon:"🏨", title:"호텔 체크인", desc:"타이베이 메리어트 호텔" },
-      { time:"18:00/18:30", icon:"🍽️", title:"석식 | 무제한 샤브샤브", desc:"현지 특식" },
-      { time:"19:30/20:00", icon:"🌃", title:"타이베이 101 전망대", desc:"야경 관람" }
+      { time:"13:30/14:30", icon:"🏛️", title:"단수이 옛거리/홍마오청/진리대학", desc:"홍마오청·옛거리 관광" },
+      { time:"16:30/17:30", icon:"🏨", title:"호텔 체크인", desc:"타이베이 메리어트 호텔[5성급]" },
+      { time:"18:00/18:30", icon:"🍽️", title:"석식 | 타카오 샤브샤브", desc:"무제한 샤브샤브" },
+      { time:"19:30/20:00", icon:"🌃", title:"타이베이 101 전망대", desc:"야경 관람" },
+      { time:"21:00/21:30", icon:"🏨", title:"호텔복귀", desc:"타이베이 메리어트 호텔[5성급]" }
     ]
   },
   {
     day: "DAY 2", date: "2026.03.12 (목)", title: "선택 관광 / 만찬",
-    items: [ /* 로직에 의해 동적 생성됨 */ ]
+    items: [
+      { time:"08:30/9:00", icon:"🚌", title:"선택 관광", desc:"개인 선택 일정" },
+      { time:"08:30", icon:"🚌", title:"티엔라이 온천", desc:"선택 1안" },
+      { time:"9:00", icon:"🏛️", title:"고궁박물관", desc:"선택 2안" },
+      { time:"13:00", icon:"🍽️", title:"중식", desc:"베이징덕" },
+      { time:"14:30", icon:"🛍️", title:"서문정", desc:"개인 선택 일정" },
+      { time:"08:30/9:00", icon:"🧭", title:"자유시간", desc:"중식비 지급" },
+      { time:"18:00", icon:"🎉", title:"ISC 만찬", desc:"필수 참석" }
+    ]
   },
   {
     day: "DAY 3", date: "2026.03.13 (금)", title: "근교 관광",
     items: [
-      { time:"10:00", icon:"🏨", title:"호텔 조식 후 출발", desc:"메리어트 호텔" },
+      { time:"10:00", icon:"🏨🍽️", title:"호텔 조식 후 출발", desc:"타이베이 메리어트 호텔[5성급]" },
       { time:"11:00", icon:"🌊", title:"야류 해상공원", desc:"기암괴석 관광" },
       { time:"12:30", icon:"🦐", title:"중식 : 씨푸드", desc:"현지 해산물 특식" },
       { time:"14:30", icon:"🏮", title:"스펀 천등날리기", desc:"소원천등 날리기" },
       { time:"17:00", icon:"🏮", title:"지우펀 야경", desc:"홍등마을" },
-      { time:"20:00", icon:"🍜", title:"야시장 투어", desc:"자유석식 및 쇼핑" }
+      { time:"20:00", icon:"🌊", title:"야시장 및 석식", desc:"야시장 자유식 및 쇼핑" },
+      { time:"21:30", icon:"🏨", title:"호텔복귀", desc:"타이베이 메리어트 호텔[5성급]" },
+      { time:"전일", icon:"🧭", title:"자유일정 선택시", desc:"전체 개인부담(중식비 지급 X)" }
     ]
   },
   {
     day: "DAY 4", date: "2026.03.14 (토)", title: "귀국",
     items: [
-      { time:"08:00", icon:"🏨", title:"체크아웃", desc:"조식 후 이동" },
+      { time:"08:00/9:00", icon:"🏨", title:"호텔 체크아웃", desc:"타이베이 메리어트 호텔[5성급]" },
       { time:"11:40/12:25", icon:"✈️", title:"타이베이 출발", desc:"OZ 712 / KE 2022" },
-      { time:"15:25/15:50", icon:"🇰🇷", title:"인천 도착", desc:"수고하셨습니다" }
+      { time:"15:25/15:50", icon:"🇰🇷", title:"인천 도착", desc:"ISC in Taiwan" }
     ]
   }
 ];
-
-// 선택관광 데이터
-const myTourTemplates = [
-  { keyword: "티엔라이", html: `<div class="tour-card"><div class="tour-header"><span class="badge" style="background:#dcfce7; color:#166534;">선택 1안</span><h3 style="margin:5px 0 0;">티엔라이 온천 힐링</h3></div><p class="tour-desc">양명산 국립공원 자락의 최고급 유황 온천 체험</p><div class="meal-box"><strong>🍽 점심 식사</strong><span style="color:#166534; font-weight:bold;">식사 포함 (베이징덕)</span></div></div>` },
-  { keyword: "고궁박물관", html: `<div class="tour-card"><div class="tour-header"><span class="badge" style="background:#dbeafe; color:#1e40af;">선택 2안</span><h3 style="margin:5px 0 0;">고궁박물관 역사 기행</h3></div><p class="tour-desc">세계 4대 박물관, 중국 역사의 정수 관람</p><div class="meal-box"><strong>🍽 점심 식사</strong><span style="color:#166534; font-weight:bold;">식사 포함 (베이징덕)</span></div></div>` },
-  { keyword: "자유일정", html: `<div class="tour-card" style="border-left-color:#ef4444;"><div class="tour-header"><span class="badge" style="background:#fee2e2; color:#991b1b;">선택 3안</span><h3 style="margin:5px 0 0;">자유로운 대만 여행</h3></div><p class="tour-desc">가이드/차량 없이 자유롭게 즐기는 일정</p><div class="meal-box"><strong>🍽 점심 식사</strong><span style="color:#ef4444; font-weight:bold;">불포함 (현금 지급)</span></div><div class="meal-check" data-tour="자유일정"><span class="status pending" style="color:#ef4444;">중식비 미지급</span><button onclick="handleMealClick(this)">지급 확인</button></div></div>` }
-];
-
-/* ================= UI FUNCTIONS ================= */
-
-function toggleMenu() {
-  document.body.classList.toggle('menu-open');
+    
+function normalizeTime(t) {
+  const s = String(t).trim();
+  const m = s.match(/^(\d{1,2}):(\d{2})$/);
+  if (!m) return s;
+  return `${String(m[1]).padStart(2, "0")}:${m[2]}`;
 }
 
-function login() {
-  const id = document.getElementById("employeeId").value.trim();
-  // 테스트용: 데이터 없으면 그냥 로그인 허용 (또는 employees 배열 확인)
-  const user = employees.find(e => e.id === id);
-
-  if (employees.length > 0 && !user) {
-     // 데이터가 있는데 유저가 없으면 에러
-     // 하지만 편의상 그냥 패스 (개발용)
-     currentUser = { id: id, name: "테스트", myTour: ["자유일정"], flight: { departure: { airline: "대한항공" }, return: { airline: "대한항공" } } };
-  } else if (user) {
-    currentUser = user;
-  } else {
-    // 데이터 로드 실패시 fallback
-    currentUser = { id: id, name: "게스트", myTour: [], flight: { departure: {}, return: {} } };
-  }
-
-  document.getElementById("loginSection").style.display = "none";
-  document.getElementById("mainSection").style.display = "block";
-  document.getElementById("employeeName").textContent = currentUser.name;
+function pickTimeByAirline(timeStr, airline) {
+  const parts = String(timeStr).split("/").map(s => normalizeTime(s));
+  if (parts.length === 1) return parts[0];
+  const isKoreanAir = String(airline || "").includes("대한항공");
+  return isKoreanAir ? parts[parts.length - 1] : parts[0];
 }
 
-function tryAutoLogin() {
-  const params = new URLSearchParams(window.location.search);
-  const eid = params.get("eid");
-  if (eid) {
-    document.getElementById("employeeId").value = eid;
-    login();
-  }
+function buildDay2ItemsForUser(user, userAirline) {
+  const tours = user?.myTour || [];
+  const hasTienlai = tours.some(v => String(v).includes("티엔라이"));
+  const hasGugung  = tours.some(v => String(v).includes("고궁박물관"));
+  const hasFree    = tours.some(v => String(v).includes("자유일정"));
+
+  const day2 = travelSchedule.find(d => d.day === "DAY 2");
+  const items = day2?.items || [];
+  const byTitle = (title) => items.find(x => x.title === title);
+
+  const itemSelect = byTitle("선택 관광");
+  const itemTienlai = byTitle("티엔라이 온천");
+  const itemGugung  = byTitle("고궁박물관");
+  const itemLunch   = byTitle("중식");
+  const itemXimen   = byTitle("서문정");
+  const itemFree    = byTitle("자유시간");
+  const itemDinner  = byTitle("ISC 만찬");
+
+  if (hasTienlai && hasGugung && hasFree) return [...(itemSelect ? [itemSelect] : []), ...(itemLunch ? [itemLunch] : []), ...(itemXimen ? [itemXimen] : []), ...(itemDinner ? [itemDinner] : [])];
+  if (hasFree && !hasTienlai && !hasGugung) return [...(itemFree ? [itemFree] : []), ...(itemDinner ? [itemDinner] : [])];
+  if (hasTienlai) return [...(itemTienlai ? [itemTienlai] : []), ...(itemLunch ? [itemLunch] : []), ...(itemXimen ? [itemXimen] : []), ...(itemDinner ? [itemDinner] : [])];
+  if (hasGugung) return [...(itemGugung ? [itemGugung] : []), ...(itemLunch ? [itemLunch] : []), ...(itemXimen ? [itemXimen] : []), ...(itemDinner ? [itemDinner] : [])];
+  
+  return [...(itemSelect ? [itemSelect] : []), ...(itemDinner ? [itemDinner] : [])];
 }
 
+function pickFlightDescByAirline(desc, airline) {
+  const s = String(desc || "");
+  if (!s.includes("/")) return s;
+  const isKoreanAir = String(airline || "").includes("대한항공");
+  const parts = s.split("/").map(v => v.trim()); 
+  return isKoreanAir ? (parts[1] || s) : (parts[0] || s);
+}
+
+/* ================= 페이지 오픈 로직 ================= */
 function openPage(type, fromHistory = false) {
-  document.body.classList.remove('menu-open');
+  document.body.classList.remove('menu-open'); // 메뉴 열려있으면 닫기
+
+  const userAirline = currentUser?.flight?.departure?.airline || ""; 
+  
   if (!fromHistory) pageHistory.push(type);
 
   const detail = document.getElementById("detailPage");
   detail.style.display = "block";
-  // 리플로우 강제 후 클래스 추가 (애니메이션 위함)
-  void detail.offsetWidth; 
-  document.body.classList.add("detail-open");
+  requestAnimationFrame(() => { document.body.classList.add("detail-open"); });
 
   const t = document.getElementById("detailTitle");
   const c = document.getElementById("detailContent");
 
-  // 내용 초기화
-  c.innerHTML = "";
-
-  // 1. 일정 페이지
+  // ✅ DAY 1 ~ 4 버튼 처리 (프리미엄 디자인 적용부)
   if (type.startsWith("day_")) {
     const idx = parseInt(type.split("_")[1]);
     const day = travelSchedule[idx];
-    t.textContent = day.day + " 일정";
-    
-    // Day 2 선택관광 로직 처리 (간소화)
-    let items = day.items;
-    if (day.day === "DAY 2") {
-        items = [
-            { time:"09:00", icon:"🚌", title:"선택 관광 진행", desc:"본인이 선택한 코스로 이동" },
-            { time:"12:30", icon:"🍽️", title:"중식", desc:"선택안 별 상이" },
-            { time:"18:00", icon:"🎉", title:"ISC 만찬", desc:"그랜드 볼룸" }
-        ];
-    }
+    t.textContent = `🗓 ${day.day} 일정`;
 
-    let html = `<div class="day-card"><h3>${day.day} <span>${day.date}</span></h3><p class="day-title-sub">${day.title}</p><div class="timeline">`;
-    items.forEach(i => {
-        html += `
-        <div class="schedule-item">
-            <div class="timeline-dot"></div>
-            <div class="schedule-card">
-                <div class="schedule-time">${i.time}</div>
-                <div class="schedule-title">${i.icon} ${i.title}</div>
-                <div class="schedule-desc">${i.desc}</div>
+    const items = (day.day === "DAY 2") ? buildDay2ItemsForUser(currentUser, userAirline) : day.items;
+
+    c.innerHTML = `
+      <div class="detail-content-wrap">
+        <div class="day-card">
+          <h3>${day.day} <span>${day.date}</span></h3>
+          <p class="day-title">${day.title}</p>
+          <div class="timeline">
+            ${items.map(i => `
+              <div class="schedule-item">
+                <div class="timeline-dot"></div>
+                <div class="schedule-card">
+                  <div class="schedule-time">${pickTimeByAirline(i.time, userAirline)}</div>
+                  <div class="schedule-body">
+                    <div class="schedule-title">${i.icon} ${i.title}</div>
+                    ${i.desc ? `<div class="schedule-desc">${pickFlightDescByAirline(i.desc, userAirline)}</div>` : ""}
+                  </div>
+                </div>
+              </div>
+            `).join("")}
+          </div>
+        </div>
+      </div>
+    `;
+    return;
+  }
+
+  // 메뉴 처리
+  if (type === "flight") {
+    const dep = currentUser.flight.departure;
+    const ret = currentUser.flight.return;
+    t.textContent = "✈️ 항공편 정보";
+    c.innerHTML = `
+      <div class="detail-content-wrap">
+        <div class="day-card"><h3>출국편</h3><div class="schedule-item"><div class="schedule-card"><div class="schedule-time">${dep.time}</div><div class="schedule-body"><div class="schedule-title">✈️ ${dep.from} → ${dep.to}</div><div class="schedule-desc">${dep.airline} ${dep.flightNo}</div><div class="schedule-desc">${dep.date}</div></div></div></div></div>
+        <div class="day-card"><h3>귀국편</h3><div class="schedule-item"><div class="schedule-card"><div class="schedule-time">${ret.time}</div><div class="schedule-body"><div class="schedule-title">🏠 ${ret.from} → ${ret.to}</div><div class="schedule-desc">${ret.airline} ${ret.flightNo}</div><div class="schedule-desc">${ret.date}</div></div></div></div></div>
+      </div>`;
+  }
+
+  if (type === "myTour") {
+    t.textContent = "🎒 나의 선택 관광";
+    c.innerHTML = `<div class="detail-content-wrap"><div class="mytour-wrap">${renderMyTour()}</div></div>`;
+    setTimeout(() => {
+      const wrap = document.querySelector('.meal-check[data-tour="자유일정"]');
+      if (!wrap) return;
+      syncMealStatusFromServer(currentUser.id, "자유일정", wrap);
+      const saved = loadMealPaid(currentUser.id, "자유일정");
+      if (!wrap.classList.contains("done") && saved?.time) setMealUI(wrap, "DONE", saved.time);
+    }, 0);
+  }
+
+  if (type === "taiwan") {
+    t.textContent = "🇹🇼 대만의 모든 것";
+    c.innerHTML = `
+      <div class="detail-content-wrap">
+        <div class="country-compare-grid">
+          <!-- 대한민국 -->
+          <div class="country-card">
+            <div class="country-header">
+              <img src="assets/images/flag-kr.jpg" class="flag-img" onerror="this.style.display='none'">
+              <h3>대한민국</h3>
             </div>
-        </div>`;
-    });
-    html += `</div></div>`;
-    c.innerHTML = html;
+            <div class="time-box">
+              <span class="time-label">현재 시각</span>
+              <strong id="timeKR">--:--:--</strong>
+            </div>
+            <ul class="country-list">
+              <li><span>시차</span><strong>기준 국가</strong></li>
+              <li><span>인구</span><strong>약 5,100만 명</strong></li>
+              <li><span>면적</span><strong>약 100,210㎢</strong></li>
+              <li><span>GDP</span><strong>약 1.7조 달러</strong></li>
+            </ul>
+          </div>
+
+          <!-- 대만 -->
+          <div class="country-card">
+            <div class="country-header">
+              <img src="assets/images/flag-tw.jpg" class="flag-img" onerror="this.style.display='none'">
+              <h3>대만</h3>
+            </div>
+            <div class="time-box">
+              <span class="time-label">현재 시각</span>
+              <strong id="timeTW">--:--:--</strong>
+            </div>
+            <ul class="country-list">
+              <li><span>시차</span><strong>한국보다 1시간 느림</strong></li>
+              <li><span>인구</span><strong>약 2,300만 명</strong></li>
+              <li><span>면적</span><strong>약 36,197㎢</strong></li>
+              <li><span>GDP</span><strong>약 0.8조 달러</strong></li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="exchange-row">환율: <strong>1 TWD ≈ 42원 내외</strong></div>
+        <p class="exchange-note" style="text-align:center; font-size:13px; color:var(--text-sub);">※ 환율은 실시간 변동될 수 있습니다</p>
+        
+        <div class="day-card" style="margin-top:20px;">
+          <h3 class="section-title">기본 정보</h3>
+          <div class="info-card-grid" style="display:grid; gap:10px; margin-top:10px;">
+            <div class="info-card" style="background:var(--bg-main); padding:12px; border-radius:10px;">
+              <h4 style="margin:0 0 4px; font-size:14px; color:var(--primary-color);">🇹🇼 국기</h4>
+              <p style="margin:0; font-size:13px;"><strong>청천백일만지홍기</strong><br>광명 · 자유 · 희생</p>
+            </div>
+            <div class="info-card" style="background:var(--bg-main); padding:12px; border-radius:10px;">
+              <h4 style="margin:0 0 4px; font-size:14px; color:var(--primary-color);">🗣 언어</h4>
+              <p style="margin:0; font-size:13px;">표준 중국어 / 번체 한자</p>
+            </div>
+            <div class="info-card" style="background:var(--bg-main); padding:12px; border-radius:10px;">
+              <h4 style="margin:0 0 4px; font-size:14px; color:var(--primary-color);">☀️ 기후</h4>
+              <p style="margin:0; font-size:13px;">3월 평균 18~25℃</p>
+            </div>
+          </div>
+        </div>
+      </div>`;
+    startWorldClock();
+  }
+
+  if (type === "exchange") {
+    t.textContent = "💱 환율 계산기";
+    c.innerHTML = `
+      <div class="detail-content-wrap">
+        <div class="exchange-row">환율: <strong>1 TWD ≈ <span id="fxRateText">불러오는 중…</span>원</strong><br><span style="font-size:12px; color:#6b7280;">업데이트: <span id="fxUpdatedText">-</span></span><div style="margin-top:10px;"><button class="primary-btn" id="fxRefreshBtn" style="max-width:220px;">환율 새로고침</button></div></div>
+        <div class="day-card"><h3 class="section-title">TWD ↔ KRW 계산</h3><div class="fx-grid"><div class="fx-box"><label>대만달러 (TWD)</label><input id="inputTWD" type="text" inputmode="decimal" placeholder="예: 1000"></div><div class="fx-eq">⇄</div><div class="fx-box"><label>원화 (KRW)</label><input id="inputKRW" type="text" inputmode="decimal" placeholder="예: 42000"></div></div><p class="fx-note" style="margin-top:10px; font-size:13px; color:#6b7280; text-align:center;">※ 숫자 입력 시 자동 계산됩니다.</p></div>
+      </div>`;
+    initExchangeCalculatorAuto();
+  }
+
+  if (type === "dinner") {
+    t.textContent = "🍽 만찬 안내";
+    c.innerHTML = `<div class="detail-content-wrap"><div class="day-card"><h3>ISC 공식 만찬</h3><p style="margin-top:10px; font-size:14px; color:var(--text-sub);">만찬에 관련된 상세 정보가 추후 업데이트 됩니다.</p></div></div>`;
   }
   
-  // 2. 기타 페이지들
-  else if (type === "taiwan") {
-      t.textContent = "대만 정보";
-      c.innerHTML = `
-      <div class="country-compare-grid">
-        <div class="country-card">
-            <img src="assets/images/flag-kr.jpg" class="flag-img" onerror="this.style.display='none'">
-            <div style="font-weight:bold; margin-bottom:5px;">한국 (KR)</div>
-            <div class="time-box"><span>현재 시각</span><strong id="timeKR">--:--</strong></div>
-        </div>
-        <div class="country-card">
-            <img src="assets/images/flag-tw.jpg" class="flag-img" onerror="this.style.display='none'">
-            <div style="font-weight:bold; margin-bottom:5px;">대만 (TW)</div>
-            <div class="time-box"><span>현재 시각</span><strong id="timeTW" style="color:#c5a059;">--:--</strong></div>
-        </div>
-      </div>
-      <div class="day-card">
-        <h3>기본 정보</h3>
-        <ul style="padding-left:20px; line-height:2; font-size:14px; color:#4b5563;">
-            <li><strong>전압:</strong> 110V (돼지코 필요)</li>
-            <li><strong>날씨:</strong> 평균 20도 (가을 날씨)</li>
-            <li><strong>시차:</strong> 한국보다 1시간 느림</li>
-        </ul>
-      </div>
-      `;
-      startTimeTick();
+  if (type === "request") {
+    t.textContent = "📝 요청사항";
+    c.innerHTML = `<div class="detail-content-wrap"><div class="day-card"><textarea id="requestInput" placeholder="요청사항을 자유롭게 입력해주세요."></textarea><button class="primary-btn" onclick="submitRequest()">제출하기</button></div></div>`;
   }
-  else if (type === "exchange") {
-      t.textContent = "환율 계산기";
-      c.innerHTML = `
-        <div class="exchange-row">기준 환율<br><strong style="font-size:24px;">1 TWD ≈ 42 KRW</strong></div>
-        <div class="day-card">
-            <div class="fx-grid">
-                <div class="fx-box"><label>대만 (TWD)</label><input type="number" id="twInput" placeholder="0" oninput="calc('tw')"></div>
-                <div style="text-align:center; color:#ccc;">⇄</div>
-                <div class="fx-box"><label>한국 (KRW)</label><input type="number" id="krInput" placeholder="0" oninput="calc('kr')"></div>
-            </div>
-        </div>
-      `;
-  }
-  else if (type === "myTour") {
-      t.textContent = "나의 선택관광";
-      const userTours = currentUser.myTour || ["자유일정"]; // 테스트용 기본값
-      const rendered = myTourTemplates.filter(t => userTours.some(u => t.keyword.includes(u) || u.includes(t.keyword)));
-      if(rendered.length === 0) c.innerHTML = `<div class="day-card" style="text-align:center; padding:40px;">선택한 관광이 없습니다.</div>`;
-      else c.innerHTML = rendered.map(r => r.html).join("");
-  }
-  else {
-      t.textContent = "준비 중";
-      c.innerHTML = `<div class="day-card" style="text-align:center; padding:40px; color:#999;">준비 중인 페이지입니다.</div>`;
+  
+  if (type === "contact") {
+    t.textContent = "📞 긴급 연락망";
+    c.innerHTML = `
+      <div class="detail-content-wrap"><div class="day-card"><h3>비상 연락망</h3><div class="timeline">
+      <div class="schedule-item"><div class="timeline-dot"></div><div class="schedule-card"><div class="schedule-body"><div class="schedule-title">📞 인카블루투어</div><div class="schedule-desc">담당자 홍길동 | 010-0000-0000</div></div></div></div>
+      <div class="schedule-item"><div class="timeline-dot"></div><div class="schedule-card"><div class="schedule-body"><div class="schedule-title">📞 인카 마케팅부</div><div class="schedule-desc">담당자 현보라과장 | 02-6214-0000</div></div></div></div>
+      <div class="schedule-item"><div class="timeline-dot"></div><div class="schedule-card"><div class="schedule-body"><div class="schedule-title">📞 현지 가이드</div><div class="schedule-desc">담당자 Jason | +886-900-222-222</div></div></div></div>
+      </div></div></div>`;
   }
 }
 
+async function syncMealStatusFromServer(userId, tour, wrap) {
+  const url = `${MEAL_SHEET_URL}?mode=customerAdmin&id=${userId}`;
+  const res = await fetch(url);
+  const data = await res.json();
+  const status = data.mealMap?.[tour];
+  if (status === "APPROVE") setMealUI(wrap, "DONE", "서버 기준");
+  else setMealUI(wrap, "PENDING");
+}
+
+/* ================= 홈으로 ================= */
 function goHome() {
+  pageHistory = [];
   document.body.classList.remove("detail-open");
   document.body.classList.remove("menu-open");
-  pageHistory = [];
+
+  // 🔥 애니메이션(0.4초)이 끝난 후 완전히 숨겨서 터치 방해 방지
   setTimeout(() => {
     document.getElementById("detailPage").style.display = "none";
-  }, 400);
+  }, 400); 
 }
 
+/* ================= 뒤로가기 ================= */
 function goBack() {
-    pageHistory.pop();
-    if(pageHistory.length > 0) openPage(pageHistory[pageHistory.length-1], true);
-    else goHome();
+  pageHistory.pop();
+  
+  if (pageHistory.length === 0) { 
+    goHome(); 
+    return; 
+  }
+  
+  const prevType = pageHistory[pageHistory.length - 1];
+  openPage(prevType, true);
 }
 
-// 시계
-function startTimeTick() {
-    setInterval(() => {
-        const now = new Date();
-        const k = new Date(now.getTime());
-        const t = new Date(now.getTime() - 3600000);
-        const fmt = d => d.toTimeString().split(' ')[0];
-        if(document.getElementById("timeKR")) document.getElementById("timeKR").innerText = fmt(k);
-        if(document.getElementById("timeTW")) document.getElementById("timeTW").innerText = fmt(t);
-    }, 1000);
+/* ================= 요청사항 전송 ================= */
+function submitRequest() {
+  const requestText = document.getElementById("requestInput").value.trim();
+  if (!requestText) { alert("요청사항을 입력해주세요."); return; }
+  if (!currentUser) { alert("로그인 정보가 없습니다."); return; }
+  
+  fetch(MEAL_SHEET_URL, {
+    method: "POST", mode: "no-cors",
+    body: JSON.stringify({ type: "request", id: currentUser.id, name: currentUser.name, request: requestText, time: nowKSTString() })
+  }).then(() => { alert("요청사항이 전송되었습니다."); document.getElementById("requestInput").value = ""; }).catch(err => { console.error(err); alert("전송 중 오류가 발생했습니다."); });
 }
 
-// 환율
-function calc(mode) {
-    const rate = 42;
-    const tw = document.getElementById("twInput");
-    const kr = document.getElementById("krInput");
-    if(mode === 'tw') kr.value = (tw.value * rate).toFixed(0);
-    else tw.value = (kr.value / rate).toFixed(1);
+function startWorldClock() {
+  function updateTime() {
+    const now = new Date();
+    const kr = new Intl.DateTimeFormat("ko-KR", { timeZone: "Asia/Seoul", hour: "2-digit", minute: "2-digit", second: "2-digit" }).format(now);
+    const tw = new Intl.DateTimeFormat("zh-TW", { timeZone: "Asia/Taipei", hour: "2-digit", minute: "2-digit", second: "2-digit" }).format(now);
+    const krEl = document.getElementById("timeKR");
+    const twEl = document.getElementById("timeTW");
+    if (krEl && twEl) { krEl.textContent = kr; twEl.textContent = tw; }
+  }
+  updateTime();
+  setInterval(updateTime, 1000);
 }
 
-// 중식비 지급 (간이 로직)
-function handleMealClick(btn) {
-    const wrap = btn.closest('.meal-check');
-    if(wrap.classList.contains('done')) return;
-    const pw = prompt("관리자 비밀번호를 입력하세요");
-    if(pw === "0000") {
-        wrap.classList.add('done');
-        wrap.querySelector('.status').innerText = "지급 완료";
-        wrap.querySelector('.status').classList.remove('pending');
-        wrap.querySelector('.status').style.color = "#166534";
-        btn.innerText = "확인 완료";
-        btn.style.background = "#ddd";
-    } else {
-        alert("비밀번호 오류");
+const FX_CACHE_KEY = "fx_twd_krw_cache_v1";
+const FX_CACHE_MS = 6 * 60 * 60 * 1000; 
+
+function fxParse(v) {
+  if (v == null) return NaN;
+  const x = String(v).replace(/,/g, "").trim();
+  if (x === "") return NaN;
+  return Number(x);
+}
+
+function fxFmt(n) {
+  if (!isFinite(n)) return "";
+  const isInt = Math.abs(n - Math.round(n)) < 1e-10;
+  return (isInt ? Math.round(n) : n).toLocaleString("ko-KR", { maximumFractionDigits: 2 });
+}
+
+async function fetchTwdToKrwRate() {
+  const url = "https://open.er-api.com/v6/latest/USD";
+  const res = await fetch(url, { cache: "no-store" });
+  if (!res.ok) throw new Error("환율 API 실패: " + res.status);
+  const data = await res.json();
+  const krwPerUsd = data?.rates?.KRW;
+  const twdPerUsd = data?.rates?.TWD;
+  if (!isFinite(krwPerUsd) || !isFinite(twdPerUsd)) throw new Error("KRW/TWD 환율 데이터 없음");
+  return { rate: krwPerUsd / twdPerUsd, updatedUtc: data.time_last_update_utc || "" };
+}
+
+function loadFxCache() {
+  const raw = localStorage.getItem(FX_CACHE_KEY);
+  if (!raw) return null;
+  try {
+    const v = JSON.parse(raw);
+    if (!v.rate || !v.savedAt) return null;
+    if (Date.now() - v.savedAt > FX_CACHE_MS) return null; 
+    return v;
+  } catch { return null; }
+}
+
+function saveFxCache(payload) {
+  localStorage.setItem(FX_CACHE_KEY, JSON.stringify({ rate: payload.rate, updatedUtc: payload.updatedUtc, savedAt: Date.now() }));
+}
+
+async function getFxRate({ force = false } = {}) {
+  if (!force) { const cached = loadFxCache(); if (cached) return cached; }
+  const fresh = await fetchTwdToKrwRate();
+  saveFxCache(fresh); return loadFxCache() || fresh;
+}
+
+function initExchangeCalculatorAuto() {
+  const twdEl = document.getElementById("inputTWD");
+  const krwEl = document.getElementById("inputKRW");
+  const rateText = document.getElementById("fxRateText");
+  const updatedText = document.getElementById("fxUpdatedText");
+  const refreshBtn = document.getElementById("fxRefreshBtn");
+  if (!twdEl || !krwEl || !rateText || !updatedText) return;
+
+  let syncing = false; let rate = NaN; 
+
+  function updateFromTWD() {
+    if (syncing) return; syncing = true;
+    const twd = fxParse(twdEl.value);
+    if (!isFinite(twd) || !isFinite(rate)) { krwEl.value = ""; syncing = false; return; }
+    krwEl.value = fxFmt(twd * rate); syncing = false;
+  }
+  function updateFromKRW() {
+    if (syncing) return; syncing = true;
+    const krw = fxParse(krwEl.value);
+    if (!isFinite(krw) || !isFinite(rate) || rate === 0) { twdEl.value = ""; syncing = false; return; }
+    twdEl.value = fxFmt(krw / rate); syncing = false;
+  }
+
+  twdEl.addEventListener("input", updateFromTWD);
+  krwEl.addEventListener("input", updateFromKRW);
+
+  async function renderRate(force = false) {
+    rateText.textContent = "불러오는 중…";
+    try {
+      const fx = await getFxRate({ force });
+      rate = Number(fx.rate);
+      rateText.textContent = fxFmt(rate);
+      updatedText.textContent = fx.updatedUtc || "-";
+      const hasT = String(twdEl.value).trim() !== "";
+      const hasK = String(krwEl.value).trim() !== "";
+      if (hasT) updateFromTWD(); else if (hasK) updateFromKRW();
+    } catch (e) {
+      console.error(e); rateText.textContent = "실패"; updatedText.textContent = "-"; alert("환율을 불러오지 못했습니다. 네트워크 상태를 확인해주세요.");
     }
+  }
+  if (refreshBtn) refreshBtn.addEventListener("click", () => renderRate(true));
+  renderRate(false);
 }
 </script>
+
 </body>
 </html>
