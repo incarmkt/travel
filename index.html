@@ -6,7 +6,7 @@
   <title>2025 ISC 대만 여행</title>
 
   <!-- ✅ [1] 폰트 CDN 추가 (Pretendard) -->
-  <link rel="stylesheet" as="style" crossorigin href="[https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css](https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css)" />
+  <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
 
   <!-- 프리미엄 테마 CSS -->
   <style>
@@ -404,7 +404,7 @@
   
 <!-- ✅ 시작부분 로컬 파일 경로 그대로 유지 -->
 <div id="mobileSplash" class="mobile-splash" style="display:none;">
-  <img src="assets/images/iscposter.jpg" alt="ISC Poster" onerror="this.src='[https://images.unsplash.com/photo-1577717903315-1691ae25ab3f?auto=format&fit=crop&w=800&q=80](https://images.unsplash.com/photo-1577717903315-1691ae25ab3f?auto=format&fit=crop&w=800&q=80)'">
+  <img src="assets/images/iscposter.jpg" alt="ISC Poster" onerror="this.src='https://images.unsplash.com/photo-1577717903315-1691ae25ab3f?auto=format&fit=crop&w=800&q=80'">
 </div>
   
 <!-- ================= LOGIN ================= -->
@@ -820,7 +820,7 @@ function nowKSTString() {
   return new Intl.DateTimeFormat("ko-KR", { timeZone: "Asia/Seoul", year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", second: "2-digit" }).format(new Date());
 }
 
-const MEAL_SHEET_URL = "[https://script.google.com/macros/s/AKfycbx2tVkT00Z8uXQWl6EeTIUUhZ3_NJHx3JDqSCHC5oJWkUCm0OtcTmaV6g20cNKoh0no9w/exec](https://script.google.com/macros/s/AKfycbx2tVkT00Z8uXQWl6EeTIUUhZ3_NJHx3JDqSCHC5oJWkUCm0OtcTmaV6g20cNKoh0no9w/exec)";
+const MEAL_SHEET_URL = "https://script.google.com/macros/s/AKfycbx2tVkT00Z8uXQWl6EeTIUUhZ3_NJHx3JDqSCHC5oJWkUCm0OtcTmaV6g20cNKoh0no9w/exec";
 
 function logMealPaymentToSheet(payload) {
   if (!currentUser) return;
@@ -1095,8 +1095,12 @@ function openPage(type, fromHistory = false) {
           </div>
         </div>
 
-        <div class="exchange-row">환율: <strong>1 TWD ≈ 42원 내외</strong></div>
-        <p class="exchange-note" style="text-align:center; font-size:13px; color:var(--text-sub);">※ 환율은 실시간 변동될 수 있습니다</p>
+        <div class="exchange-row">
+            환율: <strong>1 TWD ≈ <span id="taiwanFxRate">...</span>원</strong>
+            <br>
+            <span style="font-size:11px; opacity:0.8;">(<span id="taiwanFxTime">-</span> 기준)</span>
+        </div>
+        <p class="exchange-note" style="text-align:center; font-size:13px; color:var(--text-sub);">※ 실시간 환율 정보를 불러옵니다.</p>
         
         <div class="day-card" style="margin-top:20px;">
           <h3 class="section-title">기본 정보</h3>
@@ -1117,6 +1121,7 @@ function openPage(type, fromHistory = false) {
         </div>
       </div>`;
     startWorldClock();
+    updateTaiwanRate();
   }
 
   if (type === "exchange") {
@@ -1209,6 +1214,23 @@ function startWorldClock() {
   setInterval(updateTime, 1000);
 }
 
+async function updateTaiwanRate() {
+  const rateEl = document.getElementById("taiwanFxRate");
+  const timeEl = document.getElementById("taiwanFxTime");
+  if (!rateEl) return;
+  
+  try {
+    const data = await getFxRate(); // Use existing function
+    if (data && data.rate) {
+      rateEl.textContent = fxFmt(data.rate);
+      timeEl.textContent = data.updatedUtc ? data.updatedUtc.replace("UTC", "").trim() : "방금";
+    }
+  } catch (e) {
+    console.error(e);
+    rateEl.textContent = "42"; // Fallback
+  }
+}
+
 const FX_CACHE_KEY = "fx_twd_krw_cache_v1";
 const FX_CACHE_MS = 6 * 60 * 60 * 1000; 
 
@@ -1226,7 +1248,7 @@ function fxFmt(n) {
 }
 
 async function fetchTwdToKrwRate() {
-  const url = "[https://open.er-api.com/v6/latest/USD](https://open.er-api.com/v6/latest/USD)";
+  const url = "https://open.er-api.com/v6/latest/USD";
   const res = await fetch(url, { cache: "no-store" });
   if (!res.ok) throw new Error("환율 API 실패: " + res.status);
   const data = await res.json();
