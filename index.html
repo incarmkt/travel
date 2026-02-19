@@ -358,20 +358,74 @@
     }
     .fx-eq { font-size: 20px; color: var(--text-sub); }
 
-    /* 선택관광 카드 */
-    .tour-card {
-      background: var(--card-bg); border-radius: 16px; padding: 20px;
-      margin-bottom: 16px; border-left: 4px solid var(--accent-color);
-      box-shadow: 0 2px 10px rgba(0,0,0,0.02);
+    /* 🔥 [NEW] 선택관광 프리미엄 카드 디자인 */
+    .tour-card-new {
+      border-radius: 24px;
+      overflow: hidden;
+      box-shadow: 0 10px 30px -5px rgba(0,0,0,0.15);
+      margin-bottom: 24px;
+      position: relative;
+      color: #fff;
+      transition: transform 0.2s;
     }
-    .tour-header { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
-    .badge { background: var(--bg-main); color: var(--primary-color); padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 600; }
-    .tour-header h3 { margin: 0; font-size: 16px; flex: 1; font-weight: 800;}
-    .meal-box { background: #f8fdfa; padding: 12px; border-radius: 8px; margin: 12px 0; font-size: 14px; display: flex; justify-content: space-between;}
-    .meal-check { display: flex; justify-content: space-between; align-items: center; padding-top: 12px; border-top: 1px solid var(--border-light); }
-    .meal-check button { background: var(--accent-color); color: #fff; border: none; padding: 6px 16px; border-radius: 6px; font-weight: 600; }
-    .status.pending { color: #e53e3e; font-weight: 600;}
-    .status.done { color: #38a169; font-weight: 600;}
+    .tour-card-new:active { transform: scale(0.98); }
+
+    /* 테마별 그라데이션 */
+    .type-nature { background: linear-gradient(135deg, #10b981 0%, #047857 100%); } /* 티엔라이: 에메랄드 */
+    .type-culture { background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%); } /* 박물관: 로얄블루 */
+    .type-free { background: linear-gradient(135deg, #f97316 0%, #c2410c 100%); }   /* 자유: 오렌지 */
+    
+    .card-bg-icon {
+        position: absolute; right: -15px; top: -15px;
+        font-size: 90px; opacity: 0.15; 
+        pointer-events: none; filter: grayscale(100%) brightness(200%);
+    }
+
+    .card-content { padding: 24px; position: relative; z-index: 1;}
+    .opt-badge {
+        background: rgba(255,255,255,0.25); backdrop-filter: blur(4px);
+        padding: 5px 12px; border-radius: 100px; 
+        font-size: 12px; font-weight: 700; letter-spacing: 0.5px;
+        display: inline-block; margin-bottom: 10px;
+        border: 1px solid rgba(255,255,255,0.2);
+    }
+    
+    .tour-card-new h3 {
+        margin: 0 0 8px; font-size: 24px; font-weight: 800; line-height: 1.2;
+        text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .card-desc {
+        margin: 0 0 20px; font-size: 14px; opacity: 0.95; line-height: 1.5; font-weight: 400;
+        word-break: keep-all;
+    }
+    
+    .card-tags { display: flex; gap: 8px; flex-wrap: wrap; }
+    .card-tags span {
+        background: rgba(0,0,0,0.2); padding: 6px 10px; border-radius: 8px;
+        font-size: 12px; font-weight: 600; display: flex; align-items: center; gap: 4px;
+    }
+
+    /* 하단 정보 (흰색 영역) */
+    .card-bottom {
+        background: #fff;
+        padding: 16px 24px;
+        color: #333;
+        display: flex; justify-content: space-between; align-items: center;
+    }
+    .meal-info { display: flex; flex-direction: column; gap: 2px; }
+    .meal-label { font-size: 11px; color: #888; font-weight: 600; }
+    .meal-value { font-size: 14px; font-weight: 700; color: #1a233a; }
+    
+    .check-btn {
+        background: var(--primary-color); color: #fff; border: none;
+        padding: 8px 16px; border-radius: 8px; font-size: 13px; font-weight: 600;
+        cursor: pointer;
+    }
+    .check-btn.done { background: #e2e8f0; color: #64748b; }
+    .status-text { font-size: 12px; font-weight: 700; }
+    .status-text.pending { color: #ef4444; }
+    .status-text.done { color: #10b981; }
+
 
     #requestInput {
       width: 100%; height: 120px; padding: 16px; border: 1px solid var(--border-light);
@@ -520,11 +574,81 @@ function toggleMenu() {
   document.body.classList.toggle('menu-open');
 }
 
-/* ================= 선택관광 템플릿 ================= */
+/* ================= 🔥 [수정] 선택관광 템플릿: 프리미엄 티켓 스타일 ================= */
 const myTourTemplates = [
-  { keyword: "티엔라이", html: `<div class="tour-card green"><div class="tour-header"><span class="badge">선택 1안</span><h3>티엔라이 온천 힐링</h3><span class="icon">🌿</span></div><p class="tour-desc">티엔라이 온천욕 & 양명산 국립공원 자락의 최고급 유황 온천</p><div class="meal-box"><strong>🍽 점심 식사</strong><span>베이징덕</span><em class="included">식사 포함</em></div><div class="tour-footer"><span>🎫 입장권</span><span>🚌 전용차량</span><span>🍴 중식</span></div></div>` },
-  { keyword: "고궁박물관", html: `<div class="tour-card green"><div class="tour-header"><span class="badge">선택 2안</span><h3>고궁박물관 역사 기행</h3><span class="icon">🏛️</span></div><p class="tour-desc">중국 역사의 정수, 대만 고궁박물관</p><div class="meal-box"><strong>🍽 점심 식사</strong><span>베이징덕</span><em class="included">식사 포함</em></div><div class="tour-footer"><span>🎫 입장권</span><span>🚌 전용차량</span><span>🍴 중식</span></div></div>` },
-  { keyword: "자유일정", html: `<div class="tour-card red"><div class="tour-header"><span class="badge">선택 3안</span><h3>자유로운 대만 여행</h3><span class="icon">🇹🇼</span></div><p class="tour-desc">자유일정 대만</p><div class="meal-box"><strong>🍽 점심 식사</strong><span>자유식</span><em class="cash">현금 지급</em></div><div class="meal-check" data-tour="자유일정"><span class="status pending">중식비 미지급</span><button onclick="handleMealClick(this)">지급 확인</button></div><div class="tour-footer"><span>🚌 자유일정</span><span>🍜 중식비</span></div></div>` }
+  { 
+    keyword: "티엔라이", 
+    html: `
+    <div class="tour-card-new type-nature">
+        <div class="card-bg-icon">♨️</div>
+        <div class="card-content">
+            <span class="opt-badge">선택 1안</span>
+            <h3>티엔라이 온천 힐링</h3>
+            <p class="card-desc">양명산 국립공원의 웅장한 자연과 함께하는<br>최고급 유황 온천 체험</p>
+            <div class="card-tags">
+                <span>🚌 전용차량</span>
+                <span>🎟 입장권</span>
+                <span>🧼 온천욕</span>
+            </div>
+        </div>
+        <div class="card-bottom">
+            <div class="meal-info">
+                <span class="meal-label">중식 메뉴</span>
+                <span class="meal-value">🦆 베이징덕 (포함)</span>
+            </div>
+        </div>
+    </div>`
+  },
+  { 
+    keyword: "고궁박물관", 
+    html: `
+    <div class="tour-card-new type-culture">
+        <div class="card-bg-icon">🏛️</div>
+        <div class="card-content">
+            <span class="opt-badge">선택 2안</span>
+            <h3>고궁박물관 역사 기행</h3>
+            <p class="card-desc">세계 4대 박물관, 중국 5천년 역사의 정수<br>대만 고궁박물관 도슨트 투어</p>
+            <div class="card-tags">
+                <span>🚌 전용차량</span>
+                <span>🎟 입장권</span>
+                <span>🎧 도슨트</span>
+            </div>
+        </div>
+        <div class="card-bottom">
+            <div class="meal-info">
+                <span class="meal-label">중식 메뉴</span>
+                <span class="meal-value">🦆 베이징덕 (포함)</span>
+            </div>
+        </div>
+    </div>`
+  },
+  { 
+    keyword: "자유일정", 
+    html: `
+    <div class="tour-card-new type-free">
+        <div class="card-bg-icon">🗺️</div>
+        <div class="card-content">
+            <span class="opt-badge">선택 3안</span>
+            <h3>자유로운 대만 여행</h3>
+            <p class="card-desc">가이드와 차량 없이 내가 만드는 일정<br>자유롭게 즐기는 타이베이</p>
+            <div class="card-tags">
+                <span>🦶 자유일정</span>
+                <span>💸 중식비 지원</span>
+            </div>
+        </div>
+        <div class="card-bottom">
+            <div class="meal-info">
+                <span class="meal-label">중식비 지원</span>
+                <span class="meal-value status-text pending">미지급 상태</span>
+            </div>
+             <!-- Meal Check Logic Container -->
+            <div class="meal-check" data-tour="자유일정" style="border:none; padding:0; margin:0;">
+                <span class="status" style="display:none;"></span> <!-- Hidden logic element -->
+                <button class="check-btn" onclick="handleMealClick(this)">수령 확인</button>
+            </div>
+        </div>
+    </div>`
+  }
 ];
 
 /* ================= 선택관광 렌더링 함수 ================= */
@@ -763,37 +887,52 @@ fetch("people/employees.json?ts=" + Date.now())
     tryAutoLogin();
   });
 
-/* ================= 중식비 지급 로직 ================= */
+/* ================= 중식비 지급 로직 (UI 수정 대응) ================= */
 function handleMealClick(btn) {
   const wrap = btn.closest(".meal-check");
   const tour = wrap.dataset.tour;
-  const isDone = wrap.classList.contains("done");
-  if (isDone) showMealDetail(wrap);
-  else approveMeal(wrap, tour);
+  // 기존 로직과 UI 매핑
+  const container = btn.closest('.tour-card-new');
+  const statusText = container.querySelector('.status-text');
+
+  const isDone = btn.classList.contains("done");
+  if (isDone) showMealDetail(wrap, btn, statusText);
+  else approveMeal(wrap, tour, btn, statusText);
 }
 
-function approveMeal(wrap, tour) {
+function approveMeal(wrap, tour, btn, statusText) {
   const pw = prompt("관리자 비밀번호 입력");
   if (pw !== ADMIN_PASSWORD) { alert("비밀번호가 올바르지 않습니다."); return; }
   const time = nowKSTString();
-  setMealUI(wrap, "DONE", time);
+  setMealUI(wrap, "DONE", time, btn, statusText);
   saveMealPaid(currentUser.id, tour, time);
   logMealPaymentToSheet({ action: "APPROVE", tour, time });
 }
 
-function setMealUI(wrap, mode, time = "") {
-  const status = wrap.querySelector(".status");
-  const btn = wrap.querySelector("button");
+function setMealUI(wrap, mode, time = "", btn, statusText) {
+    if(!btn) btn = wrap.querySelector("button");
+    if(!statusText) statusText = wrap.closest('.tour-card-new').querySelector('.status-text');
+
   if (mode === "DONE") {
     wrap.classList.add("done");
-    status.textContent = "중식비 지급 완료";
-    status.classList.remove("pending"); status.classList.add("done");
-    wrap.dataset.time = time; btn.textContent = "지급 확인";
+    if(statusText) {
+        statusText.textContent = "지급 완료";
+        statusText.classList.remove("pending");
+        statusText.classList.add("done");
+    }
+    wrap.dataset.time = time; 
+    btn.textContent = "확인 완료";
+    btn.classList.add("done");
   } else {
     wrap.classList.remove("done");
-    status.textContent = "중식비 미지급";
-    status.classList.add("pending"); status.classList.remove("done");
-    wrap.dataset.time = ""; btn.textContent = "지급 확인";
+    if(statusText) {
+        statusText.textContent = "미지급 상태";
+        statusText.classList.add("pending");
+        statusText.classList.remove("done");
+    }
+    wrap.dataset.time = ""; 
+    btn.textContent = "수령 확인";
+    btn.classList.remove("done");
   }
 }
     
@@ -802,7 +941,7 @@ function saveMealPaid(userId, tour, time) { localStorage.setItem(mealKey(userId,
 function loadMealPaid(userId, tour) { const raw = localStorage.getItem(mealKey(userId, tour)); return raw ? JSON.parse(raw) : null; }
 function removeMealPaid(userId, tour) { localStorage.removeItem(mealKey(userId, tour)); }
 
-function showMealDetail(wrap) {
+function showMealDetail(wrap, btn, statusText) {
   const time = wrap.dataset.time;
   const pw = prompt(`지급 완료 시각\n${time}\n\n취소하려면 관리자 비밀번호 입력\n(확인만 보려면 취소)`);
   if (!pw) return;
@@ -810,7 +949,7 @@ function showMealDetail(wrap) {
   if (confirm("지급을 취소하시겠습니까?")) {
     const tour = wrap.dataset.tour;
     const cancelTime = nowKSTString();
-    setMealUI(wrap, "PENDING");
+    setMealUI(wrap, "PENDING", "", btn, statusText);
     removeMealPaid(currentUser.id, tour);
     logMealPaymentToSheet({ action: "CANCEL", tour, time: cancelTime });
   }
@@ -1045,12 +1184,22 @@ function openPage(type, fromHistory = false) {
     t.textContent = "🎒 나의 선택 관광";
     c.innerHTML = `<div class="detail-content-wrap"><div class="mytour-wrap">${renderMyTour()}</div></div>`;
     setTimeout(() => {
+      // ✅ [수정] 새 구조에 맞춰 meal-check 찾는 로직 업데이트
       const wrap = document.querySelector('.meal-check[data-tour="자유일정"]');
       if (!wrap) return;
-      syncMealStatusFromServer(currentUser.id, "자유일정", wrap);
-      const saved = loadMealPaid(currentUser.id, "자유일정");
-      if (!wrap.classList.contains("done") && saved?.time) setMealUI(wrap, "DONE", saved.time);
-    }, 0);
+      
+      const btn = wrap.querySelector("button");
+      // UI 업데이트를 위해 상위 카드 컨테이너의 status text 찾기
+      const card = wrap.closest('.tour-card-new');
+      const statusText = card ? card.querySelector('.status-text') : null;
+      
+      syncMealStatusFromServer(currentUser.id, "자유일정", wrap).then(() => {
+          const saved = loadMealPaid(currentUser.id, "자유일정");
+          if (!wrap.classList.contains("done") && saved?.time) {
+              setMealUI(wrap, "DONE", saved.time, btn, statusText);
+          }
+      });
+    }, 100);
   }
 
   if (type === "taiwan") {
@@ -1159,9 +1308,15 @@ async function syncMealStatusFromServer(userId, tour, wrap) {
   const url = `${MEAL_SHEET_URL}?mode=customerAdmin&id=${userId}`;
   const res = await fetch(url);
   const data = await res.json();
+  
+  // UI 요소 찾기
+  const btn = wrap.querySelector("button");
+  const card = wrap.closest('.tour-card-new');
+  const statusText = card ? card.querySelector('.status-text') : null;
+
   const status = data.mealMap?.[tour];
-  if (status === "APPROVE") setMealUI(wrap, "DONE", "서버 기준");
-  else setMealUI(wrap, "PENDING");
+  if (status === "APPROVE") setMealUI(wrap, "DONE", "서버 기준", btn, statusText);
+  else setMealUI(wrap, "PENDING", "", btn, statusText);
 }
 
 /* ================= 홈으로 ================= */
