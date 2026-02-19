@@ -6,35 +6,29 @@
   <title>2025 ISC 대만 여행</title>
 
   <!-- ✅ [1] 폰트 CDN 추가 (Pretendard) -->
-  <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+  <link rel="stylesheet" as="style" crossorigin href="[https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css](https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css)" />
 
   <!-- 프리미엄 테마 CSS -->
   <style>
     /* =========================================================
-       [1] CSS 변수 & 초기화 (Premium Luxury Palette)
+       [1] CSS 변수 & 초기화 (Premium Palette)
     ========================================================= */
     :root {
-      /* 💎 고급스러운 네이비 & 골드 조합 */
-      --primary-color: #0f172a;   /* 더 깊고 진한 네이비 */
-      --accent-color: #d4af37;    /* 샴페인 골드 */
-      --accent-sub: #f1e5bc;      /* 연한 골드 (배경용) */
-      
-      --bg-main: #f8fafc;         
+      --primary-color: #1a233a; 
+      --accent-color: #c5a059;  
+      --bg-main: #f5f7fa;        
       --card-bg: #ffffff;
-      
-      --text-main: #1e293b;
-      --text-sub: #64748b;
-      
-      --glass-surface: rgba(255, 255, 255, 0.75); /* 유리 질감 배경 */
-      --glass-border: rgba(255, 255, 255, 0.6);
-      --glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.07);
-
+      --text-main: #2d3748;
+      --text-sub: #718096;
+      --border-light: #edf2f7;
+      --sheet-radius: 24px;
       --safe-bottom: env(safe-area-inset-bottom, 20px);
     }
 
     * {
       box-sizing: border-box;
       -webkit-tap-highlight-color: transparent; 
+      /* ✅ 폰트 적용 */
       font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     }
 
@@ -44,9 +38,10 @@
       background-color: var(--primary-color);
       color: var(--text-main);
       overscroll-behavior: none; 
+      /* ✅ 모바일 꽉 채우기 핵심 설정 */
       width: 100%;
       height: 100%;
-      overflow: hidden; 
+      overflow: hidden; /* 이중 스크롤 방지 */
     }
 
     /* =========================================================
@@ -61,99 +56,83 @@
 
     .login-hero {
       width: 100%;
+      /* ✅ 모바일 주소창 대응 높이 설정 */
       height: 100vh;
       height: 100dvh; 
-      background: url('assets/images/home2.jpg') center/cover no-repeat;
+      background: url('assets/images/taiwan.jpg') center/cover no-repeat;
+      /* ✅ 배경 고정 (스크롤 시 흔들림 방지) */
       position: fixed;
       top: 0; left: 0;
       z-index: 2000;
     }
     .hero-overlay {
       position: absolute; inset: 0;
-      /* 로그인 화면은 몰입감을 위해 어둡게 유지 */
-      background: linear-gradient(135deg, rgba(15, 23, 42, 0.8) 0%, rgba(0,0,0,0.4) 100%);
+      background: linear-gradient(135deg, rgba(26,35,58,0.85) 0%, rgba(0,0,0,0.6) 100%);
       display: flex; align-items: center; justify-content: center;
       padding: 20px;
     }
     .login-box {
-      background: rgba(255, 255, 255, 0.9);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      padding: 40px 28px;
-      border-radius: 24px;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      padding: 40px 24px;
+      border-radius: 20px;
       width: 100%;
-      max-width: 360px;
+      max-width: 380px;
       text-align: center;
-      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-      border: 1px solid rgba(255,255,255,0.5);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.2);
     }
     
+    /* 🔥 [수정] 로그인 화면 로고 스타일: 비율 유지 */
     .hero-logo { 
-        width: 120px; 
-        height: auto;
-        object-fit: contain;
-        margin-bottom: 16px;
-        display: block; margin-left: auto; margin-right: auto;
+        width: 140px;       /* 적절한 가로 크기 설정 */
+        height: auto;       /* 높이는 자동 */
+        object-fit: contain;/* 비율 유지하며 표시 */
+        margin-bottom: 12px;
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
     }
 
-    .login-box h2 { 
-        color: var(--primary-color); margin: 0 0 8px; font-weight: 800; letter-spacing: -0.5px; 
-    }
-    .hero-desc { color: var(--text-sub); margin-bottom: 28px; font-size: 14px; font-weight: 500; }
-    
+    .login-box h2 { color: var(--primary-color); margin: 0 0 5px; font-weight: 800; }
+    .hero-desc { color: var(--text-sub); margin-bottom: 24px; font-size: 14px; }
     .login-box input {
-      width: 100%; padding: 16px; 
-      background: #f1f5f9;
-      border: 1px solid transparent;
-      border-radius: 14px; font-size: 16px; margin-bottom: 16px;
-      text-align: center; transition: all 0.3s;
-      font-weight: 600; color: var(--primary-color);
+      width: 100%; padding: 14px; border: 1px solid var(--border-light);
+      border-radius: 12px; font-size: 16px; margin-bottom: 16px;
+      text-align: center; transition: border 0.3s;
     }
-    .login-box input:focus { 
-        background: #fff;
-        border-color: var(--accent-color); 
-        box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.15);
-        outline: none; 
-    }
+    .login-box input:focus { border-color: var(--accent-color); outline: none; }
     .primary-btn {
-      width: 100%; padding: 16px; border: none; border-radius: 14px;
-      background: var(--primary-color); color: #fff; font-size: 16px; font-weight: 700;
+      width: 100%; padding: 15px; border: none; border-radius: 12px;
+      background: var(--primary-color); color: #fff; font-size: 16px; font-weight: 600;
       cursor: pointer; transition: background 0.3s, transform 0.1s;
-      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
     }
     .primary-btn:active { transform: scale(0.98); }
-    .error { color: #e53e3e; font-size: 13px; margin-top: 12px; min-height: 18px; font-weight: 500;}
+    .error { color: #e53e3e; font-size: 13px; margin-top: 12px; min-height: 18px; }
 
     /* =========================================================
-       [3] 홈 화면 (Luxury Redesign)
+       [3] 홈 화면 (단일 풀스크린 대시보드 구조)
     ========================================================= */
-    .main-bg { width: 100%; height: 100%; overflow: hidden; }
+    .main-bg { 
+        width: 100%; 
+        height: 100%; 
+        overflow: hidden; 
+    }
     
     .home-view {
       width: 100%;
+      /* ✅ 모바일 주소창 대응 */
       height: 100vh;
       height: 100dvh;
-      background: url('assets/images/home2.jpg') center/cover no-repeat;
+      background: url('assets/images/taiwan.jpg') center/cover no-repeat;
       position: relative;
       display: flex;
       flex-direction: column;
     }
     
-    /* ✨ [핵심] 배경이 촌스럽지 않게 만들어주는 고급 그라데이션 */
-    .home-view::before {
-        content: '';
-        position: absolute;
-        inset: 0;
-        /* 위쪽은 투명하게 사진을 보여주고, 아래쪽으로 갈수록 은은한 흰색이 올라와 글씨를 받쳐줌 */
-        background: linear-gradient(
-            to bottom, 
-            rgba(0,0,0,0.05) 0%, 
-            rgba(255,255,255,0.1) 40%, 
-            rgba(248,250,252,0.85) 85%,
-            rgba(248,250,252,1) 100%
-        );
-        z-index: 0;
-        pointer-events: none;
+    .home-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(180deg, rgba(0,0,0,0.3) 0%, rgba(26,35,58,0.95) 100%);
+      z-index: 1;
     }
 
     /* 상단 헤더 */
@@ -161,195 +140,149 @@
       position: relative; z-index: 100;
       display: flex; justify-content: space-between; align-items: center;
       padding: 20px 24px;
+      /* ✅ 아이폰 노치 영역 대응 */
       padding-top: max(20px, env(safe-area-inset-top));
     }
     
+    /* 🔥 [수정] 상단 헤더 로고 스타일: 비율 유지 */
     .header-logo { 
-        height: 32px; /* 로고를 조금 더 작고 세련되게 */
-        width: auto;
-        object-fit: contain;
+        height: 36px;       /* 헤더 높이에 맞춤 */
+        width: auto;        /* 가로는 비율대로 */
+        object-fit: contain;/* 찌그러짐 방지 */
+        filter: brightness(0) invert(1); /* 흰색으로 변경 (필요 없으면 삭제) */
     }
     
     /* =========================================================
-       [4] 카테고리 메뉴 (미니멀 & 럭셔리)
+       [4] 우측 상단 카테고리 (팝업 드롭다운 스타일)
     ========================================================= */
-    .menu-wrapper { position: relative; margin-left: auto; }
-
-    /* ✨ 버튼 디자인 변경: 투박한 버튼 -> 세련된 아이콘형 캡슐 */
-    .menu-btn {
-      background: rgba(255, 255, 255, 0.6);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      border: 1px solid rgba(255, 255, 255, 0.8);
-      color: var(--primary-color);
-      padding: 10px 18px;
-      border-radius: 100px; /* 완전 둥근 캡슐 */
-      font-weight: 700;
-      font-size: 13px;
-      letter-spacing: 0.5px;
-      cursor: pointer;
-      display: flex; align-items: center; gap: 8px;
-      transition: all 0.3s ease;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    .menu-wrapper { 
+        position: relative; 
+        /* ✅ 로고 유무와 상관없이 메뉴를 우측 끝으로 고정 */
+        margin-left: auto;
     }
-    .menu-btn:hover { background: rgba(255,255,255,0.9); transform: translateY(-1px); }
-    .menu-btn:active { transform: scale(0.96); }
 
-    /* 딤 레이어 */
+    .menu-btn {
+      background: rgba(255,255,255,0.15); 
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,0.3); 
+      color: #fff;
+      padding: 8px 16px; 
+      border-radius: 20px; 
+      font-weight: 600; 
+      font-size: 14px;
+      cursor: pointer;
+      display: flex; align-items: center; gap: 6px;
+      transition: all 0.2s;
+      position: relative; z-index: 101; 
+    }
+    .menu-btn:active { background: rgba(255,255,255,0.3); }
+
+    /* 메뉴 열릴 때 화면 어둡게 해주는 레이어 */
     .menu-dim {
-      position: fixed; inset: 0; background: rgba(15, 23, 42, 0.2); z-index: 90;
-      backdrop-filter: blur(4px); opacity: 0; visibility: hidden; transition: all 0.3s;
+      position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 90;
+      backdrop-filter: blur(3px); -webkit-backdrop-filter: blur(3px);
+      opacity: 0; visibility: hidden; transition: opacity 0.3s;
     }
     body.menu-open .menu-dim { opacity: 1; visibility: visible; }
 
-    /* 드롭다운: 고급스러운 유리 패널 */
+    /* 카테고리 드롭다운 박스 */
     .category-dropdown {
-      position: absolute; top: calc(100% + 16px); right: 0;
-      width: 240px; 
-      background: rgba(255, 255, 255, 0.95);
-      backdrop-filter: blur(20px);
-      border-radius: 20px;
-      box-shadow: 0 20px 40px -5px rgba(0,0,0,0.15);
-      padding: 12px; z-index: 100;
-      border: 1px solid rgba(255,255,255,0.5);
-      opacity: 0; visibility: hidden; transform: translateY(-10px) scale(0.98);
-      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      position: absolute; top: calc(100% + 12px); right: 0;
+      width: 250px; background: #fff; border-radius: 20px;
+      box-shadow: 0 12px 40px rgba(0,0,0,0.3);
+      padding: 8px; z-index: 100;
+      opacity: 0; visibility: hidden; transform: translateY(-10px);
+      transition: all 0.3s cubic-bezier(0.32, 0.72, 0, 1);
       transform-origin: top right;
     }
     body.menu-open .category-dropdown {
-      opacity: 1; visibility: visible; transform: translateY(0) scale(1);
+      opacity: 1; visibility: visible; transform: translateY(0);
     }
 
     .dropdown-header {
-      font-size: 11px; font-weight: 800; color: var(--accent-color);
-      text-transform: uppercase; letter-spacing: 1px;
-      padding: 8px 12px; border-bottom: 1px solid var(--border-light);
-      margin-bottom: 8px;
+      font-size: 13px; font-weight: 700; color: var(--text-sub);
+      padding: 12px 14px 8px; border-bottom: 1px solid var(--border-light);
+      margin-bottom: 4px;
     }
 
     .drop-nav button {
       width: 100%; text-align: left; background: none; border: none;
-      padding: 12px 14px; font-size: 14px; font-weight: 600; color: var(--text-main);
-      border-radius: 12px; cursor: pointer; transition: all 0.2s;
+      padding: 14px; font-size: 15px; font-weight: 600; color: var(--text-main);
+      border-radius: 12px; cursor: pointer; transition: background 0.2s;
       display: flex; align-items: center; gap: 12px;
     }
-    .drop-nav button:hover, .drop-nav button:active { background: #f8fafc; color: var(--primary-color); }
     .drop-nav button span { flex: 1; }
+    .drop-nav button:active { background: #f8fafc; transform: scale(0.98); }
 
     /* =========================================================
-       [5] 메인 콘텐츠 (잡지 표지 스타일)
+       [5] 메인 콘텐츠 (환영문구 & DAY 버튼들)
     ========================================================= */
     .home-main-content {
       position: relative; z-index: 10;
       flex: 1; 
       display: flex; flex-direction: column; justify-content: flex-end;
       padding: 0 24px 60px; 
+      /* ✅ 하단 안전영역 대응 */
       padding-bottom: max(60px, env(safe-area-inset-bottom));
-      color: var(--primary-color);
+      color: #fff;
     }
     
-    .welcome-text { margin-bottom: 40px; }
-    
-    .welcome-text p { 
-        font-size: 16px; margin: 0; opacity: 0.8; font-weight: 600; 
-        letter-spacing: -0.2px; margin-bottom: 8px;
-    }
-    .welcome-text strong { color: var(--primary-color); font-weight: 800; }
-    
-    /* ✨ 제목 타이포그래피: 고급스럽게 */
-    .welcome-text h2 { 
-        font-size: 38px; font-weight: 800; margin: 0; 
-        line-height: 1.1; letter-spacing: -0.8px;
-        color: var(--primary-color);
-        /* 텍스트에 미세한 그라데이션 적용 */
-        background: linear-gradient(135deg, #0f172a 0%, #334155 100%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-    }
-    
-    .welcome-text .sub-date { 
-        display: inline-flex; align-items: center; gap: 6px;
-        margin-top: 16px; 
-        padding: 6px 14px; 
-        background: rgba(255, 255, 255, 0.5); /* 은은한 배경 */
-        border: 1px solid rgba(15, 23, 42, 0.1);
-        border-radius: 100px; 
-        font-size: 13px; font-weight: 600; color: var(--text-main);
-        backdrop-filter: blur(4px);
-    }
-    .welcome-text .sub-date::before {
-        content:''; display:block; width:6px; height:6px; background:var(--accent-color); border-radius:50%;
-    }
+    .welcome-text { margin-bottom: 30px; }
+    .welcome-text p { font-size: 18px; margin: 0; opacity: 0.9; }
+    .welcome-text strong { color: var(--accent-color); font-weight: 800; }
+    .welcome-text h2 { font-size: 34px; font-weight: 800; margin: 5px 0 10px; line-height: 1.2; }
+    .welcome-text .sub-date { display: inline-block; padding: 6px 14px; background: rgba(0,0,0,0.4); border-radius: 20px; font-size: 13px; margin-top: 10px; border: 1px solid rgba(255,255,255,0.1);}
 
-    /* DAY 버튼 그리드 */
+    /* DAY 1~4 그리드 버튼 */
     .day-buttons {
-      display: grid; grid-template-columns: 1fr 1fr; gap: 14px;
+      display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
     }
-    
-    /* ✨ Day 버튼: 유리 타일 디자인 */
     .day-btn {
-      position: relative; overflow: hidden;
-      background: var(--glass-surface);
-      backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
-      border: 1px solid var(--glass-border);
-      padding: 24px 20px; 
-      border-radius: 20px;
-      text-align: left;
-      transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-      cursor: pointer;
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(15px);
+      -webkit-backdrop-filter: blur(15px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      padding: 20px 16px; 
+      border-radius: 16px;
+      color: #fff; text-align: left;
+      font-size: 18px; font-weight: 800;
+      transition: all 0.2s; cursor: pointer;
       display: flex; flex-direction: column; justify-content: space-between;
-      min-height: 120px;
-      box-shadow: var(--glass-shadow);
+      min-height: 100px;
     }
-    
-    .day-btn:hover { transform: translateY(-2px); box-shadow: 0 12px 40px rgba(0,0,0,0.1); border-color: #fff; }
-    .day-btn:active { transform: scale(0.98); }
-
-    /* Day 헤더 (Day 1, Day 2...) */
-    .day-btn-header {
-        font-size: 12px; font-weight: 800; color: var(--accent-color);
-        text-transform: uppercase; letter-spacing: 1px;
-        margin-bottom: 8px;
-    }
-    
-    /* Day 내용 */
-    .day-btn .day-title { 
-        font-size: 17px; font-weight: 700; color: var(--primary-color);
-        line-height: 1.35; word-break: keep-all; margin: 0;
-        letter-spacing: -0.3px;
-    }
-    
-    /* 버튼 우측 하단 장식용 화살표 */
-    .day-btn::after {
-        content: '→';
-        position: absolute; bottom: 20px; right: 20px;
-        font-size: 18px; color: var(--text-sub); opacity: 0.5; font-weight: 300;
-        transition: transform 0.3s;
-    }
-    .day-btn:hover::after { transform: translateX(3px); color: var(--accent-color); opacity: 1; }
-
+    .day-btn .day-title { font-size: 13px; font-weight: 400; opacity: 0.7; margin-top: 8px; line-height: 1.4; word-break: keep-all; }
+    .day-btn:active { background: rgba(255,255,255,0.2); transform: scale(0.96); }
 
     /* =========================================================
-       [6] Bottom Sheet (Detail Page)
+       [6] Bottom Sheet (Detail Page) - 🔥 화면 꽉 채움 유지
     ========================================================= */
-    #detailPage { position: fixed; inset: 0; z-index: 3000; display: none; }
+    #detailPage {
+      position: fixed; inset: 0; z-index: 3000;
+      display: none; 
+    }
     
+    /* pointer-events: none 추가하여 투명할때 클릭 방해 방지 */
     .detail-dim {
       position: absolute; inset: 0;
-      background: rgba(15, 23, 42, 0.3); /* 배경 딤 색상 변경 */
-      backdrop-filter: blur(8px);
+      background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(4px);
       opacity: 0; transition: opacity 0.3s ease;
       pointer-events: none; 
     }
     
     .detail-sheet__inner {
       position: absolute; bottom: 0; left: 0; right: 0;
-      height: 100%; height: 100dvh;
+      
+      /* ✅ 수정: 높이를 100%로 변경하여 화면 꽉 채움 */
+      height: 100%; 
+      height: 100dvh;
       background: var(--bg-main);
+      
+      /* ✅ 수정: 꽉 찬 화면이므로 둥근 모서리 제거 */
       border-radius: 0;
+      
       display: flex; flex-direction: column;
       transform: translateY(100%); 
-      transition: transform 0.4s cubic-bezier(0.19, 1, 0.22, 1); /* 더 부드러운 애니메이션 */
+      transition: transform 0.4s cubic-bezier(0.32, 0.72, 0, 1);
     }
 
     body.detail-open .detail-dim { opacity: 1; pointer-events: auto; }
@@ -357,190 +290,108 @@
 
     .detail-header {
       display: flex; justify-content: space-between; align-items: center;
-      padding: 16px 24px; background: rgba(255,255,255,0.9);
-      backdrop-filter: blur(10px);
-      padding-top: max(16px, env(safe-area-inset-top));
+      padding: 20px 24px; background: #fff;
+      
+      /* ✅ 수정: 노치 영역 대응 및 모서리 제거 */
+      padding-top: max(20px, env(safe-area-inset-top));
       border-radius: 0; 
-      border-bottom: 1px solid rgba(0,0,0,0.05); 
-      flex-shrink: 0; 
-      z-index: 10;
+      
+      border-bottom: 1px solid var(--border-light); flex-shrink: 0; 
     }
-    .detail-title { font-size: 17px; font-weight: 700; color: var(--primary-color); letter-spacing: -0.3px; }
+    .detail-title { font-size: 18px; font-weight: 700; color: var(--primary-color); }
     .detail-actions button {
       background: none; border: none; font-size: 14px; color: var(--text-sub);
-      margin-left: 12px; cursor: pointer; font-weight: 600; transition: color 0.2s;
+      margin-left: 12px; cursor: pointer; font-weight: 600;
     }
-    .detail-actions button:hover { color: var(--primary-color); }
-    
     #detailContent {
-      flex: 1; overflow-y: auto; padding: 24px 20px calc(40px + var(--safe-bottom));
+      flex: 1; overflow-y: auto; padding: 20px 20px calc(20px + var(--safe-bottom));
       -webkit-overflow-scrolling: touch;
     }
 
     /* =========================================================
-       [7] 상세 컨텐츠 스타일 (Clean & Minimal)
+       [7] 상세 컨텐츠 스타일 (일정, 환율 등)
     ========================================================= */
     .day-card {
-      background: #fff; border-radius: 20px; padding: 24px;
-      margin-bottom: 20px; 
-      box-shadow: 0 10px 30px -5px rgba(0,0,0,0.04);
-      border: 1px solid rgba(0,0,0,0.02);
+      background: var(--card-bg); border-radius: 16px; padding: 20px;
+      margin-bottom: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.03);
     }
     .day-card h3 {
-      margin: 0 0 12px; font-size: 20px; color: var(--primary-color);
-      display: flex; align-items: baseline; gap: 8px; font-weight: 800; letter-spacing: -0.5px;
+      margin: 0 0 10px; font-size: 18px; color: var(--primary-color);
+      display: flex; align-items: baseline; gap: 8px; font-weight: 800;
     }
-    .day-card h3 span { font-size: 14px; color: var(--text-sub); font-weight: 500; }
-    .day-title { margin: 0 0 24px; font-weight: 600; color: var(--accent-color); font-size: 15px; }
+    .day-card h3 span { font-size: 13px; color: var(--text-sub); font-weight: 500; }
+    .day-title { margin: 0 0 20px; font-weight: 600; color: var(--accent-color); font-size: 15px; }
 
-    .timeline { border-left: 2px solid var(--border-light); margin-left: 8px; padding-left: 24px; }
-    .schedule-item { position: relative; margin-bottom: 28px; }
+    .timeline { border-left: 2px solid var(--border-light); margin-left: 10px; padding-left: 20px; }
+    .schedule-item { position: relative; margin-bottom: 24px; }
     .schedule-item:last-child { margin-bottom: 0; }
     .timeline-dot {
-      position: absolute; left: -31px; top: 2px;
-      width: 12px; height: 12px; border-radius: 50%;
-      background: #fff; border: 3px solid var(--accent-color);
-      box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.1);
+      position: absolute; left: -26px; top: 0;
+      width: 10px; height: 10px; border-radius: 50%;
+      background: var(--accent-color); border: 2px solid #fff;
     }
     .schedule-card { display: flex; flex-direction: column; gap: 4px; }
-    .schedule-time { font-size: 13px; font-weight: 700; color: var(--accent-color); margin-bottom: 2px; }
-    .schedule-title { font-size: 16px; font-weight: 700; color: var(--text-main); }
-    .schedule-desc { font-size: 14px; color: var(--text-sub); margin-top: 4px; line-height: 1.5; }
+    .schedule-time { font-size: 13px; font-weight: 700; color: var(--text-sub); }
+    .schedule-title { font-size: 15px; font-weight: 600; color: var(--text-main); }
+    .schedule-desc { font-size: 13px; color: var(--text-sub); margin-top: 4px; line-height: 1.4; }
 
     /* 환율, 대만의 모든 것 */
     .country-compare-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
-    .country-card { background: #fff; padding: 20px; border-radius: 20px; text-align: center; box-shadow: 0 4px 20px rgba(0,0,0,0.03); }
-    .country-header { display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 12px; }
-    .flag-img { width: 28px; border-radius: 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-    .country-card h3 { margin: 0; font-size: 15px; font-weight: 700; }
-    .time-box { background: var(--bg-main); padding: 12px; border-radius: 12px; margin: 12px 0; }
-    .time-box strong { display: block; font-size: 20px; color: var(--primary-color); margin-top: 4px; font-family: monospace; letter-spacing: -0.5px; font-weight: 700;}
-    .country-list { list-style: none; padding: 0; margin: 0; text-align: left; font-size: 13px; color: var(--text-sub); }
-    .country-list li { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px dashed var(--border-light); }
+    .country-card { background: var(--card-bg); padding: 16px; border-radius: 16px; text-align: center; }
+    .country-header { display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 10px; }
+    .flag-img { width: 30px; border-radius: 4px; border: 1px solid var(--border-light); }
+    .country-card h3 { margin: 0; font-size: 16px; }
+    .time-box { background: var(--bg-main); padding: 10px; border-radius: 10px; margin: 10px 0; }
+    .time-box strong { display: block; font-size: 18px; color: var(--primary-color); margin-top: 4px; font-family: monospace; letter-spacing: -1px; }
+    .country-list { list-style: none; padding: 0; margin: 0; text-align: left; font-size: 13px; }
+    .country-list li { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px dashed var(--border-light); }
     .country-list li:last-child { border: none; }
 
     .exchange-row {
-      background: var(--primary-color); color: #fff; padding: 24px;
-      border-radius: 20px; text-align: center; margin-bottom: 20px;
-      box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.3);
+      background: var(--primary-color); color: #fff; padding: 20px;
+      border-radius: 16px; text-align: center; margin-bottom: 20px;
     }
     .fx-grid { display: grid; grid-template-columns: 1fr auto 1fr; gap: 10px; align-items: center; margin-top: 16px;}
     .fx-box input {
-      width: 100%; padding: 14px; border: 1px solid transparent; background: rgba(255,255,255,0.1);
-      border-radius: 12px; text-align: right; font-weight: 700; font-size: 18px; color: #fff;
+      width: 100%; padding: 12px; border: 1px solid var(--border-light);
+      border-radius: 10px; text-align: right; font-weight: 600; font-size: 16px;
     }
-    .fx-box input::placeholder { color: rgba(255,255,255,0.4); }
-    .fx-box input:focus { background: rgba(255,255,255,0.2); outline: none; }
-    .fx-box label { font-size: 12px; opacity: 0.7; margin-bottom: 4px; display: block; text-align: left; }
-    .fx-eq { font-size: 20px; color: rgba(255,255,255,0.5); }
+    .fx-eq { font-size: 20px; color: var(--text-sub); }
 
-    /* 🔥 선택관광 프리미엄 카드 */
-    .tour-card-new {
-      border-radius: 24px;
-      overflow: hidden;
-      box-shadow: 0 15px 35px -5px rgba(0,0,0,0.15);
-      margin-bottom: 24px;
-      position: relative;
-      color: #fff;
-      transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-      background-size: cover;
-      background-position: center;
-      background-repeat: no-repeat;
+    /* 선택관광 카드 */
+    .tour-card {
+      background: var(--card-bg); border-radius: 16px; padding: 20px;
+      margin-bottom: 16px; border-left: 4px solid var(--accent-color);
+      box-shadow: 0 2px 10px rgba(0,0,0,0.02);
     }
-    /* 카드 오버레이를 더 고급스럽게 */
-    .tour-card-new::before {
-        content:''; position: absolute; inset: 0;
-        background: linear-gradient(to bottom, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.8) 100%);
-    }
-    
-    .tour-card-new:active { transform: scale(0.97); }
-
-    /* 테마별 배경 */
-    .type-nature { background-image: url('assets/images/tour_tienlai.jpg'); } 
-    .type-culture { background-image: url('assets/images/tour_museum.jpg'); } 
-    .type-free { background-image: url('assets/images/tour_free.jpg'); }
-    
-    .card-bg-icon {
-        position: absolute; right: 20px; top: 20px;
-        font-size: 60px; 
-        opacity: 0.8; 
-        pointer-events: none; 
-        filter: grayscale(100%) brightness(100); /* 흰색 아이콘 효과 */
-        mix-blend-mode: overlay; 
-    }
-
-    .card-content { padding: 28px; position: relative; z-index: 1;}
-    .opt-badge {
-        background: rgba(255,255,255,0.2); backdrop-filter: blur(8px);
-        padding: 6px 14px; border-radius: 100px; 
-        font-size: 11px; font-weight: 700; letter-spacing: 0.5px;
-        display: inline-block; margin-bottom: 12px;
-        border: 1px solid rgba(255,255,255,0.3);
-        text-transform: uppercase;
-    }
-    
-    .tour-card-new h3 {
-        margin: 0 0 8px; font-size: 26px; font-weight: 800; line-height: 1.2;
-        text-shadow: 0 4px 12px rgba(0,0,0,0.3);
-    }
-    .card-desc {
-        margin: 0 0 24px; font-size: 15px; opacity: 0.95; line-height: 1.6; font-weight: 400;
-        text-shadow: 0 2px 4px rgba(0,0,0,0.3);
-    }
-    
-    .card-tags { display: flex; gap: 8px; flex-wrap: wrap; }
-    .card-tags span {
-        background: rgba(0,0,0,0.4); padding: 8px 12px; border-radius: 8px;
-        font-size: 12px; font-weight: 600; display: flex; align-items: center; gap: 4px;
-        backdrop-filter: blur(4px);
-        border: 1px solid rgba(255,255,255,0.1);
-    }
-
-    /* 하단 정보 (흰색 영역) */
-    .card-bottom {
-        background: #fff;
-        padding: 18px 28px;
-        color: #333;
-        display: flex; justify-content: space-between; align-items: center;
-        border-top: 1px solid rgba(0,0,0,0.05);
-    }
-    .meal-info { display: flex; flex-direction: column; gap: 2px; }
-    .meal-label { font-size: 11px; color: #94a3b8; font-weight: 700; text-transform: uppercase; }
-    .meal-value { font-size: 15px; font-weight: 700; color: var(--primary-color); }
-    
-    .check-btn {
-        background: var(--primary-color); color: #fff; border: none;
-        padding: 10px 20px; border-radius: 10px; font-size: 14px; font-weight: 600;
-        cursor: pointer; box-shadow: 0 4px 10px rgba(15, 23, 42, 0.2);
-    }
-    .check-btn.done { background: #f1f5f9; color: #94a3b8; box-shadow: none;}
-    .status-text { font-size: 12px; font-weight: 700; }
-    .status-text.pending { color: #ef4444; }
-    .status-text.done { color: #10b981; }
-
+    .tour-header { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
+    .badge { background: var(--bg-main); color: var(--primary-color); padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+    .tour-header h3 { margin: 0; font-size: 16px; flex: 1; font-weight: 800;}
+    .meal-box { background: #f8fdfa; padding: 12px; border-radius: 8px; margin: 12px 0; font-size: 14px; display: flex; justify-content: space-between;}
+    .meal-check { display: flex; justify-content: space-between; align-items: center; padding-top: 12px; border-top: 1px solid var(--border-light); }
+    .meal-check button { background: var(--accent-color); color: #fff; border: none; padding: 6px 16px; border-radius: 6px; font-weight: 600; }
+    .status.pending { color: #e53e3e; font-weight: 600;}
+    .status.done { color: #38a169; font-weight: 600;}
 
     #requestInput {
-      width: 100%; height: 140px; padding: 16px; border: 1px solid var(--border-light);
-      border-radius: 16px; resize: none; font-size: 15px; margin-bottom: 12px;
-      background: #f8fafc;
+      width: 100%; height: 120px; padding: 16px; border: 1px solid var(--border-light);
+      border-radius: 12px; resize: none; font-size: 15px; margin-bottom: 12px;
     }
-    #requestInput:focus { background: #fff; border-color: var(--primary-color); outline: none; }
 
     /* =========================================================
        [8] 데스크탑 (PC) 대응 
     ========================================================= */
     @media (min-width: 768px) {
       .day-buttons { grid-template-columns: repeat(4, 1fr); }
-      .home-main-content { max-width: 1000px; margin: 0 auto; width: 100%; padding-bottom: 80px; }
-      .home-header { max-width: 1000px; margin: 0 auto; width: 100%; padding-top: 40px; }
+      .home-main-content { max-width: 1000px; margin: 0 auto; width: 100%; }
+      .home-header { max-width: 1000px; margin: 0 auto; width: 100%; }
       
       .detail-sheet__inner {
         top: 50%; left: 50%;
         transform: translate(-50%, -100%) scale(0.9); 
         bottom: auto; right: auto;
-        width: 100%; max-width: 500px; height: 85vh;
-        border-radius: 28px; opacity: 0;
-        box-shadow: 0 40px 80px -20px rgba(0,0,0,0.3);
+        width: 100%; max-width: 500px; height: 80vh;
+        border-radius: 24px; opacity: 0;
       }
       body.detail-open .detail-sheet__inner {
         transform: translate(-50%, -50%) scale(1); opacity: 1;
@@ -553,7 +404,7 @@
   
 <!-- ✅ 시작부분 로컬 파일 경로 그대로 유지 -->
 <div id="mobileSplash" class="mobile-splash" style="display:none;">
-  <img src="assets/images/iscposter.jpg" alt="ISC Poster" onerror="this.src='https://images.unsplash.com/photo-1577717903315-1691ae25ab3f?auto=format&fit=crop&w=800&q=80'">
+  <img src="assets/images/iscposter.jpg" alt="ISC Poster" onerror="this.src='[https://images.unsplash.com/photo-1577717903315-1691ae25ab3f?auto=format&fit=crop&w=800&q=80](https://images.unsplash.com/photo-1577717903315-1691ae25ab3f?auto=format&fit=crop&w=800&q=80)'">
 </div>
   
 <!-- ================= LOGIN ================= -->
@@ -577,7 +428,7 @@
 
   <!-- ================= HOME VIEW ================= -->
   <section id="homeView" class="home-view">
-    <!-- 배경을 위한 그라데이션 오버레이는 CSS ::before로 처리됨 -->
+    <div class="home-overlay"></div>
     
     <!-- 메뉴 열릴 때 전체 화면을 살짝 어둡게 해주는 딤 -->
     <div id="menuDim" class="menu-dim" onclick="toggleMenu()"></div>
@@ -589,23 +440,19 @@
       
       <!-- 우측 상단 카테고리 묶음 -->
       <div class="menu-wrapper">
-        <button class="menu-btn" onclick="toggleMenu()">
-            <!-- 심플한 아이콘 형태로 변경 -->
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
-            MENU
-        </button>
+        <button class="menu-btn" onclick="toggleMenu()">☰ 카테고리</button>
         
         <!-- 버튼 누르면 아래로 떨어지는 드롭다운 팝업 메뉴 -->
         <div id="categoryDropdown" class="category-dropdown">
-          <div class="dropdown-header">TRAVEL INFO</div>
+          <div class="dropdown-header">카테고리 메뉴</div>
           <nav class="drop-nav">
-            <button onclick="openPage('taiwan')"><span>🇹🇼 대만 기본 정보</span></button>
-            <button onclick="openPage('exchange')"><span>💱 환율 계산기</span></button>  
-            <button onclick="openPage('flight')"><span>✈️ 항공편 정보</span></button>
-            <button onclick="openPage('myTour')"><span>🎒 나의 선택 관광</span></button>
-            <button onclick="openPage('dinner')"><span>🍽 만찬 안내</span></button>
-            <button onclick="openPage('request')"><span>📝 요청사항</span></button>
-            <button onclick="openPage('contact')"><span>📞 긴급 연락망</span></button>
+            <button onclick="openPage('taiwan')">🇹🇼 <span>대만의 모든 것</span></button>
+            <button onclick="openPage('exchange')">💱 <span>환율 계산기</span></button>  
+            <button onclick="openPage('flight')">✈️ <span>항공편 정보</span></button>
+            <button onclick="openPage('myTour')">🎒 <span>나의 선택 관광</span></button>
+            <button onclick="openPage('dinner')">🍽 <span>만찬 안내</span></button>
+            <button onclick="openPage('request')">📝 <span>요청사항</span></button>
+            <button onclick="openPage('contact')">📞 <span>긴급 연락망</span></button>
           </nav>
         </div>
       </div>
@@ -614,27 +461,27 @@
     <!-- 2️⃣ 메인 중앙 영역 (환영 문구 + DAY 버튼) -->
     <div class="home-main-content">
       <div class="welcome-text">
-        <p><strong id="employeeName"></strong> 님, 안녕하세요</p>
-        <h2>ISC Taiwan<br>Journey 2025</h2>
-        <div class="sub-date">2026.03.11 — 03.14</div>
+        <p><strong id="employeeName"></strong> 님, 환영합니다</p>
+        <h2>ISC Taiwan<br>여정의 시작</h2>
+        <span class="sub-date">2026.03.11 ~ 03.14</span>
       </div>
 
       <div class="day-buttons">
         <button class="day-btn" onclick="openPage('day_0')">
-          <span class="day-btn-header">Day 01</span>
-          <span class="day-title">인천 출발 &<br>시내 투어</span>
+          <span class="day-btn-header">DAY 1</span>
+          <span class="day-title">인천 출발 &<br>시내 하이라이트</span>
         </button>
         <button class="day-btn" onclick="openPage('day_1')">
-          <span class="day-btn-header">Day 02</span>
-          <span class="day-title">선택 관광 &<br>공식 만찬</span>
+          <span class="day-btn-header">DAY 2</span>
+          <span class="day-title">선택 관광 &<br>ISC 공식 만찬</span>
         </button>
         <button class="day-btn" onclick="openPage('day_2')">
-          <span class="day-btn-header">Day 03</span>
-          <span class="day-title">근교 여행 &<br>자유 일정</span>
+          <span class="day-btn-header">DAY 3</span>
+          <span class="day-title">근교 관광 &<br>자유 일정</span>
         </button>
         <button class="day-btn" onclick="openPage('day_3')">
-          <span class="day-btn-header">Day 04</span>
-          <span class="day-title">타이베이 출발<br>& 인천 귀국</span>
+          <span class="day-btn-header">DAY 4</span>
+          <span class="day-title">타이베이 출발 &<br>인천 귀국</span>
         </button>
       </div>
     </div>
@@ -651,7 +498,8 @@
       <div class="detail-header">
         <div class="detail-title" id="detailTitle"></div>
         <div class="detail-actions">
-          <button class="btn-home" onclick="goHome()">닫기</button>
+          <button class="btn-home" onclick="goHome()">홈으로</button>
+          <button class="btn-back" onclick="goBack()">뒤로가기</button>
         </div>
       </div>
     <div id="detailContent"></div>
@@ -672,81 +520,11 @@ function toggleMenu() {
   document.body.classList.toggle('menu-open');
 }
 
-/* ================= 🔥 [수정] 선택관광 템플릿: 프리미엄 티켓 스타일 ================= */
+/* ================= 선택관광 템플릿 ================= */
 const myTourTemplates = [
-  { 
-    keyword: "티엔라이", 
-    html: `
-    <div class="tour-card-new type-nature">
-        <div class="card-bg-icon">♨️</div>
-        <div class="card-content">
-            <span class="opt-badge">Option 01</span>
-            <h3>티엔라이 온천 힐링</h3>
-            <p class="card-desc">양명산 국립공원의 웅장한 자연과 함께하는<br>최고급 유황 온천 체험</p>
-            <div class="card-tags">
-                <span>🚌 전용차량</span>
-                <span>🎟 입장권</span>
-                <span>🧼 온천욕</span>
-            </div>
-        </div>
-        <div class="card-bottom">
-            <div class="meal-info">
-                <span class="meal-label">LUNCH</span>
-                <span class="meal-value">🦆 베이징덕 (포함)</span>
-            </div>
-        </div>
-    </div>`
-  },
-  { 
-    keyword: "고궁박물관", 
-    html: `
-    <div class="tour-card-new type-culture">
-        <div class="card-bg-icon">🏛️</div>
-        <div class="card-content">
-            <span class="opt-badge">Option 02</span>
-            <h3>고궁박물관 역사 기행</h3>
-            <p class="card-desc">세계 4대 박물관, 중국 5천년 역사의 정수<br>대만 고궁박물관 도슨트 투어</p>
-            <div class="card-tags">
-                <span>🚌 전용차량</span>
-                <span>🎟 입장권</span>
-                <span>🎧 도슨트</span>
-            </div>
-        </div>
-        <div class="card-bottom">
-            <div class="meal-info">
-                <span class="meal-label">LUNCH</span>
-                <span class="meal-value">🦆 베이징덕 (포함)</span>
-            </div>
-        </div>
-    </div>`
-  },
-  { 
-    keyword: "자유일정", 
-    html: `
-    <div class="tour-card-new type-free">
-        <div class="card-bg-icon">🗺️</div>
-        <div class="card-content">
-            <span class="opt-badge">Option 03</span>
-            <h3>자유로운 대만 여행</h3>
-            <p class="card-desc">가이드와 차량 없이 내가 만드는 일정<br>자유롭게 즐기는 타이베이</p>
-            <div class="card-tags">
-                <span>🦶 자유일정</span>
-                <span>💸 중식비 지원</span>
-            </div>
-        </div>
-        <div class="card-bottom">
-            <div class="meal-info">
-                <span class="meal-label">LUNCH SUPPORT</span>
-                <span class="meal-value status-text pending">미지급 상태</span>
-            </div>
-             <!-- Meal Check Logic Container -->
-            <div class="meal-check" data-tour="자유일정" style="border:none; padding:0; margin:0;">
-                <span class="status" style="display:none;"></span> <!-- Hidden logic element -->
-                <button class="check-btn" onclick="handleMealClick(this)">수령 확인</button>
-            </div>
-        </div>
-    </div>`
-  }
+  { keyword: "티엔라이", html: `<div class="tour-card green"><div class="tour-header"><span class="badge">선택 1안</span><h3>티엔라이 온천 힐링</h3><span class="icon">🌿</span></div><p class="tour-desc">티엔라이 온천욕 & 양명산 국립공원 자락의 최고급 유황 온천</p><div class="meal-box"><strong>🍽 점심 식사</strong><span>베이징덕</span><em class="included">식사 포함</em></div><div class="tour-footer"><span>🎫 입장권</span><span>🚌 전용차량</span><span>🍴 중식</span></div></div>` },
+  { keyword: "고궁박물관", html: `<div class="tour-card green"><div class="tour-header"><span class="badge">선택 2안</span><h3>고궁박물관 역사 기행</h3><span class="icon">🏛️</span></div><p class="tour-desc">중국 역사의 정수, 대만 고궁박물관</p><div class="meal-box"><strong>🍽 점심 식사</strong><span>베이징덕</span><em class="included">식사 포함</em></div><div class="tour-footer"><span>🎫 입장권</span><span>🚌 전용차량</span><span>🍴 중식</span></div></div>` },
+  { keyword: "자유일정", html: `<div class="tour-card red"><div class="tour-header"><span class="badge">선택 3안</span><h3>자유로운 대만 여행</h3><span class="icon">🇹🇼</span></div><p class="tour-desc">자유일정 대만</p><div class="meal-box"><strong>🍽 점심 식사</strong><span>자유식</span><em class="cash">현금 지급</em></div><div class="meal-check" data-tour="자유일정"><span class="status pending">중식비 미지급</span><button onclick="handleMealClick(this)">지급 확인</button></div><div class="tour-footer"><span>🚌 자유일정</span><span>🍜 중식비</span></div></div>` }
 ];
 
 /* ================= 선택관광 렌더링 함수 ================= */
@@ -985,52 +763,37 @@ fetch("people/employees.json?ts=" + Date.now())
     tryAutoLogin();
   });
 
-/* ================= 중식비 지급 로직 (UI 수정 대응) ================= */
+/* ================= 중식비 지급 로직 ================= */
 function handleMealClick(btn) {
   const wrap = btn.closest(".meal-check");
   const tour = wrap.dataset.tour;
-  // 기존 로직과 UI 매핑
-  const container = btn.closest('.tour-card-new');
-  const statusText = container.querySelector('.status-text');
-
-  const isDone = btn.classList.contains("done");
-  if (isDone) showMealDetail(wrap, btn, statusText);
-  else approveMeal(wrap, tour, btn, statusText);
+  const isDone = wrap.classList.contains("done");
+  if (isDone) showMealDetail(wrap);
+  else approveMeal(wrap, tour);
 }
 
-function approveMeal(wrap, tour, btn, statusText) {
+function approveMeal(wrap, tour) {
   const pw = prompt("관리자 비밀번호 입력");
   if (pw !== ADMIN_PASSWORD) { alert("비밀번호가 올바르지 않습니다."); return; }
   const time = nowKSTString();
-  setMealUI(wrap, "DONE", time, btn, statusText);
+  setMealUI(wrap, "DONE", time);
   saveMealPaid(currentUser.id, tour, time);
   logMealPaymentToSheet({ action: "APPROVE", tour, time });
 }
 
-function setMealUI(wrap, mode, time = "", btn, statusText) {
-    if(!btn) btn = wrap.querySelector("button");
-    if(!statusText) statusText = wrap.closest('.tour-card-new').querySelector('.status-text');
-
+function setMealUI(wrap, mode, time = "") {
+  const status = wrap.querySelector(".status");
+  const btn = wrap.querySelector("button");
   if (mode === "DONE") {
     wrap.classList.add("done");
-    if(statusText) {
-        statusText.textContent = "지급 완료";
-        statusText.classList.remove("pending");
-        statusText.classList.add("done");
-    }
-    wrap.dataset.time = time; 
-    btn.textContent = "확인 완료";
-    btn.classList.add("done");
+    status.textContent = "중식비 지급 완료";
+    status.classList.remove("pending"); status.classList.add("done");
+    wrap.dataset.time = time; btn.textContent = "지급 확인";
   } else {
     wrap.classList.remove("done");
-    if(statusText) {
-        statusText.textContent = "미지급 상태";
-        statusText.classList.add("pending");
-        statusText.classList.remove("done");
-    }
-    wrap.dataset.time = ""; 
-    btn.textContent = "수령 확인";
-    btn.classList.remove("done");
+    status.textContent = "중식비 미지급";
+    status.classList.add("pending"); status.classList.remove("done");
+    wrap.dataset.time = ""; btn.textContent = "지급 확인";
   }
 }
     
@@ -1039,7 +802,7 @@ function saveMealPaid(userId, tour, time) { localStorage.setItem(mealKey(userId,
 function loadMealPaid(userId, tour) { const raw = localStorage.getItem(mealKey(userId, tour)); return raw ? JSON.parse(raw) : null; }
 function removeMealPaid(userId, tour) { localStorage.removeItem(mealKey(userId, tour)); }
 
-function showMealDetail(wrap, btn, statusText) {
+function showMealDetail(wrap) {
   const time = wrap.dataset.time;
   const pw = prompt(`지급 완료 시각\n${time}\n\n취소하려면 관리자 비밀번호 입력\n(확인만 보려면 취소)`);
   if (!pw) return;
@@ -1047,7 +810,7 @@ function showMealDetail(wrap, btn, statusText) {
   if (confirm("지급을 취소하시겠습니까?")) {
     const tour = wrap.dataset.tour;
     const cancelTime = nowKSTString();
-    setMealUI(wrap, "PENDING", "", btn, statusText);
+    setMealUI(wrap, "PENDING");
     removeMealPaid(currentUser.id, tour);
     logMealPaymentToSheet({ action: "CANCEL", tour, time: cancelTime });
   }
@@ -1057,7 +820,7 @@ function nowKSTString() {
   return new Intl.DateTimeFormat("ko-KR", { timeZone: "Asia/Seoul", year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", second: "2-digit" }).format(new Date());
 }
 
-const MEAL_SHEET_URL = "https://script.google.com/macros/s/AKfycbx2tVkT00Z8uXQWl6EeTIUUhZ3_NJHx3JDqSCHC5oJWkUCm0OtcTmaV6g20cNKoh0no9w/exec";
+const MEAL_SHEET_URL = "[https://script.google.com/macros/s/AKfycbx2tVkT00Z8uXQWl6EeTIUUhZ3_NJHx3JDqSCHC5oJWkUCm0OtcTmaV6g20cNKoh0no9w/exec](https://script.google.com/macros/s/AKfycbx2tVkT00Z8uXQWl6EeTIUUhZ3_NJHx3JDqSCHC5oJWkUCm0OtcTmaV6g20cNKoh0no9w/exec)";
 
 function logMealPaymentToSheet(payload) {
   if (!currentUser) return;
@@ -1082,8 +845,20 @@ function login() {
   // 로그인 화면 제거
   document.getElementById("loginSection").style.display = "none";
 
-  // 메인 화면 즉시 표시 (스플래시 제거)
-  document.getElementById("mainSection").style.display = "block";
+  // 📱 모바일: 스플래시 2초
+  if (window.innerWidth <= 767) {
+    const splash = document.getElementById("mobileSplash");
+    splash.style.display = "flex";
+
+    setTimeout(() => {
+      splash.style.display = "none";
+      document.getElementById("mainSection").style.display = "block";
+    }, 2000);
+  } 
+  // 🖥 데스크탑: 즉시 진입
+  else {
+    document.getElementById("mainSection").style.display = "block";
+  }
 
   document.getElementById("employeeName").textContent = user.name;
   document.body.classList.add("logged-in");
@@ -1270,22 +1045,12 @@ function openPage(type, fromHistory = false) {
     t.textContent = "🎒 나의 선택 관광";
     c.innerHTML = `<div class="detail-content-wrap"><div class="mytour-wrap">${renderMyTour()}</div></div>`;
     setTimeout(() => {
-      // ✅ [수정] 새 구조에 맞춰 meal-check 찾는 로직 업데이트
       const wrap = document.querySelector('.meal-check[data-tour="자유일정"]');
       if (!wrap) return;
-      
-      const btn = wrap.querySelector("button");
-      // UI 업데이트를 위해 상위 카드 컨테이너의 status text 찾기
-      const card = wrap.closest('.tour-card-new');
-      const statusText = card ? card.querySelector('.status-text') : null;
-      
-      syncMealStatusFromServer(currentUser.id, "자유일정", wrap).then(() => {
-          const saved = loadMealPaid(currentUser.id, "자유일정");
-          if (!wrap.classList.contains("done") && saved?.time) {
-              setMealUI(wrap, "DONE", saved.time, btn, statusText);
-          }
-      });
-    }, 100);
+      syncMealStatusFromServer(currentUser.id, "자유일정", wrap);
+      const saved = loadMealPaid(currentUser.id, "자유일정");
+      if (!wrap.classList.contains("done") && saved?.time) setMealUI(wrap, "DONE", saved.time);
+    }, 0);
   }
 
   if (type === "taiwan") {
@@ -1330,12 +1095,8 @@ function openPage(type, fromHistory = false) {
           </div>
         </div>
 
-        <div class="exchange-row">
-            환율: <strong>1 TWD ≈ <span id="taiwanFxRate">...</span>원</strong>
-            <br>
-            <span style="font-size:11px; opacity:0.8;">(<span id="taiwanFxTime">-</span> 기준)</span>
-        </div>
-        <p class="exchange-note" style="text-align:center; font-size:13px; color:var(--text-sub);">※ 실시간 환율 정보를 불러옵니다.</p>
+        <div class="exchange-row">환율: <strong>1 TWD ≈ 42원 내외</strong></div>
+        <p class="exchange-note" style="text-align:center; font-size:13px; color:var(--text-sub);">※ 환율은 실시간 변동될 수 있습니다</p>
         
         <div class="day-card" style="margin-top:20px;">
           <h3 class="section-title">기본 정보</h3>
@@ -1356,7 +1117,6 @@ function openPage(type, fromHistory = false) {
         </div>
       </div>`;
     startWorldClock();
-    updateTaiwanRate();
   }
 
   if (type === "exchange") {
@@ -1394,15 +1154,9 @@ async function syncMealStatusFromServer(userId, tour, wrap) {
   const url = `${MEAL_SHEET_URL}?mode=customerAdmin&id=${userId}`;
   const res = await fetch(url);
   const data = await res.json();
-  
-  // UI 요소 찾기
-  const btn = wrap.querySelector("button");
-  const card = wrap.closest('.tour-card-new');
-  const statusText = card ? card.querySelector('.status-text') : null;
-
   const status = data.mealMap?.[tour];
-  if (status === "APPROVE") setMealUI(wrap, "DONE", "서버 기준", btn, statusText);
-  else setMealUI(wrap, "PENDING", "", btn, statusText);
+  if (status === "APPROVE") setMealUI(wrap, "DONE", "서버 기준");
+  else setMealUI(wrap, "PENDING");
 }
 
 /* ================= 홈으로 ================= */
@@ -1455,23 +1209,6 @@ function startWorldClock() {
   setInterval(updateTime, 1000);
 }
 
-async function updateTaiwanRate() {
-  const rateEl = document.getElementById("taiwanFxRate");
-  const timeEl = document.getElementById("taiwanFxTime");
-  if (!rateEl) return;
-  
-  try {
-    const data = await getFxRate(); // Use existing function
-    if (data && data.rate) {
-      rateEl.textContent = fxFmt(data.rate);
-      timeEl.textContent = data.updatedUtc ? data.updatedUtc.replace("UTC", "").trim() : "방금";
-    }
-  } catch (e) {
-    console.error(e);
-    rateEl.textContent = "42"; // Fallback
-  }
-}
-
 const FX_CACHE_KEY = "fx_twd_krw_cache_v1";
 const FX_CACHE_MS = 6 * 60 * 60 * 1000; 
 
@@ -1489,7 +1226,7 @@ function fxFmt(n) {
 }
 
 async function fetchTwdToKrwRate() {
-  const url = "https://open.er-api.com/v6/latest/USD";
+  const url = "[https://open.er-api.com/v6/latest/USD](https://open.er-api.com/v6/latest/USD)";
   const res = await fetch(url, { cache: "no-store" });
   if (!res.ok) throw new Error("환율 API 실패: " + res.status);
   const data = await res.json();
