@@ -501,6 +501,8 @@
             <button onclick="openPage('dinner')">🍽 <span>만찬 안내</span></button>
             <button onclick="openPage('request')">📝 <span>요청사항</span></button>
             <button onclick="openPage('contact')">📞 <span>긴급 연락망</span></button>
+            <!-- ✅ [수정] 2. 로그아웃 버튼 추가 -->
+            <button onclick="logout()" style="border-top:1px solid #eee; margin-top:4px; color:#e53e3e;">🚪 <span>로그아웃</span></button>
           </nav>
         </div>
       </div>
@@ -957,6 +959,23 @@ function login() {
   document.body.classList.add("logged-in");
 }
 
+/* ================= 로그아웃 (🔥 수정: 신규 추가) ================= */
+function logout() {
+  if(!confirm("로그아웃 하시겠습니까?")) return;
+  
+  currentUser = null;
+  document.body.classList.remove("logged-in");
+  document.body.classList.remove("menu-open");
+  
+  // 메인 숨기고 로그인 화면 보이기
+  document.getElementById("mainSection").style.display = "none";
+  document.getElementById("loginSection").style.display = "block";
+  document.getElementById("employeeId").value = "";
+  
+  // 열려있는 상세페이지 닫기
+  goHome(); 
+}
+
 function tryAutoLogin() {
   const params = new URLSearchParams(window.location.search);
   const eid = params.get("eid");
@@ -1188,7 +1207,11 @@ function openPage(type, fromHistory = false) {
           </div>
         </div>
 
-        <div class="exchange-row">환율: <strong>1 TWD ≈ 42원 내외</strong></div>
+        <!-- ✅ [수정] 1. 실시간 환율 정보 표시 -->
+        <div class="exchange-row">
+            실시간 환율: <strong>1 TWD ≈ <span id="twFxRate">로딩중..</span>원</strong>
+            <br><span style="font-size:12px; opacity:0.8;">(업데이트: <span id="twFxTime">-</span>)</span>
+        </div>
         <p class="exchange-note" style="text-align:center; font-size:13px; color:var(--text-sub);">※ 환율은 실시간 변동될 수 있습니다</p>
         
         <div class="day-card" style="margin-top:20px;">
@@ -1210,6 +1233,14 @@ function openPage(type, fromHistory = false) {
         </div>
       </div>`;
     startWorldClock();
+    
+    // ✅ [수정] 1-2. 환율 API 호출
+    getFxRate().then(data => {
+        const r = document.getElementById("twFxRate");
+        const t = document.getElementById("twFxTime");
+        if(r) r.textContent = fxFmt(data.rate);
+        if(t) t.textContent = data.updatedUtc || "방금";
+    });
   }
 
   if (type === "exchange") {
