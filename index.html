@@ -367,42 +367,69 @@
       position: relative;
       color: #fff;
       transition: transform 0.2s;
+      
+      /* ✅ 배경 이미지 공통 속성 추가 */
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
     }
     .tour-card-new:active { transform: scale(0.98); }
 
-    /* 테마별 그라데이션 */
-    .type-nature { background: linear-gradient(135deg, #10b981 0%, #047857 100%); } /* 티엔라이: 에메랄드 */
-    .type-culture { background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%); } /* 박물관: 로얄블루 */
-    .type-free { background: linear-gradient(135deg, #f97316 0%, #c2410c 100%); }   /* 자유: 오렌지 */
+    /* ✅ 테마별 배경 이미지 (Overlay 포함) */
+    
+    /* 1. 티엔라이 온천: 자연/숲/온천 느낌 */
+    .type-nature { 
+        background: linear-gradient(180deg, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.7) 100%), 
+        url('https://images.unsplash.com/photo-1563805042-7684c019e1cb?auto=format&fit=crop&w=800&q=80'); 
+    } 
+
+    /* 2. 고궁박물관: 전통 건축/박물관 느낌 */
+    .type-culture { 
+        background: linear-gradient(180deg, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.7) 100%), 
+        url('https://images.unsplash.com/photo-1596706565538-4e8979c37256?auto=format&fit=crop&w=800&q=80'); 
+    } 
+
+    /* 3. 자유여행: 타이베이 101/도시 야경 느낌 */
+    .type-free { 
+        background: linear-gradient(180deg, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.7) 100%), 
+        url('https://images.unsplash.com/photo-1470004914212-05527e49370b?auto=format&fit=crop&w=800&q=80'); 
+    }
     
     .card-bg-icon {
-        position: absolute; right: -15px; top: -15px;
-        font-size: 90px; opacity: 0.15; 
-        pointer-events: none; filter: grayscale(100%) brightness(200%);
+        position: absolute; right: -10px; top: -10px;
+        font-size: 80px; 
+        /* ✅ 배경 사진이 있으므로 아이콘은 더 은은하게 */
+        opacity: 0.15; 
+        pointer-events: none; 
+        filter: grayscale(100%);
+        mix-blend-mode: overlay; /* 배경과 자연스럽게 섞이도록 */
     }
 
     .card-content { padding: 24px; position: relative; z-index: 1;}
     .opt-badge {
-        background: rgba(255,255,255,0.25); backdrop-filter: blur(4px);
+        background: rgba(0,0,0,0.3); backdrop-filter: blur(4px);
         padding: 5px 12px; border-radius: 100px; 
         font-size: 12px; font-weight: 700; letter-spacing: 0.5px;
         display: inline-block; margin-bottom: 10px;
-        border: 1px solid rgba(255,255,255,0.2);
+        border: 1px solid rgba(255,255,255,0.3);
     }
     
     .tour-card-new h3 {
         margin: 0 0 8px; font-size: 24px; font-weight: 800; line-height: 1.2;
-        text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        text-shadow: 0 2px 10px rgba(0,0,0,0.5); /* 글씨 그림자 강화 */
     }
     .card-desc {
         margin: 0 0 20px; font-size: 14px; opacity: 0.95; line-height: 1.5; font-weight: 400;
         word-break: keep-all;
+        text-shadow: 0 1px 4px rgba(0,0,0,0.5); /* 글씨 그림자 강화 */
     }
     
     .card-tags { display: flex; gap: 8px; flex-wrap: wrap; }
     .card-tags span {
-        background: rgba(0,0,0,0.2); padding: 6px 10px; border-radius: 8px;
+        background: rgba(255,255,255,0.15); padding: 6px 10px; border-radius: 8px;
         font-size: 12px; font-weight: 600; display: flex; align-items: center; gap: 4px;
+        backdrop-filter: blur(4px);
+        border: 1px solid rgba(255,255,255,0.1);
     }
 
     /* 하단 정보 (흰색 영역) */
