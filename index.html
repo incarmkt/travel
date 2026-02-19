@@ -6,7 +6,7 @@
   <title>2025 ISC 대만 여행</title>
 
   <!-- ✅ [1] 폰트 CDN 추가 (Pretendard) -->
-  <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+  <link rel="stylesheet" as="style" crossorigin href="[https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css](https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css)" />
 
   <!-- 프리미엄 테마 CSS -->
   <style>
@@ -235,7 +235,7 @@
     .day-btn:active { background: rgba(255,255,255,0.2); transform: scale(0.96); }
 
     /* =========================================================
-       [6] Bottom Sheet (Detail Page)
+       [6] Bottom Sheet (Detail Page) - 🔥 수정된 부분
     ========================================================= */
     #detailPage {
       position: fixed; inset: 0; z-index: 3000;
@@ -252,10 +252,15 @@
     
     .detail-sheet__inner {
       position: absolute; bottom: 0; left: 0; right: 0;
-      height: 90vh; /* 높이 설정 */
-      height: 90dvh;
+      
+      /* ✅ 수정: 높이를 100%로 변경하여 화면 꽉 채움 */
+      height: 100%; 
+      height: 100dvh;
       background: var(--bg-main);
-      border-radius: var(--sheet-radius) var(--sheet-radius) 0 0;
+      
+      /* ✅ 수정: 꽉 찬 화면이므로 둥근 모서리 제거 */
+      border-radius: 0;
+      
       display: flex; flex-direction: column;
       transform: translateY(100%); 
       transition: transform 0.4s cubic-bezier(0.32, 0.72, 0, 1);
@@ -267,7 +272,11 @@
     .detail-header {
       display: flex; justify-content: space-between; align-items: center;
       padding: 20px 24px; background: #fff;
-      border-radius: var(--sheet-radius) var(--sheet-radius) 0 0;
+      
+      /* ✅ 수정: 노치 영역 대응 및 모서리 제거 */
+      padding-top: max(20px, env(safe-area-inset-top));
+      border-radius: 0; 
+      
       border-bottom: 1px solid var(--border-light); flex-shrink: 0; 
     }
     .detail-title { font-size: 18px; font-weight: 700; color: var(--primary-color); }
@@ -376,7 +385,7 @@
   
 <!-- ✅ 시작부분 로컬 파일 경로 그대로 유지 -->
 <div id="mobileSplash" class="mobile-splash" style="display:none;">
-  <img src="assets/images/iscposter.jpg" alt="ISC Poster" onerror="this.src='https://images.unsplash.com/photo-1577717903315-1691ae25ab3f?auto=format&fit=crop&w=800&q=80'">
+  <img src="assets/images/iscposter.jpg" alt="ISC Poster" onerror="this.src='[https://images.unsplash.com/photo-1577717903315-1691ae25ab3f?auto=format&fit=crop&w=800&q=80](https://images.unsplash.com/photo-1577717903315-1691ae25ab3f?auto=format&fit=crop&w=800&q=80)'">
 </div>
   
 <!-- ================= LOGIN ================= -->
@@ -790,7 +799,7 @@ function nowKSTString() {
   return new Intl.DateTimeFormat("ko-KR", { timeZone: "Asia/Seoul", year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", second: "2-digit" }).format(new Date());
 }
 
-const MEAL_SHEET_URL = "https://script.google.com/macros/s/AKfycbx2tVkT00Z8uXQWl6EeTIUUhZ3_NJHx3JDqSCHC5oJWkUCm0OtcTmaV6g20cNKoh0no9w/exec";
+const MEAL_SHEET_URL = "[https://script.google.com/macros/s/AKfycbx2tVkT00Z8uXQWl6EeTIUUhZ3_NJHx3JDqSCHC5oJWkUCm0OtcTmaV6g20cNKoh0no9w/exec](https://script.google.com/macros/s/AKfycbx2tVkT00Z8uXQWl6EeTIUUhZ3_NJHx3JDqSCHC5oJWkUCm0OtcTmaV6g20cNKoh0no9w/exec)";
 
 function logMealPaymentToSheet(payload) {
   if (!currentUser) return;
@@ -1196,7 +1205,7 @@ function fxFmt(n) {
 }
 
 async function fetchTwdToKrwRate() {
-  const url = "https://open.er-api.com/v6/latest/USD";
+  const url = "[https://open.er-api.com/v6/latest/USD](https://open.er-api.com/v6/latest/USD)";
   const res = await fetch(url, { cache: "no-store" });
   if (!res.ok) throw new Error("환율 API 실패: " + res.status);
   const data = await res.json();
