@@ -296,19 +296,27 @@ document.getElementById("btnCloseStudio").addEventListener("click", () => {
 
 
 /* ==============================
-   3. 엑셀 데이터 양식 생성 및 다운로드
+   3. 엑셀 데이터 양식 생성 및 다운로드 (🔥 개선: 실제 데이터 기반 출력)
 ============================== */
 document.getElementById('btnDownloadTemplate').addEventListener('click', () => {
-  // 샘플 데이터 배열
-  const wsData = [
-    ["사번", "이름", "소속"],
-    ["10001", "홍길동", "개발팀"],
-    ["10002", "김철수", "디자인팀"],
-    ["10003", "이영희", "경영지원"]
-  ];
+  // 헤더
+  const wsData = [ ["사번", "이름", "소속"] ];
+  
+  // 현재 로드된 실제 JSON 데이터(employees)가 있다면 그 리스트를 그대로 빼서 엑셀로 만들어 줌
+  if(employees && employees.length > 0) {
+    employees.forEach(emp => {
+      // 숫자형 사번이라도 String으로 변환해서 넣기 (엑셀에서 텍스트로 인식하도록 유도)
+      wsData.push([String(emp.id).trim(), emp.name || "", emp.department || ""]);
+    });
+  } else {
+    // 데이터가 아예 없을 경우에만 예시 데이터 생성
+    wsData.push(["10001", "홍길동", "개발본부"]);
+    wsData.push(["10002", "김철수", "디자인팀"]);
+  }
+
   // 워크시트 생성
   const ws = XLSX.utils.aoa_to_sheet(wsData);
-  // 열 너비 살짝 조절
+  // 열 너비 조절
   ws['!cols'] = [{wch: 15}, {wch: 15}, {wch: 20}];
   // 워크북 생성
   const wb = XLSX.utils.book_new();
@@ -319,7 +327,7 @@ document.getElementById('btnDownloadTemplate').addEventListener('click', () => {
 
 
 /* ==============================
-   4. 엑셀 업로드 처리 (데이터 덮어쓰기)
+   4. 엑셀 업로드 처리 (데이터 덮어쓰기 - 🔥 개선: 숫자 강제 변환 방지)
 ============================== */
 document.getElementById('excelInput').addEventListener('change', function(e) {
   const file = e.target.files[0];
@@ -334,7 +342,9 @@ document.getElementById('excelInput').addEventListener('change', function(e) {
       const data = new Uint8Array(evt.target.result);
       const workbook = XLSX.read(data, {type: 'array'});
       const worksheet = workbook.Sheets[workbook.SheetNames[0]];
-      const jsonData = XLSX.utils.sheet_to_json(worksheet);
+      
+      // 🔥 raw: false 옵션을 줘서 엑셀의 숫자를 무조건 "보이는 텍스트 그대로(String)" 읽어오게 강제
+      const jsonData = XLSX.utils.sheet_to_json(worksheet, { raw: false, defval: "" });
 
       let matchCount = 0;
 
@@ -350,7 +360,8 @@ document.getElementById('excelInput').addEventListener('change', function(e) {
         const excelDept = getVal(['department', '소속', '부서', '팀']);
 
         if (excelId) {
-          const targetEmp = employees.find(e => String(e.id).trim() === excelId);
+          // 🔥 대소문자 및 양옆 공백 완전 무시하고 텍스트로 비교
+          const targetEmp = employees.find(e => String(e.id).trim().toLowerCase() === excelId.toLowerCase());
           if (targetEmp) {
             if(excelName) targetEmp.name = excelName;
             if(excelDept) targetEmp.department = excelDept;
@@ -360,11 +371,11 @@ document.getElementById('excelInput').addEventListener('change', function(e) {
       });
 
       if(matchCount > 0) {
-        renderGrid(employees);
-        statusTxt.textContent = `✅ ${matchCount}명 매칭 완료!`;
+        renderGrid(employees); // 메인 리스트 갱신
+        statusTxt.textContent = `✅ ${matchCount}명 완벽 매칭! (새 창을 닫아도 반영됨)`;
         statusTxt.style.color = "#10b981";
       } else {
-        statusTxt.textContent = `❌ 일치하는 사번 없음`;
+        statusTxt.textContent = `❌ 일치하는 사번 없음 (양식을 다시 다운받아 확인해보세요)`;
         statusTxt.style.color = "#ef4444";
       }
     } catch(err) {
