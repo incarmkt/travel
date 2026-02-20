@@ -2,1448 +2,746 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>2025 ISC 대만 여행</title>
+  <title>ISC 직원 QR 및 명찰 생성기</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <!-- ✅ [1] 폰트 CDN 추가 (Pretendard) -->
+  <!-- 고해상도 웹 폰트 (Pretendard) -->
   <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
 
-  <!-- 프리미엄 테마 CSS -->
+  <!-- 라이브러리 (QR, ZIP, 엑셀, PDF) -->
+  <script src="https://cdn.jsdelivr.net/npm/qrcodejs/qrcode.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/file-saver@2.0.5/dist/FileSaver.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <!-- 🔥 PDF 생성을 위한 라이브러리 추가 -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
   <style>
-    /* =========================================================
-       [1] CSS 변수 & 초기화 (Premium Palette)
-    ========================================================= */
-    :root {
-      --primary-color: #1a233a; 
-      --accent-color: #c5a059;  
-      --bg-main: #f5f7fa;        
-      --card-bg: #ffffff;
-      --text-main: #2d3748;
-      --text-sub: #718096;
-      --border-light: #edf2f7;
-      --sheet-radius: 24px;
-      --safe-bottom: env(safe-area-inset-bottom, 20px);
-    }
-
-    * {
-      box-sizing: border-box;
-      -webkit-tap-highlight-color: transparent; 
-      /* ✅ 폰트 적용 */
-      font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    }
-
-    html, body {
-      margin: 0;
+    body{
+      font-family: 'Pretendard', system-ui, -apple-system, sans-serif;
+      background:#f6f7fb;
+      margin:0;
       padding: 0;
-      background-color: var(--primary-color);
-      color: var(--text-main);
-      overscroll-behavior: none; 
-      /* ✅ 모바일 꽉 채우기 핵심 설정 */
-      width: 100%;
-      height: 100%;
-      overflow: hidden; /* 이중 스크롤 방지 */
     }
+    
+    /* ================= MAIN VIEW ================= */
+    #mainView { padding: 20px; }
+    
+    .topbar{ display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin-bottom:16px; }
+    h1{ margin:0; }
+    .muted{ color:#667085; font-size:13px; margin:6px 0 0; }
+    
+    .btn{ border:0; border-radius:10px; padding:12px 16px; cursor:pointer; font-weight:700; font-size: 14px; color:#fff; transition: all 0.2s; }
+    .btn:hover { filter: brightness(0.9); }
+    .btn.primary { background: #3b82f6; }
+    .btn.secondary { background: #fff; color: #111827; border: 1px solid #e5e7eb; }
+    .btn.excel { background: #10b981; }
+    .btn.dark { background: #111827; }
 
-    /* =========================================================
-       [2] 스플래시 & 로그인
-    ========================================================= */
-    /* 스플래시 스타일은 유지하되 로직에서만 제거 */
-    .mobile-splash {
-      position: fixed; inset: 0; z-index: 9999;
-      background: var(--primary-color);
-      display: flex; align-items: center; justify-content: center;
-    }
-    .mobile-splash img { width: 100%; height: 100%; object-fit: cover; opacity: 0.8; }
-
-    .login-hero {
-      width: 100%;
-      /* ✅ 모바일 주소창 대응 높이 설정 */
-      height: 100vh;
-      height: 100dvh; 
-      background: url('assets/images/taiwan.jpg') center/cover no-repeat;
-      /* ✅ 배경 고정 (스크롤 시 흔들림 방지) */
+    .grid{ display:grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap:14px; margin-top: 20px;}
+    .card{ background:#fff; border-radius:14px; padding:16px 12px; text-align:center; box-shadow:0 4px 10px rgba(0,0,0,.05); border:1px solid #eef2f7; }
+    .name{ font-weight:800; margin-top:12px; font-size: 16px; }
+    .id{ font-size:12px; color:#6b7280; margin-top:4px; }
+    .dept { font-size:13px; color:#3b82f6; font-weight: 600; margin-top:2px; }
+    
+    .status{ margin-top:10px; margin-bottom:20px; font-size:13px; color:#111827; background:#fff; border:1px solid #e5e7eb; border-radius:12px; padding:10px 12px; display: none; }
+    .status.good{ border-color:#bbf7d0; background:#f0fdf4; color:#166534; display: block; }
+    .status.bad{ border-color:#fecaca; background:#fef2f2; color:#991b1b; display: block; }
+    
+    /* ================= STUDIO VIEW (새 창 느낌의 전체화면) ================= */
+    #studioView {
+      display: none; /* 기본 숨김 */
       position: fixed;
-      top: 0; left: 0;
-      z-index: 2000;
-    }
-    .hero-overlay {
-      position: absolute; inset: 0;
-      background: linear-gradient(135deg, rgba(26,35,58,0.85) 0%, rgba(0,0,0,0.6) 100%);
-      display: flex; align-items: center; justify-content: center;
-      padding: 20px;
-    }
-    .login-box {
-      background: rgba(255, 255, 255, 0.95);
-      backdrop-filter: blur(10px);
-      padding: 40px 24px;
-      border-radius: 20px;
-      width: 100%;
-      max-width: 380px;
-      text-align: center;
-      box-shadow: 0 20px 40px rgba(0,0,0,0.2);
-    }
-    
-    /* 🔥 [수정] 로그인 화면 로고 스타일: 비율 유지 */
-    .hero-logo { 
-        width: 140px;       /* 적절한 가로 크기 설정 */
-        height: auto;       /* 높이는 자동 */
-        object-fit: contain;/* 비율 유지하며 표시 */
-        margin-bottom: 12px;
-        display: block;
-        margin-left: auto;
-        margin-right: auto;
-    }
-
-    .login-box h2 { color: var(--primary-color); margin: 0 0 5px; font-weight: 800; }
-    .hero-desc { color: var(--text-sub); margin-bottom: 24px; font-size: 14px; }
-    .login-box input {
-      width: 100%; padding: 14px; border: 1px solid var(--border-light);
-      border-radius: 12px; font-size: 16px; margin-bottom: 16px;
-      text-align: center; transition: border 0.3s;
-    }
-    .login-box input:focus { border-color: var(--accent-color); outline: none; }
-    .primary-btn {
-      width: 100%; padding: 15px; border: none; border-radius: 12px;
-      background: var(--primary-color); color: #fff; font-size: 16px; font-weight: 600;
-      cursor: pointer; transition: background 0.3s, transform 0.1s;
-    }
-    .primary-btn:active { transform: scale(0.98); }
-    .error { color: #e53e3e; font-size: 13px; margin-top: 12px; min-height: 18px; }
-
-    /* =========================================================
-       [3] 홈 화면 (단일 풀스크린 대시보드 구조)
-    ========================================================= */
-    .main-bg { 
-        width: 100%; 
-        height: 100%; 
-        overflow: hidden; 
-    }
-    
-    .home-view {
-      width: 100%;
-      /* ✅ 모바일 주소창 대응 */
-      height: 100vh;
-      height: 100dvh;
-      background: url('assets/images/home2.jpg') center/cover no-repeat;
-      position: relative;
-      display: flex;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: #eef2f7;
+      z-index: 9999;
       flex-direction: column;
+      height: 100vh;
+      overflow: hidden;
     }
     
-    .home-overlay {
-      position: absolute; inset: 0;
-      /* ✅ 어둡게 깔린 배경 필터 제거 (투명하게 처리) */
-      background: transparent;
-      z-index: 1;
+    /* 스튜디오 상단 컨트롤 패널 */
+    .studio-header {
+      background: #fff;
+      padding: 16px 24px;
+      border-bottom: 1px solid #e5e7eb;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+      z-index: 10;
     }
-
-    /* 상단 헤더 */
-    .home-header {
-      position: relative; z-index: 100;
-      display: flex; justify-content: space-between; align-items: center;
-      padding: 20px 24px;
-      /* ✅ 아이폰 노치 영역 대응 */
-      padding-top: max(20px, env(safe-area-inset-top));
+    .studio-title h2 { margin: 0; font-size: 20px; font-weight: 800; }
+    .studio-title p { margin: 4px 0 0 0; font-size: 13px; color: #6b7280; }
+    
+    .studio-tools {
+      display: flex;
+      gap: 12px;
+      padding: 16px 24px;
+      background: #f8fafc;
+      border-bottom: 1px solid #e5e7eb;
+      align-items: center;
+      flex-wrap: wrap;
     }
     
-    /* 🔥 [수정] 상단 헤더 로고 스타일: 비율 유지 및 원본 색상 출력 */
-    .header-logo { 
-        height: 36px;       /* 헤더 높이에 맞춤 */
-        width: auto;        /* 가로는 비율대로 */
-        object-fit: contain;/* 찌그러짐 방지 */
+    .tool-group {
+      background: #fff;
+      padding: 12px 16px;
+      border-radius: 12px;
+      border: 1px solid #e5e7eb;
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+    .tool-group span.step { font-weight: 800; color: #3b82f6; margin-right: 4px; }
+
+    /* 파일 인풋 버튼 디자인화 */
+    .file-label {
+      background: #fff; border: 1px solid #d1d5db; border-radius: 8px;
+      padding: 8px 12px; font-size: 13px; font-weight: 600; cursor: pointer;
+      display: inline-block; transition: all 0.2s;
+    }
+    .file-label:hover { background: #f3f4f6; }
+    .file-label input { display: none; }
+    
+    /* 스튜디오 캔버스 (크게 보는 영역) */
+    .studio-workspace {
+      flex: 1;
+      overflow: auto;
+      padding: 40px;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
     }
     
-    /* =========================================================
-       [4] 우측 상단 카테고리 (팝업 드롭다운 스타일)
-    ========================================================= */
-    .menu-wrapper { 
-        position: relative; 
-        /* ✅ 로고 유무와 상관없이 메뉴를 우측 끝으로 고정 */
-        margin-left: auto;
+    .editor-container {
+      position: relative;
+      background: #fff;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+      /* 원본 비율을 유지하며 화면에 꽉 차게 큼지막하게 표시 */
+      max-width: 90%; 
+      margin: 0 auto;
+      touch-action: none;
     }
-
-    .menu-btn {
-      background: rgba(255,255,255,0.15); 
-      backdrop-filter: blur(10px);
-      border: 1px solid rgba(255,255,255,0.3); 
-      color: #fff;
-      padding: 8px 16px; 
-      border-radius: 20px; 
-      font-weight: 600; 
-      font-size: 14px;
-      cursor: pointer;
-      display: flex; align-items: center; gap: 6px;
-      transition: all 0.2s;
-      position: relative; z-index: 101; 
-    }
-    .menu-btn:active { background: rgba(255,255,255,0.3); }
-
-    /* 메뉴 열릴 때 화면 어둡게 해주는 레이어 */
-    .menu-dim {
-      position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 90;
-      backdrop-filter: blur(3px); -webkit-backdrop-filter: blur(3px);
-      opacity: 0; visibility: hidden; transition: opacity 0.3s;
-    }
-    body.menu-open .menu-dim { opacity: 1; visibility: visible; }
-
-    /* 카테고리 드롭다운 박스 */
-    .category-dropdown {
-      position: absolute; top: calc(100% + 12px); right: 0;
-      width: 250px; background: #fff; border-radius: 20px;
-      box-shadow: 0 12px 40px rgba(0,0,0,0.3);
-      padding: 8px; z-index: 100;
-      opacity: 0; visibility: hidden; transform: translateY(-10px);
-      transition: all 0.3s cubic-bezier(0.32, 0.72, 0, 1);
-      transform-origin: top right;
-    }
-    body.menu-open .category-dropdown {
-      opacity: 1; visibility: visible; transform: translateY(0);
-    }
-
-    .dropdown-header {
-      font-size: 13px; font-weight: 700; color: var(--text-sub);
-      padding: 12px 14px 8px; border-bottom: 1px solid var(--border-light);
-      margin-bottom: 4px;
-    }
-
-    .drop-nav button {
-      width: 100%; text-align: left; background: none; border: none;
-      padding: 14px; font-size: 15px; font-weight: 600; color: var(--text-main);
-      border-radius: 12px; cursor: pointer; transition: background 0.2s;
-      display: flex; align-items: center; gap: 12px;
-    }
-    .drop-nav button span { flex: 1; }
-    .drop-nav button:active { background: #f8fafc; transform: scale(0.98); }
-
-    /* =========================================================
-       [5] 메인 콘텐츠 (환영문구 & DAY 버튼들)
-    ========================================================= */
-    .home-main-content {
-      position: relative; z-index: 10;
-      flex: 1; 
-      display: flex; flex-direction: column; justify-content: flex-end;
-      padding: 0 24px 60px; 
-      /* ✅ 하단 안전영역 대응 */
-      padding-bottom: max(60px, env(safe-area-inset-bottom));
-      color: #fff;
-    }
-    
-    .welcome-text { 
-      margin-bottom: 30px; 
-    }
-    .welcome-text p { font-size: 18px; margin: 0; opacity: 0.95; font-weight: 500; letter-spacing: -0.5px; }
-    /* ✅ 이름 글씨 색상 변경 (#38bdf8 스카이블루 적용) 및 그림자 없이 가독성 높임 */
-    .welcome-text strong { color: #38bdf8; font-weight: 900; font-size: 20px; letter-spacing: -0.5px; }
-    .welcome-text h2 { font-size: 36px; font-weight: 900; margin: 6px 0 12px; line-height: 1.2; letter-spacing: -1px; }
-    .welcome-text .sub-date { display: inline-block; padding: 6px 14px; background: rgba(0,0,0,0.4); border-radius: 20px; font-size: 13px; margin-top: 10px; border: 1px solid rgba(255,255,255,0.1); font-weight: 600;}
-
-    /* DAY 1~4 그리드 버튼 */
-    .day-buttons {
-      display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
-    }
-    .day-btn {
-      background: rgba(0, 0, 0, 0.4); /* 텍스트 가독성을 위해 버튼 배경을 살짝만 더 어둡게 */
-      backdrop-filter: blur(15px);
-      -webkit-backdrop-filter: blur(15px);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      padding: 16px 16px; 
-      border-radius: 16px;
-      color: #fff; text-align: left;
-      transition: all 0.2s; cursor: pointer;
-      display: flex; flex-direction: column; justify-content: space-between;
-      min-height: 100px;
-    }
-    
-    /* ✅ 날짜 및 글씨체 가독성 개선 스타일 추가 */
-    .day-btn-header { display: flex; justify-content: space-between; align-items: center; width: 100%; font-size: 18px; font-weight: 800; }
-    .btn-date { font-size: 12px; font-weight: 700; color: #cbd5e1; background: rgba(255, 255, 255, 0.15); padding: 2px 8px; border-radius: 10px; letter-spacing: 0; }
-    .day-btn .day-title { font-size: 13.5px; font-weight: 600; color: #cbd5e1; margin-top: 12px; line-height: 1.4; word-break: keep-all; opacity: 1; }
-    
-    .day-btn:active { background: rgba(0,0,0,0.6); transform: scale(0.96); }
-
-    /* =========================================================
-       [6] Bottom Sheet (Detail Page) - 🔥 화면 꽉 채움 유지
-    ========================================================= */
-    #detailPage {
-      position: fixed; inset: 0; z-index: 3000;
-      display: none; 
-    }
-    
-    /* pointer-events: none 추가하여 투명할때 클릭 방해 방지 */
-    .detail-dim {
-      position: absolute; inset: 0;
-      background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(4px);
-      opacity: 0; transition: opacity 0.3s ease;
+    .editor-container img {
+      width: 100%;
+      height: auto;
+      display: block;
       pointer-events: none; 
     }
     
-    .detail-sheet__inner {
-      position: absolute; bottom: 0; left: 0; right: 0;
-      
-      /* ✅ 수정: 높이를 100%로 변경하여 화면 꽉 채움 */
-      height: 100%; 
-      height: 100dvh;
-      background: var(--bg-main);
-      
-      /* ✅ 수정: 꽉 찬 화면이므로 둥근 모서리 제거 */
-      border-radius: 0;
-      
-      display: flex; flex-direction: column;
-      transform: translateY(100%); 
-      transition: transform 0.4s cubic-bezier(0.32, 0.72, 0, 1);
+    /* 🔥 드래그 박스 개선 (얇은 점선, 색깔 점 제거, 텍스트 축소) */
+    .print-area-box {
+      position: absolute;
+      background: rgba(255, 255, 255, 0.15); /* 반투명 배경을 더 옅게 */
+      border: 1px dashed #6b7280; /* 얇고 심플한 회색 점선 */
+      cursor: grab;
+      box-sizing: border-box;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      transition: all 0.2s;
     }
-
-    body.detail-open .detail-dim { opacity: 1; pointer-events: auto; }
-    body.detail-open .detail-sheet__inner { transform: translateY(0); }
-
-    .detail-header {
-      display: flex; justify-content: space-between; align-items: center;
-      padding: 20px 24px; background: #fff;
-      
-      /* ✅ 수정: 노치 영역 대응 및 모서리 제거 */
-      padding-top: max(20px, env(safe-area-inset-top));
-      border-radius: 0; 
-      
-      border-bottom: 1px solid var(--border-light); flex-shrink: 0; 
-    }
-    .detail-title { font-size: 18px; font-weight: 700; color: var(--primary-color); }
-    .detail-actions button {
-      background: none; border: none; font-size: 14px; color: var(--text-sub);
-      margin-left: 12px; cursor: pointer; font-weight: 600;
-    }
-    #detailContent {
-      flex: 1; overflow-y: auto; padding: 20px 20px calc(20px + var(--safe-bottom));
-      -webkit-overflow-scrolling: touch;
-    }
-
-    /* =========================================================
-       [7] 상세 컨텐츠 스타일 (일정, 환율 등)
-    ========================================================= */
-    .day-card {
-      background: var(--card-bg); border-radius: 16px; padding: 20px;
-      margin-bottom: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.03);
-    }
-    .day-card h3 {
-      margin: 0 0 10px; font-size: 18px; color: var(--primary-color);
-      display: flex; align-items: baseline; gap: 8px; font-weight: 800;
-    }
-    .day-card h3 span { font-size: 13px; color: var(--text-sub); font-weight: 500; }
-    .day-title { margin: 0 0 20px; font-weight: 600; color: var(--accent-color); font-size: 15px; }
-
-    .timeline { border-left: 2px solid var(--border-light); margin-left: 10px; padding-left: 20px; }
-    .schedule-item { position: relative; margin-bottom: 24px; }
-    .schedule-item:last-child { margin-bottom: 0; }
-    .timeline-dot {
-      position: absolute; left: -26px; top: 0;
-      width: 10px; height: 10px; border-radius: 50%;
-      background: var(--accent-color); border: 2px solid #fff;
-    }
-    .schedule-card { display: flex; flex-direction: column; gap: 4px; }
-    .schedule-time { font-size: 13px; font-weight: 700; color: var(--text-sub); }
-    .schedule-title { font-size: 15px; font-weight: 600; color: var(--text-main); }
-    .schedule-desc { font-size: 13px; color: var(--text-sub); margin-top: 4px; line-height: 1.4; }
-
-    /* 환율, 대만의 모든 것 */
-    .country-compare-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
-    .country-card { background: var(--card-bg); padding: 18px 12px; border-radius: 16px; text-align: center; box-shadow: 0 4px 12px rgba(0,0,0,0.04); }
-    .country-header { display: flex; align-items: center; justify-content: center; gap: 6px; margin-bottom: 12px; }
-    .flag-img { width: 28px; border-radius: 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-    .country-card h3 { margin: 0; font-size: 15px; font-weight: 800; letter-spacing: -0.5px; color: var(--primary-color); }
-    .time-box { background: var(--bg-main); padding: 12px 8px; border-radius: 12px; margin: 12px 0; }
-    .time-box .time-label { display: block; font-size: 12px; font-weight: 600; color: var(--text-sub); }
-    /* ✅ 모노스페이스(투박한 폰트) 제거하고 깔끔한 등폭 숫자 적용 */
-    .time-box strong { display: block; font-size: 17px; color: var(--primary-color); margin-top: 4px; font-weight: 800; font-variant-numeric: tabular-nums; letter-spacing: 0; }
-    .country-list { list-style: none; padding: 0; margin: 0; text-align: left; font-size: 13px; }
-    /* ✅ 글씨체 개선 및 데이터가 좁아도 무조건 한 줄로 나오도록 강제 (줄바꿈 방지) */
-    .country-list li { display: flex; justify-content: space-between; align-items: center; padding: 8px 2px; border-bottom: 1px solid var(--border-light); }
-    .country-list li:last-child { border: none; padding-bottom: 0; }
-    .country-list li span { color: var(--text-sub); font-weight: 600; font-size: 12px; white-space: nowrap; }
-    .country-list li strong { font-weight: 700; color: var(--text-main); font-size: 13px; white-space: nowrap; text-align: right; letter-spacing: -0.3px; }
-
-    .exchange-row {
-      background: var(--primary-color); color: #fff; padding: 18px 20px;
-      border-radius: 16px; text-align: center; margin-bottom: 16px;
-      box-shadow: 0 4px 12px rgba(26,35,58,0.15);
-    }
-    .exchange-row strong { font-size: 18px; font-weight: 800; letter-spacing: -0.5px; }
-    .fx-grid { display: grid; grid-template-columns: 1fr auto 1fr; gap: 10px; align-items: center; margin-top: 16px;}
-    .fx-box input {
-      width: 100%; padding: 12px; border: 1px solid var(--border-light);
-      border-radius: 10px; text-align: right; font-weight: 600; font-size: 16px;
-    }
-    .fx-eq { font-size: 20px; color: var(--text-sub); }
-
-    /* 🔥 [수정] 2. 선택관광 사진형 카드 CSS 추가
-       (기존 .tour-card 덮어쓰지 않고 새로운 클래스 사용) 
-    */
-    .tour-card-photo {
-      position: relative;
-      border-radius: 20px;
-      overflow: hidden;
-      margin-bottom: 20px;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.1);
-      background-color: #000;
-      /* 비율 유지 (높이 지정) */
-      height: 220px; 
-      display: flex; flex-direction: column; justify-content: flex-end;
-      color: #fff;
+    .print-area-box:active { cursor: grabbing; }
+    
+    /* 글씨 작고 거슬리지 않게 */
+    .print-area-box span { 
+      font-weight: 600; 
+      font-size: 12px; 
+      color: #374151;
+      pointer-events: none; 
+      text-shadow: 1px 1px 2px rgba(255,255,255,0.9); /* 글씨 가독성만 살짝 유지 */
     }
     
-    .tour-card-bg {
-      position: absolute; inset: 0;
-      background-size: cover; background-position: center;
-      transition: transform 0.4s;
+    /* 활성화(선택) 된 박스 (키보드 조작 타겟) - 얇은 빨간 점선 */
+    .print-area-box.active {
+      background: rgba(59, 130, 246, 0.1);
+      border: 1px dashed #ef4444 !important; 
+      z-index: 10;
     }
-    .tour-card-photo:active .tour-card-bg { transform: scale(1.05); }
-
-    .tour-card-overlay {
-      position: absolute; inset: 0;
-      background: linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,0.4) 50%, rgba(0,0,0,0.9) 100%);
-    }
-
-    .tour-info {
-      position: relative; z-index: 2;
-      padding: 20px;
-    }
-
-    .tour-badge {
-      display: inline-block;
-      background: var(--accent-color); color: #fff;
-      font-size: 11px; font-weight: 700;
-      padding: 4px 10px; border-radius: 100px;
-      margin-bottom: 8px; text-transform: uppercase;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-    }
-    .tour-badge.red { background: #e53e3e; } /* 자유일정 */
-
-    .tour-info h3 { margin: 0 0 6px; font-size: 22px; font-weight: 800; line-height: 1.2; text-shadow: 0 2px 4px rgba(0,0,0,0.3); }
-    .tour-desc { font-size: 13px; opacity: 0.9; margin: 0 0 14px; line-height: 1.4; }
-
-    /* 포함/불포함 박스 (카드 내부 하단) */
-    .tour-meta-box {
-      background: rgba(255,255,255,0.15);
-      backdrop-filter: blur(4px);
-      border-radius: 12px;
-      padding: 10px 14px;
-      display: flex; justify-content: space-between; align-items: center;
-      font-size: 13px;
-    }
-    .tour-meta-items { display: flex; gap: 8px; font-size: 12px; }
-    .tour-meta-items span { background: rgba(0,0,0,0.3); padding: 2px 6px; border-radius: 4px; }
-
-    /* ✅ 중식비 상태 색상 CSS 추가 */
-    .status.pending { color: #ff4d4f; font-weight: 700; text-shadow: 0 1px 2px rgba(0,0,0,0.5); }
-    .status.done { color: #22c55e; font-weight: 700; text-shadow: 0 1px 2px rgba(0,0,0,0.5); }
-
-    .meal-status-btn {
-      background: #fff; color: #1a233a; border: none;
-      font-size: 12px; font-weight: 700; padding: 6px 12px; border-radius: 8px;
-    }
-    .meal-status-btn.done { background: #38a169; color: #fff; }
-
-    #requestInput {
-      width: 100%; height: 120px; padding: 16px; border: 1px solid var(--border-light);
-      border-radius: 12px; resize: none; font-size: 15px; margin-bottom: 12px;
+    
+    /* 크기 조절 영역 (기능은 유지하되 눈에는 안 보이게 투명 처리) */
+    .resize-handle {
+      position: absolute; 
+      right: 0; 
+      bottom: 0; 
+      width: 20px; 
+      height: 20px;
+      cursor: se-resize; 
+      background: transparent; /* 투명 */
     }
 
-    /* =========================================================
-       [8] 데스크탑 (PC) 대응 
-    ========================================================= */
-    @media (min-width: 768px) {
-      .day-buttons { grid-template-columns: repeat(4, 1fr); }
-      .home-main-content { max-width: 1000px; margin: 0 auto; width: 100%; }
-      .home-header { max-width: 1000px; margin: 0 auto; width: 100%; }
-      
-      .detail-sheet__inner {
-        top: 50%; left: 50%;
-        transform: translate(-50%, -100%) scale(0.9); 
-        bottom: auto; right: auto;
-        width: 100%; max-width: 500px; height: 80vh;
-        border-radius: 24px; opacity: 0;
-      }
-      body.detail-open .detail-sheet__inner {
-        transform: translate(-50%, -50%) scale(1); opacity: 1;
-      }
-    }
   </style>
 </head>
-
 <body>
-  
-<!-- ✅ 1. 스플래시 HTML 태그는 남겨두되 주석처리하거나, JS에서 제어하지 않음 -->
-<!-- <div id="mobileSplash" class="mobile-splash" style="display:none;">...</div> -->
 
-<!-- ================= LOGIN ================= -->
-<section id="loginSection" class="login-hero">
-  <div class="hero-overlay">
-    <div class="login-box">
-      <!-- 🔥 [수정] 내장 데이터 제거하고 로컬 경로 복원 -->
-      <img src="assets/images/logo.png" class="hero-logo" onerror="this.style.display='none'">
-      <h2>2025 ISC Taiwan</h2>
-      <p class="hero-desc">사번으로 로그인하세요</p>
-
-      <input type="text" id="employeeId" placeholder="사번 입력">
-      <button class="primary-btn" onclick="login()">로그인</button>
-      <p id="loginError" class="error"></p>
-    </div>
-  </div>
-</section>
-
-<!-- ================= MAIN ================= -->
-<main id="mainSection" class="main-bg" style="display:none;">
-
-  <!-- ================= HOME VIEW ================= -->
-  <section id="homeView" class="home-view">
-    <div class="home-overlay"></div>
-    
-    <!-- 메뉴 열릴 때 전체 화면을 살짝 어둡게 해주는 딤 -->
-    <div id="menuDim" class="menu-dim" onclick="toggleMenu()"></div>
-    
-    <!-- 1️⃣ 상단 헤더 & 메뉴 버튼 -->
-    <header class="home-header">
-      <!-- 🔥 [수정] 원본 로고가 무조건 100% 보이도록 수정 (에러 시 숨김 처리 및 필터링 제거) -->
-      <img src="assets/images/logo.png" class="header-logo" alt="INCAR Logo">
+  <!-- ================= MAIN VIEW ================= -->
+  <div id="mainView">
+    <div class="topbar">
+      <div style="flex:1; min-width:220px;">
+        <h1>ISC 직원 QR 자동생성기</h1>
+        <div class="muted">고유 QR 텍스트 데이터 베이스가 표시됩니다.</div>
+      </div>
       
-      <!-- 우측 상단 카테고리 묶음 -->
-      <div class="menu-wrapper">
-        <button class="menu-btn" onclick="toggleMenu()">☰ 카테고리</button>
+      <!-- 명찰 스튜디오 열기 버튼 -->
+      <button id="btnOpenStudio" class="btn primary" style="padding: 14px 24px; font-size: 16px;">✨ 명찰 제작 스튜디오 열기</button>
+      <button id="btnZip" class="btn secondary">QR만 전체 ZIP</button>
+    </div>
+
+    <div id="statusBox" class="status"></div>
+    <div id="qrGrid" class="grid"></div>
+  </div>
+
+
+  <!-- ================= STUDIO VIEW (새 창) ================= -->
+  <div id="studioView">
+    <div class="studio-header">
+      <div class="studio-title">
+        <h2>🎨 명찰 제작 스튜디오</h2>
+        <p>박스를 클릭 후 <b>키보드 방향키(↑,↓,←,→)</b>로 위치를 미세 조정할 수 있습니다. (소속: <b>흰색</b> / 이름: <b>검정색</b> 렌더링)</p>
+      </div>
+      <button id="btnCloseStudio" class="btn dark">돌아가기 (닫기)</button>
+    </div>
+    
+    <div class="studio-tools">
+      <div class="tool-group">
+        <span class="step">1</span>
+        <button id="btnDownloadTemplate" class="btn secondary" style="padding: 8px 12px; font-size: 13px;">엑셀 양식 다운로드</button>
+      </div>
+
+      <div class="tool-group">
+        <span class="step">2</span>
+        <label class="file-label" style="color:#10b981; border-color:#10b981;">
+          엑셀 데이터 업로드 (.xlsx)
+          <input type="file" id="excelInput" accept=".xlsx, .xls, .csv">
+        </label>
+        <span id="excelStatus" style="font-size: 13px; color: #6b7280;"></span>
+      </div>
+
+      <div class="tool-group">
+        <span class="step">3</span>
+        <label class="file-label" style="color:#3b82f6; border-color:#3b82f6;">
+          빈 명찰 디자인 업로드 (JPG, PNG)
+          <input type="file" id="templateInput" accept="image/png, image/jpeg">
+        </label>
+      </div>
+      
+      <div style="flex: 1;"></div>
+      
+      <button id="btnNameTagZip" class="btn primary" style="font-size: 16px; padding: 12px 24px;">📥 개별 이미지 + 통합 PDF 다운로드</button>
+    </div>
+
+    <!-- 엄청 크게 보이는 편집 영역 -->
+    <div class="studio-workspace">
+      <div class="editor-container" id="editorContainer">
+        <img id="templatePreview" alt="명찰 배경을 업로드해주세요." style="min-height: 400px; background: #fff;">
         
-        <!-- 버튼 누르면 아래로 떨어지는 드롭다운 팝업 메뉴 -->
-        <div id="categoryDropdown" class="category-dropdown">
-          <div class="dropdown-header">카테고리 메뉴</div>
-          <nav class="drop-nav">
-            <button onclick="openPage('taiwan')">🇹🇼 <span>대만의 모든 것</span></button>
-            <button onclick="openPage('exchange')">💱 <span>환율 계산기</span></button>  
-            <button onclick="openPage('flight')">✈️ <span>항공편 정보</span></button>
-            <button onclick="openPage('myTour')">🎒 <span>나의 선택 관광</span></button>
-            <button onclick="openPage('dinner')">🍽 <span>만찬 안내</span></button>
-            <button onclick="openPage('request')">📝 <span>요청사항</span></button>
-            <button onclick="openPage('contact')">📞 <span>긴급 연락망</span></button>
-            <!-- ✅ [수정] 2. 로그아웃 버튼 추가 -->
-            <button onclick="logout()" style="border-top:1px solid #eee; margin-top:4px; color:#e53e3e;">🚪 <span>로그아웃</span></button>
-          </nav>
+        <!-- 텍스트 내용 간소화 및 식별 ID 유지 -->
+        <div class="print-area-box" id="boxDept" style="left: 10%; top: 15%; width: 80%; height: 10%;" tabindex="0">
+          <span>소속</span><div class="resize-handle"></div>
         </div>
-      </div>
-    </header>
-
-    <!-- 2️⃣ 메인 중앙 영역 (환영 문구 + DAY 버튼) -->
-    <div class="home-main-content">
-      <div class="welcome-text">
-        <p><strong id="employeeName"></strong> 님, 환영합니다</p>
-        <h2>ISC Taiwan<br>여정의 시작</h2>
-        <span class="sub-date">2026.03.11 ~ 03.14</span>
-      </div>
-
-      <div class="day-buttons">
-        <button class="day-btn" onclick="openPage('day_0')">
-          <div class="day-btn-header">DAY 1 <span class="btn-date">03.11</span></div>
-          <span class="day-title">인천 출발 &<br>시내 하이라이트</span>
-        </button>
-        <button class="day-btn" onclick="openPage('day_1')">
-          <div class="day-btn-header">DAY 2 <span class="btn-date">03.12</span></div>
-          <span class="day-title">선택 관광 &<br>ISC 공식 만찬</span>
-        </button>
-        <button class="day-btn" onclick="openPage('day_2')">
-          <div class="day-btn-header">DAY 3 <span class="btn-date">03.13</span></div>
-          <span class="day-title">근교 관광 &<br>자유 일정</span>
-        </button>
-        <button class="day-btn" onclick="openPage('day_3')">
-          <div class="day-btn-header">DAY 4 <span class="btn-date">03.14</span></div>
-          <span class="day-title">타이베이 출발 &<br>인천 귀국</span>
-        </button>
+        <div class="print-area-box" id="boxName" style="left: 10%; top: 30%; width: 80%; height: 15%;" tabindex="0">
+          <span>이름</span><div class="resize-handle"></div>
+        </div>
+        <div class="print-area-box" id="boxQR" style="left: 25%; top: 50%; width: 50%; height: 35%;" tabindex="0">
+          <span>QR영역</span><div class="resize-handle"></div>
+        </div>
       </div>
     </div>
-  </section>
-
-<!-- ================= DETAIL OVERLAY ================= -->
-<section id="detailPage" class="detail-sheet">
-  <!-- 🔹 dim 영역 (여기만 홈으로) -->
-  <div class="detail-dim" onclick="goHome()"></div>
-
-  <!-- 🔹 실제 시트 -->
-  <div class="detail-sheet__inner" onclick="event.stopPropagation()">
-      <!-- ✅ 상단 헤더 -->
-      <div class="detail-header">
-        <div class="detail-title" id="detailTitle"></div>
-        <div class="detail-actions">
-          <button class="btn-home" onclick="goHome()">홈으로</button>
-          <button class="btn-back" onclick="goBack()">뒤로가기</button>
-        </div>
-      </div>
-    <div id="detailContent"></div>
   </div>
-</section>
 
-</main>
 
 <script>
-/* ================= 공통 ================= */
-let pageHistory = [];
-let employees = [];
-let currentUser = null;
-const ADMIN_PASSWORD = "0000";
+/* ==============================
+   1. 기본 설정 및 상태
+============================== */
+const EMP_URL  = "people/employees.json?ts=" + Date.now();
+const BASE_URL = "https://incarmkt.github.io/travel/?eid=";
+
+let employees = []; 
+let customTemplateImg = null; 
+
+// 박스 비율 저장 데이터
+let bounds = {
+  dept: { x: 0.10, y: 0.15, w: 0.80, h: 0.10 },
+  name: { x: 0.10, y: 0.30, w: 0.80, h: 0.15 },
+  qr:   { x: 0.25, y: 0.50, w: 0.50, h: 0.35 }
+};
+
+// 유틸
+function setStatus(msg, kind=""){
+  const box = document.getElementById("statusBox");
+  box.className = "status"; // 리셋
+  if(kind) box.classList.add(kind);
+  box.textContent = msg;
+}
+function safeName(str){ return String(str || "").replace(/[\\/:*?"<>|]/g, "_").trim(); }
+function dataURLtoBase64(dataUrl){ return dataUrl.split(",")[1]; }
+function sleep(ms){ return new Promise(r => setTimeout(r, ms)); }
+
+
+/* ==============================
+   2. 뷰 전환 제어 (새 창 효과)
+============================== */
+const mainView = document.getElementById("mainView");
+const studioView = document.getElementById("studioView");
+
+document.getElementById("btnOpenStudio").addEventListener("click", () => {
+  mainView.style.display = "none";
+  studioView.style.display = "flex";
+  // 화면이 보인 후 사이즈 다시 셋팅
+  setTimeout(updateBoxBounds, 200);
+});
+
+document.getElementById("btnCloseStudio").addEventListener("click", () => {
+  studioView.style.display = "none";
+  mainView.style.display = "block";
+});
+
+
+/* ==============================
+   3. 엑셀 데이터 양식 다운로드
+============================== */
+document.getElementById('btnDownloadTemplate').addEventListener('click', () => {
+  const wsData = [ ["사번", "이름", "소속"] ];
+  
+  if(employees && employees.length > 0) {
+    employees.forEach(emp => {
+      wsData.push([String(emp.id).trim(), emp.name || "", emp.department || ""]);
+    });
+  } else {
+    wsData.push(["10001", "홍길동", "개발본부"]);
+    wsData.push(["10002", "김철수", "디자인팀"]);
+  }
+
+  const ws = XLSX.utils.aoa_to_sheet(wsData);
+  ws['!cols'] = [{wch: 15}, {wch: 15}, {wch: 20}];
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, "명찰데이터");
+  XLSX.writeFile(wb, "명찰_정보_업로드양식.xlsx");
+});
+
+
+/* ==============================
+   4. 🔥 엑셀 데이터 완전 덮어쓰기 로직
+============================== */
+document.getElementById('excelInput').addEventListener('change', function(e) {
+  const file = e.target.files[0];
+  if(!file) return;
+
+  const statusTxt = document.getElementById('excelStatus');
+  statusTxt.textContent = "데이터 완전히 교체하는 중...";
+
+  const reader = new FileReader();
+  reader.onload = function(evt) {
+    try {
+      const data = new Uint8Array(evt.target.result);
+      const workbook = XLSX.read(data, {type: 'array'});
+      const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+      
+      const jsonData = XLSX.utils.sheet_to_json(worksheet, { raw: false, defval: "" });
+
+      const newEmployees = [];
+
+      jsonData.forEach(row => {
+        const keys = Object.keys(row);
+        const getVal = (possibleKeys) => {
+          const matchedKey = keys.find(k => possibleKeys.includes(k.toLowerCase().replace(/\s/g, '')));
+          return matchedKey ? String(row[matchedKey]).trim() : "";
+        };
+
+        const excelId = getVal(['id', '사번', '직원번호']);
+        const excelName = getVal(['name', '이름', '성명']);
+        const excelDept = getVal(['department', '소속', '부서', '팀']);
+
+        // 이름이나 사번이 존재하면 새로운 목록에 강제로 추가
+        if (excelName || excelId) {
+          newEmployees.push({
+            id: excelId || "0000",
+            name: excelName || "",
+            department: excelDept || ""
+          });
+        }
+      });
+
+      if(newEmployees.length > 0) {
+        // 🔥 핵심: 기존 데이터를 버리고 무조건 엑셀 기준으로 리스트를 엎어버림
+        employees = newEmployees;
+        renderGrid(employees); 
+        statusTxt.textContent = `✅ 엑셀 기준 ${employees.length}명으로 목록 교체 완료!`;
+        statusTxt.style.color = "#10b981";
+      } else {
+        statusTxt.textContent = `❌ 엑셀에서 데이터를 찾지 못했습니다.`;
+        statusTxt.style.color = "#ef4444";
+      }
+    } catch(err) {
+      statusTxt.textContent = `오류 발생: ${err.message}`;
+    }
+  };
+  reader.readAsArrayBuffer(file);
+});
+
+
+/* ==============================
+   5. 스튜디오 이미지 업로드 및 에디터 로직
+============================== */
+const editorContainer = document.getElementById("editorContainer");
+const templateInput = document.getElementById("templateInput");
+const templatePreview = document.getElementById("templatePreview");
+const boxes = document.querySelectorAll('.print-area-box');
+
+let selectedBox = null;
+let isDragging = false; let isResizing = false;
+let startX, startY, startLeft, startTop, startW, startH;
+let activeBox = null;
+
+function getPointerPos(e) {
+  if (e.touches && e.touches.length > 0) return { x: e.touches[0].clientX, y: e.touches[0].clientY };
+  return { x: e.clientX, y: e.clientY };
+}
+
+function selectBox(box) {
+  boxes.forEach(b => b.classList.remove('active'));
+  if(box) {
+    box.classList.add('active');
+    selectedBox = box;
+    box.focus();
+  } else {
+    selectedBox = null;
+  }
+}
+
+editorContainer.addEventListener('mousedown', (e) => {
+  if(e.target === editorContainer || e.target === templatePreview) {
+    selectBox(null);
+  }
+});
+
+boxes.forEach(box => {
+  const startDragEvent = (e) => {
+    selectBox(box);
+    if (e.target.classList.contains('resize-handle')) return; 
     
-/* ================= 카테고리 메뉴 토글 ================= */
-function toggleMenu() {
-  document.body.classList.toggle('menu-open');
+    activeBox = box;
+    isDragging = true;
+    const pos = getPointerPos(e);
+    startX = pos.x; startY = pos.y;
+    startLeft = box.offsetLeft; startTop = box.offsetTop;
+  };
+
+  box.addEventListener('mousedown', startDragEvent);
+  box.addEventListener('touchstart', startDragEvent, {passive: false});
+
+  const handle = box.querySelector('.resize-handle');
+  const startResizeEvent = (e) => {
+    selectBox(box);
+    e.stopPropagation();
+    activeBox = box;
+    isResizing = true;
+    const pos = getPointerPos(e);
+    startX = pos.x; startY = pos.y;
+    startW = box.offsetWidth; startH = box.offsetHeight;
+  };
+
+  handle.addEventListener('mousedown', startResizeEvent);
+  handle.addEventListener('touchstart', startResizeEvent, {passive: false});
+});
+
+window.addEventListener('mousemove', handleMove);
+window.addEventListener('touchmove', handleMove, {passive: false});
+
+function handleMove(e) {
+  if ((!isDragging && !isResizing) || !activeBox) return;
+  e.preventDefault(); 
+  
+  const pos = getPointerPos(e);
+  const dx = pos.x - startX; const dy = pos.y - startY;
+  const editorRect = editorContainer.getBoundingClientRect();
+
+  if (isDragging) {
+    let newL = Math.max(0, Math.min(startLeft + dx, editorRect.width - activeBox.offsetWidth));
+    let newT = Math.max(0, Math.min(startTop + dy, editorRect.height - activeBox.offsetHeight));
+    activeBox.style.left = newL + 'px'; activeBox.style.top = newT + 'px';
+  } else if (isResizing) {
+    let newW = Math.max(30, Math.min(startW + dx, editorRect.width - activeBox.offsetLeft));
+    let newH = Math.max(20, Math.min(startH + dy, editorRect.height - activeBox.offsetTop));
+    activeBox.style.width = newW + 'px'; activeBox.style.height = newH + 'px';
+  }
 }
 
-/* ================= 선택관광 템플릿 (🔥 수정 2. 사진 카드 디자인 적용) ================= */
-/* 이미지 경로는 assets/images/ 폴더를 기준으로 잡았으며, 없을 경우 Unsplash 이미지가 뜨도록 onerror를 설정했습니다. */
-const myTourTemplates = [
-  { 
-    keyword: "티엔라이", 
-    html: `
-      <div class="tour-card-photo">
-        <div class="tour-card-bg" style="background-image: url('assets/images/tour_tienlai.jpg');" onerror="this.style.backgroundImage='url(https://images.unsplash.com/photo-1596483582098-9642e12e84d4?auto=format&fit=crop&w=800&q=80)'"></div>
-        <div class="tour-card-overlay"></div>
-        <div class="tour-info">
-          <span class="tour-badge">선택 1안</span>
-          <h3>티엔라이 온천 힐링</h3>
-          <p class="tour-desc">티엔라이 온천욕 & 양명산 국립공원 자락의 최고급 유황 온천</p>
-          <div class="tour-meta-box">
-            <div class="tour-meta-items">
-              <span>🎫 입장권</span>
-              <span>🚌 전용차량</span>
-              <span>🍽 중식(오리)</span>
-            </div>
-          </div>
-        </div>
-      </div>` 
-  },
-  { 
-    keyword: "고궁박물관", 
-    html: `
-      <div class="tour-card-photo">
-        <div class="tour-card-bg" style="background-image: url('assets/images/tour_museum.jpg');" onerror="this.style.backgroundImage='url(https://images.unsplash.com/photo-1590059390231-fb264f3d47fb?auto=format&fit=crop&w=800&q=80)'"></div>
-        <div class="tour-card-overlay"></div>
-        <div class="tour-info">
-          <span class="tour-badge">선택 2안</span>
-          <h3>고궁박물관 역사 기행</h3>
-          <p class="tour-desc">중국 역사의 정수, 대만 고궁박물관 관람</p>
-          <div class="tour-meta-box">
-            <div class="tour-meta-items">
-              <span>🎫 입장권</span>
-              <span>🚌 전용차량</span>
-              <span>🍽 중식(오리)</span>
-            </div>
-          </div>
-        </div>
-      </div>` 
-  },
-  { 
-    keyword: "자유일정", 
-    html: `
-      <div class="tour-card-photo">
-        <div class="tour-card-bg" style="background-image: url('assets/images/tour_free.jpg');" onerror="this.style.backgroundImage='url(https://images.unsplash.com/photo-1470004914212-05527e49370b?auto=format&fit=crop&w=800&q=80)'"></div>
-        <div class="tour-card-overlay"></div>
-        <div class="tour-info">
-          <span class="tour-badge red">선택 3안</span>
-          <h3>자유로운 대만 여행</h3>
-          <p class="tour-desc">자유일정 대만 (중식비 지급)</p>
-          <div class="tour-meta-box">
-             <div class="meal-check" data-tour="자유일정" style="width:100%; display:flex; justify-content:space-between; align-items:center;">
-                <!-- ✅ 고정된 흰색 글씨를 지우고 CSS 클래스를 통해 색상 제어 -->
-                <span class="status pending">중식비 미지급</span>
-                <button class="meal-status-btn" onclick="handleMealClick(this)">지급 확인</button>
-             </div>
-          </div>
-        </div>
-      </div>` 
-  }
-];
+window.addEventListener('mouseup', endAction);
+window.addEventListener('touchend', endAction);
 
-/* ================= 선택관광 렌더링 함수 ================= */
-function renderMyTour() {
-  const selected = currentUser.myTour || [];
-  const matchedCards = myTourTemplates.filter(t => selected.some(input => input.includes(t.keyword)));
-  if (matchedCards.length === 0) return `<div class="card">선택된 관광이 없습니다.</div>`;
-  return matchedCards.map(t => t.html).join("");
+function endAction() {
+  if (isDragging || isResizing) {
+    isDragging = false; isResizing = false;
+    updateBoxBounds(); 
+    activeBox = null;
+  }
 }
 
-// 🔥 작성해주신 원본 JSON 로직 그대로 유지 (더이상 MOCK_DATA로 덮어쓰지 않음)
-// 테스트용으로 데이터를 직접 주입 (파일이 없을 경우 대비)
-const EMBEDDED_EMPLOYEES = [
-  {
-    "id": "1612156",
-    "name": "박상현",
-    "flight": {
-      "departure": {
-        "date": "2026.03.11",
-        "time": "09:00",
-        "from": "인천",
-        "to": "타이베이",
-        "airline": "대한항공",
-        "flightNo": "KE 2021"
-      },
-      "return": {
-        "date": "2026.03.14",
-        "time": "12:25",
-        "from": "타이베이",
-        "to": "인천",
-        "airline": "대한항공",
-        "flightNo": "KE 2022"
-      }
-    },
-    "myTour": [
-      "티엔라이"
-    ]
-  },
-  {
-    "id": "1612001",
-    "name": "김해빛나",
-    "flight": {
-      "departure": {
-        "date": "2026.03.11",
-        "time": "08:00",
-        "from": "인천",
-        "to": "타이베이",
-        "airline": "아시아나항공",
-        "flightNo": "OZ 711"
-      },
-      "return": {
-        "date": "2026.03.14",
-        "time": "11:40",
-        "from": "타이베이",
-        "to": "인천",
-        "airline": "아시아나항공",
-        "flightNo": "OZ 712"
-      }
-    },
-    "myTour": [
-      "자유일정"
-    ]
-  },
-  {
-    "id": "1612163",
-    "name": "이은지",
-    "flight": {
-      "departure": {
-        "date": "2026.03.11",
-        "time": "08:00",
-        "from": "인천",
-        "to": "타이베이",
-        "airline": "아시아나항공",
-        "flightNo": "OZ 711"
-      },
-      "return": {
-        "date": "2026.03.14",
-        "time": "11:40",
-        "from": "타이베이",
-        "to": "인천",
-        "airline": "아시아나항공",
-        "flightNo": "OZ 712"
-      }
-    },
-    "myTour": [
-      "티엔라이",
-      "고궁박물관",
-      "자유일정"
-    ]
-  },
-  {
-    "id": "1611391",
-    "name": "남욱현",
-    "flight": {
-      "departure": {
-        "date": "2026.03.11",
-        "time": "08:00",
-        "from": "인천",
-        "to": "타이베이",
-        "airline": "아시아나항공",
-        "flightNo": "OZ 711"
-      },
-      "return": {
-        "date": "2026.03.14",
-        "time": "11:40",
-        "from": "타이베이",
-        "to": "인천",
-        "airline": "아시아나항공",
-        "flightNo": "OZ 712"
-      }
-    },
-    "myTour": [
-      "고궁박물관"
-    ]
-  },
-  {
-    "id": "1611499",
-    "name": "최진우",
-    "flight": {
-      "departure": {
-        "date": "2026.03.11",
-        "time": "08:00",
-        "from": "인천",
-        "to": "타이베이",
-        "airline": "아시아나항공",
-        "flightNo": "OZ 711"
-      },
-      "return": {
-        "date": "2026.03.14",
-        "time": "11:40",
-        "from": "타이베이",
-        "to": "인천",
-        "airline": "아시아나항공",
-        "flightNo": "OZ 712"
-      }
-    },
-    "myTour": [
-      "티엔라이",
-      "고궁박물관",
-      "자유일정"
-    ]
-  },
-   {
-    "id": "1612164",
-    "name": "이제훈",
-    "flight": {
-      "departure": {
-        "date": "2026.03.11",
-        "time": "08:00",
-        "from": "인천",
-        "to": "타이베이",
-        "airline": "아시아나항공",
-        "flightNo": "OZ 711"
-      },
-      "return": {
-        "date": "2026.03.14",
-        "time": "11:40",
-        "from": "타이베이",
-        "to": "인천",
-        "airline": "아시아나항공",
-        "flightNo": "OZ 712"
-      }
-    },
-    "myTour": [
-      "티엔라이",
-      "고궁박물관",
-      "자유일정"
-    ]
-  },
-  {
-    "id": "1611836",
-    "name": "신현하",
-    "flight": {
-      "departure": {
-        "date": "2026.03.11",
-        "time": "08:00",
-        "from": "인천",
-        "to": "타이베이",
-        "airline": "아시아나항공",
-        "flightNo": "OZ 711"
-      },
-      "return": {
-        "date": "2026.03.14",
-        "time": "11:40",
-        "from": "타이베이",
-        "to": "인천",
-        "airline": "아시아나항공",
-        "flightNo": "OZ 712"
-      }
-    },
-    "myTour": [
-      "티엔라이",
-      "고궁박물관",
-      "자유일정"
-    ]
-  },
-  {
-    "id": "1612022",
-    "name": "현보라",
-    "flight": {
-      "departure": {
-        "date": "2026.03.11",
-        "time": "08:00",
-        "from": "인천",
-        "to": "타이베이",
-        "airline": "아시아나항공",
-        "flightNo": "OZ 711"
-      },
-      "return": {
-        "date": "2026.03.14",
-        "time": "11:40",
-        "from": "타이베이",
-        "to": "인천",
-        "airline": "아시아나항공",
-        "flightNo": "OZ 712"
-      }
-    },
-    "myTour": [
-      "티엔라이",
-      "고궁박물관",
-      "자유일정"
-    ]
-  }
-];
+window.addEventListener('keydown', (e) => {
+  if (!selectedBox || studioView.style.display === 'none') return;
+  
+  if (["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].includes(e.key)) {
+    e.preventDefault(); 
+    const step = e.shiftKey ? 10 : 1;
+    let currentLeft = selectedBox.offsetLeft;
+    let currentTop = selectedBox.offsetTop;
+    
+    const editorRect = editorContainer.getBoundingClientRect();
+    
+    if (e.key === "ArrowUp") currentTop -= step;
+    if (e.key === "ArrowDown") currentTop += step;
+    if (e.key === "ArrowLeft") currentLeft -= step;
+    if (e.key === "ArrowRight") currentLeft += step;
 
-// 로컬 파일 시도 후 실패하면 위 데이터 사용
-fetch("people/employees.json?ts=" + Date.now())
-  .then(res => res.json())
-  .then(data => {
-    employees = data;
-    tryAutoLogin(); 
-  })
-  .catch(err => {
-    console.warn("로컬 JSON 로드 실패, 내장 데이터를 사용합니다.");
-    employees = EMBEDDED_EMPLOYEES;
-    tryAutoLogin();
+    currentLeft = Math.max(0, Math.min(currentLeft, editorRect.width - selectedBox.offsetWidth));
+    currentTop = Math.max(0, Math.min(currentTop, editorRect.height - selectedBox.offsetHeight));
+
+    selectedBox.style.left = currentLeft + 'px';
+    selectedBox.style.top = currentTop + 'px';
+    
+    updateBoxBounds();
+  }
+});
+
+function updateBoxBounds() {
+  const ew = editorContainer.offsetWidth;
+  const eh = editorContainer.offsetHeight;
+  if(ew === 0 || eh === 0) return;
+
+  const getBounds = (box) => ({
+    x: box.offsetLeft / ew, y: box.offsetTop / eh,
+    w: box.offsetWidth / ew, h: box.offsetHeight / eh
   });
 
-/* ================= 중식비 지급 로직 ================= */
-function handleMealClick(btn) {
-  const wrap = btn.closest(".meal-check");
-  const tour = wrap.dataset.tour;
-  const isDone = wrap.classList.contains("done");
-  if (isDone) showMealDetail(wrap);
-  else approveMeal(wrap, tour);
+  bounds.dept = getBounds(document.getElementById('boxDept'));
+  bounds.name = getBounds(document.getElementById('boxName'));
+  bounds.qr   = getBounds(document.getElementById('boxQR'));
 }
 
-function approveMeal(wrap, tour) {
-  const pw = prompt("관리자 비밀번호 입력");
-  if (pw !== ADMIN_PASSWORD) { alert("비밀번호가 올바르지 않습니다."); return; }
-  const time = nowKSTString();
-  setMealUI(wrap, "DONE", time);
-  saveMealPaid(currentUser.id, tour, time);
-  logMealPaymentToSheet({ action: "APPROVE", tour, time });
-}
+templateInput.addEventListener('change', function(e) {
+  const file = e.target.files[0];
+  if (!file) return;
 
-function setMealUI(wrap, mode, time = "") {
-  const status = wrap.querySelector(".status");
-  const btn = wrap.querySelector("button");
-  if (mode === "DONE") {
-    wrap.classList.add("done");
-    status.textContent = "지급 완료";
-    status.classList.remove("pending"); status.classList.add("done");
-    wrap.dataset.time = time; btn.textContent = "지급 확인";
-  } else {
-    wrap.classList.remove("done");
-    status.textContent = "중식비 미지급";
-    status.classList.add("pending"); status.classList.remove("done");
-    wrap.dataset.time = ""; btn.textContent = "지급 확인";
-  }
-}
+  const reader = new FileReader();
+  reader.onload = function(event) {
+    customTemplateImg = new Image();
+    customTemplateImg.onload = function() {
+      templatePreview.src = event.target.result;
+      setTimeout(updateBoxBounds, 100);
+    };
+    customTemplateImg.src = event.target.result;
+  };
+  reader.readAsDataURL(file);
+});
+
+
+/* ==============================
+   6. 명찰 최종 합성 (Canvas)
+============================== */
+async function createCustomNameTag(emp, qrDataUrl) {
+  if (!customTemplateImg) throw new Error("명찰 배경을 업로드해주세요!");
+
+  const canvas = document.createElement('canvas');
+  const ctx = canvas.getContext('2d');
+
+  const baseW = customTemplateImg.naturalWidth;
+  const baseH = customTemplateImg.naturalHeight;
+  canvas.width = baseW; canvas.height = baseH;
+
+  ctx.drawImage(customTemplateImg, 0, 0, baseW, baseH);
+
+  if (emp.department) {
+    const bDept = bounds.dept;
+    const deptX = baseW * bDept.x; const deptY = baseH * bDept.y;
+    const deptW = baseW * bDept.w; const deptH = baseH * bDept.h;
     
-function mealKey(userId, tour) { return `mealPaid_${userId}_${tour}`; }
-function saveMealPaid(userId, tour, time) { localStorage.setItem(mealKey(userId, tour), JSON.stringify({ time })); }
-function loadMealPaid(userId, tour) { const raw = localStorage.getItem(mealKey(userId, tour)); return raw ? JSON.parse(raw) : null; }
-function removeMealPaid(userId, tour) { localStorage.removeItem(mealKey(userId, tour)); }
-
-function showMealDetail(wrap) {
-  const time = wrap.dataset.time;
-  const pw = prompt(`지급 완료 시각\n${time}\n\n취소하려면 관리자 비밀번호 입력\n(확인만 보려면 취소)`);
-  if (!pw) return;
-  if (pw !== ADMIN_PASSWORD) { alert("비밀번호 오류"); return; }
-  if (confirm("지급을 취소하시겠습니까?")) {
-    const tour = wrap.dataset.tour;
-    const cancelTime = nowKSTString();
-    setMealUI(wrap, "PENDING");
-    removeMealPaid(currentUser.id, tour);
-    logMealPaymentToSheet({ action: "CANCEL", tour, time: cancelTime });
+    const fontSizeDept = Math.max(deptH * 0.6, 12); 
+    ctx.fillStyle = "#ffffff"; 
+    ctx.font = `600 ${fontSizeDept}px Pretendard, sans-serif`;
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillText(emp.department, deptX + (deptW / 2), deptY + (deptH / 2));
   }
-}
 
-function nowKSTString() {
-  return new Intl.DateTimeFormat("ko-KR", { timeZone: "Asia/Seoul", year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", second: "2-digit" }).format(new Date());
-}
-
-const MEAL_SHEET_URL = "https://script.google.com/macros/s/AKfycbx2tVkT00Z8uXQWl6EeTIUUhZ3_NJHx3JDqSCHC5oJWkUCm0OtcTmaV6g20cNKoh0no9w/exec";
-
-function logMealPaymentToSheet(payload) {
-  if (!currentUser) return;
-  fetch(MEAL_SHEET_URL, {
-    method: "POST", mode: "no-cors",
-    body: JSON.stringify({ type: "meal", id: currentUser.id, name: currentUser.name, action: payload.action, tour: payload.tour, time: payload.time })
-  }).catch(console.error);
-}
+  if (emp.name) {
+    const bName = bounds.name;
+    const nameX = baseW * bName.x; const nameY = baseH * bName.y;
+    const nameW = baseW * bName.w; const nameH = baseH * bName.h;
     
-/* ================= 로그인 (🔥 수정 1. 스플래시 삭제) ================= */
-function login() {
-  const id = document.getElementById("employeeId").value.trim();
-  const user = employees.find(e => e.id === id);
-
-  if (!user) {
-    document.getElementById("loginError").textContent = "등록되지 않은 사번입니다.";
-    return;
+    const fontSizeName = Math.max(nameH * 0.75, 16);
+    ctx.fillStyle = "#111827"; 
+    ctx.font = `800 ${fontSizeName}px Pretendard, sans-serif`;
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillText(emp.name, nameX + (nameW / 2), nameY + (nameH / 2));
   }
 
-  currentUser = user;
-
-  // 로그인 화면 제거
-  document.getElementById("loginSection").style.display = "none";
-
-  // 📱 모바일: 스플래시 없이 즉시 메인으로 진입하도록 수정
-  document.getElementById("mainSection").style.display = "block";
-
-  document.getElementById("employeeName").textContent = user.name;
-  document.body.classList.add("logged-in");
-}
-
-/* ================= 로그아웃 (🔥 수정: 신규 추가) ================= */
-function logout() {
-  if(!confirm("로그아웃 하시겠습니까?")) return;
+  const bQR = bounds.qr;
+  const qrX = baseW * bQR.x; const qrY = baseH * bQR.y;
+  const qrW = baseW * bQR.w; const qrH = baseH * bQR.h;
   
-  currentUser = null;
-  document.body.classList.remove("logged-in");
-  document.body.classList.remove("menu-open");
-  
-  // 메인 숨기고 로그인 화면 보이기
-  document.getElementById("mainSection").style.display = "none";
-  document.getElementById("loginSection").style.display = "block";
-  document.getElementById("employeeId").value = "";
-  
-  // 열려있는 상세페이지 닫기
-  goHome(); 
+  const qrSize = Math.min(qrW, qrH); 
+  const qrDrawX = qrX + ((qrW - qrSize) / 2);
+  const qrDrawY = qrY + ((qrH - qrSize) / 2);
+
+  const qrImg = new Image();
+  qrImg.src = qrDataUrl;
+  await new Promise(r => qrImg.onload = r);
+
+  ctx.drawImage(qrImg, qrDrawX, qrDrawY, qrSize, qrSize);
+
+  return canvas;
 }
 
-function tryAutoLogin() {
-  const params = new URLSearchParams(window.location.search);
-  const eid = params.get("eid");
 
-  if (!eid) return;
+/* ==============================
+   7. 그리드 출력 (메인 화면용)
+============================== */
+function renderGrid(list){
+  const grid = document.getElementById("qrGrid");
+  grid.innerHTML = "";
 
-  // input에 사번 주입
-  const input = document.getElementById("employeeId");
-  if (input) input.value = eid;
+  list.forEach(emp => {
+    const card = document.createElement("div");
+    card.className = "card";
 
-  const user = employees.find(e => String(e.id) === String(eid));
-  if (!user) {
-    document.getElementById("loginError").textContent = "QR 사번이 유효하지 않습니다.";
-    return;
-  }
+    const qrBox = document.createElement("div");
+    qrBox.style.display = "inline-block";
+    qrBox.style.padding = "6px";
+    qrBox.style.background = "#fff";
+    qrBox.style.borderRadius = "12px";
+    qrBox.style.border = "1px solid #eef2f7";
 
-  // 🔥 여기서 끝
-  login();
+    card.appendChild(qrBox);
+
+    const qrText = BASE_URL + String(emp.id).trim();
+    new QRCode(qrBox, { text: qrText, width: 140, height: 140 });
+
+    const nameEl = document.createElement("div"); nameEl.className = "name"; nameEl.textContent = emp.name;
+    const deptEl = document.createElement("div"); deptEl.className = "dept"; deptEl.textContent = emp.department || "";
+    const idEl = document.createElement("div"); idEl.className = "id"; idEl.textContent = "ID: " + emp.id;
+
+    card.appendChild(nameEl); if(emp.department) card.appendChild(deptEl); card.appendChild(idEl);
+    grid.appendChild(card);
+  });
 }
 
-/* ================= 여행 일정 데이터 ================= */
-const travelSchedule = [
-  {
-    day: "DAY 1", date: "2026.03.11 (수)", title: "인천 → 타이베이 / 시내 하이라이트",
-    items: [
-      { time:"08:00/9:00", icon:"✈️", title:"인천 국제공항 출발", desc:"OZ 711 / KE 2021" },
-      { time:"12:30/13:30", icon:"🍜", title:"중식 | 우육면", desc:"현지 인기 중식당" },
-      { time:"13:30/14:30", icon:"🏛️", title:"단수이 옛거리/홍마오청/진리대학", desc:"홍마오청·옛거리 관광" },
-      { time:"16:30/17:30", icon:"🏨", title:"호텔 체크인", desc:"타이베이 메리어트 호텔[5성급]" },
-      { time:"18:00/18:30", icon:"🍽️", title:"석식 | 타카오 샤브샤브", desc:"무제한 샤브샤브" },
-      { time:"19:30/20:00", icon:"🌃", title:"타이베이 101 전망대", desc:"야경 관람" },
-      { time:"21:00/21:30", icon:"🏨", title:"호텔복귀", desc:"타이베이 메리어트 호텔[5성급]" }
-    ]
-  },
-  {
-    day: "DAY 2", date: "2026.03.12 (목)", title: "선택 관광 / 만찬",
-    items: [
-      { time:"08:30/9:00", icon:"🚌", title:"선택 관광", desc:"개인 선택 일정" },
-      { time:"08:30", icon:"🚌", title:"티엔라이 온천", desc:"선택 1안" },
-      { time:"9:00", icon:"🏛️", title:"고궁박물관", desc:"선택 2안" },
-      { time:"13:00", icon:"🍽️", title:"중식", desc:"베이징덕" },
-      { time:"14:30", icon:"🛍️", title:"서문정", desc:"개인 선택 일정" },
-      { time:"08:30/9:00", icon:"🧭", title:"자유시간", desc:"중식비 지급" },
-      { time:"18:00", icon:"🎉", title:"ISC 만찬", desc:"필수 참석" }
-    ]
-  },
-  {
-    day: "DAY 3", date: "2026.03.13 (금)", title: "근교 관광",
-    items: [
-      { time:"10:00", icon:"🏨🍽️", title:"호텔 조식 후 출발", desc:"타이베이 메리어트 호텔[5성급]" },
-      { time:"11:00", icon:"🌊", title:"야류 해상공원", desc:"기암괴석 관광" },
-      { time:"12:30", icon:"🦐", title:"중식 : 씨푸드", desc:"현지 해산물 특식" },
-      { time:"14:30", icon:"🏮", title:"스펀 천등날리기", desc:"소원천등 날리기" },
-      { time:"17:00", icon:"🏮", title:"지우펀 야경", desc:"홍등마을" },
-      { time:"20:00", icon:"🌊", title:"야시장 및 석식", desc:"야시장 자유식 및 쇼핑" },
-      { time:"21:30", icon:"🏨", title:"호텔복귀", desc:"타이베이 메리어트 호텔[5성급]" },
-      { time:"전일", icon:"🧭", title:"자유일정 선택시", desc:"전체 개인부담(중식비 지급 X)" }
-    ]
-  },
-  {
-    day: "DAY 4", date: "2026.03.14 (토)", title: "귀국",
-    items: [
-      { time:"08:00/9:00", icon:"🏨", title:"호텔 체크아웃", desc:"타이베이 메리어트 호텔[5성급]" },
-      { time:"11:40/12:25", icon:"✈️", title:"타이베이 출발", desc:"OZ 712 / KE 2022" },
-      { time:"15:25/15:50", icon:"🇰🇷", title:"인천 도착", desc:"ISC in Taiwan" }
-    ]
-  }
-];
-    
-function normalizeTime(t) {
-  const s = String(t).trim();
-  const m = s.match(/^(\d{1,2}):(\d{2})$/);
-  if (!m) return s;
-  return `${String(m[1]).padStart(2, "0")}:${m[2]}`;
-}
-
-function pickTimeByAirline(timeStr, airline) {
-  const parts = String(timeStr).split("/").map(s => normalizeTime(s));
-  if (parts.length === 1) return parts[0];
-  const isKoreanAir = String(airline || "").includes("대한항공");
-  return isKoreanAir ? parts[parts.length - 1] : parts[0];
-}
-
-function buildDay2ItemsForUser(user, userAirline) {
-  const tours = user?.myTour || [];
-  const hasTienlai = tours.some(v => String(v).includes("티엔라이"));
-  const hasGugung  = tours.some(v => String(v).includes("고궁박물관"));
-  const hasFree    = tours.some(v => String(v).includes("자유일정"));
-
-  const day2 = travelSchedule.find(d => d.day === "DAY 2");
-  const items = day2?.items || [];
-  const byTitle = (title) => items.find(x => x.title === title);
-
-  const itemSelect = byTitle("선택 관광");
-  const itemTienlai = byTitle("티엔라이 온천");
-  const itemGugung  = byTitle("고궁박물관");
-  const itemLunch   = byTitle("중식");
-  const itemXimen   = byTitle("서문정");
-  const itemFree    = byTitle("자유시간");
-  const itemDinner  = byTitle("ISC 만찬");
-
-  if (hasTienlai && hasGugung && hasFree) return [...(itemSelect ? [itemSelect] : []), ...(itemLunch ? [itemLunch] : []), ...(itemXimen ? [itemXimen] : []), ...(itemDinner ? [itemDinner] : [])];
-  if (hasFree && !hasTienlai && !hasGugung) return [...(itemFree ? [itemFree] : []), ...(itemDinner ? [itemDinner] : [])];
-  if (hasTienlai) return [...(itemTienlai ? [itemTienlai] : []), ...(itemLunch ? [itemLunch] : []), ...(itemXimen ? [itemXimen] : []), ...(itemDinner ? [itemDinner] : [])];
-  if (hasGugung) return [...(itemGugung ? [itemGugung] : []), ...(itemLunch ? [itemLunch] : []), ...(itemXimen ? [itemXimen] : []), ...(itemDinner ? [itemDinner] : [])];
-  
-  return [...(itemSelect ? [itemSelect] : []), ...(itemDinner ? [itemDinner] : [])];
-}
-
-function pickFlightDescByAirline(desc, airline) {
-  const s = String(desc || "");
-  if (!s.includes("/")) return s;
-  const isKoreanAir = String(airline || "").includes("대한항공");
-  const parts = s.split("/").map(v => v.trim()); 
-  return isKoreanAir ? (parts[1] || s) : (parts[0] || s);
-}
-
-/* ================= 페이지 오픈 로직 ================= */
-function openPage(type, fromHistory = false) {
-  document.body.classList.remove('menu-open'); // 메뉴 열려있으면 닫기
-
-  const userAirline = currentUser?.flight?.departure?.airline || ""; 
-  
-  if (!fromHistory) pageHistory.push(type);
-
-  const detail = document.getElementById("detailPage");
-  detail.style.display = "block";
-  requestAnimationFrame(() => { document.body.classList.add("detail-open"); });
-
-  const t = document.getElementById("detailTitle");
-  const c = document.getElementById("detailContent");
-
-  // ✅ DAY 1 ~ 4 버튼 처리 (프리미엄 디자인 적용부)
-  if (type.startsWith("day_")) {
-    const idx = parseInt(type.split("_")[1]);
-    const day = travelSchedule[idx];
-    t.textContent = `🗓 ${day.day} 일정`;
-
-    const items = (day.day === "DAY 2") ? buildDay2ItemsForUser(currentUser, userAirline) : day.items;
-
-    c.innerHTML = `
-      <div class="detail-content-wrap">
-        <div class="day-card">
-          <h3>${day.day} <span>${day.date}</span></h3>
-          <p class="day-title">${day.title}</p>
-          <div class="timeline">
-            ${items.map(i => `
-              <div class="schedule-item">
-                <div class="timeline-dot"></div>
-                <div class="schedule-card">
-                  <div class="schedule-time">${pickTimeByAirline(i.time, userAirline)}</div>
-                  <div class="schedule-body">
-                    <div class="schedule-title">${i.icon} ${i.title}</div>
-                    ${i.desc ? `<div class="schedule-desc">${pickFlightDescByAirline(i.desc, userAirline)}</div>` : ""}
-                  </div>
-                </div>
-              </div>
-            `).join("")}
-          </div>
-        </div>
-      </div>
-    `;
-    return;
-  }
-
-  // 메뉴 처리
-  if (type === "flight") {
-    const dep = currentUser.flight.departure;
-    const ret = currentUser.flight.return;
-    t.textContent = "✈️ 항공편 정보";
-    c.innerHTML = `
-      <div class="detail-content-wrap">
-        <div class="day-card"><h3>출국편</h3><div class="schedule-item"><div class="schedule-card"><div class="schedule-time">${dep.time}</div><div class="schedule-body"><div class="schedule-title">✈️ ${dep.from} → ${dep.to}</div><div class="schedule-desc">${dep.airline} ${dep.flightNo}</div><div class="schedule-desc">${dep.date}</div></div></div></div></div>
-        <div class="day-card"><h3>귀국편</h3><div class="schedule-item"><div class="schedule-card"><div class="schedule-time">${ret.time}</div><div class="schedule-body"><div class="schedule-title">🏠 ${ret.from} → ${ret.to}</div><div class="schedule-desc">${ret.airline} ${ret.flightNo}</div><div class="schedule-desc">${ret.date}</div></div></div></div></div>
-      </div>`;
-  }
-
-  if (type === "myTour") {
-    t.textContent = "🎒 나의 선택 관광";
-    c.innerHTML = `<div class="detail-content-wrap"><div class="mytour-wrap">${renderMyTour()}</div></div>`;
-    setTimeout(() => {
-      const wrap = document.querySelector('.meal-check[data-tour="자유일정"]');
-      if (!wrap) return;
-      syncMealStatusFromServer(currentUser.id, "자유일정", wrap);
-      const saved = loadMealPaid(currentUser.id, "자유일정");
-      if (!wrap.classList.contains("done") && saved?.time) setMealUI(wrap, "DONE", saved.time);
-    }, 0);
-  }
-
-  if (type === "taiwan") {
-    t.textContent = "🇹🇼 대만의 모든 것";
-    c.innerHTML = `
-      <div class="detail-content-wrap">
-        <div class="country-compare-grid">
-          <!-- 대한민국 -->
-          <div class="country-card">
-            <div class="country-header">
-              <img src="assets/images/flag-kr.jpg" class="flag-img" onerror="this.style.display='none'">
-              <h3>대한민국</h3>
-            </div>
-            <div class="time-box">
-              <span class="time-label">현재 시각</span>
-              <strong id="timeKR">--:--:--</strong>
-            </div>
-            <ul class="country-list">
-              <li><span>시차</span><strong>기준 국가</strong></li>
-              <li><span>인구</span><strong>약 5,100만 명</strong></li>
-              <li><span>면적</span><strong>약 100,210㎢</strong></li>
-              <li><span>GDP</span><strong>약 1.7조 달러</strong></li>
-            </ul>
-          </div>
-
-          <!-- 대만 -->
-          <div class="country-card">
-            <div class="country-header">
-              <img src="assets/images/flag-tw.jpg" class="flag-img" onerror="this.style.display='none'">
-              <h3>대만</h3>
-            </div>
-            <div class="time-box">
-              <span class="time-label">현재 시각</span>
-              <strong id="timeTW">--:--:--</strong>
-            </div>
-            <ul class="country-list">
-              <li><span>시차</span><strong>한국보다 1시간 느림</strong></li>
-              <li><span>인구</span><strong>약 2,300만 명</strong></li>
-              <li><span>면적</span><strong>약 36,197㎢</strong></li>
-              <li><span>GDP</span><strong>약 0.8조 달러</strong></li>
-            </ul>
-          </div>
-        </div>
-
-        <!-- ✅ [수정] 1. 실시간 환율 정보 표시 -->
-        <div class="exchange-row">
-            실시간 환율: <strong>1 TWD ≈ <span id="twFxRate">로딩중..</span>원</strong>
-            <br><span style="font-size:12px; opacity:0.8;">(업데이트: <span id="twFxTime">-</span>)</span>
-        </div>
-        <p class="exchange-note" style="text-align:center; font-size:13px; font-weight:600; color:var(--text-sub);">※ 환율은 실시간 변동될 수 있습니다</p>
-        
-        <div class="day-card" style="margin-top:20px;">
-          <h3 class="section-title">기본 정보</h3>
-          <div class="info-card-grid" style="display:grid; gap:12px; margin-top:12px;">
-            <div class="info-card" style="background:var(--bg-main); padding:16px; border-radius:12px; display:flex; flex-direction:column; gap:6px;">
-              <h4 style="margin:0; font-size:14px; font-weight:800; color:var(--primary-color); letter-spacing:-0.5px;">🇹🇼 국기</h4>
-              <p style="margin:0; font-size:13px; line-height:1.4; color:var(--text-main); word-break:keep-all;"><strong>청천백일만지홍기</strong><br><span style="color:var(--text-sub); font-size:12px; font-weight:600;">광명 · 자유 · 희생</span></p>
-            </div>
-            <div class="info-card" style="background:var(--bg-main); padding:16px; border-radius:12px; display:flex; flex-direction:column; gap:6px;">
-              <h4 style="margin:0; font-size:14px; font-weight:800; color:var(--primary-color); letter-spacing:-0.5px;">🗣 언어</h4>
-              <p style="margin:0; font-size:13px; font-weight:700; color:var(--text-main);">표준 중국어 / 번체 한자</p>
-            </div>
-            <div class="info-card" style="background:var(--bg-main); padding:16px; border-radius:12px; display:flex; flex-direction:column; gap:6px;">
-              <h4 style="margin:0; font-size:14px; font-weight:800; color:var(--primary-color); letter-spacing:-0.5px;">☀️ 기후</h4>
-              <p style="margin:0; font-size:13px; font-weight:700; color:var(--text-main);">3월 평균 18~25℃</p>
-            </div>
-          </div>
-        </div>
-      </div>`;
-    startWorldClock();
-    
-    // ✅ [수정] 1-2. 환율 API 호출
-    getFxRate().then(data => {
-        const r = document.getElementById("twFxRate");
-        const t = document.getElementById("twFxTime");
-        if(r) r.textContent = fxFmt(data.rate);
-        if(t) t.textContent = data.updatedUtc || "방금";
-    });
-  }
-
-  if (type === "exchange") {
-    t.textContent = "💱 환율 계산기";
-    c.innerHTML = `
-      <div class="detail-content-wrap">
-        <div class="exchange-row">환율: <strong>1 TWD ≈ <span id="fxRateText">불러오는 중…</span>원</strong><br><span style="font-size:12px; color:#6b7280;">업데이트: <span id="fxUpdatedText">-</span></span><div style="margin-top:10px;"><button class="primary-btn" id="fxRefreshBtn" style="max-width:220px;">환율 새로고침</button></div></div>
-        <div class="day-card"><h3 class="section-title">TWD ↔ KRW 계산</h3><div class="fx-grid"><div class="fx-box"><label>대만달러 (TWD)</label><input id="inputTWD" type="text" inputmode="decimal" placeholder="예: 1000"></div><div class="fx-eq">⇄</div><div class="fx-box"><label>원화 (KRW)</label><input id="inputKRW" type="text" inputmode="decimal" placeholder="예: 42000"></div></div><p class="fx-note" style="margin-top:10px; font-size:13px; color:#6b7280; text-align:center;">※ 숫자 입력 시 자동 계산됩니다.</p></div>
-      </div>`;
-    initExchangeCalculatorAuto();
-  }
-
-  if (type === "dinner") {
-    t.textContent = "🍽 만찬 안내";
-    c.innerHTML = `<div class="detail-content-wrap"><div class="day-card"><h3>ISC 공식 만찬</h3><p style="margin-top:10px; font-size:14px; color:var(--text-sub);">만찬에 관련된 상세 정보가 추후 업데이트 됩니다.</p></div></div>`;
-  }
-   
-  if (type === "request") {
-    t.textContent = "📝 요청사항";
-    c.innerHTML = `<div class="detail-content-wrap"><div class="day-card"><textarea id="requestInput" placeholder="요청사항을 자유롭게 입력해주세요."></textarea><button class="primary-btn" onclick="submitRequest()">제출하기</button></div></div>`;
-  }
-   
-  if (type === "contact") {
-    t.textContent = "📞 긴급 연락망";
-    c.innerHTML = `
-      <div class="detail-content-wrap"><div class="day-card"><h3>비상 연락망</h3><div class="timeline">
-      <div class="schedule-item"><div class="timeline-dot"></div><div class="schedule-card"><div class="schedule-body"><div class="schedule-title">📞 인카블루투어</div><div class="schedule-desc">담당자 홍길동 | 010-0000-0000</div></div></div></div>
-      <div class="schedule-item"><div class="timeline-dot"></div><div class="schedule-card"><div class="schedule-body"><div class="schedule-title">📞 인카 마케팅부</div><div class="schedule-desc">담당자 현보라과장 | 02-6214-0000</div></div></div></div>
-      <div class="schedule-item"><div class="timeline-dot"></div><div class="schedule-card"><div class="schedule-body"><div class="schedule-title">📞 현지 가이드</div><div class="schedule-desc">담당자 Jason | +886-900-222-222</div></div></div></div>
-      </div></div></div>`;
-  }
-}
-
-async function syncMealStatusFromServer(userId, tour, wrap) {
-  const url = `${MEAL_SHEET_URL}?mode=customerAdmin&id=${userId}`;
-  const res = await fetch(url);
-  const data = await res.json();
-  const status = data.mealMap?.[tour];
-  if (status === "APPROVE") setMealUI(wrap, "DONE", "서버 기준");
-  else setMealUI(wrap, "PENDING");
-}
-
-/* ================= 홈으로 ================= */
-function goHome() {
-  pageHistory = [];
-  document.body.classList.remove("detail-open");
-  document.body.classList.remove("menu-open");
-
-  // 🔥 애니메이션(0.4초)이 끝난 후 완전히 숨겨서 터치 방해 방지
-  setTimeout(() => {
-    document.getElementById("detailPage").style.display = "none";
-  }, 400); 
-}
-
-/* ================= 뒤로가기 ================= */
-function goBack() {
-  pageHistory.pop();
-   
-  if (pageHistory.length === 0) { 
-    goHome(); 
-    return; 
-  }
-   
-  const prevType = pageHistory[pageHistory.length - 1];
-  openPage(prevType, true);
-}
-
-/* ================= 요청사항 전송 ================= */
-function submitRequest() {
-  const requestText = document.getElementById("requestInput").value.trim();
-  if (!requestText) { alert("요청사항을 입력해주세요."); return; }
-  if (!currentUser) { alert("로그인 정보가 없습니다."); return; }
-   
-  fetch(MEAL_SHEET_URL, {
-    method: "POST", mode: "no-cors",
-    body: JSON.stringify({ type: "request", id: currentUser.id, name: currentUser.name, request: requestText, time: nowKSTString() })
-  }).then(() => { alert("요청사항이 전송되었습니다."); document.getElementById("requestInput").value = ""; }).catch(err => { console.error(err); alert("전송 중 오류가 발생했습니다."); });
-}
-
-function startWorldClock() {
-  function updateTime() {
-    const now = new Date();
-    const kr = new Intl.DateTimeFormat("ko-KR", { timeZone: "Asia/Seoul", hour: "2-digit", minute: "2-digit", second: "2-digit" }).format(now);
-    const tw = new Intl.DateTimeFormat("zh-TW", { timeZone: "Asia/Taipei", hour: "2-digit", minute: "2-digit", second: "2-digit" }).format(now);
-    const krEl = document.getElementById("timeKR");
-    const twEl = document.getElementById("timeTW");
-    if (krEl && twEl) { krEl.textContent = kr; twEl.textContent = tw; }
-  }
-  updateTime();
-  setInterval(updateTime, 1000);
-}
-
-const FX_CACHE_KEY = "fx_twd_krw_cache_v1";
-const FX_CACHE_MS = 6 * 60 * 60 * 1000; 
-
-function fxParse(v) {
-  if (v == null) return NaN;
-  const x = String(v).replace(/,/g, "").trim();
-  if (x === "") return NaN;
-  return Number(x);
-}
-
-function fxFmt(n) {
-  if (!isFinite(n)) return "";
-  const isInt = Math.abs(n - Math.round(n)) < 1e-10;
-  return (isInt ? Math.round(n) : n).toLocaleString("ko-KR", { maximumFractionDigits: 2 });
-}
-
-async function fetchTwdToKrwRate() {
-  const url = "https://open.er-api.com/v6/latest/USD";
-  const res = await fetch(url, { cache: "no-store" });
-  if (!res.ok) throw new Error("환율 API 실패: " + res.status);
-  const data = await res.json();
-  const krwPerUsd = data?.rates?.KRW;
-  const twdPerUsd = data?.rates?.TWD;
-  if (!isFinite(krwPerUsd) || !isFinite(twdPerUsd)) throw new Error("KRW/TWD 환율 데이터 없음");
-  return { rate: krwPerUsd / twdPerUsd, updatedUtc: data.time_last_update_utc || "" };
-}
-
-function loadFxCache() {
-  const raw = localStorage.getItem(FX_CACHE_KEY);
-  if (!raw) return null;
-  try {
-    const v = JSON.parse(raw);
-    if (!v.rate || !v.savedAt) return null;
-    if (Date.now() - v.savedAt > FX_CACHE_MS) return null; 
-    return v;
-  } catch { return null; }
-}
-
-function saveFxCache(payload) {
-  localStorage.setItem(FX_CACHE_KEY, JSON.stringify({ rate: payload.rate, updatedUtc: payload.updatedUtc, savedAt: Date.now() }));
-}
-
-async function getFxRate({ force = false } = {}) {
-  if (!force) { const cached = loadFxCache(); if (cached) return cached; }
-  const fresh = await fetchTwdToKrwRate();
-  saveFxCache(fresh); return loadFxCache() || fresh;
-}
-
-function initExchangeCalculatorAuto() {
-  const twdEl = document.getElementById("inputTWD");
-  const krwEl = document.getElementById("inputKRW");
-  const rateText = document.getElementById("fxRateText");
-  const updatedText = document.getElementById("fxUpdatedText");
-  const refreshBtn = document.getElementById("fxRefreshBtn");
-  if (!twdEl || !krwEl || !rateText || !updatedText) return;
-
-  let syncing = false; let rate = NaN; 
-
-  function updateFromTWD() {
-    if (syncing) return; syncing = true;
-    const twd = fxParse(twdEl.value);
-    if (!isFinite(twd) || !isFinite(rate)) { krwEl.value = ""; syncing = false; return; }
-    krwEl.value = fxFmt(twd * rate); syncing = false;
-  }
-  function updateFromKRW() {
-    if (syncing) return; syncing = true;
-    const krw = fxParse(krwEl.value);
-    if (!isFinite(krw) || !isFinite(rate) || rate === 0) { twdEl.value = ""; syncing = false; return; }
-    twdEl.value = fxFmt(krw / rate); syncing = false;
-  }
-
-  twdEl.addEventListener("input", updateFromTWD);
-  krwEl.addEventListener("input", updateFromKRW);
-
-  async function renderRate(force = false) {
-    rateText.textContent = "불러오는 중…";
-    try {
-      const fx = await getFxRate({ force });
-      rate = Number(fx.rate);
-      rateText.textContent = fxFmt(rate);
-      updatedText.textContent = fx.updatedUtc || "-";
-      const hasT = String(twdEl.value).trim() !== "";
-      const hasK = String(krwEl.value).trim() !== "";
-      if (hasT) updateFromTWD(); else if (hasK) updateFromKRW();
-    } catch (e) {
-      console.error(e); rateText.textContent = "실패"; updatedText.textContent = "-"; alert("환율을 불러오지 못했습니다. 네트워크 상태를 확인해주세요.");
+/* ==============================
+   8. 초기 JSON 로드 
+============================== */
+async function loadEmployees(){
+  setStatus("데이터 로드 중...", "");
+  try{
+    if (window.location.protocol === 'blob:' || window.location.protocol === 'data:') {
+      throw new Error("Preview sandbox");
     }
+    const res = await fetch(EMP_URL, { cache:"no-store" });
+    if (!res.ok) throw new Error("JSON not found");
+    employees = await res.json();
+    employees.sort((a,b) => String(a.id).localeCompare(String(b.id), "ko"));
+    setStatus(`✅ 기본 데이터 로드 완료 (${employees.length}명)`, "good");
+  }catch(e){
+    employees = [
+      { id: "10001", name: "홍길동", department: "개발본부" },
+      { id: "10002", name: "김철수", department: "디자인팀" },
+      { id: "10003", name: "이영희", department: "경영지원팀" }
+    ];
+    setStatus("테스트 샘플 데이터가 로드되었습니다.", "bad");
   }
-  if (refreshBtn) refreshBtn.addEventListener("click", () => renderRate(true));
-  renderRate(false);
+  renderGrid(employees);
 }
-</script>
 
+// QR 만 전체 압축
+document.getElementById("btnZip").addEventListener("click", async () => {
+  if(!employees.length) return alert("직원 목록이 비어있습니다.");
+  const zip = new JSZip(); const folder = zip.folder("ISC_QR");
+  
+  for(let i=0; i<employees.length; i++){
+    const emp = employees[i];
+    const temp = document.createElement("div");
+    temp.style.position = "fixed"; temp.style.left = "-9999px"; document.body.appendChild(temp);
+    new QRCode(temp, { text: BASE_URL + String(emp.id).trim(), width: 320, height: 320 });
+    await sleep(40);
+    const img = temp.querySelector("img"); const canvas = temp.querySelector("canvas");
+    let dataUrl = img && img.src ? img.src : (canvas ? canvas.toDataURL("image/png") : "");
+    folder.file(`${safeName(emp.id)}_${safeName(emp.name)}.png`, dataURLtoBase64(dataUrl), { base64:true });
+    temp.remove();
+  }
+  const blob = await zip.generateAsync({ type:"blob" });
+  saveAs(blob, "ISC_직원_QR전체.zip");
+});
+
+// 🔥 스튜디오 내: 명찰 개별 PNG + 통합 A4 PDF를 한 번에 생성
+document.getElementById("btnNameTagZip").addEventListener("click", async () => {
+  if(!employees.length) return alert("직원 목록이 없습니다. 엑셀을 업로드 해주세요.");
+  if(!customTemplateImg) return alert("디자인 파일(JPG, PNG)을 먼저 업로드해주세요!");
+
+  const btn = document.getElementById("btnNameTagZip");
+  btn.textContent = "명찰 및 PDF 생성 중... 잠시만 기다려주세요!";
+  btn.style.pointerEvents = "none";
+
+  try{
+    const zip = new JSZip(); 
+    const imgFolder = zip.folder("개별_명찰_이미지"); // PNG 담을 폴더
+    
+    // A4 사이즈 기준 PDF (단위 mm, 210 x 297)
+    const { jsPDF } = window.jspdf;
+    const pdf = new jsPDF('p', 'mm', 'a4');
+
+    for(let i=0; i<employees.length; i++){
+      const emp = employees[i];
+      const temp = document.createElement("div");
+      temp.style.position = "fixed"; temp.style.left = "-9999px"; document.body.appendChild(temp);
+
+      // QR 코드 고해상도 생성
+      new QRCode(temp, { text: BASE_URL + String(emp.id).trim(), width: 400, height: 400 });
+      await sleep(40); 
+
+      const img = temp.querySelector("img"); const canvas = temp.querySelector("canvas");
+      let qrDataUrl = img && img.src ? img.src : (canvas ? canvas.toDataURL("image/png") : "");
+      temp.remove();
+
+      // 명찰 이미지 생성
+      const nameTagCanvas = await createCustomNameTag(emp, qrDataUrl);
+      const imgDataUrl = nameTagCanvas.toDataURL("image/png");
+      
+      // 1. ZIP에 개별 PNG 추가
+      imgFolder.file(`${safeName(emp.id)}_${safeName(emp.name)}_명찰.png`, dataURLtoBase64(imgDataUrl), { base64:true });
+
+      // 2. PDF에 2장씩 배치 추가 로직
+      // (비율 유지하되 1장당 최대 높이 135mm, 마진 10mm로 상/하 배치)
+      const ratio = nameTagCanvas.height / nameTagCanvas.width;
+      const targetH = 135; 
+      const targetW = targetH / ratio;
+      const startX = (210 - targetW) / 2; // 가로 중앙 정렬
+
+      if (i > 0 && i % 2 === 0) {
+        pdf.addPage(); // 2장 채워졌으면 새 페이지
+      }
+      
+      // 짝수 인덱스(0, 2, 4...)는 상단 배치, 홀수 인덱스는 하단 배치
+      const startY = (i % 2 === 0) ? 10 : 10 + targetH + 10;
+      pdf.addImage(imgDataUrl, 'PNG', startX, startY, targetW, targetH);
+    }
+    
+    // PDF 데이터를 blob으로 뽑아서 zip 바로 바깥에 추가
+    const pdfBlob = pdf.output('blob');
+    zip.file("명찰_출력용_A4_통합본.pdf", pdfBlob);
+
+    // ZIP 다운로드
+    const blob = await zip.generateAsync({ type:"blob" });
+    saveAs(blob, "ISC_전체명찰_및_PDF.zip");
+    alert("개별 이미지와 PDF 파일 다운로드가 완료되었습니다!");
+  }catch(e){ 
+    alert("오류 발생: " + e.message);
+  } finally {
+    btn.textContent = "📥 개별 이미지 + 통합 PDF 다운로드";
+    btn.style.pointerEvents = "auto";
+  }
+});
+
+loadEmployees();
+</script>
 </body>
 </html>
