@@ -128,33 +128,44 @@
       pointer-events: none; 
     }
     
-    /* 드래그 박스 */
+    /* 🔥 드래그 박스 개선 (얇은 점선, 색깔 점 제거, 텍스트 축소) */
     .print-area-box {
       position: absolute;
-      background: rgba(255, 255, 255, 0.4);
+      background: rgba(255, 255, 255, 0.15); /* 반투명 배경을 더 옅게 */
+      border: 1px dashed #6b7280; /* 얇고 심플한 회색 점선 */
       cursor: grab;
       box-sizing: border-box;
       display: flex; flex-direction: column; align-items: center; justify-content: center;
-      transition: box-shadow 0.2s;
+      transition: all 0.2s;
     }
     .print-area-box:active { cursor: grabbing; }
-    .print-area-box span { font-weight: 800; font-size: 15px; pointer-events: none; text-shadow: 1px 1px 2px rgba(255,255,255,0.8); }
     
-    /* 🔥 활성화(선택) 된 박스 강조 (키보드 조작 타겟) */
+    /* 글씨 작고 거슬리지 않게 */
+    .print-area-box span { 
+      font-weight: 600; 
+      font-size: 12px; 
+      color: #374151;
+      pointer-events: none; 
+      text-shadow: 1px 1px 2px rgba(255,255,255,0.9); /* 글씨 가독성만 살짝 유지 */
+    }
+    
+    /* 활성화(선택) 된 박스 (키보드 조작 타겟) - 얇은 빨간 점선 */
     .print-area-box.active {
-      background: rgba(59, 130, 246, 0.2);
-      box-shadow: 0 0 0 3px #ef4444 !important; /* 빨간색 진한 테두리 */
+      background: rgba(59, 130, 246, 0.1);
+      border: 1px dashed #ef4444 !important; 
       z-index: 10;
     }
     
+    /* 크기 조절 영역 (기능은 유지하되 눈에는 안 보이게 투명 처리) */
     .resize-handle {
-      position: absolute; right: -2px; bottom: -2px; width: 28px; height: 28px;
-      cursor: se-resize; border-radius: 50%; border: 2px solid #fff;
+      position: absolute; 
+      right: 0; 
+      bottom: 0; 
+      width: 20px; 
+      height: 20px;
+      cursor: se-resize; 
+      background: transparent; /* 투명 */
     }
-
-    #boxDept { border: 2px dashed #3b82f6; } #boxDept span { color: #3b82f6; } #boxDept .resize-handle { background: #3b82f6; }
-    #boxName { border: 2px dashed #10b981; } #boxName span { color: #10b981; } #boxName .resize-handle { background: #10b981; }
-    #boxQR { border: 2px dashed #ef4444; } #boxQR span { color: #ef4444; } #boxQR .resize-handle { background: #ef4444; }
 
   </style>
 </head>
@@ -221,15 +232,15 @@
       <div class="editor-container" id="editorContainer">
         <img id="templatePreview" alt="명찰 배경을 업로드해주세요." style="min-height: 400px; background: #fff;">
         
-        <!-- 3개의 독립된 드래그 박스 (탭 인덱스를 주어 포커스 가능하게) -->
+        <!-- 🔥 텍스트 내용 간소화 및 식별 ID 유지 -->
         <div class="print-area-box" id="boxDept" style="left: 10%; top: 15%; width: 80%; height: 10%;" tabindex="0">
-          <span>소속 (흰색 렌더링)</span><div class="resize-handle"></div>
+          <span>소속</span><div class="resize-handle"></div>
         </div>
         <div class="print-area-box" id="boxName" style="left: 10%; top: 30%; width: 80%; height: 15%;" tabindex="0">
-          <span>이름 (검정색 렌더링)</span><div class="resize-handle"></div>
+          <span>이름</span><div class="resize-handle"></div>
         </div>
         <div class="print-area-box" id="boxQR" style="left: 25%; top: 50%; width: 50%; height: 35%;" tabindex="0">
-          <span>QR 코드 영역</span><div class="resize-handle"></div>
+          <span>QR영역</span><div class="resize-handle"></div>
         </div>
       </div>
     </div>
