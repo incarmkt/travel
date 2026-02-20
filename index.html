@@ -8,6 +8,10 @@
   <!-- ✅ [1] 폰트 CDN 추가 (Pretendard) -->
   <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
 
+  <!-- ✅ [추가] 이미지 빠른 로딩을 위한 Preload (브라우저가 가장 먼저 이미지를 다운로드하도록 지시) -->
+  <link rel="preload" as="image" href="assets/images/taiwan.jpg">
+  <link rel="preload" as="image" href="assets/images/home2.jpg">
+
   <!-- 프리미엄 테마 CSS -->
   <style>
     /* =========================================================
@@ -403,7 +407,9 @@
       background-color: #000;
       /* 비율 유지 (높이 지정) */
       height: 220px; 
-      display: flex; flex-direction: column; justify-content: flex-end;
+      display: flex; flex-direction: column; 
+      /* ✅ 텍스트를 위쪽(하늘)으로 올리기 위해 flex-start로 변경 */
+      justify-content: flex-start;
       color: #fff;
     }
     
@@ -416,7 +422,8 @@
 
     .tour-card-overlay {
       position: absolute; inset: 0;
-      background: linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,0.4) 50%, rgba(0,0,0,0.9) 100%);
+      /* ✅ 텍스트가 위로 올라갔으므로, 가독성을 위해 위쪽이 어두운 그라데이션으로 반전 */
+      background: linear-gradient(to bottom, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.3) 60%, rgba(0,0,0,0) 100%);
     }
 
     .tour-info {
@@ -437,7 +444,7 @@
     .tour-info h3 { margin: 0 0 6px; font-size: 22px; font-weight: 800; line-height: 1.2; text-shadow: 0 2px 4px rgba(0,0,0,0.3); }
     .tour-desc { font-size: 13px; opacity: 0.9; margin: 0 0 14px; line-height: 1.4; }
 
-    /* 포함/불포함 박스 (카드 내부 하단) */
+    /* 포함/불포함 박스 (카드 내부 상단/하단) */
     .tour-meta-box {
       background: rgba(255,255,255,0.15);
       backdrop-filter: blur(4px);
