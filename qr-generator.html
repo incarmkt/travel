@@ -71,11 +71,46 @@
     .setting-card h2 { margin: 0 0 10px 0; font-size: 18px; }
     .file-input-wrapper { margin-bottom: 16px; }
     
-    /* 🔥 명찰 에디터 - 3개의 박스로 분리 */
+    /* 🔥 명찰 제작 모달 (오버레이) */
+    .modal-overlay {
+      display: none; 
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.6);
+      z-index: 999;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .modal-content {
+      background: #fff;
+      border-radius: 16px;
+      width: 100%;
+      max-width: 800px;
+      max-height: 90vh;
+      overflow-y: auto;
+      padding: 24px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    }
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+      border-bottom: 1px solid #e5e7eb;
+      padding-bottom: 12px;
+    }
+    .modal-header h2 { margin: 0; font-size: 20px; }
+    .btn-close {
+      background: none; border: none; font-size: 24px; cursor: pointer; color: #6b7280; padding: 0; line-height: 1;
+    }
+
+    /* 🔥 명찰 에디터 - 모달 내에서 크게 보이도록 */
     .editor-container {
       position: relative;
       display: none; 
-      max-width: 400px;
+      width: 100%; /* 부모 너비 꽉 채움 */
+      max-width: 600px; /* 너무 커지는 것 방지 */
       margin: 0 auto;
       border: 1px solid #e5e7eb;
       border-radius: 8px;
@@ -103,7 +138,7 @@
     .print-area-box:active { cursor: grabbing; }
     .print-area-box span {
       font-weight: 800;
-      font-size: 13px;
+      font-size: 14px; /* 글씨 살짝 키움 */
       text-align: center;
       pointer-events: none;
     }
@@ -111,8 +146,8 @@
       position: absolute;
       right: -1px;
       bottom: -1px;
-      width: 20px;
-      height: 20px;
+      width: 24px; /* 핸들 살짝 키움 */
+      height: 24px;
       cursor: se-resize;
       border-radius: 4px 0 0 0;
     }
@@ -129,6 +164,14 @@
     #boxQR { border: 2px dashed #ef4444; }
     #boxQR span { color: #ef4444; }
     #boxQR .resize-handle { background: #ef4444; }
+
+    /* 메인 화면 레이아웃 (카드형 상단) */
+    .main-controls {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 20px;
+      margin-bottom: 24px;
+    }
 
     /* 그리드 및 직원 카드 */
     .grid{ display:grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap:14px; }
@@ -156,46 +199,70 @@
       </div>
     </div>
 
-    <button id="btnReload" class="btn secondary">초기 JSON 로드</button>
-    <button id="btnZip" class="btn">QR만 전체 ZIP</button>
-    <button id="btnNameTagZip" class="btn primary">전체 명찰 ZIP 다운로드</button>
+    <!-- 버튼 간소화 및 명찰 제작 모달 띄우기 버튼 추가 -->
+    <button id="btnReload" class="btn secondary">새로고침</button>
+    <button id="btnOpenModal" class="btn primary">명찰 제작 (양식 셋팅)</button>
   </div>
 
   <div id="statusBox" class="status hidden"></div>
 
-  <!-- 1. 엑셀 데이터 매칭 -->
-  <div class="setting-card">
-    <h2>1. 엑셀 데이터 매칭 (이름, 소속, 사번)</h2>
-    <div class="muted" style="margin-bottom: 12px;">
-      업로드 시 <b>기존에 생성된 QR 로직은 그대로 유지</b>되며, 엑셀의 사번과 대조하여 명찰에 들어갈 [이름/소속] 정보만 안전하게 덧입혀집니다.
+  <!-- 메인 화면 컨트롤 영역 (엑셀 업로드 / 일괄 다운로드) -->
+  <div class="main-controls">
+    <!-- 1. 엑셀 데이터 매칭 -->
+    <div class="setting-card" style="margin-bottom:0;">
+      <h2>1. 엑셀 데이터 덮어쓰기 (선택)</h2>
+      <div class="muted" style="margin-bottom: 12px;">
+        기존 QR은 유지한 채 <b>이름/소속</b> 텍스트만 엑셀 데이터로 덮어씌웁니다.
+      </div>
+      <div class="file-input-wrapper" style="margin-bottom:0;">
+        <input type="file" id="excelInput" accept=".xlsx, .xls, .csv" class="btn excel" style="width:100%; padding: 10px;">
+      </div>
     </div>
-    <div class="file-input-wrapper">
-      <input type="file" id="excelInput" accept=".xlsx, .xls, .csv" class="btn excel" style="width:100%; max-width: 400px; padding: 10px;">
+
+    <!-- 2. 일괄 다운로드 -->
+    <div class="setting-card" style="margin-bottom:0; display:flex; flex-direction:column; justify-content:center;">
+      <h2 style="margin-bottom:12px;">2. 전체 파일 다운로드</h2>
+      <div style="display:flex; gap:10px;">
+        <button id="btnZip" class="btn secondary" style="flex:1;">QR만 전체 ZIP</button>
+        <button id="btnNameTagZip" class="btn primary" style="flex:1;">전체 명찰 ZIP</button>
+      </div>
     </div>
   </div>
 
-  <!-- 2. 명찰 양식 에디터 -->
-  <div class="setting-card">
-    <h2>2. 명찰 양식 업로드 및 독립 영역 설정</h2>
-    <div class="muted" style="margin-bottom: 12px;">
-      빈 명찰 이미지를 업로드 후, <b>소속 / 이름 / QR</b> 이 들어갈 3개의 박스를 각각 원하는 위치와 크기로 조절하세요.
-    </div>
-    <div class="file-input-wrapper">
-      <input type="file" id="templateInput" accept="image/png, image/jpeg" class="btn secondary" style="width:100%; max-width: 400px; padding: 10px;">
-    </div>
-
-    <div class="editor-container" id="editorContainer">
-      <img id="templatePreview" alt="명찰 배경 미리보기">
+  <!-- 🔥 명찰 제작 (양식 셋팅) 모달 -->
+  <div id="nameTagModal" class="modal-overlay">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>디자이너 명찰 양식 셋팅</h2>
+        <button class="btn-close" id="btnCloseModal">&times;</button>
+      </div>
       
-      <!-- 3개의 독립된 드래그 박스 -->
-      <div class="print-area-box" id="boxDept" style="left: 10%; top: 15%; width: 80%; height: 10%;">
-        <span>소속 칸</span><div class="resize-handle"></div>
+      <div class="muted" style="margin-bottom: 16px;">
+        빈 명찰 이미지를 업로드 후, <b>소속 / 이름 / QR</b> 이 들어갈 3개의 박스를 마우스로 끌어 크기와 위치를 맞추세요. (크게 보면서 작업하세요)
       </div>
-      <div class="print-area-box" id="boxName" style="left: 10%; top: 30%; width: 80%; height: 15%;">
-        <span>이름 칸</span><div class="resize-handle"></div>
+      
+      <div class="file-input-wrapper">
+        <input type="file" id="templateInput" accept="image/png, image/jpeg" class="btn secondary" style="width:100%; max-width: 400px; padding: 10px;">
       </div>
-      <div class="print-area-box" id="boxQR" style="left: 25%; top: 50%; width: 50%; height: 35%;">
-        <span>QR 칸</span><div class="resize-handle"></div>
+
+      <!-- 크게 보이도록 에디터 컨테이너 분리 -->
+      <div class="editor-container" id="editorContainer">
+        <img id="templatePreview" alt="명찰 배경 미리보기">
+        
+        <!-- 3개의 독립된 드래그 박스 -->
+        <div class="print-area-box" id="boxDept" style="left: 10%; top: 15%; width: 80%; height: 10%;">
+          <span>소속 칸</span><div class="resize-handle"></div>
+        </div>
+        <div class="print-area-box" id="boxName" style="left: 10%; top: 30%; width: 80%; height: 15%;">
+          <span>이름 칸</span><div class="resize-handle"></div>
+        </div>
+        <div class="print-area-box" id="boxQR" style="left: 25%; top: 50%; width: 50%; height: 35%;">
+          <span>QR 칸</span><div class="resize-handle"></div>
+        </div>
+      </div>
+      
+      <div style="text-align: right; margin-top: 20px;">
+        <button class="btn primary" id="btnSaveTemplate">셋팅 완료 (닫기)</button>
       </div>
     </div>
   </div>
@@ -238,6 +305,24 @@ function clearStatus(){
 function safeName(str){ return String(str || "").replace(/[\\/:*?"<>|]/g, "_").trim(); }
 function dataURLtoBase64(dataUrl){ return dataUrl.split(",")[1]; }
 function sleep(ms){ return new Promise(r => setTimeout(r, ms)); }
+
+/* ==============================
+   🔥 모달 제어
+============================== */
+const modal = document.getElementById("nameTagModal");
+document.getElementById("btnOpenModal").addEventListener("click", () => {
+  modal.style.display = "flex";
+  // 모달이 열릴 때 혹시 모를 에디터 박스 비율 재계산
+  if(customTemplateImg) setTimeout(updateBoxBounds, 100); 
+});
+document.getElementById("btnCloseModal").addEventListener("click", () => modal.style.display = "none");
+document.getElementById("btnSaveTemplate").addEventListener("click", () => {
+  updateBoxBounds();
+  modal.style.display = "none";
+  if(customTemplateImg) setStatus("명찰 양식이 셋팅되었습니다. 이제 명찰을 다운로드할 수 있습니다.", "good");
+});
+// 배경 클릭 시 닫기 막음 (작업 중 실수 방지)
+
 
 /* ==============================
    🔥 엑셀 처리 (데이터 매핑/병합)
@@ -296,7 +381,7 @@ document.getElementById('excelInput').addEventListener('change', function(e) {
 
 
 /* ==============================
-   🔥 멀티 박스 드래그 & 리사이즈 에디터
+   🔥 멀티 박스 드래그 & 리사이즈 에디터 (모달 내)
 ============================== */
 const editorContainer = document.getElementById("editorContainer");
 const templateInput = document.getElementById("templateInput");
@@ -396,7 +481,7 @@ templateInput.addEventListener('change', function(e) {
       editorContainer.style.display = "block";
       setTimeout(() => {
         updateBoxBounds(); 
-        setStatus("명찰 양식이 적용되었습니다. 각 영역 박스를 마우스로 이동하여 위치를 맞춰주세요.", "good");
+        // 템플릿 로드 완료 시 알림 없음 (모달 안에 있으므로)
       }, 100);
     };
     customTemplateImg.src = event.target.result;
@@ -528,7 +613,7 @@ function renderGrid(list){
     const btnNameTag = document.createElement("button");
     btnNameTag.className = "btn primary"; btnNameTag.textContent = "명찰다운";
     btnNameTag.onclick = async () => {
-      if(!customTemplateImg) return alert("상단에서 명찰 양식(디자인)을 먼저 업로드해주세요!");
+      if(!customTemplateImg) return alert("상단 '명찰 제작' 버튼을 눌러 양식을 먼저 셋팅해주세요!");
       try{
         await sleep(30);
         const img = qrBox.querySelector("img"); const canvas = qrBox.querySelector("canvas");
@@ -576,11 +661,36 @@ async function loadEmployees(){
 /* ==============================
    전체 일괄 다운로드
 ============================== */
-async function downloadZipAll(){ /* 기존 로직 유지 */ }
+async function downloadZipAll(){ 
+  if(!employees.length) return setStatus("직원 목록이 비어있습니다.", "bad");
+  setStatus("QR ZIP 생성 중...", "");
+  try{
+    const zip = new JSZip(); const folder = zip.folder("ISC_QR");
+
+    for(let i=0; i<employees.length; i++){
+      const emp = employees[i];
+      const temp = document.createElement("div");
+      temp.style.position = "fixed"; temp.style.left = "-9999px"; document.body.appendChild(temp);
+
+      new QRCode(temp, { text: BASE_URL + String(emp.id).trim(), width: 320, height: 320 });
+      await sleep(60);
+
+      const img = temp.querySelector("img"); const canvas = temp.querySelector("canvas");
+      let dataUrl = img && img.src ? img.src : (canvas ? canvas.toDataURL("image/png") : "");
+
+      const base64 = dataURLtoBase64(dataUrl);
+      folder.file(`${safeName(emp.id)}_${safeName(emp.name)}.png`, base64, { base64:true });
+      temp.remove();
+    }
+    const blob = await zip.generateAsync({ type:"blob" });
+    saveAs(blob, "ISC_직원_QR전체.zip");
+    setStatus("QR ZIP 다운로드 완료 ✅", "good");
+  }catch(e){ setStatus("ZIP 생성 실패", "bad"); }
+}
 
 async function downloadNameTagZipAll(){
   if(!employees.length) return setStatus("직원 목록이 비어있습니다.", "bad");
-  if(!customTemplateImg) return alert("상단에서 명찰 양식(디자인)을 먼저 업로드해주세요!");
+  if(!customTemplateImg) return alert("상단 '명찰 제작' 버튼을 눌러 양식을 먼저 셋팅해주세요!");
 
   setStatus("명찰 ZIP 생성 중... (잠시만 기다려주세요)", "");
   try{
