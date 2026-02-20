@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <title>ISC 직원 QR 생성기</title>
+  <title>ISC 직원 QR 및 명찰 생성기</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <!-- QR 생성 -->
@@ -36,38 +36,51 @@
       font-weight:700;
       background:#111827;
       color:#fff;
+      transition: all 0.2s ease;
     }
+    .btn:hover { background: #1f2937; }
+    
     .btn.secondary{
       background:#fff;
       color:#111827;
       border:1px solid #e5e7eb;
     }
+    .btn.secondary:hover { background: #f9fafb; }
+    
+    .btn.primary {
+      background: #3b82f6;
+      color: #fff;
+    }
+    .btn.primary:hover { background: #2563eb; }
+
     .grid{
       display:grid;
-      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      /* 버튼이 3개로 늘어나 카드가 좁아지지 않도록 최소 너비를 220px로 조정 */
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
       gap:14px;
     }
     .card{
       background:#fff;
       border-radius:14px;
-      padding:12px;
+      padding:16px 12px;
       text-align:center;
       box-shadow:0 4px 10px rgba(0,0,0,.05);
       border:1px solid #eef2f7;
     }
-    .name{font-weight:800;margin-top:8px;}
-    .id{font-size:12px;color:#6b7280;margin-top:2px;}
+    .name{font-weight:800;margin-top:12px; font-size: 16px;}
+    .id{font-size:12px;color:#6b7280;margin-top:4px;}
     .mini-actions{
-      margin-top:10px;
+      margin-top:14px;
       display:flex;
-      gap:8px;
+      gap:6px;
       justify-content:center;
       flex-wrap:wrap;
     }
     .mini-actions button{
-      font-size:12px;
-      padding:8px 10px;
-      border-radius:10px;
+      font-size:11px;
+      padding:8px;
+      border-radius:8px;
+      flex: 1; /* 버튼들을 균등한 너비로 */
     }
     .status{
       margin-top:10px;
@@ -87,14 +100,16 @@
 
   <div class="topbar">
     <div style="flex:1; min-width:220px;">
-      <h1>ISC 직원 QR 코드 생성기</h1>
+      <h1>ISC 직원 QR & 명찰 생성기</h1>
       <div class="muted">
         QR 내용은 <b>https://incarmkt.github.io/travel/?eid=사번</b> 형식입니다.
       </div>
     </div>
 
-    <button id="btnReload" class="btn secondary">새로고침(직원목록 다시불러오기)</button>
-    <button id="btnZip" class="btn">전체 직원 QR ZIP 다운로드</button>
+    <button id="btnReload" class="btn secondary">새로고침(목록 재로드)</button>
+    <button id="btnZip" class="btn">QR만 전체 ZIP</button>
+    <!-- 🔥 새롭게 추가된 전체 명찰 ZIP 다운로드 버튼 -->
+    <button id="btnNameTagZip" class="btn primary">전체 명찰 ZIP 다운로드</button>
   </div>
 
   <div id="statusBox" class="status hidden"></div>
@@ -141,6 +156,78 @@ function dataURLtoBase64(dataUrl){
 function sleep(ms){ return new Promise(r => setTimeout(r, ms)); }
 
 /* ==============================
+   🔥 명찰 이미지(Canvas) 생성 로직
+============================== */
+async function createNameTagCanvas(emp, qrDataUrl) {
+  const canvas = document.createElement('canvas');
+  // 명찰 실물 비율 (약 2:3, 예: 54x86mm 비율) 
+  canvas.width = 600;
+  canvas.height = 900;
+  const ctx = canvas.getContext('2d');
+
+  // 1. 전체 배경 (연한 회색톤)
+  ctx.fillStyle = "#f8fafc";
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  // 2. 상단 헤더 영역 (ISC 다크 네이비)
+  ctx.fillStyle = "#111827"; 
+  ctx.fillRect(0, 0, canvas.width, 180);
+  
+  // 헤더 하단 포인트 라인 (블루)
+  ctx.fillStyle = "#3b82f6";
+  ctx.fillRect(0, 180, canvas.width, 10);
+
+  // 3. 상단 텍스트 (행사명)
+  ctx.fillStyle = "#ffffff";
+  ctx.font = "bold 34px system-ui, -apple-system, sans-serif";
+  ctx.textAlign = "center";
+  ctx.fillText("ISC OVERSEAS WORKSHOP", 300, 80);
+  
+  ctx.fillStyle = "#9ca3af";
+  ctx.font = "24px system-ui, -apple-system, sans-serif";
+  ctx.fillText("TAIWAN 2026", 300, 130);
+
+  // 4. 사원 정보
+  // JSON에 부서(department) 정보가 있다면 사용하고, 없으면 기본값 적용
+  const dept = emp.department || emp.team || "ISC 임직원";
+  
+  ctx.fillStyle = "#3b82f6"; // 파란색 소속 텍스트
+  ctx.font = "bold 28px system-ui, -apple-system, sans-serif";
+  ctx.fillText(dept, 300, 310);
+
+  ctx.fillStyle = "#111827"; // 이름
+  ctx.font = "bold 76px system-ui, -apple-system, sans-serif";
+  ctx.fillText(emp.name, 300, 400);
+
+  ctx.fillStyle = "#6b7280"; // 사번
+  ctx.font = "26px system-ui, -apple-system, sans-serif";
+  ctx.fillText(`ID : ${emp.id}`, 300, 450);
+
+  // 5. 하단 QR 영역 배경 (그림자 효과)
+  ctx.fillStyle = "#ffffff";
+  ctx.shadowColor = "rgba(0,0,0,0.1)";
+  ctx.shadowBlur = 15;
+  ctx.shadowOffsetY = 5;
+  ctx.fillRect(140, 500, 320, 320); // 흰색 박스
+  ctx.shadowColor = "transparent"; // 그림자 리셋
+
+  // 6. QR 코드 합성
+  const qrImg = new Image();
+  qrImg.src = qrDataUrl;
+  await new Promise(r => qrImg.onload = r);
+
+  // QR 이미지를 박스 안에 배치 (여백 포함)
+  ctx.drawImage(qrImg, 150, 510, 300, 300);
+
+  // 7. 테두리 (인쇄용 컷팅 가이드라인 느낌)
+  ctx.strokeStyle = "#e2e8f0";
+  ctx.lineWidth = 2;
+  ctx.strokeRect(1, 1, canvas.width - 2, canvas.height - 2);
+
+  return canvas;
+}
+
+/* ==============================
    렌더
 ============================== */
 function renderGrid(list){
@@ -160,7 +247,7 @@ function renderGrid(list){
 
     card.appendChild(qrBox);
 
-    // ✅ QR 생성(여기가 정답)
+    // ✅ 기존 QR 생성 유지
     const qrText = BASE_URL + String(emp.id).trim();
 
     new QRCode(qrBox, {
@@ -180,6 +267,7 @@ function renderGrid(list){
     const actions = document.createElement("div");
     actions.className = "mini-actions";
 
+    // --- 기존 버튼들 ---
     const btnCopy = document.createElement("button");
     btnCopy.className = "btn secondary";
     btnCopy.textContent = "링크복사";
@@ -194,39 +282,62 @@ function renderGrid(list){
 
     const btnPng = document.createElement("button");
     btnPng.className = "btn secondary";
-    btnPng.textContent = "PNG다운로드";
+    btnPng.textContent = "QR다운";
     btnPng.onclick = async () => {
       try{
-        // qrcodejs는 img 또는 canvas를 만들 수 있음
         await sleep(30);
         const img = qrBox.querySelector("img");
         const canvas = qrBox.querySelector("canvas");
-        let dataUrl = "";
+        let dataUrl = img && img.src ? img.src : (canvas ? canvas.toDataURL("image/png") : "");
 
-        if(img && img.src){
-          dataUrl = img.src; // data:image/png;base64...
-        }else if(canvas){
-          dataUrl = canvas.toDataURL("image/png");
-        }else{
-          throw new Error("QR 렌더 요소 없음");
-        }
+        if(!dataUrl) throw new Error("QR 렌더 요소 없음");
 
         const a = document.createElement("a");
         a.href = dataUrl;
-        a.download = `${safeName(emp.id)}_${safeName(emp.name)}.png`;
+        a.download = `${safeName(emp.id)}_${safeName(emp.name)}_QR.png`;
         document.body.appendChild(a);
         a.click();
         a.remove();
-
-        setStatus(`${emp.name} (${emp.id}) PNG 다운로드 완료`, "good");
+        setStatus(`${emp.name} (${emp.id}) QR 다운로드 완료`, "good");
       }catch(e){
         console.error(e);
         setStatus("PNG 다운로드 실패", "bad");
       }
     };
 
+    // 🔥 새롭게 추가된 명찰 다운로드 버튼
+    const btnNameTag = document.createElement("button");
+    btnNameTag.className = "btn primary";
+    btnNameTag.textContent = "명찰다운";
+    btnNameTag.onclick = async () => {
+      try{
+        await sleep(30);
+        const img = qrBox.querySelector("img");
+        const canvas = qrBox.querySelector("canvas");
+        let qrDataUrl = img && img.src ? img.src : (canvas ? canvas.toDataURL("image/png") : "");
+        
+        if(!qrDataUrl) throw new Error("QR 데이터 추출 실패");
+
+        // 명찰 캔버스 합성
+        const nameTagCanvas = await createNameTagCanvas(emp, qrDataUrl);
+        
+        const a = document.createElement("a");
+        a.href = nameTagCanvas.toDataURL("image/png");
+        a.download = `${safeName(emp.id)}_${safeName(emp.name)}_명찰.png`;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+
+        setStatus(`${emp.name} (${emp.id}) 명찰 다운로드 완료`, "good");
+      }catch(e){
+        console.error(e);
+        setStatus("명찰 생성 실패", "bad");
+      }
+    };
+
     actions.appendChild(btnCopy);
     actions.appendChild(btnPng);
+    actions.appendChild(btnNameTag); // 버튼 추가
 
     card.appendChild(nameEl);
     card.appendChild(idEl);
@@ -239,7 +350,7 @@ function renderGrid(list){
 }
 
 /* ==============================
-   직원 데이터 로드
+   직원 데이터 로드 (기존 동일)
 ============================== */
 async function loadEmployees(){
   setStatus("직원 목록 불러오는 중...", "");
@@ -247,7 +358,6 @@ async function loadEmployees(){
     const res = await fetch(EMP_URL, { cache:"no-store" });
     employees = await res.json();
 
-    // 기본 정렬(사번 오름차순) - 문자열 사번도 안전하게
     employees.sort((a,b) => String(a.id).localeCompare(String(b.id), "ko"));
 
     renderGrid(employees);
@@ -259,73 +369,94 @@ async function loadEmployees(){
 }
 
 /* ==============================
-   전체 ZIP 다운로드
+   전체 QR ZIP 다운로드 (기존 유지)
 ============================== */
 async function downloadZipAll(){
-  if(!employees.length){
-    setStatus("직원 목록이 비어있습니다. 먼저 로드하세요.", "bad");
-    return;
-  }
-
-  setStatus("ZIP 생성 중... (직원 수 많으면 조금 걸릴 수 있음)", "");
-
+  if(!employees.length) return setStatus("직원 목록이 비어있습니다.", "bad");
+  setStatus("QR ZIP 생성 중...", "");
   try{
     const zip = new JSZip();
     const folder = zip.folder("ISC_QR");
 
-    // ZIP은 해상도 조금 키워서 저장
     for(let i=0; i<employees.length; i++){
       const emp = employees[i];
-      setStatus(`ZIP 생성 중... ${i+1}/${employees.length} (${emp.name})`, "");
+      setStatus(`QR ZIP 생성 중... ${i+1}/${employees.length} (${emp.name})`, "");
 
       const temp = document.createElement("div");
-      // 화면에 안 보이게
-      temp.style.position = "fixed";
-      temp.style.left = "-9999px";
-      temp.style.top = "-9999px";
+      temp.style.position = "fixed"; temp.style.left = "-9999px";
       document.body.appendChild(temp);
 
-      const qrText = BASE_URL + String(emp.id).trim();
-
-      new QRCode(temp, {
-        text: qrText,
-        width: 320,
-        height: 320
-      });
-
-      // 렌더 대기
+      new QRCode(temp, { text: BASE_URL + String(emp.id).trim(), width: 320, height: 320 });
       await sleep(60);
 
       const img = temp.querySelector("img");
       const canvas = temp.querySelector("canvas");
-
-      let dataUrl = "";
-      if(img && img.src) dataUrl = img.src;
-      else if(canvas) dataUrl = canvas.toDataURL("image/png");
-      else throw new Error("QR 렌더 요소 없음");
+      let dataUrl = img && img.src ? img.src : (canvas ? canvas.toDataURL("image/png") : "");
 
       const base64 = dataURLtoBase64(dataUrl);
-      const fileName = `${safeName(emp.id)}_${safeName(emp.name)}.png`;
-      folder.file(fileName, base64, { base64:true });
-
+      folder.file(`${safeName(emp.id)}_${safeName(emp.name)}.png`, base64, { base64:true });
       temp.remove();
     }
-
     const blob = await zip.generateAsync({ type:"blob" });
-    saveAs(blob, "ISC_직원_QR.zip");
-    setStatus("ZIP 다운로드 완료 ✅", "good");
-
+    saveAs(blob, "ISC_직원_QR전체.zip");
+    setStatus("QR ZIP 다운로드 완료 ✅", "good");
   }catch(e){
     console.error(e);
-    setStatus("ZIP 생성/다운로드 실패", "bad");
+    setStatus("ZIP 생성 실패", "bad");
   }
 }
 
 /* ==============================
-   이벤트
+   🔥 전체 명찰 ZIP 다운로드 (신규)
+============================== */
+async function downloadNameTagZipAll(){
+  if(!employees.length) return setStatus("직원 목록이 비어있습니다.", "bad");
+  setStatus("명찰 ZIP 생성 중... (디자인 합성 중이므로 시간이 걸릴 수 있습니다)", "");
+  
+  try{
+    const zip = new JSZip();
+    const folder = zip.folder("ISC_명찰_출력용");
+
+    for(let i=0; i<employees.length; i++){
+      const emp = employees[i];
+      setStatus(`명찰 ZIP 생성 중... ${i+1}/${employees.length} (${emp.name})`, "");
+
+      // 1. 임시 고해상도 QR 생성
+      const temp = document.createElement("div");
+      temp.style.position = "fixed"; temp.style.left = "-9999px";
+      document.body.appendChild(temp);
+
+      new QRCode(temp, { text: BASE_URL + String(emp.id).trim(), width: 400, height: 400 });
+      await sleep(60); // 렌더링 대기
+
+      const img = temp.querySelector("img");
+      const canvas = temp.querySelector("canvas");
+      let qrDataUrl = img && img.src ? img.src : (canvas ? canvas.toDataURL("image/png") : "");
+      temp.remove();
+
+      // 2. 명찰 디자인 합성
+      const nameTagCanvas = await createNameTagCanvas(emp, qrDataUrl);
+      const base64 = dataURLtoBase64(nameTagCanvas.toDataURL("image/png"));
+      
+      // 3. ZIP에 추가
+      folder.file(`${safeName(emp.id)}_${safeName(emp.name)}_명찰.png`, base64, { base64:true });
+    }
+
+    const blob = await zip.generateAsync({ type:"blob" });
+    saveAs(blob, "ISC_명찰_출력용_전체.zip");
+    setStatus("명찰 ZIP 다운로드 완료 ✅ (바로 인쇄소에 넘길 수 있습니다)", "good");
+  }catch(e){
+    console.error(e);
+    setStatus("명찰 ZIP 생성 실패", "bad");
+  }
+}
+
+/* ==============================
+   이벤트 바인딩
 ============================== */
 document.getElementById("btnReload").addEventListener("click", loadEmployees);
 document.getElementById("btnZip").addEventListener("click", downloadZipAll);
+document.getElementById("btnNameTagZip").addEventListener("click", downloadNameTagZipAll);
 
 /* 최초 로드 */
 loadEmployees();
