@@ -173,10 +173,15 @@
       font-size: 14px;
       cursor: pointer;
       display: flex; align-items: center; gap: 6px;
-      transition: all 0.2s;
+      /* ✅ 메뉴 버튼 누를 때 효과 (transition 추가) */
+      transition: transform 0.1s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.1s;
       position: relative; z-index: 101; 
     }
-    .menu-btn:active { background: rgba(255,255,255,0.3); }
+    /* ✅ 메뉴 버튼 클릭 시 효과 */
+    .menu-btn:active { 
+      background: rgba(255,255,255,0.3); 
+      transform: scale(0.94);
+    }
 
     /* 메뉴 열릴 때 화면 어둡게 해주는 레이어 */
     .menu-dim {
@@ -209,11 +214,17 @@
     .drop-nav button {
       width: 100%; text-align: left; background: none; border: none;
       padding: 14px; font-size: 15px; font-weight: 600; color: var(--text-main);
-      border-radius: 12px; cursor: pointer; transition: background 0.2s;
+      border-radius: 12px; cursor: pointer; 
       display: flex; align-items: center; gap: 12px;
+      /* ✅ 카테고리 버튼 누를 때 효과 (transition 추가) */
+      transition: transform 0.1s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.1s;
     }
     .drop-nav button span { flex: 1; }
-    .drop-nav button:active { background: #f8fafc; transform: scale(0.98); }
+    /* ✅ 카테고리 항목 클릭 시 쫀득한 효과 */
+    .drop-nav button:active { 
+      background: #f1f5f9; 
+      transform: scale(0.95); 
+    }
 
     /* =========================================================
        [5] 메인 콘텐츠 (환영문구 & DAY 버튼들)
@@ -232,8 +243,8 @@
       margin-bottom: 30px; 
     }
     .welcome-text p { font-size: 18px; margin: 0; opacity: 0.95; font-weight: 500; letter-spacing: -0.5px; }
-    /* ✅ 배경 이미지에 구애받지 않고 뚜렷하게 잘 보이는 밝은 민트그린(#4ade80)으로 변경 */
-    .welcome-text strong { color: #4ade80; font-weight: 900; font-size: 20px; letter-spacing: -0.5px; }
+    /* ✅ 이름 글씨 색상을 고급스러운 샴페인 골드(#e6c27a)로 변경하고 살짝의 그림자로 가독성을 높임 */
+    .welcome-text strong { color: #e6c27a; font-weight: 900; font-size: 20px; letter-spacing: -0.5px; text-shadow: 0 2px 6px rgba(0,0,0,0.4); }
     .welcome-text h2 { font-size: 36px; font-weight: 900; margin: 6px 0 12px; line-height: 1.2; letter-spacing: -1px; }
     .welcome-text .sub-date { display: inline-block; padding: 6px 14px; background: rgba(0,0,0,0.4); border-radius: 20px; font-size: 13px; margin-top: 10px; border: 1px solid rgba(255,255,255,0.1); font-weight: 600;}
 
@@ -249,7 +260,9 @@
       padding: 16px 16px; 
       border-radius: 16px;
       color: #fff; text-align: left;
-      transition: all 0.2s; cursor: pointer;
+      /* ✅ DAY 버튼 누를 때 효과를 위한 transition 설정 */
+      transition: transform 0.1s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.1s, border-color 0.1s;
+      cursor: pointer;
       display: flex; flex-direction: column; justify-content: space-between;
       min-height: 100px;
     }
@@ -259,7 +272,12 @@
     .btn-date { font-size: 12px; font-weight: 700; color: #cbd5e1; background: rgba(255, 255, 255, 0.15); padding: 2px 8px; border-radius: 10px; letter-spacing: 0; }
     .day-btn .day-title { font-size: 13.5px; font-weight: 600; color: #cbd5e1; margin-top: 12px; line-height: 1.4; word-break: keep-all; opacity: 1; }
     
-    .day-btn:active { background: rgba(0,0,0,0.6); transform: scale(0.96); }
+    /* ✅ DAY 버튼 클릭 시 쫀득한 애니메이션 효과 */
+    .day-btn:active { 
+      background: rgba(0,0,0,0.65); 
+      transform: scale(0.94); 
+      border-color: rgba(255, 255, 255, 0.4);
+    }
 
     /* =========================================================
        [6] Bottom Sheet (Detail Page) - 🔥 화면 꽉 채움 유지
