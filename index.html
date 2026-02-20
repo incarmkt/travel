@@ -232,8 +232,8 @@
       margin-bottom: 30px; 
     }
     .welcome-text p { font-size: 18px; margin: 0; opacity: 0.95; font-weight: 500; letter-spacing: -0.5px; }
-    /* ✅ 이름 글씨 색상 변경 (#38bdf8 스카이블루 적용) 및 그림자 없이 가독성 높임 */
-    .welcome-text strong { color: #38bdf8; font-weight: 900; font-size: 20px; letter-spacing: -0.5px; }
+    /* ✅ 배경 이미지에 구애받지 않고 뚜렷하게 잘 보이는 밝은 민트그린(#4ade80)으로 변경 */
+    .welcome-text strong { color: #4ade80; font-weight: 900; font-size: 20px; letter-spacing: -0.5px; }
     .welcome-text h2 { font-size: 36px; font-weight: 900; margin: 6px 0 12px; line-height: 1.2; letter-spacing: -1px; }
     .welcome-text .sub-date { display: inline-block; padding: 6px 14px; background: rgba(0,0,0,0.4); border-radius: 20px; font-size: 13px; margin-top: 10px; border: 1px solid rgba(255,255,255,0.1); font-weight: 600;}
 
@@ -1274,7 +1274,18 @@ function openPage(type, fromHistory = false) {
 
   if (type === "dinner") {
     t.textContent = "🍽 만찬 안내";
-    c.innerHTML = `<div class="detail-content-wrap"><div class="day-card"><h3>ISC 공식 만찬</h3><p style="margin-top:10px; font-size:14px; color:var(--text-sub);">만찬에 관련된 상세 정보가 추후 업데이트 됩니다.</p></div></div>`;
+    c.innerHTML = `
+      <div class="detail-content-wrap">
+        <div class="day-card">
+          <h3>ISC 공식 만찬</h3>
+          <p style="margin-top:10px; font-size:14px; color:var(--text-sub);">ISC 공식 만찬장 배치도 및 상세 안내입니다.</p>
+          
+          <!-- ✅ 만찬장 배치도 이미지가 들어가는 자리입니다 -->
+          <div style="margin-top:16px; border-radius:12px; overflow:hidden; border:1px solid var(--border-light); background:#f8fafc;">
+            <img src="assets/images/dinner_map.jpg" alt="만찬장 배치도" style="width:100%; height:auto; display:block;" onerror="this.style.display='none'">
+          </div>
+        </div>
+      </div>`;
   }
    
   if (type === "request") {
