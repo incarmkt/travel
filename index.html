@@ -132,7 +132,8 @@
     
     .home-overlay {
       position: absolute; inset: 0;
-      background: linear-gradient(180deg, rgba(0,0,0,0.3) 0%, rgba(26,35,58,0.95) 100%);
+      /* ✅ 어둡게 깔린 배경 필터 제거 (투명하게 처리) */
+      background: transparent;
       z-index: 1;
     }
 
@@ -174,6 +175,8 @@
       display: flex; align-items: center; gap: 6px;
       transition: all 0.2s;
       position: relative; z-index: 101; 
+      /* 배경이 밝아질 경우를 대비해 텍스트 그림자 추가 */
+      text-shadow: 0 1px 3px rgba(0,0,0,0.5);
     }
     .menu-btn:active { background: rgba(255,255,255,0.3); }
 
@@ -227,18 +230,22 @@
       color: #fff;
     }
     
-    .welcome-text { margin-bottom: 30px; }
+    .welcome-text { 
+      margin-bottom: 30px; 
+      /* 텍스트 가독성을 위해 그림자 추가 */
+      text-shadow: 0 2px 4px rgba(0,0,0,0.5); 
+    }
     .welcome-text p { font-size: 18px; margin: 0; opacity: 0.9; }
     .welcome-text strong { color: var(--accent-color); font-weight: 800; }
     .welcome-text h2 { font-size: 34px; font-weight: 800; margin: 5px 0 10px; line-height: 1.2; }
-    .welcome-text .sub-date { display: inline-block; padding: 6px 14px; background: rgba(0,0,0,0.4); border-radius: 20px; font-size: 13px; margin-top: 10px; border: 1px solid rgba(255,255,255,0.1);}
+    .welcome-text .sub-date { display: inline-block; padding: 6px 14px; background: rgba(0,0,0,0.4); border-radius: 20px; font-size: 13px; margin-top: 10px; border: 1px solid rgba(255,255,255,0.1); text-shadow: none;}
 
     /* DAY 1~4 그리드 버튼 */
     .day-buttons {
       display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
     }
     .day-btn {
-      background: rgba(255, 255, 255, 0.1);
+      background: rgba(0, 0, 0, 0.4); /* 텍스트 가독성을 위해 버튼 배경을 살짝만 더 어둡게 */
       backdrop-filter: blur(15px);
       -webkit-backdrop-filter: blur(15px);
       border: 1px solid rgba(255, 255, 255, 0.2);
@@ -250,8 +257,8 @@
       display: flex; flex-direction: column; justify-content: space-between;
       min-height: 100px;
     }
-    .day-btn .day-title { font-size: 13px; font-weight: 400; opacity: 0.7; margin-top: 8px; line-height: 1.4; word-break: keep-all; }
-    .day-btn:active { background: rgba(255,255,255,0.2); transform: scale(0.96); }
+    .day-btn .day-title { font-size: 13px; font-weight: 400; opacity: 0.8; margin-top: 8px; line-height: 1.4; word-break: keep-all; }
+    .day-btn:active { background: rgba(0,0,0,0.6); transform: scale(0.96); }
 
     /* =========================================================
        [6] Bottom Sheet (Detail Page) - 🔥 화면 꽉 채움 유지
@@ -416,6 +423,10 @@
     .tour-meta-items { display: flex; gap: 8px; font-size: 12px; }
     .tour-meta-items span { background: rgba(0,0,0,0.3); padding: 2px 6px; border-radius: 4px; }
 
+    /* ✅ 중식비 상태 색상 CSS 추가 */
+    .status.pending { color: #ff4d4f; font-weight: 700; text-shadow: 0 1px 2px rgba(0,0,0,0.5); }
+    .status.done { color: #22c55e; font-weight: 700; text-shadow: 0 1px 2px rgba(0,0,0,0.5); }
+
     .meal-status-btn {
       background: #fff; color: #1a233a; border: none;
       font-size: 12px; font-weight: 700; padding: 6px 12px; border-radius: 8px;
@@ -497,6 +508,8 @@
             <button onclick="openPage('exchange')">💱 <span>환율 계산기</span></button>  
             <button onclick="openPage('flight')">✈️ <span>항공편 정보</span></button>
             <button onclick="openPage('myTour')">🎒 <span>나의 선택 관광</span></button>
+            <button onclick="openPage('dinner')">🍽 <span>만찬 안내</span></button>
+            <button onclick="openPage('request')">📝 <span>요청사항</span></button>
             <button onclick="openPage('contact')">📞 <span>긴급 연락망</span></button>
             <!-- ✅ [수정] 2. 로그아웃 버튼 추가 -->
             <button onclick="logout()" style="border-top:1px solid #eee; margin-top:4px; color:#e53e3e;">🚪 <span>로그아웃</span></button>
@@ -622,7 +635,8 @@ const myTourTemplates = [
           <p class="tour-desc">자유일정 대만 (중식비 지급)</p>
           <div class="tour-meta-box">
              <div class="meal-check" data-tour="자유일정" style="width:100%; display:flex; justify-content:space-between; align-items:center;">
-                <span class="status pending" style="color:#fff; font-weight:600;">중식비 미지급</span>
+                <!-- ✅ 고정된 흰색 글씨를 지우고 CSS 클래스를 통해 색상 제어 -->
+                <span class="status pending">중식비 미지급</span>
                 <button class="meal-status-btn" onclick="handleMealClick(this)">지급 확인</button>
              </div>
           </div>
