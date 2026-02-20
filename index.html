@@ -1259,21 +1259,46 @@ function openPage(type, fromHistory = false) {
         </div>
         <p class="exchange-note" style="text-align:center; font-size:13px; font-weight:600; color:var(--text-sub);">※ 환율은 실시간 변동될 수 있습니다</p>
         
+        <!-- 🔥 [수정] 대만 기본 정보 업그레이드 -->
         <div class="day-card" style="margin-top:20px;">
-          <h3 class="section-title">기본 정보</h3>
-          <div class="info-card-grid" style="display:grid; gap:12px; margin-top:12px;">
-            <div class="info-card" style="background:var(--bg-main); padding:16px; border-radius:12px; display:flex; flex-direction:column; gap:6px;">
-              <h4 style="margin:0; font-size:14px; font-weight:800; color:var(--primary-color); letter-spacing:-0.5px;">🇹🇼 국기</h4>
-              <p style="margin:0; font-size:13px; line-height:1.4; color:var(--text-main); word-break:keep-all;"><strong>청천백일만지홍기</strong><br><span style="color:var(--text-sub); font-size:12px; font-weight:600;">광명 · 자유 · 희생</span></p>
+          <h3 style="margin: 0 0 16px; font-size: 18px; color: var(--primary-color); font-weight: 800; display:flex; align-items:center; gap:6px;">
+            <span style="font-size:20px;">💡</span> 대만 여행 필수 정보
+          </h3>
+          
+          <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px; margin-bottom:12px;">
+            <div style="background:var(--bg-main); padding:16px; border-radius:12px; border:1px solid var(--border-light);">
+               <h4 style="margin:0 0 8px; font-size:13px; color:var(--text-sub); font-weight:700;">🔌 전압 및 콘센트</h4>
+               <p style="margin:0; font-size:15px; font-weight:800; color:var(--primary-color); letter-spacing:-0.5px;">110V / 60Hz</p>
+               <span style="font-size:12px; color:#e53e3e; font-weight:700; margin-top:4px; display:block; letter-spacing:-0.5px;">※ 11자형(돼지코) 필수</span>
             </div>
-            <div class="info-card" style="background:var(--bg-main); padding:16px; border-radius:12px; display:flex; flex-direction:column; gap:6px;">
-              <h4 style="margin:0; font-size:14px; font-weight:800; color:var(--primary-color); letter-spacing:-0.5px;">🗣 언어</h4>
-              <p style="margin:0; font-size:13px; font-weight:700; color:var(--text-main);">표준 중국어 / 번체 한자</p>
+            
+            <div style="background:var(--bg-main); padding:16px; border-radius:12px; border:1px solid var(--border-light);">
+               <h4 style="margin:0 0 8px; font-size:13px; color:var(--text-sub); font-weight:700;">🛂 비자 (Visa)</h4>
+               <p style="margin:0; font-size:15px; font-weight:800; color:var(--primary-color); letter-spacing:-0.5px;">90일 무비자</p>
+               <span style="font-size:12px; color:var(--text-sub); font-weight:600; margin-top:4px; display:block; letter-spacing:-0.5px;">한국 여권 소지자 기준</span>
             </div>
-            <div class="info-card" style="background:var(--bg-main); padding:16px; border-radius:12px; display:flex; flex-direction:column; gap:6px;">
-              <h4 style="margin:0; font-size:14px; font-weight:800; color:var(--primary-color); letter-spacing:-0.5px;">☀️ 기후</h4>
-              <p style="margin:0; font-size:13px; font-weight:700; color:var(--text-main);">3월 평균 18~25℃</p>
+            
+            <div style="background:var(--bg-main); padding:16px; border-radius:12px; border:1px solid var(--border-light);">
+               <h4 style="margin:0 0 8px; font-size:13px; color:var(--text-sub); font-weight:700;">🪙 팁 문화</h4>
+               <p style="margin:0; font-size:15px; font-weight:800; color:var(--primary-color); letter-spacing:-0.5px;">팁 문화 없음</p>
+               <span style="font-size:12px; color:var(--text-sub); font-weight:600; margin-top:4px; display:block; letter-spacing:-0.5px;">대부분 10% 봉사료 포함</span>
             </div>
+            
+            <div style="background:var(--bg-main); padding:16px; border-radius:12px; border:1px solid var(--border-light);">
+               <h4 style="margin:0 0 8px; font-size:13px; color:var(--text-sub); font-weight:700;">🗣️ 사용 언어</h4>
+               <p style="margin:0; font-size:15px; font-weight:800; color:var(--primary-color); letter-spacing:-0.5px;">중국어(번체)</p>
+               <span style="font-size:12px; color:var(--text-sub); font-weight:600; margin-top:4px; display:block; letter-spacing:-0.5px;">주요 관광지 영/한 통용</span>
+            </div>
+          </div>
+
+          <div style="background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%); padding:18px; border-radius:12px; position:relative; overflow:hidden; border:1px solid var(--border-light);">
+            <div style="position:relative; z-index:2;">
+               <h4 style="margin:0 0 8px; font-size:15px; font-weight:800; color:var(--primary-color); display:flex; align-items:center; gap:6px;">⛅ 3월의 대만, 날씨와 옷차림</h4>
+               <p style="margin:0 0 6px; font-size:13px; line-height:1.6; color:var(--text-main); word-break:keep-all;">
+                 <strong>평균 기온 18~25℃</strong>로 한국의 초여름~봄 날씨와 비슷합니다. 낮에는 가벼운 옷차림이 좋지만, 아침저녁이나 에어컨이 강한 실내에서는 쌀쌀할 수 있으므로 <strong style="color:#2b6cb0;">얇은 겉옷(가디건, 바람막이)</strong>을 꼭 챙겨주세요!
+               </p>
+            </div>
+            <span style="font-size:70px; position:absolute; right:-10px; bottom:-15px; opacity:0.1; z-index:1;">🧥</span>
           </div>
         </div>
       </div>`;
