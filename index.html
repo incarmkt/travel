@@ -175,8 +175,6 @@
       display: flex; align-items: center; gap: 6px;
       transition: all 0.2s;
       position: relative; z-index: 101; 
-      /* 배경이 밝아질 경우를 대비해 텍스트 그림자 추가 */
-      text-shadow: 0 1px 3px rgba(0,0,0,0.5);
     }
     .menu-btn:active { background: rgba(255,255,255,0.3); }
 
@@ -232,14 +230,12 @@
     
     .welcome-text { 
       margin-bottom: 30px; 
-      /* ✅ 텍스트 가독성을 위해 그림자 강화 */
-      text-shadow: 0 2px 8px rgba(0,0,0,0.6); 
     }
     .welcome-text p { font-size: 18px; margin: 0; opacity: 0.95; font-weight: 500; letter-spacing: -0.5px; }
-    /* ✅ 황색에서 깔끔하고 선명한 흰색으로 변경, 폰트 두께 조절 */
-    .welcome-text strong { color: #ffffff; font-weight: 900; font-size: 20px; letter-spacing: -0.5px; }
+    /* ✅ 이름 글씨 색상 변경 (#38bdf8 스카이블루 적용) 및 그림자 없이 가독성 높임 */
+    .welcome-text strong { color: #38bdf8; font-weight: 900; font-size: 20px; letter-spacing: -0.5px; }
     .welcome-text h2 { font-size: 36px; font-weight: 900; margin: 6px 0 12px; line-height: 1.2; letter-spacing: -1px; }
-    .welcome-text .sub-date { display: inline-block; padding: 6px 14px; background: rgba(0,0,0,0.4); border-radius: 20px; font-size: 13px; margin-top: 10px; border: 1px solid rgba(255,255,255,0.1); text-shadow: none; font-weight: 600;}
+    .welcome-text .sub-date { display: inline-block; padding: 6px 14px; background: rgba(0,0,0,0.4); border-radius: 20px; font-size: 13px; margin-top: 10px; border: 1px solid rgba(255,255,255,0.1); font-weight: 600;}
 
     /* DAY 1~4 그리드 버튼 */
     .day-buttons {
@@ -250,15 +246,19 @@
       backdrop-filter: blur(15px);
       -webkit-backdrop-filter: blur(15px);
       border: 1px solid rgba(255, 255, 255, 0.2);
-      padding: 20px 16px; 
+      padding: 16px 16px; 
       border-radius: 16px;
       color: #fff; text-align: left;
-      font-size: 18px; font-weight: 800;
       transition: all 0.2s; cursor: pointer;
       display: flex; flex-direction: column; justify-content: space-between;
       min-height: 100px;
     }
-    .day-btn .day-title { font-size: 13px; font-weight: 400; opacity: 0.8; margin-top: 8px; line-height: 1.4; word-break: keep-all; }
+    
+    /* ✅ 날짜 및 글씨체 가독성 개선 스타일 추가 */
+    .day-btn-header { display: flex; justify-content: space-between; align-items: center; width: 100%; font-size: 18px; font-weight: 800; }
+    .btn-date { font-size: 12px; font-weight: 700; color: #cbd5e1; background: rgba(255, 255, 255, 0.15); padding: 2px 8px; border-radius: 10px; letter-spacing: 0; }
+    .day-btn .day-title { font-size: 13.5px; font-weight: 600; color: #cbd5e1; margin-top: 12px; line-height: 1.4; word-break: keep-all; opacity: 1; }
+    
     .day-btn:active { background: rgba(0,0,0,0.6); transform: scale(0.96); }
 
     /* =========================================================
@@ -536,19 +536,19 @@
 
       <div class="day-buttons">
         <button class="day-btn" onclick="openPage('day_0')">
-          <span class="day-btn-header">DAY 1</span>
+          <div class="day-btn-header">DAY 1 <span class="btn-date">03.11</span></div>
           <span class="day-title">인천 출발 &<br>시내 하이라이트</span>
         </button>
         <button class="day-btn" onclick="openPage('day_1')">
-          <span class="day-btn-header">DAY 2</span>
+          <div class="day-btn-header">DAY 2 <span class="btn-date">03.12</span></div>
           <span class="day-title">선택 관광 &<br>ISC 공식 만찬</span>
         </button>
         <button class="day-btn" onclick="openPage('day_2')">
-          <span class="day-btn-header">DAY 3</span>
+          <div class="day-btn-header">DAY 3 <span class="btn-date">03.13</span></div>
           <span class="day-title">근교 관광 &<br>자유 일정</span>
         </button>
         <button class="day-btn" onclick="openPage('day_3')">
-          <span class="day-btn-header">DAY 4</span>
+          <div class="day-btn-header">DAY 4 <span class="btn-date">03.14</span></div>
           <span class="day-title">타이베이 출발 &<br>인천 귀국</span>
         </button>
       </div>
