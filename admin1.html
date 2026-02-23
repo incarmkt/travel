@@ -209,6 +209,29 @@
         const { useState, useEffect, useMemo, useRef, Fragment, useCallback } = React;
         const CURRENCY = '$';
 
+        const TRAVEL_SITE_BASE_URL = "https://incarmkt.github.io/travel/"; // 여행 안내 사이트 주소
+
+function buildTravelDeepLink(uid) {
+  const base = TRAVEL_SITE_BASE_URL.replace(/\/?$/, "/");
+  return `${base}?eid=${encodeURIComponent(String(uid))}`;
+}
+
+function extractUidFromScan(raw) {
+  const text = String(raw || "").trim();
+  if (/^\d{4,}$/.test(text)) return text;
+
+  try {
+    const url = new URL(text);
+    const eid = url.searchParams.get("eid");
+    if (eid) return String(eid).trim();
+  } catch (e) {}
+
+  const m = text.match(/(?:\?|&)?eid=([^&#]+)/i);
+  if (m && m[1]) return decodeURIComponent(m[1]).trim();
+
+  return text;
+}
+        
         // 폰트 목록 정의
         const AVAILABLE_FONTS = [
             { name: 'Noto Sans KR (고딕)', value: "'Noto Sans KR', sans-serif" },
@@ -863,11 +886,12 @@
                             setIsLookupScanning(false);
                             html5QrCodeRef.current = null;
 
-                            const found = users.find(u => u.uid === decodedText);
+                           const uid = extractUidFromScan(decodedText);
+const found = users.find(u => String(u.uid) === String(uid));
                             if (found) {
                                 setSelectedUser(found);
                             } else {
-                                alert(`미등록 사용자입니다. (ID: ${decodedText})`);
+                                alert(`미등록 사용자입니다. (ID: ${uid})`);
                             }
                         }, 
                         (errorMessage) => {}
@@ -1039,7 +1063,7 @@
                                     </div>
                                     <div className="bg-white border-2 border-dashed border-slate-200 rounded-2xl p-4 flex flex-col items-center justify-center text-center w-full md:w-auto">
                                         <div className="mb-2 w-32 h-32 flex items-center justify-center bg-slate-50">
-                                            <QRCodeCanvas text={selectedUser.uid} />
+                                       <QRCodeCanvas text={buildTravelDeepLink(selectedUser.uid)} />
                                         </div>
                                         <p className="text-[10px] font-bold text-slate-400">QR 데이터: {selectedUser.uid}</p>
                                     </div>
@@ -1201,7 +1225,7 @@
                 if (layer.type === 'qr') {
                     return (
                         <div key={layer.id} style={{ ...commonStyle, width: `${layer.size}px`, height: `${layer.size}px`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                            <QRCodeCanvas text={u.uid} size={layer.size} transparent={true} />
+                       <QRCodeCanvas text={buildTravelDeepLink(u.uid)} size={layer.size} transparent={true} />
                         </div>
                     );
                 } else if (layer.type === 'text') {
@@ -1817,7 +1841,7 @@
                                     {badgeConfig.bgImage && <img src={badgeConfig.bgImage} className="absolute inset-0 w-full h-full object-cover" />}
                                     {badgeConfig.layers && badgeConfig.layers.map((layer, idx) => {
                                         const commonStyle = { position: 'absolute', top: `${layer.y}%`, left: `${layer.x}%`, transform: 'translate(-50%, -50%)', zIndex: idx, width: layer.width === 'auto' ? 'auto' : `${layer.width}px`, textAlign: layer.align || 'center' };
-                                        if (layer.type === 'qr') return <div key={layer.id} style={{ ...commonStyle, width: `${layer.size}px`, height: `${layer.size}px`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}><QRCodeCanvas text={u.uid} size={layer.size} transparent={true} /></div>;
+                                        if (layer.type === 'qr') return <div key={layer.id} style={{ ...commonStyle, width: `${layer.size}px`, height: `${layer.size}px`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}><QRCodeCanvas text={buildTravelDeepLink(u.uid)} size={layer.size} transparent={true} /></div>;
                                         else if (layer.type === 'text') {
                                             let content = layer.content;
                                             if (layer.variable) { if (layer.variable === 'name') content = u.name; else if (layer.variable === 'org') content = u.org; else if (layer.variable === 'role') content = u.options && (u.options['직책'] || u.options['Role'] || '-'); else if (layer.variable === 'id') content = u.uid; }
@@ -2313,8 +2337,9 @@
                 }); 
             };
 
-            const processScan = async (scannedUid, strictMode = false) => { 
-                const user = users.find(u => u.uid === scannedUid); 
+const processScan = async (scannedText, strictMode = false) => { 
+  const scannedUid = extractUidFromScan(scannedText);
+  const user = users.find(u => String(u.uid) === String(scannedUid));
                 if (!user) return setScanResult({ status: 'error', msg: '미등록 참가자', subMsg: `ID: ${scannedUid}` }); 
                 
                 const session = schedules.find(s => s.id === targetSessionId); 
