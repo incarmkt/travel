@@ -1,0 +1,2473 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>INCARPASS PRO - Universal Event Platform</title>
+    
+    <!-- 필수 라이브러리 -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://unpkg.com/html5-qrcode"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+
+    <!-- 이미지 및 압축 관련 라이브러리 추가 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+    
+    <!-- 폰트 다양화 (20종 추가) -->
+    <link href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Cute+Font&family=Do+Hyeon&family=Dongle&family=Gaegu&family=Gamja+Flower&family=Gowun+Batang&family=Gowun+Dodum&family=Gugi&family=Hi+Melody&family=Jua&family=Nanum+Brush+Script&family=Nanum+Gothic&family=Nanum+Myeongjo&family=Nanum+Pen+Script&family=Noto+Sans+KR:wght@100;300;400;500;700;900&family=Poor+Story&family=Single+Day&family=Song+Myung&family=Stylish&family=Sunflower:wght@300;500;700&family=Yeon+Sung&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: { 
+                        incar: '#27398C', 
+                        'incar-dark': '#1a2b6d', 
+                        'incar-light': '#eef2ff',
+                        success: '#10b981',
+                        warning: '#f59e0b',
+                        danger: '#ef4444'
+                    },
+                    boxShadow: { 'card': '0 4px 20px rgba(39, 57, 140, 0.08)' },
+                    fontFamily: {
+                        'sans': ['Noto Sans KR', 'sans-serif'],
+                    },
+                    cursor: {
+                        'grab': 'grab',
+                        'grabbing': 'grabbing',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { font-family: 'Noto Sans KR', sans-serif; background-color: #f1f5f9; color: #334155; overflow: hidden; -webkit-tap-highlight-color: transparent; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .pb-safe { padding-bottom: env(safe-area-inset-bottom); }
+        .animate-slide-up { animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
+        @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        
+        .scan-line { width: 100%; height: 2px; background: #ef4444; position: absolute; top: 0; left: 0; animation: scan 2s infinite linear; z-index: 20; box-shadow: 0 0 4px #ef4444; }
+        @keyframes scan { 0% { top: 0; } 50% { top: 100%; } 100% { top: 0; } }
+        
+        .mobile-only { display: block; }
+        .pc-only { display: none; }
+        @media (min-width: 768px) {
+            .mobile-only { display: none; }
+            .pc-only { display: block; }
+        }
+        
+        .data-table th { background-color: #f8fafc; color: #64748b; font-weight: 700; font-size: 0.75rem; text-transform: uppercase; padding: 12px 16px; border-bottom: 2px solid #e2e8f0; white-space: nowrap; }
+        .data-table td { padding: 14px 16px; border-bottom: 1px solid #f1f5f9; font-size: 0.85rem; font-weight: 500; color: #334155; }
+        .data-table tr:hover td { background-color: #f8fafc; }
+
+        /* 스캐너 UI 강제 스타일 (정사각형 및 꽉 채우기) */
+        .scanner-container {
+            position: relative;
+            width: 100%;
+            max-width: 320px;
+            aspect-ratio: 1 / 1;
+            background: #000;
+            border-radius: 1.5rem;
+            overflow: hidden;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            border: 4px solid rgba(255, 255, 255, 0.1);
+        }
+
+        #reader, #lookup-reader {
+            width: 100% !important;
+            height: 100% !important;
+            position: absolute !important;
+            top: 0;
+            left: 0;
+            border: none !important;
+        }
+
+        #reader video, #lookup-reader video {
+            width: 100% !important;
+            height: 100% !important;
+            object-fit: cover !important;
+            border-radius: 1.2rem;
+        }
+
+        /* 인쇄 스타일 */
+        @media print {
+            @page { size: auto; margin: 0; }
+            
+            html, body, #root, main, .overflow-y-auto {
+                width: 100%;
+                height: auto !important;
+                min-height: auto !important;
+                overflow: visible !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                background: white !important;
+                position: static !important;
+            }
+
+            body * { visibility: hidden; }
+
+            .print-only-container, .print-only-container * { visibility: visible !important; }
+
+            .print-only-container {
+                position: absolute !important;
+                top: 0 !important;
+                left: 0 !important;
+                width: 100% !important;
+                height: auto !important;
+                background: white;
+                z-index: 9999;
+                display: block !important;
+                overflow: visible !important;
+            }
+
+            .print-reset-spacing {
+                display: block !important;
+                overflow: visible !important;
+                height: auto !important;
+                padding: 0 !important;
+            }
+
+            .no-print { display: none !important; }
+
+            .page-wrapper {
+                width: 100%;
+                height: 100vh;
+                display: flex !important;
+                justify-content: center;
+                align-items: center;
+                break-after: page;
+                page-break-after: always;
+                page-break-inside: avoid;
+                margin: 0;
+                padding: 0;
+                position: relative !important;
+            }
+            
+            .page-wrapper:last-child {
+                break-after: auto;
+                page-break-after: auto;
+            }
+
+            .badge-card {
+                border: none !important;
+                box-shadow: none !important;
+                page-break-inside: avoid;
+            }
+        }
+        .print-only { display: none; }
+        
+        /* 가이드라인 스타일 */
+        .smart-guide-x {
+            position: absolute;
+            left: 50%;
+            top: 0;
+            bottom: 0;
+            width: 1px;
+            background-color: #ef4444;
+            z-index: 200; /* Ensure it is above layers */
+            pointer-events: none;
+            border-left: 1px dashed #ef4444;
+        }
+        .smart-guide-y {
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background-color: #ef4444;
+            z-index: 200; /* Ensure it is above layers */
+            pointer-events: none;
+            border-top: 1px dashed #ef4444;
+        }
+        
+        .layer-item:hover { background-color: #f1f5f9; }
+        .layer-item.active { background-color: #eef2ff; border-color: #27398C; }
+        
+        /* 스크롤바 숨기기 (프린트시) */
+        @media print {
+            ::-webkit-scrollbar { display: none; }
+        }
+        /* 데이터 테이블 인쇄용 */
+        .no-print-scroll { -ms-overflow-style: none; scrollbar-width: none; }
+        .no-print-scroll::-webkit-scrollbar { display: none; }
+    </style>
+</head>
+<body class="h-[100dvh] w-screen flex flex-col md:flex-row bg-slate-50">
+    <div id="root" class="h-full w-full"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useMemo, useRef, Fragment, useCallback } = React;
+        const CURRENCY = '$';
+
+        // 폰트 목록 정의
+        const AVAILABLE_FONTS = [
+            { name: 'Noto Sans KR (고딕)', value: "'Noto Sans KR', sans-serif" },
+            { name: 'Nanum Gothic (나눔고딕)', value: "'Nanum Gothic', sans-serif" },
+            { name: 'Nanum Myeongjo (나눔명조)', value: "'Nanum Myeongjo', serif" },
+            { name: 'Black Han Sans (검은고딕)', value: "'Black Han Sans', sans-serif" },
+            { name: 'Do Hyeon (도현)', value: "'Do Hyeon', sans-serif" },
+            { name: 'Jua (주아)', value: "'Jua', sans-serif" },
+            { name: 'Yeon Sung (연성)', value: "'Yeon Sung', cursive" },
+            { name: 'Gugi (구기)', value: "'Gugi', cursive" },
+            { name: 'Gamja Flower (감자꽃)', value: "'Gamja Flower', cursive" },
+            { name: 'Hi Melody (하이멜로디)', value: "'Hi Melody', cursive" },
+            { name: 'Sunflower (해바라기)', value: "'Sunflower', sans-serif" },
+            { name: 'Gowun Dodum (고운돋움)', value: "'Gowun Dodum', sans-serif" },
+            { name: 'Gowun Batang (고운바탕)', value: "'Gowun Batang', serif" },
+            { name: 'Dongle (동글)', value: "'Dongle', sans-serif" },
+            { name: 'Poor Story (가난한이야기)', value: "'Poor Story', cursive" },
+            { name: 'Single Day (싱글데이)', value: "'Single Day', cursive" },
+            { name: 'Cute Font (큐트)', value: "'Cute Font', cursive" },
+            { name: 'Song Myung (송명)', value: "'Song Myung', serif" },
+            { name: 'Stylish (스타일리시)', value: "'Stylish', serif" },
+            { name: 'Gaegu (개구쟁이)', value: "'Gaegu', cursive" }
+        ];
+
+        const Icon = ({ name, size = 20, className = "" }) => {
+            const icons = {
+                menu: <path d="M3 12h18M3 6h18M3 18h18"/>,
+                dashboard: <path d="M3 3h7v7H3V3m11 0h7v7h-7V3m0 11h7v7h-7v-7M3 14h7v7H3v-7"/>,
+                qr: <path d="M3 7V3h4M3 17v4h4M17 3h4v4M21 17v-4h4m-4 4h-4M7 11h2v2H7v-2m4 0h2v2h-2v-2m4 0h2v2h-2v-2"/>,
+                users: <g><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></g>,
+                money: <path d="M12 1v22M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>,
+                edit: <g><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></g>,
+                settings: <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2zM12 15a3 3 0 1 1 0-6 3 3 0 0 1 0 6z"/>,
+                check: <polyline points="20 6 9 17 4 12"/>,
+                x: <g><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></g>,
+                alert: <g><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12" y2="16"/></g>,
+                history: <g><path d="M12 8v4l3 3"/><circle cx="12" cy="12" r="10"/></g>,
+                upload: <g><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></g>,
+                download: <g><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></g>,
+                table: <g><path d="M12 3h7a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-7m0-18H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h7m0-18v18"/></g>,
+                print: <g><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></g>,
+                bus: <g><path d="M19 17h2l.64-2.54c.24-1.12.36-2.26.36-3.41V8.5a4.5 4.5 0 0 0-4.5-4.5h-11A4.5 4.5 0 0 0 2 8.5v2.55c0 1.15.12 2.29.36 3.41L3 17h2"/><path d="M15 17v2a2 2 0 0 1-2 2h-2a2 2 0 0 1-2-2v-2"/><path d="M16 8.5h.01"/><path d="M8 8.5h.01"/></g>,
+                trash: <g><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></g>,
+                layers: <g><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></g>,
+                plus: <g><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></g>,
+                square: <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>,
+                circle: <circle cx="12" cy="12" r="10"/>,
+                type: <g><polyline points="4 7 4 4 20 4 20 7"/><line x1="9" y1="20" x2="15" y2="20"/><line x1="12" y1="4" x2="12" y2="20"/></g>,
+                up: <g><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></g>,
+                down: <g><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></g>,
+                chevronsUp: <g><polyline points="17 11 12 6 7 11"/><polyline points="17 18 12 13 7 18"/></g>,
+                chevronsDown: <g><polyline points="7 13 12 18 17 13"/><polyline points="7 6 12 11 17 6"/></g>,
+                image: <g><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></g>
+            };
+            return <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>{icons[name] || <circle cx="12" cy="12" r="2"/>}</svg>;
+        };
+
+        const Sidebar = ({ activeTab, setActiveTab }) => (
+            <aside className="w-64 bg-white/95 backdrop-blur-md h-full border-r border-slate-200 flex flex-col shadow-lg z-30 no-print hidden md:flex relative">
+                <div className="p-6 border-b border-slate-100 flex items-center gap-3">
+                    <div className="w-8 h-8 bg-incar rounded-lg flex items-center justify-center text-white font-black">P</div>
+                    <h1 className="font-black text-slate-800 tracking-tight">INCARPASS <span className="text-incar text-[10px] px-1.5 py-0.5 bg-indigo-50 rounded-md align-top">PC</span></h1>
+                </div>
+                <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
+                    {[
+                        {id:'dashboard', icon:'dashboard', label:'현황 (Status)'},
+                        {id:'boarding', icon:'bus', label:'탑승 (Boarding)'},
+                        {id:'payment', icon:'money', label:'지급 (Payment)'},
+                        {id:'change', icon:'edit', label:'관리 (Management)'},
+                        {id:'manage', icon:'settings', label:'설정 (Settings)'}
+                    ].map(menu => (
+                        <button key={menu.id} onClick={()=>setActiveTab(menu.id)} className={`w-full flex items-center gap-3 p-3 rounded-xl font-bold transition-all ${activeTab===menu.id ? 'bg-incar text-white shadow-md' : 'text-slate-400 hover:bg-slate-50'}`}>
+                            <Icon name={menu.icon} /> {menu.label}
+                        </button>
+                    ))}
+                </nav>
+                <div className="p-6 border-t border-slate-100">
+                    <div className="text-xs text-slate-400 font-bold mb-2">OPERATOR</div>
+                    <div className="flex items-center gap-3"><div className="w-8 h-8 rounded-full bg-slate-200"></div><div className="text-sm font-bold text-slate-700">관리자님</div></div>
+                </div>
+            </aside>
+        );
+
+        const MobileTab = ({ activeTab, setActiveTab }) => (
+            <nav className="fixed bottom-0 w-full bg-white border-t border-slate-200 pb-safe pt-2 px-4 flex justify-around items-center z-30 rounded-t-3xl shadow-[0_-10px_40px_rgba(0,0,0,0.1)] no-print md:hidden">
+                <button onClick={()=>setActiveTab('dashboard')} className={`flex flex-col items-center gap-1 p-2 w-14 ${activeTab==='dashboard'?'text-incar':'text-slate-300'}`}><Icon name="dashboard" size={20} className={activeTab==='dashboard'?'fill-current':''} /><span className="text-[9px] font-bold">현황</span></button>
+                <button onClick={()=>setActiveTab('boarding')} className={`flex flex-col items-center gap-1 p-2 w-14 relative ${activeTab==='boarding'?'text-incar':'text-slate-300'}`}><div className={`w-10 h-10 rounded-full flex items-center justify-center transition-all ${activeTab==='boarding'?'bg-incar text-white shadow-lg ring-2 ring-slate-100 mb-1':''}`}><Icon name="bus" size={20} /></div>{activeTab!=='boarding' && <span className="text-[9px] font-bold">탑승</span>}</button>
+                <button onClick={()=>setActiveTab('payment')} className={`flex flex-col items-center gap-1 p-2 w-14 relative ${activeTab==='payment'?'text-emerald-500':'text-slate-300'}`}><div className={`w-10 h-10 rounded-full flex items-center justify-center transition-all ${activeTab==='payment'?'bg-emerald-500 text-white shadow-lg ring-2 ring-slate-100 mb-1':''}`}><Icon name="money" size={20} /></div>{activeTab!=='payment' && <span className="text-[9px] font-bold">지급</span>}</button>
+                <button onClick={()=>setActiveTab('change')} className={`flex flex-col items-center gap-1 p-2 w-14 ${activeTab==='change'?'text-incar':'text-slate-300'}`}><Icon name="edit" size={20} className={activeTab==='change'?'fill-current':''} /><span className="text-[9px] font-bold">관리</span></button>
+            </nav>
+        );
+
+        const ResultModal = ({ result, onClose, onForceUpdate }) => {
+            if (!result) return null;
+            const { status, msg, subMsg, user, logs, relatedLogs, requiredChoice, session } = result;
+            const isSuccess = status === 'success';
+            const isTargetMismatch = status === 'error' && msg === '대상자 아님';
+            const isBusMismatch = status === 'error' && msg === '탑승 불가 (차량 불일치)';
+            
+            useEffect(() => {
+                if(isSuccess) {
+                    const timer = setTimeout(onClose, 3000);
+                    return () => clearTimeout(timer);
+                }
+            }, [isSuccess]);
+
+            return (
+                <div className="fixed inset-0 z-[200] flex items-center justify-center p-6 bg-slate-900/60 backdrop-blur-sm animate-slide-up no-print">
+                    <div className="bg-white rounded-3xl w-full max-w-sm overflow-hidden shadow-2xl relative z-[201]">
+                        <div className={`p-8 text-center flex flex-col items-center justify-center ${isSuccess ? 'bg-emerald-50' : (status==='duplicate'?'bg-amber-50':'bg-rose-50')}`}>
+                            <div className={`w-20 h-20 rounded-full flex items-center justify-center mb-4 ${isSuccess ? 'bg-emerald-100 text-emerald-600' : (status==='duplicate'?'bg-amber-100 text-amber-600':'bg-rose-100 text-rose-600')}`}>
+                                <Icon name={isSuccess ? 'check' : (status==='duplicate'?'alert':'x')} size={40} />
+                            </div>
+                            <h2 className={`text-2xl font-bold mb-1 ${isSuccess ? 'text-emerald-800' : (status==='duplicate'?'text-amber-800':'text-rose-800')}`}>{msg}</h2>
+                            <p className="text-slate-500 font-medium">{subMsg}</p>
+                        </div>
+                        {user && (
+                            <div className="p-6 bg-white space-y-4">
+                                <div className="flex items-center gap-4 p-4 rounded-2xl bg-slate-50 border border-slate-100">
+                                    <div className="w-12 h-12 rounded-full bg-incar text-white flex items-center justify-center font-bold text-lg">{user.name[0]}</div>
+                                    <div>
+                                        <div className="font-bold text-lg text-slate-900">{user.name}</div>
+                                        <div className="text-xs text-slate-400 font-medium">{user.org} | {user.uid}</div>
+                                        {user.bus && <div className="text-xs text-incar font-bold mt-1">배정차량: {user.bus}</div>}
+                                    </div>
+                                </div>
+                                {isSuccess && logs && logs.finalAmount !== undefined && (
+                                    <div className="flex justify-between items-center p-4 bg-emerald-50 rounded-xl border border-emerald-100">
+                                        <span className="text-emerald-700 font-bold text-sm">최종 지급액</span>
+                                        <div className="text-right">
+                                            <span className="text-2xl font-bold text-emerald-600">{CURRENCY}{logs.finalAmount}</span>
+                                            {logs.penaltyApplied > 0 && <div className="text-[10px] text-rose-500 font-bold">(-패널티 {CURRENCY}{logs.penaltyApplied})</div>}
+                                        </div>
+                                    </div>
+                                )}
+                                
+                                {isTargetMismatch && (
+                                    <div className="p-4 bg-rose-50 border border-rose-100 rounded-xl text-center">
+                                        <p className="text-sm font-bold text-rose-600 mb-2">현장에서 바로 변경하시겠습니까?</p>
+                                        <p className="text-xs text-rose-400 mb-3">주의: 이전 옵션에 대한 완료 기록이 있다면 삭제됩니다.</p>
+                                        <button onClick={() => onForceUpdate(user, session, requiredChoice)} className="w-full py-3 bg-rose-500 text-white font-bold rounded-xl shadow-lg active:scale-95 transition-transform text-sm">
+                                            네, 일정 변경 후 승인
+                                        </button>
+                                    </div>
+                                )}
+                                
+                                {isBusMismatch && (
+                                    <div className="p-4 bg-rose-50 border border-rose-100 rounded-xl text-center">
+                                        <p className="text-sm font-bold text-rose-600 mb-2">차량이 일치하지 않습니다</p>
+                                        <p className="text-xs text-slate-500 mb-1">해당 인원은 <strong>{user.bus}</strong> 탑승 대상입니다.</p>
+                                        <p className="text-xs text-slate-400">다른 차량으로 안내하거나, 관리자에게 문의하세요.</p>
+                                    </div>
+                                )}
+
+                                {relatedLogs && relatedLogs.length > 0 && (
+                                    <div className="mt-4 border-t border-slate-100 pt-4">
+                                        <h4 className="text-xs font-bold text-slate-400 mb-2">오늘의 다른 활동 내역</h4>
+                                        <div className="space-y-2">
+                                            {relatedLogs.map((log, idx) => (
+                                                <div key={idx} className="flex items-center justify-between text-xs p-2 bg-slate-50 rounded-lg">
+                                                    <span className="text-slate-600 font-medium">{log.sessionTitle}</span>
+                                                    <span className="text-emerald-600 font-bold">{log.action === '지급' ? '지급완료' : '탑승완료'}</span>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+                        )}
+                        <button onClick={onClose} className="w-full py-5 bg-slate-900 text-white font-bold text-lg hover:bg-slate-800 transition-colors">닫기</button>
+                    </div>
+                </div>
+            );
+        };
+
+        const SessionDetailModal = ({ session, users, logs, onClose, onManualComplete }) => {
+            const [tab, setTab] = useState('done');
+            
+            const targetUsers = useMemo(() => {
+                if (!session) return [];
+                if (session.targetKey === 'ALL') return users;
+                return users.filter(u => u.options && u.options[session.targetKey] && u.options[session.targetKey].includes(session.targetVal));
+            }, [session, users]);
+
+            const { doneList, yetList } = useMemo(() => {
+                const doneIds = new Set(logs.filter(l => l.sessionId === session.id).map(l => l.uid));
+                const done = [];
+                const yet = [];
+                targetUsers.forEach(u => {
+                    if (doneIds.has(u.uid)) {
+                        const log = logs.find(l => l.sessionId === session.id && l.uid === u.uid);
+                        done.push({ ...u, log });
+                    } else {
+                        yet.push(u);
+                    }
+                });
+                return { doneList: done, yetList: yet };
+            }, [targetUsers, logs, session]);
+
+            const currentList = tab === 'done' ? doneList : yetList;
+
+            return (
+                <div className="fixed inset-0 z-[150] flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm animate-fade-in no-print" onClick={onClose}>
+                    <div className="bg-white w-full max-w-lg rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[80vh]" onClick={e => e.stopPropagation()}>
+                        <div className="p-6 border-b border-slate-100 flex justify-between items-start bg-slate-50">
+                            <div>
+                                <span className={`inline-block px-2 py-1 rounded text-[10px] font-bold mb-1 ${session.type==='PAYMENT'?'bg-emerald-100 text-emerald-600':'bg-indigo-100 text-incar'}`}>{session.type==='PAYMENT'?'지급':'탑승'}</span>
+                                <h3 className="font-bold text-lg text-slate-800 leading-tight">{session.title}</h3>
+                                <p className="text-xs text-slate-500 mt-1">{session.displayDate} | 대상 {targetUsers.length}명</p>
+                            </div>
+                            <button onClick={onClose} className="p-2 text-slate-400 hover:text-slate-600"><Icon name="x" size={24}/></button>
+                        </div>
+                        
+                        <div className="flex border-b border-slate-100">
+                            <button onClick={()=>setTab('done')} className={`flex-1 py-4 text-sm font-bold transition-colors ${tab==='done'?'text-emerald-600 border-b-2 border-emerald-600 bg-emerald-50/50':'text-slate-400 hover:bg-slate-50'}`}>
+                                완료 ({doneList.length})
+                            </button>
+                            <button onClick={()=>setTab('yet')} className={`flex-1 py-4 text-sm font-bold transition-colors ${tab==='yet'?'text-rose-500 border-b-2 border-rose-500 bg-rose-50/50':'text-slate-400 hover:bg-slate-50'}`}>
+                                미완료 ({yetList.length})
+                            </button>
+                        </div>
+
+                        <div className="overflow-y-auto flex-1 p-4 space-y-2">
+                            {currentList.length === 0 ? (
+                                <div className="py-10 text-center text-slate-400 text-sm">해당 인원이 없습니다.</div>
+                            ) : (
+                                currentList.map(u => (
+                                    <div key={u.uid} className="flex justify-between items-center p-3 rounded-xl border border-slate-100 hover:border-slate-300 transition-colors">
+                                        <div className="flex items-center gap-3">
+                                            <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-white ${tab==='done'?'bg-emerald-500':'bg-slate-300'}`}>{u.name[0]}</div>
+                                            <div>
+                                                <div className="font-bold text-slate-800 text-sm">{u.name} <span className="text-xs font-normal text-slate-500">({u.options && (u.options['직책'] || u.org)})</span></div>
+                                                <div className="text-[10px] text-slate-400 font-mono">{u.uid}</div>
+                                                {u.bus && <div className="text-[10px] text-incar font-bold">배정: {u.bus}</div>}
+                                            </div>
+                                        </div>
+                                        {tab === 'done' && u.log && (
+                                            <div className="text-right">
+                                                {session.type === 'PAYMENT' && (
+                                                    <div className="font-bold text-emerald-600 text-sm">{CURRENCY}{u.log.finalAmount}</div>
+                                                )}
+                                                <div className="text-[10px] text-slate-400">{new Date(u.log.timestamp).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}</div>
+                                            </div>
+                                        )}
+                                        {tab === 'yet' && (
+                                            <button onClick={() => onManualComplete(u, session)} className="px-3 py-1.5 bg-slate-800 text-white text-[10px] font-bold rounded-lg hover:bg-slate-700 transition-colors shadow-sm">
+                                                수동 완료
+                                            </button>
+                                        )}
+                                    </div>
+                                ))
+                            )}
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+        const QRCodeCanvas = ({ text, size = 100, transparent = false }) => {
+            const canvasRef = useRef(null);
+            useEffect(() => {
+                if (canvasRef.current && window.QRious) {
+                    new QRious({
+                        element: canvasRef.current,
+                        value: text,
+                        size: size,
+                        level: 'H',
+                        background: transparent ? 'transparent' : 'white',
+                        foreground: 'black'
+                    });
+                }
+            }, [text, size, transparent]);
+            return <canvas ref={canvasRef} />;
+        };
+
+        const DashboardView = ({ users, logs, scheduleStats, groupedStats, changeLogs, onSessionClick }) => (
+            <div className="space-y-6 animate-slide-up">
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div className="bg-white p-6 rounded-3xl shadow-card border-l-8 border-incar">
+                        <div className="text-slate-400 text-xs font-bold uppercase tracking-wider mb-2">Total Participants</div>
+                        <div className="text-4xl font-bold text-slate-800">{users.length}</div>
+                    </div>
+                    <div className="bg-white p-6 rounded-3xl shadow-card border-l-8 border-emerald-500">
+                        <div className="text-slate-400 text-xs font-bold uppercase tracking-wider mb-2">Total Payout</div>
+                        <div className="text-4xl font-bold text-slate-800">{CURRENCY}{logs.reduce((sum, l) => sum + (l.finalAmount||0), 0).toLocaleString()}</div>
+                        <div className="text-xs text-rose-500 font-bold mt-2">
+                            (패널티/미반환: {CURRENCY}{(changeLogs.reduce((sum, c) => sum + (c.penalty || 0), 0) + logs.reduce((sum, l) => sum + (l.penaltyApplied || 0), 0)).toLocaleString()})
+                        </div>
+                    </div>
+                    <div className="bg-white p-6 rounded-3xl shadow-card border-l-8 border-indigo-400 hidden md:block">
+                        <div className="text-slate-400 text-xs font-bold uppercase tracking-wider mb-2">Completion Rate</div>
+                        <div className="text-4xl font-bold text-slate-800">
+                            {scheduleStats.length > 0 ? Math.round(scheduleStats.reduce((acc, s) => acc + s.percent, 0) / scheduleStats.length) : 0}%
+                        </div>
+                    </div>
+                    <div className="bg-white p-6 rounded-3xl shadow-card border-l-8 border-rose-400 hidden md:block">
+                        <div className="text-slate-400 text-xs font-bold uppercase tracking-wider mb-2">Total Penalties</div>
+                        <div className="text-4xl font-bold text-slate-800">{changeLogs.length}건</div>
+                    </div>
+                </div>
+
+                <div>
+                    <h3 className="font-bold text-lg text-slate-800 mb-4 flex items-center gap-2">
+                        <Icon name="dashboard" className="text-incar"/> 일정별 진행률 (요약)
+                    </h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        {scheduleStats.map(stat => {
+                             const sessionPenalties = logs.filter(l => l.sessionId === stat.id).reduce((sum, l) => sum + (l.penaltyApplied || 0), 0);
+                             return (
+                                <div key={stat.id} onClick={() => onSessionClick(stat)} className="cursor-pointer bg-white p-5 rounded-2xl shadow-sm border border-slate-100 relative overflow-hidden group hover:shadow-md transition-shadow active:scale-[0.98] transition-transform">
+                                    <div className="absolute right-0 top-0 p-3 opacity-10 group-hover:opacity-20 transition-opacity"><Icon name={stat.type === 'PAYMENT' ? 'money' : 'bus'} size={60} /></div>
+                                    <div className="relative z-10">
+                                        <div className="flex justify-between items-start mb-2">
+                                            <span className={`text-[10px] font-bold px-2 py-0.5 rounded ${stat.type==='PAYMENT'?'bg-emerald-100 text-emerald-600':'bg-indigo-50 text-incar'}`}>{stat.type==='PAYMENT'?'지급':'탑승'}</span>
+                                            <span className="text-xs font-bold text-slate-400">{stat.displayDate}</span>
+                                        </div>
+                                        <h4 className="font-bold text-slate-800 mb-4 truncate pr-8">{stat.title}</h4>
+                                        <div className="flex justify-between items-end mb-1">
+                                            <span className="text-3xl font-bold text-slate-800">{stat.doneCount}<span className="text-sm text-slate-400 font-medium ml-1">/ {stat.targetCount}</span></span>
+                                            <span className={`text-xl font-bold ${stat.percent === 100 ? 'text-emerald-500' : 'text-incar'}`}>{stat.percent}%</span>
+                                        </div>
+                                        <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden mb-2">
+                                            <div className={`h-full rounded-full transition-all duration-1000 ${stat.percent===100?'bg-emerald-500':'bg-incar'}`} style={{width: `${stat.percent}%`}}></div>
+                                        </div>
+                                        {stat.type === 'PAYMENT' && (
+                                            <div className="pt-2 border-t border-slate-50 flex flex-col gap-1 text-xs">
+                                                <div className="flex justify-between">
+                                                    <span className="text-slate-400">집행액</span>
+                                                    <span className="font-bold text-slate-700">{CURRENCY}{stat.actualAmount.toLocaleString()}</span>
+                                                </div>
+                                                {sessionPenalties > 0 && (
+                                                    <div className="flex justify-between text-[10px] text-rose-500 font-bold">
+                                                        <span>(패널티 차감분)</span>
+                                                        <span>-{CURRENCY}{sessionPenalties.toLocaleString()}</span>
+                                                    </div>
+                                                )}
+                                                <div className="flex justify-between mt-1 pt-1 border-t border-slate-100/50">
+                                                    <span className="text-slate-400">예상 (변경전 포함안함)</span>
+                                                    <span>{CURRENCY}{stat.expectedAmount.toLocaleString()}</span>
+                                                </div>
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+                            );
+                        })}
+                        {scheduleStats.length === 0 && <div className="col-span-full py-10 text-center text-slate-400 bg-white rounded-2xl border border-dashed border-slate-200">등록된 일정이 없습니다.</div>}
+                    </div>
+                </div>
+                
+                <div className="pc-only bg-white rounded-3xl border border-slate-200 shadow-card overflow-hidden mt-8">
+                    <div className="p-5 border-b border-slate-100 bg-slate-50/50">
+                        <h3 className="font-bold text-slate-800 flex items-center gap-2"><Icon name="table" className="text-incar"/> 상세 현황 분석표</h3>
+                    </div>
+                    {Object.entries(groupedStats).length === 0 ? <div className="p-10 text-center text-slate-400">데이터가 없습니다.</div> : (
+                        <div className="p-6 space-y-8">
+                            {Object.entries(groupedStats).sort().map(([date, stats]) => (
+                                <div key={date}>
+                                    <h4 className="text-xs font-bold text-incar bg-indigo-50 px-3 py-1.5 rounded-lg inline-block mb-3">{date}</h4>
+                                    <div className="overflow-hidden rounded-xl border border-slate-200">
+                                        <table className="w-full text-left data-table">
+                                            <thead><tr><th className="w-1/3">일정명</th><th className="text-center">구분</th><th className="text-right">대상(Target)</th><th className="text-right">완료(Done)</th><th className="text-center border-l border-slate-200">미완료</th><th className="text-right">예상 금액</th><th className="text-right">실제 집행</th><th className="text-center border-l border-slate-200">차액 (Diff)</th></tr></thead>
+                                            <tbody>
+                                                {stats.map(s => (
+                                                    <tr key={s.id} onClick={() => onSessionClick(s)} className="cursor-pointer hover:bg-slate-50 transition-colors">
+                                                        <td className="font-bold text-slate-700">{s.title}</td>
+                                                        <td className="text-center"><span className={`px-2 py-0.5 rounded text-[10px] font-bold border ${s.type==='PAYMENT'?'bg-emerald-50 text-emerald-600 border-emerald-100':'bg-indigo-50 text-incar border-indigo-100'}`}>{s.type==='PAYMENT'?'지급':'탑승'}</span></td>
+                                                        <td className="text-right text-slate-500">{s.targetCount}</td>
+                                                        <td className="text-right font-bold text-slate-900">{s.doneCount}</td>
+                                                        <td className="text-center border-l border-slate-50">{s.targetCount - s.doneCount === 0 ? <span className="text-emerald-500 font-bold text-xs">Complete</span> : <span className="text-rose-500 font-bold text-xs">{s.targetCount - s.doneCount}명 남음</span>}</td>
+                                                        <td className="text-right text-slate-400">{s.type==='PAYMENT'?`${CURRENCY}${s.expectedAmount.toLocaleString()}`:'-'}</td>
+                                                        <td className="text-right font-bold text-emerald-600">{s.type==='PAYMENT'?`${CURRENCY}${s.actualAmount.toLocaleString()}`:'-'}</td>
+                                                        <td className="text-center border-l border-slate-50">{s.type !== 'PAYMENT' ? '-' : (s.diffAmount === 0 ? <span className="text-emerald-500 font-bold text-xs">OK</span> : s.diffAmount < 0 ? <span className="text-rose-500 font-bold text-xs">{s.diffAmount}</span> : <span className="text-blue-500 font-bold text-xs">+{s.diffAmount}</span>)}</td>
+                                                    </tr>
+                                                ))}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    )}
+                </div>
+            </div>
+        );
+
+        const ScanView = ({ mode, schedules, targetSessionId, setTargetSessionId, targetBus, setTargetBus, manualBus, setManualBus, isScanning, setIsScanning, processScan, users, isMobile, busList, setBusList }) => {
+            const scannerRef = useRef(null);
+            const isRunningRef = useRef(false);
+            const [isStrictBusMode, setIsStrictBusMode] = useState(false);
+            
+            const filteredSchedules = useMemo(() => {
+                return schedules.filter(s => s.type === mode);
+            }, [schedules, mode]);
+
+            useEffect(() => {
+                if (filteredSchedules.length > 0) {
+                    const exists = filteredSchedules.find(s => s.id === targetSessionId);
+                    if (!exists) setTargetSessionId(filteredSchedules[0].id);
+                } else {
+                    setTargetSessionId('');
+                }
+            }, [mode, filteredSchedules]);
+
+            useEffect(() => {
+                return () => {
+                    stopScanner();
+                };
+            }, []);
+
+            const handleAddBus = () => {
+                let nextNum = 1;
+                if (busList.length > 0) {
+                    const nums = busList.map(b => {
+                        const match = b.match(/(\d+)호차/);
+                        return match ? parseInt(match[1]) : 0;
+                    });
+                    const maxNum = Math.max(...nums, 0);
+                    nextNum = maxNum + 1;
+                }
+                const newBus = `${nextNum}호차`;
+                const newList = [...busList, newBus];
+                setBusList(newList);
+                if(!manualBus) setTargetBus(newBus);
+            };
+
+            const handleRenameBus = (index) => {
+                const oldName = busList[index];
+                const newName = prompt(`'${oldName}'의 새로운 이름을 입력하세요:`, oldName);
+                if (newName && newName.trim()) {
+                    const newList = [...busList];
+                    newList[index] = newName.trim();
+                    setBusList(newList);
+                    if(targetBus === oldName) setTargetBus(newName.trim());
+                }
+            };
+
+            const handleDeleteBus = (index, e) => {
+                e.stopPropagation();
+                if(confirm(`'${busList[index]}'을(를) 삭제하시겠습니까?`)){
+                    const newList = busList.filter((_, i) => i !== index);
+                    setBusList(newList);
+                    if(targetBus === busList[index] && newList.length > 0) setTargetBus(newList[0]);
+                }
+            };
+
+            const startScanner = () => {
+                if (isRunningRef.current) return;
+                setIsScanning(true);
+                
+                setTimeout(() => {
+                    const element = document.getElementById("reader");
+                    if (!element) return;
+
+                    if (!scannerRef.current) {
+                        scannerRef.current = new Html5Qrcode("reader");
+                    }
+                    const config = { fps: 10, qrbox: { width: 250, height: 250 }, aspectRatio: 1.0 };
+                    scannerRef.current.start({ facingMode: "environment" }, config, (decodedText) => {
+                        stopScanner();
+                        processScan(decodedText, isStrictBusMode); // Strict Mode 상태 전달
+                    }, () => {}).then(() => {
+                        isRunningRef.current = true;
+                    }).catch(err => {
+                        console.error("Camera start failed", err);
+                        setIsScanning(false);
+                        alert("카메라 시작 실패. 권한을 확인해주세요.");
+                    });
+                }, 100);
+            };
+
+            const stopScanner = () => {
+                if (scannerRef.current && isRunningRef.current) {
+                    scannerRef.current.stop().then(() => {
+                        scannerRef.current.clear();
+                        isRunningRef.current = false;
+                        setIsScanning(false);
+                    }).catch(err => {
+                        console.log("Failed to stop scanner", err);
+                        setIsScanning(false);
+                        isRunningRef.current = false;
+                    });
+                } else {
+                    setIsScanning(false);
+                }
+            };
+
+            return (
+                <div className="space-y-6 h-full flex flex-col animate-slide-up">
+                    <div className="bg-white p-6 rounded-3xl shadow-card border border-slate-200">
+                        <div className="flex items-center gap-2 mb-4">
+                            <span className={`px-2 py-1 rounded-lg text-xs font-bold ${mode==='BOARDING'?'bg-incar text-white':'bg-emerald-500 text-white'}`}>{mode==='BOARDING' ? 'STEP 1' : '지급'}</span>
+                            <h3 className="text-lg font-bold text-slate-800">{mode==='BOARDING' ? '탑승 일정 선택' : '지급 항목 선택'}</h3>
+                        </div>
+                        <div className="mb-6">
+                            <select value={targetSessionId} onChange={(e) => setTargetSessionId(e.target.value)} className={`w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl font-bold text-lg outline-none focus:ring-4 transition-all ${mode==='BOARDING'?'focus:ring-incar/20':'focus:ring-emerald-500/20'}`}>
+                                {filteredSchedules.length === 0 && <option>해당하는 일정이 없습니다</option>}
+                                {filteredSchedules.map(s => <option key={s.id} value={s.id}>[{s.displayDate}] {s.title}</option>)}
+                            </select>
+                        </div>
+                        {mode === 'BOARDING' && (
+                            <div className="animate-slide-up">
+                                <div className="flex items-center gap-1.5 sm:gap-2 mb-3 w-full">
+                                    <span className="px-2 py-1 rounded-lg text-[10px] sm:text-xs font-bold bg-slate-800 text-white shrink-0 whitespace-nowrap">STEP 2</span>
+                                    <div className="flex justify-between items-center flex-1 min-w-0 gap-1 sm:gap-2">
+                                        <h3 className="text-base sm:text-lg font-bold text-slate-800 shrink-0 whitespace-nowrap">차량 선택</h3>
+                                        <div className="flex gap-1.5 sm:gap-2 items-center shrink-0">
+                                            {/* 검증 모드 토글 */}
+                                            <div className="flex items-center bg-slate-100 rounded-lg px-1.5 sm:px-2 py-1 gap-1 sm:gap-2 cursor-pointer shrink-0 whitespace-nowrap" onClick={() => setIsStrictBusMode(!isStrictBusMode)}>
+                                                <div className={`w-7 sm:w-8 h-4 rounded-full relative transition-colors shrink-0 ${isStrictBusMode ? 'bg-incar' : 'bg-slate-300'}`}>
+                                                    <div className={`absolute top-0.5 left-0.5 w-3 h-3 bg-white rounded-full transition-transform ${isStrictBusMode ? 'translate-x-3 sm:translate-x-4' : 'translate-x-0'}`}></div>
+                                                </div>
+                                                <span className={`text-[9px] sm:text-[10px] font-bold ${isStrictBusMode ? 'text-incar' : 'text-slate-400'}`}>배정 차량 검증</span>
+                                            </div>
+                                            <button onClick={()=>setManualBus(!manualBus)} className={`text-[10px] sm:text-xs font-bold px-2 sm:px-3 py-1.5 rounded-lg transition-colors shrink-0 whitespace-nowrap ${manualBus ? 'bg-incar text-white shadow-md' : 'bg-slate-100 text-slate-500'}`}>
+                                                {manualBus ? '관리 완료' : '차량 관리'}
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="grid grid-cols-4 gap-2">
+                                    {busList.map((bus, i) => (
+                                        <div key={i} className="relative group">
+                                            <button 
+                                                onClick={() => manualBus ? handleRenameBus(i) : setTargetBus(bus)}
+                                                className={`w-full py-3 rounded-xl text-sm font-bold transition-all relative ${
+                                                    targetBus === bus && !manualBus
+                                                    ? 'bg-incar text-white shadow-lg scale-105 z-10' 
+                                                    : manualBus 
+                                                        ? 'bg-white border-2 border-dashed border-indigo-200 text-indigo-400 hover:bg-indigo-50'
+                                                        : 'bg-slate-100 text-slate-400 hover:bg-slate-200'
+                                                }`}
+                                            >
+                                                {bus}
+                                                {manualBus && <span className="absolute bottom-0.5 right-1 text-[8px] opacity-50">수정</span>}
+                                            </button>
+                                            {manualBus && (
+                                                <button 
+                                                    onClick={(e) => handleDeleteBus(i, e)}
+                                                    className="absolute -top-2 -right-2 w-6 h-6 bg-rose-500 text-white rounded-full flex items-center justify-center shadow-md z-20 hover:scale-110 transition-transform"
+                                                >
+                                                    <Icon name="x" size={12} />
+                                                </button>
+                                            )}
+                                        </div>
+                                    ))}
+                                    
+                                    {/* 항상 보이는 추가 버튼 (관리 모드가 아닐 때도 추가 가능) */}
+                                    <button onClick={handleAddBus} className="py-3 rounded-xl text-sm font-bold bg-slate-50 border-2 border-dashed border-slate-200 text-slate-400 hover:bg-slate-100 hover:text-slate-600 hover:border-slate-300 transition-all flex items-center justify-center">
+                                        <Icon name="plus" size={20} />
+                                    </button>
+                                </div>
+                                {manualBus && <div className="text-[10px] text-slate-400 mt-2 text-right">* 차량을 눌러 이름을 수정하거나 X를 눌러 삭제하세요.</div>}
+                            </div>
+                        )}
+                    </div>
+
+                    <div className="flex-1 flex flex-col justify-end">
+                        <button onClick={startScanner} className={`w-full py-6 text-white rounded-3xl font-bold text-xl shadow-xl flex items-center justify-center gap-3 active:scale-95 transition-transform ${mode==='BOARDING'?'bg-incar shadow-incar/30':'bg-emerald-500 shadow-emerald-500/30'}`}>
+                            <Icon name="qr" size={28}/> {mode==='BOARDING' ? '탑승 스캔 시작' : '지급 스캔 시작'}
+                        </button>
+                        {!isMobile && users.length > 0 && <button onClick={()=>processScan(users[0].uid)} className="mt-4 text-xs text-slate-400 underline text-center">테스트: 첫번째 유저 강제 인식</button>}
+                    </div>
+
+                    {isScanning && (
+                        <div className="fixed inset-0 z-[100] bg-black/95 flex flex-col items-center justify-center p-6 animate-fade-in" style={{ touchAction: 'none' }}>
+                            <button onClick={stopScanner} className="absolute top-8 right-8 text-white p-3 bg-white/10 rounded-full hover:bg-white/20 transition-colors z-[101]">
+                                <Icon name="x" size={32} />
+                            </button>
+                            
+                            {/* 정사각형 스캐너 래퍼 */}
+                            <div className="scanner-container">
+                                <div id="reader"></div>
+                                
+                                {/* 중앙 가이드라인 (황금비율 스타일) */}
+                                <div className="absolute inset-0 pointer-events-none flex items-center justify-center">
+                                    <div className="relative w-[70%] h-[70%]">
+                                        <div className="absolute top-0 left-0 w-8 h-8 border-t-4 border-l-4 border-white rounded-tl-2xl"></div>
+                                        <div className="absolute top-0 right-0 w-8 h-8 border-t-4 border-r-4 border-white rounded-tr-2xl"></div>
+                                        <div className="absolute bottom-0 left-0 w-8 h-8 border-b-4 border-l-4 border-white rounded-bl-2xl"></div>
+                                        <div className="absolute bottom-0 right-0 w-8 h-8 border-b-4 border-r-4 border-white rounded-br-2xl"></div>
+                                        <div className={`scan-line ${mode==='BOARDING'?'bg-incar':'bg-emerald-500'}`} style={{ width: '90%' }}></div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <p className="text-white mt-10 font-bold text-xl animate-pulse text-center">
+                                QR코드를 사각형 중앙에 맞춰주세요
+                            </p>
+                            
+                            <div className="mt-8 flex gap-4">
+                                <button onClick={stopScanner} className="px-8 py-3 bg-white text-slate-900 rounded-xl font-bold text-sm hover:bg-slate-200 transition-colors">닫기</button>
+                            </div>
+                        </div>
+                    )}
+                </div>
+            );
+        };
+
+        const ChangeView = ({ searchQuery, setSearchQuery, selectedUser, setSelectedUser, editForm, setEditForm, handleUserUpdate, users, schedules, changeLogs }) => {
+            const [manualInput, setManualInput] = useState(false);
+            const [showAllHistory, setShowAllHistory] = useState(false);
+            const [isLookupScanning, setIsLookupScanning] = useState(false);
+            const html5QrCodeRef = useRef(null);
+
+            useEffect(() => {
+                return () => {
+                    if (html5QrCodeRef.current) {
+                        if (html5QrCodeRef.current.isScanning) {
+                            html5QrCodeRef.current.stop().catch(err => console.error(err));
+                        }
+                        html5QrCodeRef.current.clear();
+                    }
+                };
+            }, []);
+
+            const startLookupScanner = () => {
+                setIsLookupScanning(true);
+                
+                setTimeout(() => {
+                    const elementId = "lookup-reader";
+                    const element = document.getElementById(elementId);
+                    if (!element) {
+                        console.error("Scanner element not found");
+                        return;
+                    }
+
+                    if (html5QrCodeRef.current) {
+                        if(html5QrCodeRef.current.isScanning) return; 
+                        html5QrCodeRef.current.clear(); 
+                    }
+
+                    const html5QrCode = new Html5Qrcode(elementId);
+                    html5QrCodeRef.current = html5QrCode;
+
+                    const config = { fps: 10, qrbox: { width: 250, height: 250 }, aspectRatio: 1.0 };
+                    
+                    html5QrCode.start(
+                        { facingMode: "environment" }, 
+                        config, 
+                        async (decodedText) => {
+                            try {
+                                if (html5QrCode.isScanning) {
+                                    await html5QrCode.stop();
+                                }
+                                html5QrCode.clear();
+                            } catch (err) {
+                                console.warn("Failed to stop scanner", err);
+                            }
+
+                            setIsLookupScanning(false);
+                            html5QrCodeRef.current = null;
+
+                            const found = users.find(u => u.uid === decodedText);
+                            if (found) {
+                                setSelectedUser(found);
+                            } else {
+                                alert(`미등록 사용자입니다. (ID: ${decodedText})`);
+                            }
+                        }, 
+                        (errorMessage) => {}
+                    ).catch(err => {
+                        console.error("Error starting scanner", err);
+                        setIsLookupScanning(false);
+                        alert("카메라를 실행할 수 무없습니다. 권한을 확인해주세요.");
+                    });
+                }, 300);
+            };
+
+            const stopLookupScanner = async () => {
+                if (html5QrCodeRef.current) {
+                    try {
+                        if (html5QrCodeRef.current.isScanning) {
+                            await html5QrCodeRef.current.stop();
+                        }
+                        html5QrCodeRef.current.clear();
+                    } catch (err) {
+                        console.warn("Error stopping scanner", err);
+                    }
+                    html5QrCodeRef.current = null;
+                }
+                setIsLookupScanning(false);
+            };
+
+            const userSchedules = useMemo(() => {
+                if (!selectedUser || !schedules) return [];
+                return schedules.filter(s => {
+                    if (s.targetKey === 'ALL') return true;
+                    const userOpt = selectedUser.options?.[s.targetKey];
+                    if (!userOpt) return false;
+                    return s.targetVal === 'ALL' || userOpt.includes(s.targetVal);
+                }).sort((a,b) => a.date > b.date ? 1 : -1);
+            }, [selectedUser, schedules]);
+
+            const uniqueValues = useMemo(() => {
+                if (!editForm.optKey) return [];
+                const values = new Set();
+                
+                if (users) {
+                    users.forEach(u => {
+                        if (u.options && u.options[editForm.optKey]) {
+                            values.add(u.options[editForm.optKey]);
+                        }
+                    });
+                }
+
+                if (schedules) {
+                    schedules.forEach(s => {
+                        if (s.targetKey === editForm.optKey && s.targetVal !== 'ALL') {
+                            values.add(s.targetVal);
+                        }
+                    });
+                }
+
+                return Array.from(values).sort();
+            }, [editForm.optKey, users, schedules]);
+
+            useEffect(() => {
+                if (!selectedUser || !editForm.optKey || !editForm.optVal || !schedules) return;
+
+                const oldVal = selectedUser.options[editForm.optKey];
+                const newVal = editForm.optVal;
+
+                if (oldVal === newVal) return;
+
+                const getPriceForOption = (val) => {
+                    return schedules
+                        .filter(s => s.targetKey === editForm.optKey && s.targetVal === val && s.type === 'PAYMENT')
+                        .reduce((sum, s) => sum + (s.price || 0), 0);
+                };
+
+                const oldPrice = getPriceForOption(oldVal);
+                const newPrice = getPriceForOption(newVal);
+                const diff = oldPrice - newPrice;
+
+                if (diff > 0) {
+                    setEditForm(prev => ({
+                        ...prev,
+                        penalty: diff,
+                        reason: `일정 변경 차액 (${oldVal}: ${CURRENCY}${oldPrice} -> ${newVal}: ${CURRENCY}${newPrice})`
+                    }));
+                }
+            }, [editForm.optVal, editForm.optKey, selectedUser, schedules]);
+
+            const userHistoryLogs = useMemo(() => {
+                if(!selectedUser) return [];
+                return changeLogs.filter(l => l.uid === selectedUser.uid).sort((a,b)=> new Date(b.timestamp) - new Date(a.timestamp));
+            }, [changeLogs, selectedUser]);
+
+            const visibleLogs = showAllHistory ? userHistoryLogs : userHistoryLogs.slice(0, 1);
+
+            return (
+                <div className="space-y-6 animate-slide-up">
+                    <div className="bg-white p-6 rounded-3xl shadow-card">
+                        <h3 className="font-bold text-lg mb-4 text-slate-800">참가자 일정 변경 및 패널티 관리</h3>
+                        <div className="flex flex-col gap-2 mb-6">
+                            <input 
+                                type="text" 
+                                value={searchQuery} 
+                                onChange={(e)=>setSearchQuery(e.target.value)} 
+                                placeholder="사번 또는 이름 검색" 
+                                className="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl font-bold outline-none focus:border-incar" 
+                            />
+                            <div className="flex gap-2">
+                                <button 
+                                    onClick={startLookupScanner} 
+                                    className="bg-slate-100 text-slate-600 px-4 py-4 rounded-2xl hover:bg-slate-200 transition-colors border border-slate-200 flex-none" 
+                                    title="QR 스캔으로 찾기"
+                                >
+                                    <Icon name="qr" size={24} />
+                                </button>
+                                <button 
+                                    onClick={()=>{
+                                        const found = users.find(u => u.uid.includes(searchQuery) || u.name.includes(searchQuery));
+                                        if(found) setSelectedUser(found); else alert("사용자를 찾을 수 없습니다.");
+                                    }} 
+                                    className="flex-1 bg-slate-800 text-white px-6 py-4 rounded-2xl font-bold"
+                                >
+                                    검색
+                                </button>
+                            </div>
+                        </div>
+
+                        {/* 스캐너 모달 */}
+                        {isLookupScanning && (
+                            <div className="fixed inset-0 z-[300] bg-black/95 flex flex-col items-center justify-center p-6 animate-fade-in" style={{ touchAction: 'none' }}>
+                                <button onClick={stopLookupScanner} className="absolute top-8 right-8 text-white p-3 bg-white/10 rounded-full hover:bg-white/20 transition-colors z-[101]">
+                                    <Icon name="x" size={32} />
+                                </button>
+                                <div className="scanner-container">
+                                    <div id="lookup-reader"></div>
+                                    <div className="absolute inset-0 pointer-events-none flex items-center justify-center">
+                                        <div className="relative w-[70%] h-[70%]">
+                                            <div className="absolute top-0 left-0 w-8 h-8 border-t-4 border-l-4 border-white rounded-tl-2xl"></div>
+                                            <div className="absolute top-0 right-0 w-8 h-8 border-t-4 border-r-4 border-white rounded-tr-2xl"></div>
+                                            <div className="absolute bottom-0 left-0 w-8 h-8 border-b-4 border-l-4 border-white rounded-bl-2xl"></div>
+                                            <div className="absolute bottom-0 right-0 w-8 h-8 border-b-4 border-r-4 border-white rounded-br-2xl"></div>
+                                            <div className="scan-line bg-incar"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <p className="text-white mt-10 font-bold text-xl animate-pulse text-center">조회할 QR코드를 스캔하세요</p>
+                                <div className="mt-8 flex gap-4">
+                                    <button onClick={stopLookupScanner} className="px-8 py-3 bg-white text-slate-900 rounded-xl font-bold text-sm hover:bg-slate-200 transition-colors">닫기</button>
+                                </div>
+                            </div>
+                        )}
+
+                        {selectedUser && (
+                            <div className="border-t border-slate-100 pt-6 space-y-4">
+                                <div className="flex flex-col md:flex-row gap-6 mb-6">
+                                    <div className="flex-1 bg-slate-50 p-5 rounded-2xl border border-slate-100 flex flex-col justify-center">
+                                        <div className="flex justify-between items-start mb-2">
+                                            <div>
+                                                <div className="font-black text-2xl text-slate-800">{selectedUser.name}</div>
+                                                <div className="text-sm font-bold text-slate-500">{selectedUser.org}</div>
+                                            </div>
+                                            <div className="text-right">
+                                                <div className="text-[10px] font-bold text-slate-400 uppercase">사번(ID)</div>
+                                                <div className="font-mono font-bold text-incar">{selectedUser.uid}</div>
+                                            </div>
+                                        </div>
+                                        <div className="mt-4 pt-4 border-t border-slate-200/50 flex justify-between items-center">
+                                            <span className="text-xs font-bold text-slate-400">누적 패널티</span>
+                                            <span className="font-black text-rose-500 text-lg">-{CURRENCY}{selectedUser.penaltyTotal || 0}</span>
+                                        </div>
+                                    </div>
+                                    <div className="bg-white border-2 border-dashed border-slate-200 rounded-2xl p-4 flex flex-col items-center justify-center text-center w-full md:w-auto">
+                                        <div className="mb-2 w-32 h-32 flex items-center justify-center bg-slate-50">
+                                            <QRCodeCanvas text={selectedUser.uid} />
+                                        </div>
+                                        <p className="text-[10px] font-bold text-slate-400">QR 데이터: {selectedUser.uid}</p>
+                                    </div>
+                                </div>
+
+                                <div className="bg-indigo-50 border border-indigo-100 rounded-2xl p-5 mb-4">
+                                    <h4 className="font-bold text-incar mb-3 flex items-center gap-2"><Icon name="dashboard" size={16}/> {selectedUser.name}님의 전체 여행 일정</h4>
+                                    {userSchedules.length === 0 ? (
+                                        <div className="text-center text-slate-400 text-xs py-4">배정된 일정이 없습니다.</div>
+                                    ) : (
+                                        <div className="max-h-60 overflow-y-auto space-y-2 pr-2 custom-scrollbar">
+                                            {userSchedules.map((s, idx) => (
+                                                <div key={idx} className="bg-white p-3 rounded-xl border border-indigo-100 shadow-sm flex justify-between items-center">
+                                                    <div>
+                                                        <span className="text-[10px] font-bold text-slate-400 block">{s.displayDate}</span>
+                                                        <span className="font-bold text-slate-800">{s.title}</span>
+                                                    </div>
+                                                    <div className="text-right">
+                                                        <span className={`inline-block px-2 py-0.5 rounded text-[10px] font-bold ${s.type==='PAYMENT'?'bg-emerald-100 text-emerald-600':'bg-slate-100 text-slate-500'}`}>
+                                                            {s.type==='PAYMENT' ? `지급 ${CURRENCY}${s.price}` : '탑승'}
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    )}
+                                </div>
+
+                                <div className="mt-6 pt-6 border-t border-slate-100">
+                                    <h4 className="font-bold text-sm text-slate-800 mb-3 flex items-center gap-2"><Icon name="history" size={16}/> 변경 및 패널티 이력</h4>
+                                    {userHistoryLogs.length === 0 ? (
+                                        <p className="text-xs text-slate-400">변경 이력이 없습니다.</p>
+                                    ) : (
+                                        <div className="space-y-3">
+                                            {/* PC 뷰 (테이블) */}
+                                            <div className="hidden md:block overflow-x-auto">
+                                                <table className="w-full text-xs text-left">
+                                                    <thead className="bg-slate-50 text-slate-500 font-bold">
+                                                        <tr><th className="p-2">일시</th><th className="p-2">항목</th><th className="p-2">내용</th><th className="p-2 text-right">패널티</th><th className="p-2">사유</th></tr>
+                                                    </thead>
+                                                    <tbody className="divide-y divide-slate-100">
+                                                        {visibleLogs.map((log, i) => (
+                                                            <tr key={i}>
+                                                                <td className="p-2 text-slate-400">{log.timestamp.slice(5, 16)}</td>
+                                                                <td className="p-2 font-bold">{log.targetOption}</td>
+                                                                <td className="p-2">
+                                                                    <span className="line-through text-slate-300">{log.oldVal}</span> 
+                                                                    <span className="mx-1 text-slate-300">→</span> 
+                                                                    <span className="text-incar font-bold">{log.newVal}</span>
+                                                                </td>
+                                                                <td className="p-2 text-right font-bold text-rose-500">{log.penalty > 0 ? `-${CURRENCY}${log.penalty}` : '-'}</td>
+                                                                <td className="p-2 text-slate-500 truncate max-w-[100px]">{log.reason}</td>
+                                                            </tr>
+                                                        ))}
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                            
+                                            {/* 모바일 뷰 (카드 리스트) */}
+                                            <div className="md:hidden space-y-2">
+                                                {visibleLogs.map((log, i) => (
+                                                    <div key={i} className="bg-slate-50 p-4 rounded-xl border border-slate-100 flex flex-col gap-2">
+                                                        <div className="flex justify-between items-center text-xs text-slate-400 font-medium border-b border-slate-200 pb-2 mb-1">
+                                                            <span>{log.timestamp.slice(5, 16)}</span>
+                                                            <span className="bg-white px-2 py-0.5 rounded border border-slate-200">{log.targetOption}</span>
+                                                        </div>
+                                                        <div className="flex items-center justify-center gap-2 text-sm">
+                                                            <span className="line-through text-slate-400">{log.oldVal}</span>
+                                                            <Icon name="chevronsDown" size={12} className="rotate-[-90deg] text-slate-300" />
+                                                            <span className="font-bold text-incar">{log.newVal}</span>
+                                                        </div>
+                                                        <div className="flex justify-between items-end mt-1 pt-2 border-t border-slate-200/50">
+                                                            <span className="text-xs text-slate-500 flex-1 truncate pr-2">{log.reason}</span>
+                                                            <span className="text-sm font-bold text-rose-500">{log.penalty > 0 ? `-${CURRENCY}${log.penalty}` : '-'}</span>
+                                                        </div>
+                                                    </div>
+                                                ))}
+                                            </div>
+
+                                            {userHistoryLogs.length > 1 && (
+                                                <button 
+                                                    onClick={() => setShowAllHistory(!showAllHistory)} 
+                                                    className="w-full py-2 text-xs font-bold text-slate-400 bg-slate-50 hover:bg-slate-100 rounded-lg transition-colors flex items-center justify-center gap-1"
+                                                >
+                                                    {showAllHistory ? '접기' : `더보기 (${userHistoryLogs.length - 1}건 더 있음)`} <Icon name={showAllHistory ? "up" : "down"} size={12} />
+                                                </button>
+                                            )}
+                                        </div>
+                                    )}
+                                </div>
+
+                                <div className="grid grid-cols-2 gap-4 mt-4">
+                                    <div><label className="block text-xs font-bold text-slate-400 mb-1">변경 전 일정</label><select value={editForm.optKey} onChange={e=>setEditForm({...editForm, optKey: e.target.value})} className="w-full p-3 border rounded-xl font-bold text-sm bg-white"><option value="">선택하세요</option>{Object.keys(selectedUser.options).map(key => <option key={key} value={key}>{key} (현재: {selectedUser.options[key]})</option>)}</select></div>
+                                    
+                                    <div>
+                                        <div className="flex justify-between items-center mb-1">
+                                            <label className="block text-xs font-bold text-slate-400">변경 후 일정</label>
+                                            <button onClick={()=>setManualInput(!manualInput)} className="text-[10px] text-incar underline font-bold">{manualInput ? '목록에서 선택' : '직접 입력'}</button>
+                                        </div>
+                                        {manualInput ? (
+                                            <input type="text" value={editForm.optVal} onChange={e=>setEditForm({...editForm, optVal: e.target.value})} className="w-full p-3 border rounded-xl font-bold text-sm bg-white" placeholder="직접 입력하세요" />
+                                        ) : (
+                                            <select value={editForm.optVal} onChange={e=>setEditForm({...editForm, optVal: e.target.value})} className="w-full p-3 border rounded-xl font-bold text-sm bg-white">
+                                                <option value="">선택하세요</option>
+                                                {uniqueValues.map(val => (
+                                                    <option key={val} value={val}>{val}</option>
+                                                ))}
+                                                <option value="직접입력">[목록에 없음]</option>
+                                            </select>
+                                        )}
+                                    </div>
+                                </div>
+                                <div>
+                                    <label className="block text-xs font-bold text-slate-400 mb-1">패널티 ({CURRENCY})</label>
+                                    <input type="number" value={editForm.penalty} onChange={e=>setEditForm({...editForm, penalty: e.target.value})} className="w-full p-3 border border-rose-200 bg-rose-50 rounded-xl font-bold text-rose-600" />
+                                    <p className="text-[10px] text-slate-400 mt-1">* 기존 일정보다 저렴한 일정으로 변경 시 차액이 자동 계산됩니다.</p>
+                                </div>
+                                <div><label className="block text-xs font-bold text-slate-400 mb-1">변경 사유</label><input type="text" value={editForm.reason} onChange={e=>setEditForm({...editForm, reason: e.target.value})} className="w-full p-3 border rounded-xl font-bold text-sm" /></div>
+                                <button onClick={handleUserUpdate} className="w-full py-4 bg-incar text-white font-bold rounded-2xl shadow-lg mt-4 hover:bg-incar-dark">저장하기</button>
+                            </div>
+                        )}
+                    </div>
+                </div>
+            );
+        };
+
+        const BadgePrintView = ({ users, onClose, config }) => {
+            const calculateStyle = () => {
+                let w = config.imgWidth || 545;
+                let h = config.imgHeight || 697;
+                const MAX_WIDTH = 794; 
+                if (w > MAX_WIDTH) {
+                    const ratio = h / w;
+                    w = MAX_WIDTH;
+                    h = MAX_WIDTH * ratio;
+                }
+                return { 
+                    width: `${w}px`, 
+                    height: `${h}px`,
+                    border: config?.bgImage ? 'none' : '2px solid #0f172a',
+                    borderRadius: '0', 
+                    flexShrink: 0
+                };
+            };
+
+            const renderLayer = (layer, u, index) => {
+                const commonStyle = {
+                    position: 'absolute',
+                    top: `${layer.y}%`,
+                    left: `${layer.x}%`,
+                    transform: 'translate(-50%, -50%)',
+                    zIndex: index, 
+                    width: layer.width === 'auto' ? 'auto' : `${layer.width}px`,
+                    textAlign: layer.align || 'center',
+                    cursor: 'default',
+                    whiteSpace: 'nowrap'
+                };
+
+                if (layer.type === 'qr') {
+                    return (
+                        <div key={layer.id} style={{ ...commonStyle, width: `${layer.size}px`, height: `${layer.size}px`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                            <QRCodeCanvas text={u.uid} size={layer.size} transparent={true} />
+                        </div>
+                    );
+                } else if (layer.type === 'text') {
+                    let content = layer.content;
+                    if (layer.variable) {
+                        if (layer.variable === 'name') content = u.name;
+                        else if (layer.variable === 'org') content = u.org;
+                        else if (layer.variable === 'role') content = u.options && (u.options['직책'] || u.options['Role'] || '-');
+                        else if (layer.variable === 'id') content = u.uid;
+                    }
+                    return (
+                        <div key={layer.id} className={layer.fontFamily} style={{
+                            ...commonStyle,
+                            fontSize: `${layer.fontSize}px`,
+                            color: layer.color,
+                            fontWeight: layer.fontWeight || 'bold',
+                            backgroundColor: layer.bgColor || 'transparent',
+                            padding: `${layer.padding || 0}px`,
+                            borderRadius: `${layer.borderRadius || 0}px`,
+                            textShadow: layer.shadow ? '2px 2px 4px rgba(0,0,0,0.5)' : 'none',
+                            fontFamily: layer.fontFamily 
+                        }}>
+                            {content}
+                        </div>
+                    );
+                } else if (layer.type === 'rect' || layer.type === 'circle') {
+                    return (
+                        <div key={layer.id} style={{
+                            ...commonStyle,
+                            width: `${layer.w}px`,
+                            height: `${layer.h}px`,
+                            backgroundColor: layer.fill,
+                            border: `${layer.borderWidth}px solid ${layer.borderColor}`,
+                            borderRadius: layer.type === 'circle' ? '50%' : `${layer.borderRadius}px`,
+                            opacity: layer.opacity
+                        }}></div>
+                    );
+                }
+                return null;
+            };
+
+            return (
+                <div className="fixed inset-0 bg-white z-[100] overflow-auto animate-fade-in print-only-container">
+                    <div className="no-print fixed top-0 left-0 w-full bg-slate-900 text-white p-4 flex justify-between items-center shadow-xl z-50">
+                        <div className="font-bold text-lg flex items-center gap-4">
+                            <span className="bg-incar px-2 py-1 rounded text-xs">PRINT MODE</span> 
+                            <span>명찰 일괄 출력 (총 {users.length}명)</span>
+                        </div>
+                        <div className="flex gap-3">
+                            <button onClick={() => window.print()} className="bg-emerald-500 hover:bg-emerald-600 px-6 py-2 rounded-lg font-bold flex items-center gap-2">
+                                <Icon name="print" /> 인쇄 / PDF저장
+                            </button>
+                            <button onClick={onClose} className="bg-slate-700 hover:bg-slate-600 px-6 py-2 rounded-lg font-bold">닫기</button>
+                        </div>
+                    </div>
+                    
+                    <div className="print-reset-spacing p-8 pt-24 w-full min-h-screen bg-slate-100 flex flex-col items-center gap-8 print:bg-white">
+                        {users.map((u, i) => (
+                            <div key={u.uid} className="page-wrapper relative">
+                                <div className="badge-card relative overflow-hidden bg-white shadow-lg" style={calculateStyle()}>
+                                    {config.bgImage && <img src={config.bgImage} className="absolute inset-0 w-full h-full object-cover z-0" />}
+                                    {config.layers && config.layers.map((layer, idx) => renderLayer(layer, u, idx))}
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            );
+        };
+
+        const ManageView = ({ users, handleUserUpload, handleScheduleUpload, badgeConfig, setBadgeConfig, db, serverError, schedules, logs, setIsPrintMode, setUsers, setSchedules, setLogs, setChangeLogs, changeLogs, appBgImage, setAppBgImage, handleAppBgUpload }) => {
+            const handleBgImageUpload = (e) => {
+                const file = e.target.files[0];
+                if(file){
+                    const reader = new FileReader();
+                    reader.onload = (evt) => {
+                        const img = new Image();
+                        img.onload = () => {
+                            setBadgeConfig(prev => ({
+                                ...prev,
+                                bgImage: evt.target.result,
+                                imgWidth: img.naturalWidth,
+                                imgHeight: img.naturalHeight
+                            }));
+                        };
+                        img.src = evt.target.result;
+                    };
+                    reader.readAsDataURL(file);
+                }
+            };
+
+            const [selectedId, setSelectedId] = useState(null);
+            const [dragTarget, setDragTarget] = useState(null);
+            const [guides, setGuides] = useState({ x: null, y: null });
+            const [snapTargets, setSnapTargets] = useState([]);
+            const [isZipping, setIsZipping] = useState(false);
+            const [zipProgress, setZipProgress] = useState(0);
+            const editorRef = useRef(null);
+
+            const startDrag = (e, id) => {
+                e.preventDefault();
+                e.stopPropagation();
+                setSelectedId(id);
+                setDragTarget(id);
+
+                const targets = [];
+                targets.push({ x: 50, y: 50 }); // Canvas Center
+
+                if (badgeConfig.layers) {
+                    badgeConfig.layers.forEach(l => {
+                        if (l.id !== id) {
+                            targets.push({ x: l.x, y: l.y });
+                        }
+                    });
+                }
+                setSnapTargets(targets);
+            };
+
+            const onEditorMove = useCallback((e) => {
+                if (!dragTarget || !editorRef.current) return;
+                
+                const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+                const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+                const rect = editorRef.current.getBoundingClientRect();
+                
+                let newX = ((clientX - rect.left) / rect.width) * 100;
+                let newY = ((clientY - rect.top) / rect.height) * 100;
+                
+                newX = Math.max(0, Math.min(100, newX));
+                newY = Math.max(0, Math.min(100, newY));
+                
+                let guideX = null;
+                let guideY = null;
+                
+                const threshold = 1.5;
+                for (const target of snapTargets) {
+                    if (guideX === null && Math.abs(newX - target.x) < threshold) {
+                        newX = target.x;
+                        guideX = target.x;
+                    }
+                    if (guideY === null && Math.abs(newY - target.y) < threshold) {
+                        newY = target.y;
+                        guideY = target.y;
+                    }
+                }
+                
+                setGuides({ x: guideX, y: guideY });
+                
+                setBadgeConfig(prev => ({
+                    ...prev,
+                    layers: prev.layers.map(l => l.id === dragTarget ? { ...l, x: newX, y: newY } : l)
+                }));
+            }, [dragTarget, snapTargets]);
+
+            const stopDrag = () => {
+                setDragTarget(null);
+                setGuides({ x: null, y: null });
+                setSnapTargets([]);
+            };
+
+            useEffect(() => {
+                if (dragTarget) {
+                    window.addEventListener('mousemove', onEditorMove);
+                    window.addEventListener('mouseup', stopDrag);
+                    window.addEventListener('touchmove', onEditorMove, { passive: false });
+                    window.addEventListener('touchend', stopDrag);
+                }
+                return () => {
+                    window.removeEventListener('mousemove', onEditorMove);
+                    window.removeEventListener('mouseup', stopDrag);
+                    window.removeEventListener('touchmove', onEditorMove);
+                    window.removeEventListener('touchend', stopDrag);
+                };
+            }, [dragTarget, onEditorMove]);
+
+            const addLayer = (type, subType = null) => {
+                const newId = `${type}_${Date.now()}`;
+                let newLayer = { id: newId, type, x: 50, y: 50 };
+                
+                if (type === 'text') {
+                    newLayer = { 
+                        ...newLayer, 
+                        content: subType ? (subType === 'name' ? '성 명' : subType === 'org' ? '소 속' : '직 책') : 'New Text',
+                        variable: subType, 
+                        fontSize: 30, fontFamily: 'Noto Sans KR', color: '#000000', align: 'center', width: 'auto' 
+                    };
+                } else if (type === 'qr') {
+                    newLayer = { ...newLayer, size: 100 };
+                } else if (type === 'rect') {
+                    newLayer = { ...newLayer, w: 200, h: 50, fill: '#e2e8f0', borderColor: '#000000', borderWidth: 0, opacity: 1, borderRadius: 0 };
+                } else if (type === 'circle') {
+                    newLayer = { ...newLayer, w: 100, h: 100, fill: '#e2e8f0', borderColor: '#000000', borderWidth: 0, opacity: 1 };
+                }
+                
+                setBadgeConfig(prev => ({ ...prev, layers: [...(prev.layers || []), newLayer] }));
+                setSelectedId(newId);
+            };
+
+            const updateLayer = (key, value) => {
+                setBadgeConfig(prev => ({
+                    ...prev,
+                    layers: prev.layers.map(l => l.id === selectedId ? { ...l, [key]: value } : l)
+                }));
+            };
+
+            const deleteLayer = () => {
+                if(confirm("삭제하시겠습니까?")) {
+                    setBadgeConfig(prev => ({ ...prev, layers: prev.layers.filter(l => l.id !== selectedId) }));
+                    setSelectedId(null);
+                }
+            };
+
+            // 레이어 이동 로직 (물리적 z-index 배열 변경)
+            const moveLayer = (direction) => {
+                if (!selectedId) return;
+                setBadgeConfig(prev => {
+                    const idx = prev.layers.findIndex(l => l.id === selectedId);
+                    if (idx < 0) return prev;
+                    let newLayers = [...prev.layers];
+                    const item = newLayers.splice(idx, 1)[0];
+
+                    if (direction === 'top') {
+                        newLayers.push(item); // 배열 맨 뒤가 화면 맨 위(Front)
+                    } else if (direction === 'bottom') {
+                        newLayers.unshift(item); // 배열 맨 앞이 화면 맨 아래(Back)
+                    } else if (direction === 'up' && idx < prev.layers.length - 1) {
+                        newLayers.splice(idx + 1, 0, item);
+                    } else if (direction === 'down' && idx > 0) {
+                        newLayers.splice(idx - 1, 0, item);
+                    } else {
+                        newLayers.splice(idx, 0, item);
+                    }
+                    return { ...prev, layers: newLayers };
+                });
+            };
+
+            const selectedLayer = badgeConfig.layers ? badgeConfig.layers.find(l => l.id === selectedId) : null;
+
+            // Render Layer on Editor
+            const renderEditorLayer = (layer, index) => {
+                const isSelected = layer.id === selectedId;
+                const style = {
+                    position: 'absolute', top: `${layer.y}%`, left: `${layer.x}%`,
+                    transform: 'translate(-50%, -50%)',
+                    cursor: 'grab',
+                    border: isSelected ? '2px solid #3b82f6' : '1px dashed rgba(0,0,0,0.1)',
+                    zIndex: index, 
+                };
+
+                const handlers = {
+                    onMouseDown: (e) => startDrag(e, layer.id),
+                    onTouchStart: (e) => startDrag(e, layer.id),
+                    onClick: (e) => e.stopPropagation()
+                };
+
+                if (layer.type === 'qr') {
+                    return <div key={layer.id} {...handlers} style={{ ...style, width: `${layer.size}px`, height: `${layer.size}px`, display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(255,255,255,0.5)' }}><span className="text-[10px] font-bold text-red-500">QR</span></div>;
+                } else if (layer.type === 'text') {
+                    return (
+                        <div key={layer.id} {...handlers} className={layer.fontFamily} style={{
+                            ...style,
+                            fontSize: `${layer.fontSize}px`, color: layer.color, fontWeight: layer.fontWeight || 'bold',
+                            backgroundColor: layer.bgColor || 'transparent', padding: `${layer.padding || 0}px`, borderRadius: `${layer.borderRadius || 0}px`,
+                            width: layer.width === 'auto' ? 'auto' : `${layer.width}px`, textAlign: layer.align || 'center', whiteSpace: 'nowrap',
+                            fontFamily: layer.fontFamily
+                        }}>
+                            {(!layer.variable ? layer.content : { name: '성 명', org: '소 속', role: '직 책', id: '사 번' }[layer.variable] || layer.content)}
+                        </div>
+                    );
+                } else if (layer.type === 'rect' || layer.type === 'circle') {
+                    return (
+                        <div key={layer.id} {...handlers} style={{
+                            ...style, width: `${layer.w}px`, height: `${layer.h}px`, backgroundColor: layer.fill,
+                            border: `${layer.borderWidth}px solid ${layer.borderColor}`, borderRadius: layer.type === 'circle' ? '50%' : `${layer.borderRadius}px`, opacity: layer.opacity
+                        }}></div>
+                    );
+                }
+            };
+
+            const contentOrPlaceholder = (layer) => {
+                if (!layer.variable) return layer.content;
+                const names = { name: '성 명', org: '소 속', role: '직 책', id: '사 번' };
+                return names[layer.variable] || layer.content;
+            };
+
+            const exportAllData = () => {
+                if(logs.length === 0 && changeLogs.length === 0) return alert("내보낼 데이터가 없습니다.");
+                
+                // 날짜 포맷 헬퍼 함수
+                const formatLogDate = (ts) => {
+                    if (!ts) return '-';
+                    const date = new Date(ts);
+                    if (isNaN(date.getTime())) return ts; 
+                    const pad = n => n < 10 ? '0'+n : n;
+                    return `${date.getFullYear()}-${pad(date.getMonth()+1)}-${pad(date.getDate())} ${pad(date.getHours())}:${pad(date.getMinutes())}`;
+                };
+
+                // 데이터 통합 및 정렬
+                const combinedData = [];
+
+                // 일반 로그 (지급/탑승) 추가
+                logs.forEach(l => {
+                    combinedData.push({
+                        rawTime: l.timestamp,
+                        일시: formatLogDate(l.timestamp),
+                        사번: l.uid,
+                        성명: l.name,
+                        구분: l.action, // '지급' or '탑승'
+                        일정명: l.sessionTitle,
+                        금액: l.finalAmount || 0,
+                        패널티: l.penaltyApplied || 0,
+                        탑승차량: l.bus,
+                        비고: ''
+                    });
+                });
+
+                // 변경 로그 추가
+                changeLogs.forEach(c => {
+                    combinedData.push({
+                        rawTime: c.timestamp,
+                        일시: formatLogDate(c.timestamp),
+                        사번: c.uid,
+                        성명: c.name,
+                        구분: '변경',
+                        일정명: c.targetOption, // 변경 대상 옵션키 (예: 2일차 투어)
+                        금액: 0,
+                        패널티: c.penalty || 0,
+                        탑승차량: '', // 변경은 차량과 무관하므로 공란
+                        비고: `${c.oldVal} -> ${c.newVal} | ${c.reason}` // 변경 내역과 사유를 비고에 통합
+                    });
+                });
+
+                // 시간순 정렬 (내림차순 - 최신순)
+                combinedData.sort((a, b) => new Date(b.rawTime) - new Date(a.rawTime));
+
+                // 2. HTML 테이블 생성 (요청된 컬럼 순서 적용)
+                // 일시 | 사번 | 성명 | 구분 | 일정명 | 금액 | 패널티 | 탑승차량 | 비고
+                const headers = ['일시', '사번', '성명', '구분', '일정명', '금액', '패널티', '탑승차량', '비고'];
+                let rows = '';
+                combinedData.forEach(d => {
+                    rows += `<tr>
+                        <td>${d.일시}</td>
+                        <td style="mso-number-format:'@'">${d.사번}</td>
+                        <td>${d.성명}</td>
+                        <td>${d.구분}</td>
+                        <td>${d.일정명}</td>
+                        <td>${d.금액}</td>
+                        <td>${d.패널티}</td>
+                        <td>${d.탑승차량}</td>
+                        <td>${d.비고}</td>
+                    </tr>`;
+                });
+
+                const tableHTML = `
+                <html xmlns:x="urn:schemas-microsoft-com:office:excel">
+                    <head>
+                        <meta http-equiv="content-type" content="application/vnd.ms-excel; charset=UTF-8">
+                        <style>
+                            table { border-collapse: collapse; width: 100%; }
+                            th, td { border: 1px solid #000; padding: 5px; text-align: center; white-space: nowrap; vertical-align: middle; }
+                            th { background-color: #f0f0f0; font-weight: bold; }
+                        </style>
+                    </head>
+                    <body>
+                        <h3>[INCARPASS 통합 운영 로그]</h3>
+                        <table>
+                            <thead><tr>${headers.map(h=>`<th>${h}</th>`).join('')}</tr></thead>
+                            <tbody>${rows}</tbody>
+                        </table>
+                    </body>
+                </html>`;
+                
+                const blob = new Blob([tableHTML], { type: 'application/vnd.ms-excel' });
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(blob);
+                link.download = `INCARPASS_Unified_Log_${new Date().toISOString().slice(0,10)}.xls`;
+                link.click();
+            };
+
+            // 데이터 초기화 기능 (서버 데이터 포함)
+            const handleFullReset = async () => {
+                if(!confirm("⚠️ 경고: 로컬 및 서버의 모든 데이터(참가자, 일정, 로그)가 삭제됩니다. 정말 진행하시겠습니까?")) return;
+                const SYSTEM_APP_ID = 'inca-prod-v1';
+                try {
+                    if(db) {
+                        const collections = ['users', 'schedules', 'logs', 'changelogs'];
+                        for (const col of collections) {
+                            const snapshot = await db.collection('artifacts').doc(SYSTEM_APP_ID).collection(col).get();
+                            const batch = db.batch();
+                            snapshot.docs.forEach(doc => batch.delete(doc.ref));
+                            await batch.commit();
+                        }
+                    }
+                    localStorage.clear();
+                    alert("모든 데이터가 초기화되었습니다.");
+                    window.location.reload();
+                } catch(e) { 
+                    console.error(e); 
+                    alert("초기화 중 오류가 발생했습니다: " + e.message);
+                }
+            };
+
+            // Image Export Logic
+            const generateZip = async () => {
+                if (users.length === 0) return alert("데이터가 없습니다.");
+                setIsZipping(true);
+                setZipProgress(0);
+
+                await new Promise(resolve => setTimeout(resolve, 1000)); // Allow render
+
+                const zip = new JSZip();
+                const folder = zip.folder("badges");
+
+                // 사번(uid) 순으로 정렬
+                const sortedUsers = [...users].sort((a, b) => a.uid.localeCompare(b.uid, undefined, { numeric: true, sensitivity: 'base' }));
+
+                for (let i = 0; i < sortedUsers.length; i++) {
+                    const u = sortedUsers[i];
+                    const element = document.getElementById(`badge-export-${u.uid}`);
+                    if (element) {
+                        try {
+                            const canvas = await html2canvas(element, { scale: 2, useCORS: true, backgroundColor: null });
+                            const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
+                            folder.file(`${u.name}_${u.uid}.png`, blob);
+                        } catch (err) {
+                            console.error("Error capturing badge:", u.name, err);
+                        }
+                    }
+                    setZipProgress(Math.round(((i + 1) / sortedUsers.length) * 100));
+                    await new Promise(resolve => setTimeout(resolve, 10)); 
+                }
+
+                zip.generateAsync({ type: "blob" }).then(content => {
+                    saveAs(content, `명찰_이미지_일괄_${new Date().toISOString().slice(0,10)}.zip`);
+                    setIsZipping(false);
+                    alert("다운로드가 완료되었습니다.");
+                });
+            };
+
+            return (
+                <div className="space-y-6 animate-slide-up no-print">
+                    <div className="bg-white p-6 rounded-3xl shadow-card border border-slate-200">
+                        <div className="flex justify-between items-center mb-4">
+                            <h3 className="font-bold text-lg text-slate-800 flex items-center gap-2"><Icon name="edit" className="text-incar"/> 명찰 디자인 에디터</h3>
+                            <div className="flex gap-2">
+                                <button onClick={()=>addLayer('text', 'name')} className="px-3 py-1.5 bg-slate-100 text-xs font-bold rounded-lg hover:bg-slate-200">+ 이름</button>
+                                <button onClick={()=>addLayer('text', 'org')} className="px-3 py-1.5 bg-slate-100 text-xs font-bold rounded-lg hover:bg-slate-200">+ 소속</button>
+                                <button onClick={()=>addLayer('text')} className="px-3 py-1.5 bg-slate-100 text-xs font-bold rounded-lg hover:bg-slate-200">+ 텍스트</button>
+                                <button onClick={()=>addLayer('rect')} className="px-3 py-1.5 bg-slate-100 text-xs font-bold rounded-lg hover:bg-slate-200">+ 박스</button>
+                                <button onClick={()=>addLayer('circle')} className="px-3 py-1.5 bg-slate-100 text-xs font-bold rounded-lg hover:bg-slate-200">+ 원</button>
+                                <button onClick={()=>addLayer('qr')} className="px-3 py-1.5 bg-slate-100 text-xs font-bold rounded-lg hover:bg-slate-200">+ QR</button>
+                            </div>
+                        </div>
+                        
+                        <div className="flex flex-col lg:flex-row gap-8 items-start">
+                            {/* Canvas Area */}
+                            <div className="flex-none bg-slate-50 rounded-2xl border-2 border-dashed border-slate-200 p-4 flex justify-center relative" onClick={()=>setSelectedId(null)}>
+                                <div ref={editorRef} className="relative overflow-hidden shadow-2xl bg-white select-none" style={{ width: '545px', height: '697px', borderRadius: '10px' }}>
+                                    {guides.x !== null && <div className="smart-guide-x" style={{left: `${guides.x}%`}}></div>}
+                                    {guides.y !== null && <div className="smart-guide-y" style={{top: `${guides.y}%`}}></div>}
+                                    {badgeConfig.bgImage ? <img src={badgeConfig.bgImage} className="absolute inset-0 w-full h-full object-cover pointer-events-none" /> : <div className="absolute inset-0 flex items-center justify-center text-slate-300">이미지 없음</div>}
+                                    {badgeConfig.layers && badgeConfig.layers.map((layer, idx) => renderEditorLayer(layer, idx))}
+                                </div>
+                            </div>
+
+                            {/* Property Panel */}
+                            <div className="flex-1 space-y-4 w-full bg-white p-4 rounded-xl border border-slate-100 shadow-sm" onMouseDown={e => e.stopPropagation()}>
+                                <div><label className="block text-xs font-bold text-slate-400 mb-2">배경 이미지</label><input type="file" accept="image/*" onChange={handleBgImageUpload} className="block w-full text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-incar-light file:text-incar hover:file:bg-indigo-100"/></div>
+                                
+                                {selectedLayer ? (
+                                    <div className="space-y-4 animate-fade-in">
+                                        <div className="flex justify-between items-center border-b pb-2">
+                                            <span className="font-bold text-sm text-incar">속성 편집 ({selectedLayer.type})</span>
+                                            <div className="flex gap-2">
+                                                <button onClick={()=>moveLayer('top')} className="p-1 hover:bg-slate-100 rounded text-incar" title="맨 앞으로"><Icon name="chevronsUp" size={16}/></button>
+                                                <button onClick={()=>moveLayer('up')} className="p-1 hover:bg-slate-100 rounded" title="한 칸 앞으로"><Icon name="up" size={16}/></button>
+                                                <button onClick={()=>moveLayer('down')} className="p-1 hover:bg-slate-100 rounded" title="한 칸 뒤로"><Icon name="down" size={16}/></button>
+                                                <button onClick={()=>moveLayer('bottom')} className="p-1 hover:bg-slate-100 rounded text-incar" title="맨 뒤로"><Icon name="chevronsDown" size={16}/></button>
+                                                <button onClick={deleteLayer} className="p-1 hover:bg-rose-100 text-rose-500 rounded ml-2" title="삭제"><Icon name="trash" size={16}/></button>
+                                            </div>
+                                        </div>
+
+                                        <div className="grid grid-cols-2 gap-4">
+                                            <div><label className="text-[10px] font-bold text-slate-400">X (%)</label><input type="number" value={Math.round(selectedLayer.x)} onChange={e=>updateLayer('x', Number(e.target.value))} className="w-full p-2 border rounded text-xs"/></div>
+                                            <div><label className="text-[10px] font-bold text-slate-400">Y (%)</label><input type="number" value={Math.round(selectedLayer.y)} onChange={e=>updateLayer('y', Number(e.target.value))} className="w-full p-2 border rounded text-xs"/></div>
+                                        </div>
+
+                                        {selectedLayer.type === 'text' && (
+                                            <>
+                                                <div><label className="text-[10px] font-bold text-slate-400">내용</label><input type="text" value={selectedLayer.content} onChange={e=>updateLayer('content', e.target.value)} className="w-full p-2 border rounded text-xs"/></div>
+                                                <div>
+                                                    <label className="text-[10px] font-bold text-slate-400">데이터 연결</label>
+                                                    <select value={selectedLayer.variable || ''} onChange={e=>updateLayer('variable', e.target.value)} className="w-full p-2 border rounded text-xs">
+                                                        <option value="">(연결 없음 - 고정 텍스트)</option>
+                                                        <option value="name">이름 {`{name}`}</option>
+                                                        <option value="org">소속 {`{org}`}</option>
+                                                        <option value="role">직책 {`{role}`}</option>
+                                                        <option value="id">사번 {`{id}`}</option>
+                                                    </select>
+                                                </div>
+                                                <div>
+                                                    <label className="text-[10px] font-bold text-slate-400">폰트</label>
+                                                    <select value={selectedLayer.fontFamily || "'Noto Sans KR', sans-serif"} onChange={e=>updateLayer('fontFamily', e.target.value)} className="w-full p-2 border rounded text-xs" style={{ fontFamily: selectedLayer.fontFamily }}>
+                                                        {AVAILABLE_FONTS.map((font, idx) => (
+                                                            <option key={idx} value={font.value} style={{ fontFamily: font.value }}>{font.name}</option>
+                                                        ))}
+                                                    </select>
+                                                </div>
+                                                <div className="grid grid-cols-2 gap-4">
+                                                    <div><label className="text-[10px] font-bold text-slate-400">폰트 크기</label><input type="number" value={selectedLayer.fontSize} onChange={e=>updateLayer('fontSize', Number(e.target.value))} className="w-full p-2 border rounded text-xs"/></div>
+                                                    <div><label className="text-[10px] font-bold text-slate-400">색상</label><div className="flex items-center gap-2"><input type="color" value={selectedLayer.color} onChange={e=>updateLayer('color', e.target.value)} className="w-8 h-8 rounded border"/><span className="text-xs">{selectedLayer.color}</span></div></div>
+                                                </div>
+                                            </>
+                                        )}
+
+                                        {(selectedLayer.type === 'rect' || selectedLayer.type === 'circle') && (
+                                            <>
+                                                <div className="grid grid-cols-2 gap-4">
+                                                    <div><label className="text-[10px] font-bold text-slate-400">너비 (px)</label><input type="number" value={selectedLayer.w} onChange={e=>updateLayer('w', Number(e.target.value))} className="w-full p-2 border rounded text-xs"/></div>
+                                                    <div><label className="text-[10px] font-bold text-slate-400">높이 (px)</label><input type="number" value={selectedLayer.h} onChange={e=>updateLayer('h', Number(e.target.value))} className="w-full p-2 border rounded text-xs"/></div>
+                                                </div>
+                                                <div className="grid grid-cols-2 gap-4">
+                                                    <div><label className="text-[10px] font-bold text-slate-400">배경색</label><div className="flex items-center gap-2"><input type="color" value={selectedLayer.fill} onChange={e=>updateLayer('fill', e.target.value)} className="w-8 h-8 rounded border"/></div></div>
+                                                    <div><label className="text-[10px] font-bold text-slate-400">투명도 (0-1)</label><input type="number" step="0.1" min="0" max="1" value={selectedLayer.opacity} onChange={e=>updateLayer('opacity', Number(e.target.value))} className="w-full p-2 border rounded text-xs"/></div>
+                                                </div>
+                                                {selectedLayer.type === 'rect' && (
+                                                    <div><label className="text-[10px] font-bold text-slate-400">모서리 둥글기 (px)</label><input type="number" value={selectedLayer.borderRadius} onChange={e=>updateLayer('borderRadius', Number(e.target.value))} className="w-full p-2 border rounded text-xs"/></div>
+                                                )}
+                                            </>
+                                        )}
+                                        
+                                        {selectedLayer.type === 'qr' && (
+                                            <div><label className="text-[10px] font-bold text-slate-400">크기</label><input type="number" value={selectedLayer.size} onChange={e=>updateLayer('size', Number(e.target.value))} className="w-full p-2 border rounded text-xs"/></div>
+                                        )}
+                                    </div>
+                                ) : (
+                                    <div className="text-center py-10 text-slate-400 text-sm border-2 border-dashed border-slate-100 rounded-xl bg-slate-50">
+                                        요소를 클릭하여 편집하세요
+                                    </div>
+                                )}
+                                
+                                <div className="mt-4 pt-4 border-t">
+                                    <label className="block text-xs font-bold text-slate-400 mb-2">레이어 목록 (위쪽이 앞면)</label>
+                                    <div className="max-h-40 overflow-y-auto border rounded-lg text-xs">
+                                        {badgeConfig.layers && [...badgeConfig.layers].reverse().map((l, idx) => (
+                                            <div key={l.id} onClick={()=>setSelectedId(l.id)} className={`p-2 border-b cursor-pointer flex justify-between items-center layer-item ${l.id===selectedId?'active':''}`}>
+                                                <span>{l.type === 'text' ? (l.content || 'Text') : l.type.toUpperCase()}</span>
+                                                <span className="text-[9px] text-slate-400">{l.id}</span>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="bg-incar text-white p-6 rounded-3xl shadow-xl relative overflow-hidden">
+                        <div className="relative z-10">
+                            <h3 className="font-black text-2xl">Master Data Setup</h3>
+                            <div className="space-y-4 mt-4">
+                                <div className="bg-white/10 rounded-2xl border border-white/20 p-4 flex justify-between items-center">
+                                    <div className="flex items-center gap-3"><Icon name="users" className="text-blue-200"/><div><div className="font-bold text-sm">1. 참가자 명단 (Users.csv)</div></div></div>
+                                    <label className="flex items-center justify-center px-4 py-2 bg-white text-incar font-bold rounded-lg cursor-pointer hover:bg-slate-100 text-xs"><input type="file" accept=".csv" onChange={handleUserUpload} className="hidden" />업로드</label>
+                                </div>
+                                <div className="bg-white/10 rounded-2xl border border-white/20 p-4 flex justify-between items-center">
+                                    <div className="flex items-center gap-3"><Icon name="dashboard" className="text-blue-200"/><div><div className="font-bold text-sm">2. 일정 정보 (Schedules.csv)</div></div></div>
+                                    <label className="flex items-center justify-center px-4 py-2 bg-white text-incar font-bold rounded-lg cursor-pointer hover:bg-slate-100 text-xs"><input type="file" accept=".csv" onChange={handleScheduleUpload} className="hidden" />업로드</label>
+                                </div>
+                                
+                                {/* 앱 전체 배경화면 추가 */}
+                                <div className="bg-white/10 rounded-2xl border border-white/20 p-4 flex justify-between items-center">
+                                    <div className="flex items-center gap-3">
+                                        <Icon name="image" className="text-blue-200"/>
+                                        <div>
+                                            <div className="font-bold text-sm">3. 앱 전체 배경화면 (행사 전경 등)</div>
+                                        </div>
+                                    </div>
+                                    <div className="flex gap-2">
+                                        {appBgImage && <button onClick={() => setAppBgImage(null)} className="px-3 py-2 bg-rose-500/80 text-white font-bold rounded-lg hover:bg-rose-500 text-xs transition-colors">초기화</button>}
+                                        <label className="flex items-center justify-center px-4 py-2 bg-white text-incar font-bold rounded-lg cursor-pointer hover:bg-slate-100 text-xs">
+                                            <input type="file" accept="image/*" onChange={handleAppBgUpload} className="hidden" />업로드
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div className="bg-slate-100 border border-slate-200 p-6 rounded-3xl shadow-sm flex justify-between items-center">
+                        <div><h4 className="font-bold text-lg text-slate-800 mb-1 flex items-center gap-2"><Icon name="download" /> 데이터 내보내기</h4></div>
+                        <div className="flex gap-2">
+                             <button onClick={exportAllData} className="px-6 py-3 bg-slate-800 text-white rounded-xl font-bold text-sm hover:bg-slate-900 transition-colors shadow-lg">전체 내역 다운로드</button>
+                        </div>
+                    </div>
+
+                    <div className="bg-slate-800 text-white p-6 rounded-3xl shadow-card flex justify-between items-center relative overflow-hidden group">
+                        <div className="relative z-10"><h4 className="font-bold text-lg mb-1 flex items-center gap-2"><Icon name="download" /> 명찰 이미지 다운로드</h4><p className="text-xs text-slate-400">등록된 {users.length}명의 QR 명찰 이미지를 ZIP 파일로 다운로드합니다.</p></div>
+                        <button onClick={generateZip} className="relative z-10 px-6 py-3 bg-white text-slate-900 rounded-xl font-bold text-sm hover:bg-slate-100 transition-colors shadow-lg">{isZipping ? `생성 중... ${zipProgress}%` : '이미지 일괄 다운로드 (ZIP)'}</button>
+                    </div>
+
+                    <div className="bg-white p-6 rounded-3xl shadow-card text-center border border-rose-100">
+                        <h4 className="font-bold text-slate-800 mb-2">데이터 관리 및 초기화</h4>
+                        <p className="text-xs text-slate-400 mb-4">현재 데이터: {users.length}명 / {schedules.length}개 세션 / {logs.length}개 로그</p>
+                        <button onClick={handleFullReset} className="w-full py-3 bg-rose-50 text-rose-600 font-bold rounded-xl hover:bg-rose-100 text-sm flex items-center justify-center gap-2">
+                           <Icon name="trash" size={16} /> 모든 데이터 영구 삭제 (초기화)
+                        </button>
+                    </div>
+
+                    {isZipping && (
+                        <div style={{ position: 'fixed', top: '-10000px', left: 0, zIndex: -1000, visibility: 'visible', pointerEvents: 'none' }}>
+                            {users.map(u => (
+                                <div key={u.uid} id={`badge-export-${u.uid}`} style={{ width: `${badgeConfig.imgWidth}px`, height: `${badgeConfig.imgHeight}px`, position: 'relative', overflow: 'hidden', backgroundColor: 'white' }}>
+                                    {badgeConfig.bgImage && <img src={badgeConfig.bgImage} className="absolute inset-0 w-full h-full object-cover" />}
+                                    {badgeConfig.layers && badgeConfig.layers.map((layer, idx) => {
+                                        const commonStyle = { position: 'absolute', top: `${layer.y}%`, left: `${layer.x}%`, transform: 'translate(-50%, -50%)', zIndex: idx, width: layer.width === 'auto' ? 'auto' : `${layer.width}px`, textAlign: layer.align || 'center' };
+                                        if (layer.type === 'qr') return <div key={layer.id} style={{ ...commonStyle, width: `${layer.size}px`, height: `${layer.size}px`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}><QRCodeCanvas text={u.uid} size={layer.size} transparent={true} /></div>;
+                                        else if (layer.type === 'text') {
+                                            let content = layer.content;
+                                            if (layer.variable) { if (layer.variable === 'name') content = u.name; else if (layer.variable === 'org') content = u.org; else if (layer.variable === 'role') content = u.options && (u.options['직책'] || u.options['Role'] || '-'); else if (layer.variable === 'id') content = u.uid; }
+                                            return <div key={layer.id} className={layer.fontFamily} style={{ ...commonStyle, fontSize: `${layer.fontSize}px`, color: layer.color, fontWeight: layer.fontWeight || 'bold', backgroundColor: layer.bgColor || 'transparent', padding: `${layer.padding || 0}px`, borderRadius: `${layer.borderRadius || 0}px`, textShadow: layer.shadow ? '2px 2px 4px rgba(0,0,0,0.5)' : 'none', whiteSpace: 'nowrap', fontFamily: layer.fontFamily }}>{content}</div>;
+                                        } 
+                                        return null;
+                                    })}
+                                </div>
+                            ))}
+                        </div>
+                    )}
+                </div>
+            );
+        };
+
+        const App = () => {
+            const [activeTab, setActiveTab] = useState('dashboard');
+            const [users, setUsers] = useState([]);
+            const [schedules, setSchedules] = useState([]);
+            const [logs, setLogs] = useState([]);
+            const [changeLogs, setChangeLogs] = useState([]);
+            
+            // 앱 전체 배경화면 상태
+            const [appBgImage, setAppBgImage] = useState(() => localStorage.getItem('incar_pro_app_bg') || null);
+
+            // 차량 목록 관리용 상태 (LocalStorage 저장)
+            const [busList, setBusList] = useState(() => {
+                const saved = localStorage.getItem('incar_pro_bus_list');
+                return saved ? JSON.parse(saved) : ['1호차', '2호차', '3호차'];
+            });
+
+            // 배경화면 및 차량 목록이 변경될 때마다 로컬 스토리지에 저장
+            useEffect(() => {
+                localStorage.setItem('incar_pro_bus_list', JSON.stringify(busList));
+            }, [busList]);
+
+            useEffect(() => {
+                if (appBgImage) localStorage.setItem('incar_pro_app_bg', appBgImage);
+                else localStorage.removeItem('incar_pro_app_bg');
+            }, [appBgImage]);
+
+            const handleAppBgUpload = (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = (evt) => {
+                        const img = new Image();
+                        img.onload = () => {
+                            const canvas = document.createElement('canvas');
+                            const ctx = canvas.getContext('2d');
+                            let width = img.width;
+                            let height = img.height;
+                            const MAX = 1920; // 1920px 이하로 압축
+                            if (width > height && width > MAX) {
+                                height *= MAX / width;
+                                width = MAX;
+                            } else if (height > MAX) {
+                                width *= MAX / height;
+                                height = MAX;
+                            }
+                            canvas.width = width;
+                            canvas.height = height;
+                            ctx.drawImage(img, 0, 0, width, height);
+                            const dataUrl = canvas.toDataURL('image/jpeg', 0.6); // 60% 압축 저장
+                            setAppBgImage(dataUrl);
+                        };
+                        img.src = evt.target.result;
+                    };
+                    reader.readAsDataURL(file);
+                }
+            };
+
+            const scheduleStats = useMemo(() => {
+                return schedules.map(s => {
+                    let targetCount = 0;
+                    if(s.targetKey === 'ALL') targetCount = users.length;
+                    else targetCount = users.filter(u => u.options && u.options[s.targetKey] && u.options[s.targetKey].includes(s.targetVal)).length;
+                    
+                    const doneCount = logs.filter(l => {
+                        if (l.sessionId !== s.id) return false;
+                        const currentUser = users.find(u => u.uid === l.uid);
+                        if (!currentUser) return false; 
+                        
+                        if (s.targetKey === 'ALL') return true;
+                        const userOpt = currentUser.options?.[s.targetKey];
+                        if (!userOpt) return false;
+                        return s.targetVal === 'ALL' || userOpt.includes(s.targetVal);
+                    }).length;
+
+                    const percent = targetCount > 0 ? Math.round((doneCount / targetCount) * 100) : 0;
+                    const expectedAmount = targetCount * (s.price || 0);
+                    const actualAmount = logs.filter(l => {
+                        if (l.sessionId !== s.id) return false;
+                        const currentUser = users.find(u => u.uid === l.uid);
+                        if (!currentUser) return false;
+                        if (s.targetKey === 'ALL') return true;
+                        const userOpt = currentUser.options?.[s.targetKey];
+                        if (!userOpt) return false;
+                        return s.targetVal === 'ALL' || userOpt.includes(s.targetVal);
+                    }).reduce((sum, l) => sum + (l.finalAmount || 0), 0);
+
+                    const diffCount = doneCount - targetCount;
+                    const diffAmount = actualAmount - expectedAmount;
+                    return { ...s, targetCount, doneCount, percent, expectedAmount, actualAmount, diffCount, diffAmount };
+                });
+            }, [schedules, users, logs]);
+
+            const groupedStats = useMemo(() => {
+                const groups = {};
+                scheduleStats.forEach(stat => {
+                    const date = stat.displayDate || '기타';
+                    if(!groups[date]) groups[date] = [];
+                    groups[date].push(stat);
+                });
+                return groups;
+            }, [scheduleStats]);
+
+            const [isPrintMode, setIsPrintMode] = useState(false);
+            const [badgeConfig, setBadgeConfig] = useState({
+                bgImage: null,
+                imgWidth: 545,
+                imgHeight: 697,
+                layers: [
+                    { id: 'qr', type: 'qr', x: 50, y: 20, size: 100 },
+                    { id: 'org', type: 'text', content: '소속 (Org)', variable: 'org', x: 50, y: 40, fontSize: 20, fontFamily: "'Noto Sans KR', sans-serif", color: '#475569', align: 'center', width: 'auto' },
+                    { id: 'name', type: 'text', content: '성 명 (Name)', variable: 'name', x: 50, y: 65, fontSize: 40, fontFamily: "'Noto Sans KR', sans-serif", color: '#000000', align: 'center', width: 'auto' },
+                    { id: 'role', type: 'text', content: '직책 (Role)', variable: 'role', x: 50, y: 50, fontSize: 18, fontFamily: "'Noto Sans KR', sans-serif", color: '#000000', align: 'center', width: 'auto' }
+                ]
+            });
+
+            const [user, setUser] = useState(null); 
+            const [db, setDb] = useState(null);        
+            const [isLoading, setIsLoading] = useState(true);
+            const [serverError, setServerError] = useState(null);
+            
+            const [scanResult, setScanResult] = useState(null);
+            const [selectedSession, setSelectedSession] = useState(null);
+            const [isScanning, setIsScanning] = useState(false);
+            const [targetSessionId, setTargetSessionId] = useState('');
+            const [targetBus, setTargetBus] = useState('1호차');
+            const [manualBus, setManualBus] = useState(false);
+            const [searchQuery, setSearchQuery] = useState('');
+            const [selectedUser, setSelectedUser] = useState(null);
+            const [editForm, setEditForm] = useState({ optKey: '', optVal: '', penalty: 0, reason: '' });
+            const [refundRequest, setRefundRequest] = useState(null);
+            const [forfeitRequest, setForfeitRequest] = useState(null);
+            const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+            const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
+            const SYSTEM_APP_ID = 'inca-prod-v1';
+
+            const firebaseConfig = {
+             apiKey: "AIzaSyAh1dsSNobeF6Wz-0euP5AUggdqJANJ3dQ",
+             authDomain: "incarpass.firebaseapp.com",
+             projectId: "incarpass",
+             storageBucket: "incarpass.firebasestorage.app",
+             messagingSenderId: "955362361998",
+             appId: "1:955362361998:web:166055dd392784f1827fdf",
+             measurementId: "G-SNR3FPPQ7E"
+            };
+
+            useEffect(() => {
+                const handleResize = () => setIsMobile(window.innerWidth < 768);
+                window.addEventListener('resize', handleResize);
+                return () => window.removeEventListener('resize', handleResize);
+            }, []);
+
+            useEffect(() => {
+                const initSystem = async () => {
+                    if (window.location.protocol === 'file:') {
+                        alert("⚠️ 주의: HTML 파일을 직접 열면(file://) 파이어베이스 서버 연결이 차단됩니다.\n\nVS Code의 'Live Server'를 사용하거나, GitHub/Netlify에 올려서(http/https) 실행해주세요.");
+                    }
+
+                    if (firebaseConfig.apiKey && firebaseConfig.projectId) {
+                        try {
+                            if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+                            const _db = firebase.firestore();
+                            await firebase.auth().signInAnonymously();
+                            
+                            setDb(_db);
+                            setServerError(null);
+
+                            const unsubS = _db.collection('artifacts').doc(SYSTEM_APP_ID).collection('schedules').onSnapshot(snap => {
+                                const list = snap.docs.map(d => ({id:d.id, ...d.data()})).sort((a,b)=>a.date>b.date?1:-1);
+                                setSchedules(list);
+                                if(list.length > 0 && !targetSessionId) setTargetSessionId(list[0].id);
+                            }, err => console.error("Schedules Sync Error:", err));
+
+                            const unsubL = _db.collection('artifacts').doc(SYSTEM_APP_ID).collection('logs').orderBy('timestamp','desc').onSnapshot(snap => {
+                                setLogs(snap.docs.map(d => ({id:d.id, ...d.data()})));
+                            }, err => console.error("Logs Sync Error:", err));
+
+                            const unsubC = _db.collection('artifacts').doc(SYSTEM_APP_ID).collection('changelogs').orderBy('timestamp','desc').onSnapshot(snap => {
+                                setChangeLogs(snap.docs.map(d => ({id:d.id, ...d.data()})));
+                            }, err => console.error("Changelogs Sync Error:", err));
+
+                            const unsubU = _db.collection('artifacts').doc(SYSTEM_APP_ID).collection('users').onSnapshot(snap => {
+                                setUsers(snap.docs.map(d => d.data()));
+                            }, err => console.error("Users Sync Error:", err));
+
+                            firebase.auth().onAuthStateChanged(u => {
+                                setUser(u);
+                                setIsLoading(false);
+                            });
+
+                            return () => { unsubS(); unsubL(); unsubC(); unsubU(); };
+
+                        } catch (e) {
+                            console.error("Firebase Init Failed:", e);
+                            initLocal();
+                        }
+                    } else {
+                        initLocal();
+                    }
+                };
+
+                const initLocal = () => {
+                    const loadedUsers = JSON.parse(localStorage.getItem('incar_pro_users') || '[]');
+                    const loadedSched = JSON.parse(localStorage.getItem('incar_pro_schedules') || '[]');
+                    const loadedLogs = JSON.parse(localStorage.getItem('incar_pro_logs') || '[]');
+                    const loadedChanges = JSON.parse(localStorage.getItem('incar_pro_changelogs') || '[]');
+                    
+                    setUsers(loadedUsers);
+                    setSchedules(loadedSched);
+                    setLogs(loadedLogs);
+                    setChangeLogs(loadedChanges);
+                    
+                    if (loadedSched.length > 0) setTargetSessionId(loadedSched[0].id);
+                    setIsLoading(false);
+                };
+
+                initSystem();
+
+                const loadedBadgeConfig = JSON.parse(localStorage.getItem('incar_pro_badge_config_v2_9') || 'null');
+                if(loadedBadgeConfig) {
+                    if (loadedBadgeConfig.layers) {
+                        setBadgeConfig(loadedBadgeConfig);
+                    } else if (loadedBadgeConfig.name) {
+                        const newLayers = [];
+                        if (loadedBadgeConfig.qr) newLayers.push({ id: 'qr', type: 'qr', x: loadedBadgeConfig.qr.x, y: loadedBadgeConfig.qr.y, size: loadedBadgeConfig.qr.size });
+                        ['org', 'name', 'role'].forEach(key => {
+                            if (loadedBadgeConfig[key] && loadedBadgeConfig[key].show) {
+                                newLayers.push({
+                                    id: key,
+                                    type: 'text',
+                                    variable: key,
+                                    content: key === 'name' ? '성 명' : key === 'org' ? '소 속' : '직 책',
+                                    x: loadedBadgeConfig[key].x,
+                                    y: loadedBadgeConfig[key].y,
+                                    fontSize: loadedBadgeConfig[key].size,
+                                    fontFamily: loadedBadgeConfig[key].font,
+                                    color: loadedBadgeConfig[key].color,
+                                    align: loadedBadgeConfig[key].textAlign,
+                                    width: loadedBadgeConfig[key].width
+                                });
+                            }
+                        });
+                        setBadgeConfig({
+                            bgImage: loadedBadgeConfig.bgImage,
+                            imgWidth: loadedBadgeConfig.imgWidth || 545,
+                            imgHeight: loadedBadgeConfig.imgHeight || 697,
+                            layers: newLayers
+                        });
+                    }
+                }
+            }, []);
+
+            useEffect(() => { if(!db) localStorage.setItem('incar_pro_users', JSON.stringify(users)); }, [users, db]);
+            useEffect(() => { if(!db) localStorage.setItem('incar_pro_schedules', JSON.stringify(schedules)); }, [schedules, db]);
+            useEffect(() => { if(!db) localStorage.setItem('incar_pro_logs', JSON.stringify(logs)); }, [logs, db]);
+            useEffect(() => { if(!db) localStorage.setItem('incar_pro_changelogs', JSON.stringify(changeLogs)); }, [changeLogs, db]);
+            useEffect(() => { localStorage.setItem('incar_pro_badge_config_v2_9', JSON.stringify(badgeConfig)); }, [badgeConfig]);
+
+            const cleanupOldLogs = async (uid, targetKey, oldVal, performUpdate = true) => {
+                const relatedSessions = schedules.filter(s => s.targetKey === targetKey);
+                const logsToDelete = logs.filter(l => l.uid === uid && relatedSessions.some(s => s.id === l.sessionId));
+                const oldLogIds = logsToDelete.map(l => l.id);
+                if(performUpdate && oldLogIds.length > 0) {
+                    if (db) {
+                        const batch = db.batch();
+                        oldLogIds.forEach(logId => { const ref = db.collection('artifacts').doc(SYSTEM_APP_ID).collection('logs').doc(logId); batch.delete(ref); });
+                        await batch.commit();
+                    } else { setLogs(prevLogs => prevLogs.filter(l => !oldLogIds.includes(l.id))); }
+                }
+                return oldLogIds;
+            };
+
+            const handleManualComplete = async (user, session) => {
+                if(!confirm(`${user.name}님을 수동으로 [${session.type==='PAYMENT'?'지급완료':'탑승완료'}] 처리하시겠습니까?`)) return;
+                const newLog = { id: `LOG_${Date.now()}_MANUAL`, timestamp: new Date().toLocaleString(), uid: user.uid, name: user.name, org: user.org, action: session.type === 'PAYMENT' ? '지급' : '탑승', sessionId: session.id, sessionTitle: session.title, bus: '수동처리', amount: session.type === 'PAYMENT' ? session.price : 0, penaltyApplied: 0, finalAmount: session.type === 'PAYMENT' ? session.price : 0 };
+                if(db) { await db.collection('artifacts').doc(SYSTEM_APP_ID).collection('logs').add(newLog); } else { setLogs([newLog, ...logs]); }
+                alert("처리되었습니다.");
+            };
+
+            const executeUpdate = async (user, session, requiredChoice, penaltyAmount, reason, payoutOverride = null) => {
+                if(!db && !confirm("로컬 모드입니다. 변경사항이 다른 기기에 반영되지 않습니다. 계속하시겠습니까?")) return;
+                
+                const oldVal = user.options[session.targetKey];
+                const logIdsToRemove = await cleanupOldLogs(user.uid, session.targetKey, oldVal, !!db);
+                const newPenalty = penaltyAmount;
+
+                if(db) { 
+                    const userRef = db.collection('artifacts').doc(SYSTEM_APP_ID).collection('users').doc(String(user.uid)); 
+                    const updatedOptions = { ...user.options, [session.targetKey]: requiredChoice }; 
+                    await userRef.update({ options: updatedOptions, penaltyTotal: (user.penaltyTotal || 0) + newPenalty }); 
+                } else { 
+                    const updatedUsers = users.map(u => { 
+                        if (u.uid === user.uid) { 
+                            const newOptions = { ...u.options, [session.targetKey]: requiredChoice }; 
+                            return { ...u, options: newOptions, penaltyTotal: (u.penaltyTotal || 0) + newPenalty }; 
+                        } 
+                        return u; 
+                    }); 
+                    setUsers([...updatedUsers]); 
+                }
+
+                const changeLog = { id: `CHG_${Date.now()}`, timestamp: new Date().toLocaleString(), uid: user.uid, name: user.name, targetOption: session.targetKey, oldVal: oldVal || '미선택', newVal: requiredChoice, penalty: newPenalty, reason: reason };
+                if(db) await db.collection('artifacts').doc(SYSTEM_APP_ID).collection('changelogs').add(changeLog); 
+                else setChangeLogs([changeLog, ...changeLogs]);
+
+                let finalAmount = 0; 
+                let penaltyApplied = 0;
+
+                if (session.type === 'PAYMENT') { 
+                    if (payoutOverride !== null) { 
+                        finalAmount = payoutOverride; 
+                        penaltyApplied = 0; 
+                    } else { 
+                        const baseAmount = session.price; 
+                        const deduction = (user.penaltyTotal || 0) + newPenalty; 
+                        finalAmount = Math.max(0, baseAmount - deduction); 
+                        penaltyApplied = (baseAmount - finalAmount); 
+                    } 
+                }
+
+                const newLog = { id: `LOG_${Date.now()}_FORCE`, timestamp: new Date().toLocaleString(), uid: user.uid, name: user.name, org: user.org, action: session.type === 'PAYMENT' ? '지급' : '탑승', sessionId: session.id, sessionTitle: session.title, bus: targetBus, amount: session.type === 'PAYMENT' ? session.price : 0, penaltyApplied: penaltyApplied, finalAmount: finalAmount };
+                
+                if(db) { 
+                    await db.collection('artifacts').doc(SYSTEM_APP_ID).collection('logs').add(newLog); 
+                    if (penaltyApplied > 0) { 
+                        const currentPenalty = (user.penaltyTotal || 0) + newPenalty; 
+                        const userRef = db.collection('artifacts').doc(SYSTEM_APP_ID).collection('users').doc(String(user.uid)); 
+                        await userRef.update({ penaltyTotal: currentPenalty - penaltyApplied }); 
+                    } 
+                } else { 
+                    setLogs(prevLogs => { 
+                        const filtered = prevLogs.filter(l => !logIdsToRemove.includes(l.id)); 
+                        return [newLog, ...filtered]; 
+                    }); 
+                    if (penaltyApplied > 0) { 
+                        const currentPenalty = (user.penaltyTotal || 0) + newPenalty; 
+                        const updatedUsers2 = users.map(u => u.uid === user.uid ? { ...u, penaltyTotal: currentPenalty - penaltyApplied } : u); 
+                        setUsers([...updatedUsers2]); 
+                    } 
+                }
+
+                setScanResult(null); 
+                setRefundRequest(null); 
+                setForfeitRequest(null);
+                
+                let alertMsg = `${user.name}님의 일정이 [${requiredChoice}]로 변경되고 탑승 처리되었습니다.`; 
+                if(penaltyAmount > 0) alertMsg += `\n\n⚠️ 미반환 처리: ${CURRENCY}${penaltyAmount}가 패널티로 등록되었습니다.`; 
+                else if (reason.includes('반환')) alertMsg += `\n\n✅ 반환 확인: 기존 지급액이 정상적으로 회수되었습니다.`; 
+                else if (payoutOverride === 0) alertMsg += `\n\nℹ️ 지급 보류: 기존 일정 비용을 고려하여 이번 지급은 생략되었습니다.`; 
+                else alertMsg += `\n(이전 일정에 대한 완료 기록은 삭제되었습니다.)`; 
+                
+                alert(alertMsg);
+            };
+
+            const handleForceUpdateAndProcess = async (user, session, requiredChoice) => {
+                if(!db && !confirm("로컬 모드입니다. 변경사항이 다른 기기에 반영되지 않습니다. 계속하시겠습니까?")) return;
+                const oldVal = user.options[session.targetKey];
+                const oldPaymentSchedules = schedules.filter(s => s.targetKey === session.targetKey && s.targetVal === oldVal && s.type === 'PAYMENT');
+                const oldPaymentLogs = logs.filter(l => l.uid === user.uid && oldPaymentSchedules.some(s => s.id === l.sessionId));
+                const recoupAmount = oldPaymentLogs.reduce((sum, l) => sum + (l.finalAmount || 0), 0);
+                
+                if (recoupAmount > 0) { 
+                    setScanResult(null); 
+                    setRefundRequest({ user, session, requiredChoice, amount: recoupAmount, oldVal }); 
+                    return; 
+                } 
+                
+                const oldBoardingSchedules = schedules.filter(s => s.targetKey === session.targetKey && s.targetVal === oldVal && s.type === 'BOARDING');
+                const isFromTour = oldBoardingSchedules.length > 0;
+                const isToPayment = session.type === 'PAYMENT' && session.price > 0;
+                
+                if (isFromTour && isToPayment) { 
+                    setScanResult(null); 
+                    setForfeitRequest({ user, session, requiredChoice, oldVal, price: session.price }); 
+                    return; 
+                }
+                
+                await executeUpdate(user, session, requiredChoice, 0, '현장 스캔 시 즉시 변경');
+            };
+
+            const resolveRefundRequest = async (isReturned) => { 
+                if (!refundRequest) return; 
+                const { user, session, requiredChoice, amount } = refundRequest; 
+                if (isReturned) await executeUpdate(user, session, requiredChoice, 0, `현장 변경 (기존 지급액 ${CURRENCY}${amount} 현장 반환)`); 
+                else await executeUpdate(user, session, requiredChoice, amount, `현장 변경 (기존 지급액 ${CURRENCY}${amount} 미반환/패널티)`); 
+            };
+
+            const resolveForfeitRequest = async (shouldPay) => { 
+                if (!forfeitRequest) return; 
+                const { user, session, requiredChoice, oldVal } = forfeitRequest; 
+                if (shouldPay) await executeUpdate(user, session, requiredChoice, 0, '현장 변경 (관광->지급, 위약금 면제 및 정상지급)'); 
+                else await executeUpdate(user, session, requiredChoice, 0, `현장 변경 (관광->지급, 예약부도 위약금 적용으로 지급생략)`, 0); 
+            };
+
+            const handleUserUpload = async (e) => { 
+                const file = e.target.files[0]; 
+                if (!file) return; 
+                Papa.parse(file, { 
+                    header: true, 
+                    skipEmptyLines: true, 
+                    complete: async (results) => { 
+                        const parsed = results.data.map(row => { 
+                            const uid = row['사번'] || row['ID'] || row['uid'] || Object.values(row)[0]; 
+                            const name = row['성명'] || row['이름'] || row['Name'] || Object.values(row)[1]; 
+                            const org = row['소속'] || row['부서'] || row['Org'] || '-'; 
+                            const bus = row['버스'] || row['탑승버스'] || row['Bus'] || '미정'; 
+                            const options = {}; 
+                            Object.keys(row).forEach(key => { 
+                                if(!['사번','ID','uid','성명','이름','Name','소속','부서','Org','버스','탑승버스','Bus'].includes(key)) { 
+                                    if(row[key]) options[key] = row[key]; 
+                                } 
+                            }); 
+                            return { uid, name, org, bus, options, penaltyTotal: 0 }; 
+                        }).filter(u => u.uid); 
+                        
+                        if(confirm(`${parsed.length}명의 참가자 명단을 로드하시겠습니까?`)) { 
+                            if (db) { 
+                                const batch = db.batch(); 
+                                parsed.forEach(u => { const ref = db.collection('artifacts').doc(SYSTEM_APP_ID).collection('users').doc(String(u.uid)); batch.set(ref, u); }); 
+                                await batch.commit(); 
+                                alert("서버 업로드 완료!"); 
+                            } else { 
+                                setUsers(parsed); 
+                                alert("로컬 로드 완료!"); 
+                            } 
+                        } 
+                    } 
+                }); 
+            };
+
+            const handleScheduleUpload = async (e) => { 
+                const file = e.target.files[0]; 
+                if (!file) return; 
+                Papa.parse(file, { 
+                    header: true, 
+                    skipEmptyLines: true, 
+                    complete: async (results) => { 
+                        const parsed = results.data.map((row, idx) => { 
+                            const rawDate = row['일정'] || row['Date'] || `Day ${idx+1}`; 
+                            const today = new Date(); 
+                            const dateObj = new Date(today); 
+                            if(rawDate.includes('1일')) dateObj.setDate(today.getDate()); 
+                            else if(rawDate.includes('2일')) dateObj.setDate(today.getDate()+1); 
+                            else if(rawDate.includes('3일')) dateObj.setDate(today.getDate()+2); 
+                            else if(rawDate.includes('4일')) dateObj.setDate(today.getDate()+3); 
+                            const dateStr = dateObj.toISOString().split('T')[0]; 
+                            let rawPrice = row['지급'] || row['Price'] || '0'; 
+                            if (typeof rawPrice === 'string') rawPrice = rawPrice.replace(/[$,\s]/g, ''); 
+                            const price = parseInt(rawPrice) || 0; 
+                            let type = 'BOARDING'; 
+                            if (price > 0) type = 'PAYMENT'; 
+                            else if (row['타입'] && (row['타입'].includes('지급') || row['타입'].includes('Payment'))) type = 'PAYMENT'; 
+                            return { 
+                                id: `SCHED_${idx}`, 
+                                date: dateStr, 
+                                displayDate: rawDate, 
+                                title: row['장소'] || row['Title'] || '일정', 
+                                type: type, 
+                                price: price, 
+                                targetKey: row['타겟옵션'] || row['OptionKey'] || 'ALL', 
+                                targetVal: row['타겟값'] || row['OptionVal'] || 'ALL' 
+                            }; 
+                        }); 
+                        
+                        if(confirm(`${parsed.length}개의 스케줄을 로드하시겠습니까?`)) { 
+                            if (db) { 
+                                const batch = db.batch(); 
+                                parsed.forEach(s => { const ref = db.collection('artifacts').doc(SYSTEM_APP_ID).collection('schedules').doc(s.id); batch.set(ref, s); }); 
+                                await batch.commit(); 
+                                alert("서버 업로드 완료!"); 
+                            } else { 
+                                setSchedules(parsed); 
+                                if(parsed.length > 0) setTargetSessionId(parsed[0].id); 
+                                alert("로컬 로드 완료!"); 
+                            } 
+                        } 
+                    } 
+                }); 
+            };
+
+            const processScan = async (scannedUid, strictMode = false) => { 
+                const user = users.find(u => u.uid === scannedUid); 
+                if (!user) return setScanResult({ status: 'error', msg: '미등록 참가자', subMsg: `ID: ${scannedUid}` }); 
+                
+                const session = schedules.find(s => s.id === targetSessionId); 
+                if (!session) return setScanResult({ status: 'error', msg: '세션 미선택', subMsg: '관리자에게 문의하세요' }); 
+
+                // 차량 배정 검증 로직 추가
+                if (strictMode && session.type === 'BOARDING') {
+                    if (user.bus && user.bus.trim() !== targetBus.trim()) {
+                         return setScanResult({ 
+                             status: 'error', 
+                             msg: '탑승 불가 (차량 불일치)', 
+                             subMsg: `배정: ${user.bus} / 현재: ${targetBus}`, 
+                             user 
+                         });
+                    }
+                }
+                
+                const isDuplicate = logs.some(l => l.uid === user.uid && l.sessionId === session.id); 
+                if (isDuplicate) return setScanResult({ status: 'duplicate', msg: '이미 처리됨', subMsg: `${session.displayDate} - ${session.title}`, user }); 
+                
+                if (session.targetKey !== 'ALL') { 
+                    const userChoice = user.options[session.targetKey]; 
+                    const requiredChoice = session.targetVal; 
+                    if (!userChoice || (requiredChoice !== 'ALL' && !userChoice.includes(requiredChoice))) { 
+                        return setScanResult({ status: 'error', msg: '대상자 아님', subMsg: `필요: ${requiredChoice} / 본인: ${userChoice || '선택없음'}`, user, requiredChoice, session }); 
+                    } 
+                } 
+                
+                let finalAmount = 0; 
+                let penaltyApplied = 0; 
+                
+                if (session.type === 'PAYMENT') { 
+                    const baseAmount = session.price; 
+                    const deduction = user.penaltyTotal || 0; 
+                    finalAmount = Math.max(0, baseAmount - deduction); 
+                    penaltyApplied = (baseAmount - finalAmount); 
+                } 
+                
+                const newLog = { 
+                    id: `LOG_${Date.now()}_${Math.random().toString(36).substr(2,9)}`, 
+                    timestamp: new Date().toLocaleString(), 
+                    uid: user.uid, 
+                    name: user.name, 
+                    org: user.org, 
+                    action: session.type === 'PAYMENT' ? '지급' : '탑승', 
+                    sessionId: session.id, 
+                    sessionTitle: session.title, 
+                    bus: session.type === 'BOARDING' ? targetBus : '-', 
+                    amount: session.type === 'PAYMENT' ? session.price : 0, 
+                    penaltyApplied: penaltyApplied, 
+                    finalAmount: finalAmount 
+                }; 
+                
+                if (db) { 
+                    await db.collection('artifacts').doc(SYSTEM_APP_ID).collection('logs').add(newLog); 
+                    if (penaltyApplied > 0) { 
+                        const userRef = db.collection('artifacts').doc(SYSTEM_APP_ID).collection('users').doc(String(user.uid)); 
+                        await userRef.update({ penaltyTotal: user.penaltyTotal - penaltyApplied }); 
+                    } 
+                } else { 
+                    setLogs([newLog, ...logs]); 
+                    if (penaltyApplied > 0) { 
+                        const updatedUsers = users.map(u => u.uid === user.uid ? { ...u, penaltyTotal: u.penaltyTotal - penaltyApplied } : u); 
+                        setUsers([...updatedUsers]); 
+                    } 
+                } 
+                
+                const todayLogs = logs.filter(l => l.uid === user.uid && l.timestamp.slice(0, 10) === newLog.timestamp.slice(0, 10) && l.action === '지급'); 
+                setScanResult({ status: 'success', msg: session.type==='PAYMENT'?'지급 완료':'탑승 확인', subMsg: session.title, user, logs: newLog, relatedLogs: todayLogs }); 
+            };
+
+            const handleUserUpdate = async () => { 
+                if (!selectedUser || !editForm.optKey) return; 
+                const oldVal = selectedUser.options[editForm.optKey]; 
+                const logIdsToRemove = await cleanupOldLogs(selectedUser.uid, editForm.optKey, oldVal, !!db); 
+                const newPenalty = parseInt(editForm.penalty || 0); 
+                const changeLog = { id: `CHG_${Date.now()}`, timestamp: new Date().toLocaleString(), uid: selectedUser.uid, name: selectedUser.name, targetOption: editForm.optKey, oldVal: oldVal, newVal: editForm.optVal, penalty: newPenalty, reason: editForm.reason }; 
+                
+                if (db) { 
+                    const userRef = db.collection('artifacts').doc(SYSTEM_APP_ID).collection('users').doc(String(selectedUser.uid)); 
+                    const updatedOptions = { ...selectedUser.options, [editForm.optKey]: editForm.optVal }; 
+                    await userRef.update({ options: updatedOptions, penaltyTotal: (selectedUser.penaltyTotal || 0) + newPenalty }); 
+                    await db.collection('artifacts').doc(SYSTEM_APP_ID).collection('changelogs').add(changeLog); 
+                } else { 
+                    if(logIdsToRemove.length > 0) { 
+                        setLogs(prevLogs => prevLogs.filter(l => !logIdsToRemove.includes(l.id))); 
+                    } 
+                    const updatedUsers = users.map(u => { 
+                        if (u.uid === selectedUser.uid) { 
+                            const newOptions = { ...u.options, [editForm.optKey]: editForm.optVal }; 
+                            const totalPenalty = (u.penaltyTotal || 0) + newPenalty; 
+                            const updatedUser = { ...u, options: newOptions, penaltyTotal: totalPenalty }; 
+                            setSelectedUser(updatedUser); 
+                            return updatedUser; 
+                        } 
+                        return u; 
+                    }); 
+                    setUsers([...updatedUsers]); 
+                    setChangeLogs([changeLog, ...changeLogs]); 
+                } 
+                alert("변경 및 패널티 적용이 완료되었습니다."); 
+                setEditForm({ optKey: '', optVal: '', penalty: 0, reason: '' }); 
+                setSearchQuery(''); 
+            };
+
+            return (
+                <div 
+                    className={`h-full flex flex-row w-full relative ${appBgImage ? 'bg-cover bg-center bg-no-repeat bg-fixed' : 'bg-slate-50'}`} 
+                    style={appBgImage ? {backgroundImage: `url(${appBgImage})`} : {}}
+                >
+                    {/* 전체 배경 오버레이 (사진 적용 시 약간 어둡게 처리) */}
+                    {appBgImage && <div className="absolute inset-0 z-0 bg-slate-900/40 backdrop-blur-[2px] pointer-events-none"></div>}
+
+                    <div className="z-10 h-full hidden md:block">
+                        <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} />
+                    </div>
+                    
+                    <main className="flex-1 flex flex-col h-full overflow-hidden relative w-full z-10">
+                        { isMobile && (
+                            <header className={`${appBgImage ? 'bg-white/90 backdrop-blur-md' : 'bg-white'} px-6 py-4 shadow-sm flex justify-between items-center z-20 no-print`}>
+                                <div className="flex items-center gap-2">
+                                    <div className="w-8 h-8 bg-incar rounded-lg flex items-center justify-center text-white font-black">P</div>
+                                    <h1 className="font-black text-slate-800 tracking-tight">INCARPASS</h1>
+                                </div>
+                                <div className="text-xs font-bold text-slate-400">{users.length}명</div>
+                            </header>
+                        )}
+                        
+                        <div className="flex-1 overflow-y-auto p-4 pb-32 md:p-8 md:pb-8 w-full no-print-scroll relative z-10">
+                            <div className="max-w-5xl mx-auto w-full">
+                                {activeTab === 'dashboard' && <DashboardView users={users} logs={logs} scheduleStats={scheduleStats} groupedStats={groupedStats} changeLogs={changeLogs} onSessionClick={setSelectedSession} />}
+                                {activeTab === 'boarding' && <ScanView mode="BOARDING" schedules={schedules} targetSessionId={targetSessionId} setTargetSessionId={setTargetSessionId} targetBus={targetBus} setTargetBus={setTargetBus} manualBus={manualBus} setManualBus={setManualBus} isScanning={isScanning} setIsScanning={setIsScanning} processScan={processScan} users={users} isMobile={isMobile} busList={busList} setBusList={setBusList} />}
+                                {activeTab === 'payment' && <ScanView mode="PAYMENT" schedules={schedules} targetSessionId={targetSessionId} setTargetSessionId={setTargetSessionId} targetBus={targetBus} setTargetBus={setTargetBus} manualBus={manualBus} setManualBus={setManualBus} isScanning={isScanning} setIsScanning={setIsScanning} processScan={processScan} users={users} isMobile={isMobile} busList={busList} setBusList={setBusList} />}
+                                {activeTab === 'change' && <ChangeView searchQuery={searchQuery} setSearchQuery={setSearchQuery} selectedUser={selectedUser} setSelectedUser={setSelectedUser} editForm={editForm} setEditForm={setEditForm} handleUserUpdate={handleUserUpdate} users={users} schedules={schedules} changeLogs={changeLogs} />}
+                                {activeTab === 'manage' && <ManageView users={users} handleUserUpload={handleUserUpload} handleScheduleUpload={handleScheduleUpload} badgeConfig={badgeConfig} setBadgeConfig={setBadgeConfig} db={db} serverError={serverError} schedules={schedules} logs={logs} setIsPrintMode={setIsPrintMode} setUsers={setUsers} setSchedules={setSchedules} setLogs={setLogs} setChangeLogs={setChangeLogs} changeLogs={changeLogs} appBgImage={appBgImage} setAppBgImage={setAppBgImage} handleAppBgUpload={handleAppBgUpload} />} 
+                            </div>
+                        </div>
+
+                        { isMobile && <MobileTab activeTab={activeTab} setActiveTab={setActiveTab} /> }
+                        
+                        {isPrintMode && <BadgePrintView users={users} config={badgeConfig} onClose={() => setIsPrintMode(false)} />}
+                        {selectedSession && <SessionDetailModal session={selectedSession} users={users} logs={logs} onClose={() => setSelectedSession(null)} onManualComplete={handleManualComplete} />}
+                        {refundRequest && (<div className="fixed inset-0 z-[300] flex items-center justify-center p-6 bg-slate-900/80 backdrop-blur-sm animate-fade-in no-print"><div className="bg-white w-full max-w-sm rounded-3xl overflow-hidden shadow-2xl animate-slide-up"><div className="bg-rose-50 p-6 text-center border-b border-rose-100"><div className="w-16 h-16 bg-white text-rose-500 rounded-full flex items-center justify-center mx-auto mb-3 shadow-sm text-2xl font-bold">$</div><h3 className="text-xl font-black text-rose-600 mb-1">지급금 반환 필요</h3><p className="text-slate-600 font-bold text-sm">{refundRequest.user.name}님은<br/>이미 <span className="text-rose-600 underline">{CURRENCY}{refundRequest.amount}</span>을 지급받았습니다.</p></div><div className="p-6 space-y-4"><div className="text-center text-xs text-slate-400 mb-2">기존 일정: {refundRequest.oldVal} <br/>▼ <br/>변경 일정: {refundRequest.session.title}</div><button onClick={() => resolveRefundRequest(true)} className="w-full py-4 bg-emerald-500 text-white font-bold rounded-xl shadow-lg active:scale-95 transition-transform flex flex-col items-center justify-center leading-none gap-1"><span>반환 받았습니다</span><span className="text-[10px] opacity-80 font-normal">(패널티 없음)</span></button><button onClick={() => resolveRefundRequest(false)} className="w-full py-4 bg-slate-800 text-white font-bold rounded-xl shadow-lg active:scale-95 transition-transform flex flex-col items-center justify-center leading-none gap-1"><span>반환받지 못했습니다</span><span className="text-[10px] opacity-80 font-normal">(미반환금 패널티 처리)</span></button><button onClick={() => setRefundRequest(null)} className="w-full py-3 text-slate-400 font-bold text-sm hover:bg-slate-50 rounded-xl">취소</button></div></div></div>)}
+                        {forfeitRequest && (<div className="fixed inset-0 z-[300] flex items-center justify-center p-6 bg-slate-900/80 backdrop-blur-sm animate-fade-in no-print"><div className="bg-white w-full max-w-sm rounded-3xl overflow-hidden shadow-2xl animate-slide-up"><div className="bg-indigo-50 p-6 text-center border-b border-indigo-100"><div className="w-16 h-16 bg-white text-indigo-500 rounded-full flex items-center justify-center mx-auto mb-3 shadow-sm text-2xl font-bold">?</div><h3 className="text-xl font-black text-indigo-900 mb-1">일정 변경 확인 (Case 2)</h3><p className="text-slate-600 font-bold text-sm">예약된 관광 코스를 취소하고<br/>현금 지급 일정으로 변경합니다.</p></div><div className="p-6 space-y-4"><div className="text-center text-xs text-slate-400 mb-2">기존: {forfeitRequest.oldVal} (예약취소)<br/>▼ <br/>변경: {forfeitRequest.session.title} (지급 {CURRENCY}{forfeitRequest.price})</div><button onClick={() => resolveForfeitRequest(false)} className="w-full py-4 bg-rose-500 text-white font-bold rounded-xl shadow-lg active:scale-95 transition-transform flex flex-col items-center justify-center leading-none gap-1"><span>부지급 (위약금 적용)</span><span className="text-[10px] opacity-80 font-normal">(예약 비용 패널티로 상계 처리)</span></button><button onClick={() => resolveForfeitRequest(true)} className="w-full py-4 bg-slate-800 text-white font-bold rounded-xl shadow-lg active:scale-95 transition-transform flex flex-col items-center justify-center leading-none gap-1"><span>정상 지급</span><span className="text-[10px] opacity-80 font-normal">({CURRENCY}{forfeitRequest.price} 지급 승인)</span></button><button onClick={() => setForfeitRequest(null)} className="w-full py-3 text-slate-400 font-bold text-sm hover:bg-slate-50 rounded-xl">취소</button></div></div></div>)}
+                    </main>
+                    
+                    <ResultModal result={scanResult} onClose={() => setScanResult(null)} onForceUpdate={handleForceUpdateAndProcess} />
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
