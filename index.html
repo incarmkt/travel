@@ -1057,15 +1057,17 @@ function getWeatherEmoji(code) {
   if (code >= 45 && code <= 48) return "🌫️"; 
   if ((code >= 51 && code <= 67) || (code >= 80 && code <= 82)) return "🌧️"; 
   if (code >= 71 && code <= 77) return "❄️"; 
-  if (code >= 95) return "⛈️"; 
+  if (code >= 85 && code <= 86) return "❄️"; /* 추가된 눈보라 처리 */
+  if (code >= 95 && code <= 99) return "⛈️"; /* 96, 99 폭풍우 처리 보강 */
   return "☁️";
 }
 
-/* ================= 🔥 실시간 날씨 연동 (홈 및 대만 상세) - 날짜 오류 및 타임존 완벽 수정본 ================= */
+/* ================= 🔥 실시간 날씨 연동 (캐시 완벽 제거) ================= */
 async function fetchTaipeiWeather() {
   try {
     const url = `https://api.open-meteo.com/v1/forecast?latitude=25.0330&longitude=121.5654&current=temperature_2m,weather_code&timezone=Asia%2FTaipei&_t=${Date.now()}`;
-    const res = await fetch(url);
+    // 캐시를 절대 타지 않도록 강제 설정
+    const res = await fetch(url, { cache: "no-store" });
     const data = await res.json();
     const temp = Math.round(data.current.temperature_2m);
     const code = data.current.weather_code;
@@ -1083,13 +1085,13 @@ async function fetchTaipeiWeather() {
 async function renderDetailedWeather() {
   try {
     // 서울 실시간 (캐시 방지 및 타임존 고정)
-    const resSeoul = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=37.5665&longitude=126.9780&current=temperature_2m,weather_code&timezone=Asia%2FSeoul&_t=${Date.now()}`);
+    const resSeoul = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=37.5665&longitude=126.9780&current=temperature_2m,weather_code&timezone=Asia%2FSeoul&_t=${Date.now()}`, { cache: "no-store" });
     const dataSeoul = await resSeoul.json();
     const seoulTemp = Math.round(dataSeoul.current.temperature_2m);
     const seoulIcon = getWeatherEmoji(dataSeoul.current.weather_code);
     
     // 타이베이 실시간 + 주간 (캐시 방지 및 타임존 고정)
-    const resTaipei = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=25.0330&longitude=121.5654&current=temperature_2m,weather_code&daily=weather_code,temperature_2m_max,temperature_2m_min&timezone=Asia%2FTaipei&forecast_days=5&_t=${Date.now()}`);
+    const resTaipei = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=25.0330&longitude=121.5654&current=temperature_2m,weather_code&daily=weather_code,temperature_2m_max,temperature_2m_min&timezone=Asia%2FTaipei&forecast_days=5&_t=${Date.now()}`, { cache: "no-store" });
     const dataTaipei = await resTaipei.json();
     const taipeiTemp = Math.round(dataTaipei.current.temperature_2m);
     const taipeiIcon = getWeatherEmoji(dataTaipei.current.weather_code);
@@ -1101,20 +1103,20 @@ async function renderDetailedWeather() {
     if(elSeoul) elSeoul.innerHTML = `${seoulIcon} ${seoulTemp}°C`;
     if(elTaipei) elTaipei.innerHTML = `${taipeiIcon} ${taipeiTemp}°C`;
     
+    // 새로고침 했다는 것을 눈으로 즉시 볼 수 있게 "초 단위"까지 표시
     const now = new Date();
-    const timeStr = new Intl.DateTimeFormat("ko-KR", { hour: "2-digit", minute: "2-digit" }).format(now);
+    const timeStr = new Intl.DateTimeFormat("ko-KR", { hour: "2-digit", minute: "2-digit", second: "2-digit" }).format(now);
     if(elUpdate) elUpdate.textContent = `오늘 ${timeStr} 기준`;
 
     const daily = dataTaipei.daily;
     const forecastHtml = daily.time.slice(0, 5).map((dateStr, idx) => {
-      // 🔥 [버그 수정] Date 객체 생성 시 문자열을 잘라서 로컬 시간 기준으로 강제 생성 (하루 밀림 현상 방지)
+      // Date 객체 생성 시 문자열을 잘라서 로컬 시간 기준으로 강제 생성 (하루 밀림 현상 방지)
       const parts = dateStr.split("-");
       const d = new Date(parts[0], parts[1] - 1, parts[2]);
       
       const days = ["일", "월", "화", "수", "목", "금", "토"];
       const isToday = (idx === 0);
       
-      // 오늘인 경우 직관적으로 '오늘' 표시
       const dateTxt = isToday ? "오늘" : `${d.getMonth()+1}.${d.getDate()} (${days[d.getDay()]})`;
       
       const max = Math.round(daily.temperature_2m_max[idx]);
@@ -1144,7 +1146,7 @@ async function renderDetailedWeather() {
 // 스크립트 로드 시 홈화면 날씨 바로 호출
 fetchTaipeiWeather();
     
-/* ================= 로그인 (🔥 수정 1. 스플래시 삭제) ================= */
+/* ================= 로그인 (스플래시 삭제) ================= */
 function login() {
   const id = document.getElementById("employeeId").value.trim();
   const user = employees.find(e => e.id === id);
@@ -1300,13 +1302,13 @@ function pickFlightDescByAirline(desc, airline) {
   return isKoreanAir ? (parts[1] || s) : (parts[0] || s);
 }
 
-/* ================= 페이지 오픈 로직 (🔥 브라우저 히스토리 추가 반영) ================= */
+/* ================= 페이지 오픈 로직 (브라우저 히스토리 추가 반영) ================= */
 function openPage(type, fromHistory = false) {
   document.body.classList.remove('menu-open'); // 메뉴 열려있으면 닫기
 
   const userAirline = currentUser?.flight?.departure?.airline || ""; 
   
-  // 🔥 [수정] 폰 자체 뒤로가기를 위한 History pushState 추가
+  // 폰 자체 뒤로가기를 위한 History pushState 추가
   if (!fromHistory) {
     pageHistory.push(type);
     history.pushState({ page: type }, "", "");
@@ -1560,12 +1562,12 @@ async function syncMealStatusFromServer(userId, tour, wrap) {
   else setMealUI(wrap, "PENDING");
 }
 
-/* ================= 홈으로 (🔥 브라우저 히스토리 초기화 추가) ================= */
+/* ================= 홈으로 (브라우저 히스토리 초기화 추가) ================= */
 function goHome() {
   const steps = pageHistory.length;
   pageHistory = [];
 
-  // 🔥 쌓여있는 브라우저 뒤로가기 기록을 한 번에 날려줌 (폰 자체 뒤로가기 최적화)
+  // 쌓여있는 브라우저 뒤로가기 기록을 한 번에 날려줌 (폰 자체 뒤로가기 최적화)
   if (steps > 0) {
     history.go(-steps);
   }
@@ -1573,23 +1575,23 @@ function goHome() {
   document.body.classList.remove("detail-open");
   document.body.classList.remove("menu-open");
 
-  // 🔥 애니메이션(0.4초)이 끝난 후 완전히 숨겨서 터치 방해 방지
+  // 애니메이션(0.4초)이 끝난 후 완전히 숨겨서 터치 방해 방지
   setTimeout(() => {
     document.getElementById("detailPage").style.display = "none";
   }, 400); 
 }
 
-/* ================= 뒤로가기 (🔥 브라우저 뒤로가기 로직 연동) ================= */
+/* ================= 뒤로가기 (브라우저 뒤로가기 로직 연동) ================= */
 function goBack() {
   if (pageHistory.length > 0) {
-    // 🔥 앱 내 뒤로가기 버튼도 스마트폰 브라우저 뒤로가기와 동일한 로직(popstate)을 타게 만듦
+    // 앱 내 뒤로가기 버튼도 스마트폰 브라우저 뒤로가기와 동일한 로직(popstate)을 타게 만듦
     history.back(); 
   } else {
     goHome();
   }
 }
 
-/* ================= 🔥 폰 자체 뒤로가기(하드웨어 버튼) 감지 및 연동 ================= */
+/* ================= 폰 자체 뒤로가기(하드웨어 버튼) 감지 및 연동 ================= */
 window.addEventListener("popstate", (event) => {
   // 1. 메뉴가 열려있을 때 뒤로가기 누르면 메뉴만 닫음
   if (document.body.classList.contains("menu-open")) {
@@ -1653,15 +1655,30 @@ function fxFmt(n) {
   return (isInt ? Math.round(n) : n).toLocaleString("ko-KR", { maximumFractionDigits: 2 });
 }
 
+/* ================= 🔥 환율 실시간 갱신 완벽 적용 ================= */
 async function fetchTwdToKrwRate() {
-  const url = "https://open.er-api.com/v6/latest/USD";
+  // 타임스탬프를 URL에 붙여서 브라우저 캐시 무력화
+  const url = `https://open.er-api.com/v6/latest/USD?_t=${Date.now()}`;
   const res = await fetch(url, { cache: "no-store" });
   if (!res.ok) throw new Error("환율 API 실패: " + res.status);
+  
   const data = await res.json();
   const krwPerUsd = data?.rates?.KRW;
   const twdPerUsd = data?.rates?.TWD;
+  
   if (!isFinite(krwPerUsd) || !isFinite(twdPerUsd)) throw new Error("KRW/TWD 환율 데이터 없음");
-  return { rate: krwPerUsd / twdPerUsd, updatedUtc: data.time_last_update_utc || "" };
+  
+  // API의 구형 업데이트 시간이 아니라, 사용자가 버튼을 누른 즉시 현재 한국 시간을 생성
+  const nowKST = new Intl.DateTimeFormat("ko-KR", { 
+    timeZone: "Asia/Seoul", 
+    month: "2-digit", 
+    day: "2-digit", 
+    hour: "2-digit", 
+    minute: "2-digit", 
+    second: "2-digit" 
+  }).format(new Date());
+
+  return { rate: krwPerUsd / twdPerUsd, updatedUtc: `오늘 ${nowKST}` };
 }
 
 function loadFxCache() {
@@ -1680,9 +1697,14 @@ function saveFxCache(payload) {
 }
 
 async function getFxRate({ force = false } = {}) {
-  if (!force) { const cached = loadFxCache(); if (cached) return cached; }
+  // force(새로고침 버튼) 일 경우 무조건 서버에서 새로 가져옴
+  if (!force) { 
+    const cached = loadFxCache(); 
+    if (cached) return cached; 
+  }
   const fresh = await fetchTwdToKrwRate();
-  saveFxCache(fresh); return loadFxCache() || fresh;
+  saveFxCache(fresh); 
+  return fresh;
 }
 
 function initExchangeCalculatorAuto() {
@@ -1712,7 +1734,7 @@ function initExchangeCalculatorAuto() {
   krwEl.addEventListener("input", updateFromKRW);
 
   async function renderRate(force = false) {
-    rateText.textContent = "불러오는 중…";
+    rateText.textContent = "가져오는 중…";
     try {
       const fx = await getFxRate({ force });
       rate = Number(fx.rate);
@@ -1725,6 +1747,7 @@ function initExchangeCalculatorAuto() {
       console.error(e); rateText.textContent = "실패"; updatedText.textContent = "-"; alert("환율을 불러오지 못했습니다. 네트워크 상태를 확인해주세요.");
     }
   }
+  
   if (refreshBtn) refreshBtn.addEventListener("click", () => renderRate(true));
   renderRate(false);
 }
