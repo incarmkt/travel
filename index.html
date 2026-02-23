@@ -533,23 +533,80 @@
     }
 
     /* =========================================================
-       [8] 데스크탑 (PC) 대응 
+       [8] 데스크탑 (PC) 대응 - 🔥 오버라이드 (여기서 모든 브라우저 호환 및 디자인 완성)
     ========================================================= */
     @media (min-width: 768px) {
-      .day-buttons { grid-template-columns: repeat(4, 1fr); }
-      .home-main-content { max-width: 1000px; margin: 0 auto; width: 100%; }
-      .home-header { max-width: 1000px; margin: 0 auto; width: 100%; }
+      /* 1. 메인 레이아웃 및 크기 조정 */
+      .home-main-content { 
+        max-width: 1000px; 
+        margin: 0 auto; 
+        width: 100%; 
+        padding-bottom: 80px; /* PC는 하단 여백을 시원하게 */
+      }
+      .home-header { 
+        max-width: 1000px; 
+        margin: 0 auto; 
+        width: 100%; 
+        padding-top: 30px; /* PC에서는 노치(env) 여백 무시하고 고정 여백 */
+      }
       
+      /* 2. 환영 문구 폰트 확대 */
+      .welcome-text h2 { font-size: 48px; }
+      .welcome-text p { font-size: 20px; }
+
+      /* 3. DAY 버튼 4열 유지 및 큼직하게 변경 */
+      .day-buttons { 
+        grid-template-columns: repeat(4, 1fr); 
+        gap: 16px; 
+      }
+      .day-btn {
+        min-height: 120px;
+        padding: 20px;
+      }
+      .day-btn-header { font-size: 20px; }
+      .day-btn .day-title { font-size: 15px; margin-top: 16px; }
+
+      /* 4. 카테고리 메뉴 팝업 사이즈 최적화 */
+      .category-dropdown {
+        width: 280px; /* PC는 마우스 조작이 편하게 조금 넓게 */
+        padding: 12px;
+      }
+      .drop-nav button { font-size: 16px; padding: 16px; }
+
+      /* 5. 바텀 시트 -> 중앙 팝업 모달(Modal)로 완벽하게 변환 */
       .detail-sheet__inner {
         top: 50%; left: 50%;
-        transform: translate(-50%, -100%) scale(0.9); 
         bottom: auto; right: auto;
-        width: 100%; max-width: 500px; height: 80vh;
-        border-radius: 24px; opacity: 0;
+        /* 화면 중앙에서 살짝 위에서 아래로 내려오며 나타나는 애니메이션 */
+        transform: translate(-50%, -48%) scale(0.95); 
+        width: 100%; 
+        max-width: 600px; /* PC에서 너무 퍼지지 않게 팝업 창 가로 고정 */
+        height: 85vh;     /* 높이도 화면의 85% 정도로 제한 */
+        max-height: 800px; 
+        border-radius: 24px; /* 둥근 모서리 복구 */
+        opacity: 0;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); /* 입체감 부여 */
+        transition: transform 0.4s cubic-bezier(0.32, 0.72, 0, 1), opacity 0.4s;
       }
       body.detail-open .detail-sheet__inner {
-        transform: translate(-50%, -50%) scale(1); opacity: 1;
+        transform: translate(-50%, -50%) scale(1); 
+        opacity: 1;
       }
+
+      /* 6. 모달 내부 헤더 및 여백 복구 (PC 맞춤) */
+      .detail-header {
+        padding: 24px;
+        padding-top: 24px; /* 노치 무시 */
+        border-radius: 24px 24px 0 0; /* 위쪽만 둥글게 복구 */
+      }
+      #detailContent {
+        padding: 24px 24px 40px; /* 스크롤 여백 넉넉하게 */
+      }
+
+      /* 7. 상세 컨텐츠 내부 요소 PC 사이즈 맞춤 */
+      .country-compare-grid { gap: 20px; }
+      .tour-card-photo { height: 320px; } /* 사진 카드 높이 증가 */
+      .fx-box input { padding: 16px; font-size: 18px; } /* 환율 계산기 입력칸 확대 */
     }
   </style>
 </head>
