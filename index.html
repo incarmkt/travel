@@ -291,36 +291,87 @@
       letter-spacing: -0.3px;
     }
 
-    /* DAY 1~4 그리드 버튼 */
+    /* =========================================================
+       🔥🔥🔥 [NEW] 대만풍 DAY 1~4 버튼 디자인 적용
+    ========================================================= */
     .day-buttons {
       display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
     }
+
     .day-btn {
-      background: rgba(0, 0, 0, 0.4); /* 텍스트 가독성을 위해 버튼 배경을 살짝만 더 어둡게 */
+      /* 대만의 밤거리(홍등) 느낌을 살린 딥 브라운/레드톤 그라데이션 오버레이 + 전통 창살 무늬 패턴 SVG */
+      background: linear-gradient(135deg, rgba(40, 15, 15, 0.45) 0%, rgba(10, 10, 15, 0.6) 100%),
+                  url("data:image/svg+xml,%3Csvg width='24' height='24' viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M12 0L24 12 12 24 0 12 12 0zm0 3.5L3.5 12 12 20.5 20.5 12 12 3.5z' fill='%23c5a059' fill-opacity='0.08' fill-rule='evenodd'/%3E%3C/svg%3E");
+      background-size: cover, 24px 24px;
       backdrop-filter: blur(15px);
       -webkit-backdrop-filter: blur(15px);
-      border: 1px solid rgba(255, 255, 255, 0.2);
+      
+      /* 테두리를 은은한 샴페인 골드로 주어 고급스러움 극대화 */
+      border: 1px solid rgba(197, 160, 89, 0.25);
       padding: 16px 16px; 
       border-radius: 16px;
       color: #fff; text-align: left;
+      
       /* ✅ DAY 버튼 누를 때 효과를 위한 transition 설정 */
       transition: transform 0.1s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.1s, border-color 0.1s;
       cursor: pointer;
       display: flex; flex-direction: column; justify-content: space-between;
       min-height: 100px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* 대만 전통 등불의 붉은빛이 번지는 듯한 효과 (상단 우측) */
+    .day-btn::before {
+      content: '';
+      position: absolute;
+      top: -30px;
+      right: -30px;
+      width: 100px;
+      height: 100px;
+      background: radial-gradient(circle, rgba(229, 62, 62, 0.18) 0%, transparent 70%);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* 금빛 빛 번짐 효과 (하단 좌측) */
+    .day-btn::after {
+      content: '';
+      position: absolute;
+      bottom: -20px;
+      left: -20px;
+      width: 80px;
+      height: 80px;
+      background: radial-gradient(circle, rgba(197, 160, 89, 0.15) 0%, transparent 70%);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 0;
     }
     
-    /* ✅ 날짜 및 글씨체 가독성 개선 스타일 추가 */
+    /* 내부 텍스트 겹침 방지 (빛번짐 효과보다 위로) */
+    .day-btn-header, .day-btn .day-title { 
+      position: relative; 
+      z-index: 1; 
+    }
+
+    /* 날짜 및 글씨체 가독성 개선 스타일 */
     .day-btn-header { display: flex; justify-content: space-between; align-items: center; width: 100%; font-size: 18px; font-weight: 800; }
-    .btn-date { font-size: 12px; font-weight: 700; color: #cbd5e1; background: rgba(255, 255, 255, 0.15); padding: 2px 8px; border-radius: 10px; letter-spacing: 0; }
-    .day-btn .day-title { font-size: 13.5px; font-weight: 600; color: #cbd5e1; margin-top: 12px; line-height: 1.4; word-break: keep-all; opacity: 1; }
+    
+    /* 포인트 날짜 배지도 골드톤 테마에 어울리게 미세 조정 */
+    .btn-date { font-size: 12px; font-weight: 700; color: #fef08a; background: rgba(197, 160, 89, 0.2); padding: 2px 8px; border-radius: 10px; letter-spacing: 0; border: 1px solid rgba(197, 160, 89, 0.2); }
+    
+    .day-btn .day-title { font-size: 13.5px; font-weight: 600; color: #f1f5f9; margin-top: 12px; line-height: 1.4; word-break: keep-all; opacity: 1; }
     
     /* ✅ DAY 버튼 클릭 시 쫀득한 애니메이션 효과 */
     .day-btn:active { 
-      background: rgba(0,0,0,0.65); 
+      background: linear-gradient(135deg, rgba(50, 20, 20, 0.55) 0%, rgba(20, 20, 25, 0.7) 100%),
+                  url("data:image/svg+xml,%3Csvg width='24' height='24' viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M12 0L24 12 12 24 0 12 12 0zm0 3.5L3.5 12 12 20.5 20.5 12 12 3.5z' fill='%23c5a059' fill-opacity='0.12' fill-rule='evenodd'/%3E%3C/svg%3E");
       transform: scale(0.94); 
-      border-color: rgba(255, 255, 255, 0.4);
+      border-color: rgba(197, 160, 89, 0.5);
     }
+    /* ========================================================= */
+
 
     /* =========================================================
        [6] Bottom Sheet (Detail Page) - 🔥 화면 꽉 채움 유지
