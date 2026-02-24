@@ -24,7 +24,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
     
-    <!-- 폰트 다양화 (20종 추가) -->
+    <!-- 폰트 다양화 -->
     <link href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Cute+Font&family=Do+Hyeon&family=Dongle&family=Gaegu&family=Gamja+Flower&family=Gowun+Batang&family=Gowun+Dodum&family=Gugi&family=Hi+Melody&family=Jua&family=Nanum+Brush+Script&family=Nanum+Gothic&family=Nanum+Myeongjo&family=Nanum+Pen+Script&family=Noto+Sans+KR:wght@100;300;400;500;700;900&family=Poor+Story&family=Single+Day&family=Song+Myung&family=Stylish&family=Sunflower:wght@300;500;700&family=Yeon+Sung&display=swap" rel="stylesheet">
     
     <script>
@@ -72,7 +72,6 @@
         .data-table td { padding: 14px 16px; border-bottom: 1px solid #f1f5f9; font-size: 0.85rem; font-weight: 500; color: #334155; }
         .data-table tr:hover td { background-color: #f8fafc; }
 
-        /* 스캐너 UI 강제 스타일 (정사각형 및 꽉 채우기) */
         .scanner-container {
             position: relative;
             width: 100%;
@@ -101,109 +100,29 @@
             border-radius: 1.2rem;
         }
 
-        /* 인쇄 스타일 */
         @media print {
             @page { size: auto; margin: 0; }
-            
-            html, body, #root, main, .overflow-y-auto {
-                width: 100%;
-                height: auto !important;
-                min-height: auto !important;
-                overflow: visible !important;
-                margin: 0 !important;
-                padding: 0 !important;
-                background: white !important;
-                position: static !important;
-            }
-
+            html, body, #root, main, .overflow-y-auto { width: 100%; height: auto !important; min-height: auto !important; overflow: visible !important; margin: 0 !important; padding: 0 !important; background: white !important; position: static !important; }
             body * { visibility: hidden; }
-
             .print-only-container, .print-only-container * { visibility: visible !important; }
-
-            .print-only-container {
-                position: absolute !important;
-                top: 0 !important;
-                left: 0 !important;
-                width: 100% !important;
-                height: auto !important;
-                background: white;
-                z-index: 9999;
-                display: block !important;
-                overflow: visible !important;
-            }
-
-            .print-reset-spacing {
-                display: block !important;
-                overflow: visible !important;
-                height: auto !important;
-                padding: 0 !important;
-            }
-
+            .print-only-container { position: absolute !important; top: 0 !important; left: 0 !important; width: 100% !important; height: auto !important; background: white; z-index: 9999; display: block !important; overflow: visible !important; }
+            .print-reset-spacing { display: block !important; overflow: visible !important; height: auto !important; padding: 0 !important; }
             .no-print { display: none !important; }
-
-            .page-wrapper {
-                width: 100%;
-                display: flex !important;
-                justify-content: center;
-                align-items: center;
-                break-after: page;
-                page-break-after: always;
-                page-break-inside: avoid;
-                margin: 0;
-                padding: 0;
-                position: relative !important;
-            }
-            
-            .page-wrapper:last-child {
-                break-after: auto;
-                page-break-after: auto;
-            }
-
-            .badge-card {
-                border: none !important;
-                box-shadow: none !important;
-                page-break-inside: avoid;
-            }
+            .page-wrapper { width: 100%; display: flex !important; justify-content: center; align-items: center; break-after: page; page-break-after: always; page-break-inside: avoid; margin: 0; padding: 0; position: relative !important; }
+            .page-wrapper:last-child { break-after: auto; page-break-after: auto; }
+            .badge-card { border: none !important; box-shadow: none !important; page-break-inside: avoid; }
         }
         .print-only { display: none; }
         
-        /* 가이드라인 스타일 */
-        .smart-guide-x {
-            position: absolute;
-            left: 50%;
-            top: 0;
-            bottom: 0;
-            width: 1px;
-            background-color: #ef4444;
-            z-index: 200; /* Ensure it is above layers */
-            pointer-events: none;
-            border-left: 1px dashed #ef4444;
-        }
-        .smart-guide-y {
-            position: absolute;
-            top: 50%;
-            left: 0;
-            right: 0;
-            height: 1px;
-            background-color: #ef4444;
-            z-index: 200; /* Ensure it is above layers */
-            pointer-events: none;
-            border-top: 1px dashed #ef4444;
-        }
-        
+        .smart-guide-x { position: absolute; left: 50%; top: 0; bottom: 0; width: 1px; background-color: #ef4444; z-index: 200; pointer-events: none; border-left: 1px dashed #ef4444; }
+        .smart-guide-y { position: absolute; top: 50%; left: 0; right: 0; height: 1px; background-color: #ef4444; z-index: 200; pointer-events: none; border-top: 1px dashed #ef4444; }
         .layer-item:hover { background-color: #f1f5f9; }
         .layer-item.active { background-color: #eef2ff; border-color: #27398C; }
-        
-        /* 스크롤바 숨기기 (프린트시) */
-        @media print {
-            ::-webkit-scrollbar { display: none; }
-        }
-        /* 데이터 테이블 인쇄용 */
         .no-print-scroll { -ms-overflow-style: none; scrollbar-width: none; }
         .no-print-scroll::-webkit-scrollbar { display: none; }
     </style>
 </head>
-<body class="h-screen h-[100dvh] w-screen flex flex-col md:flex-row bg-slate-50">
+<body class="h-screen w-screen flex flex-col md:flex-row bg-slate-50 overflow-hidden">
     <div id="root" class="h-full w-full"></div>
 
     <script type="text/babel">
@@ -226,13 +145,13 @@
             measurementId: "G-SNR3FPPQ7E"
         };
 
-        // ✅ QR URL 파싱 로직 (URL로 스캔되어도 사번만 정확하게 추출)
+        // ✅ QR URL 파싱 로직 (사번만 정확하게 추출)
         const extractEid = (text) => {
             const m = String(text).match(/[?&]eid=([^&]+)/);
             return m ? m[1] : text;
         };
 
-        // ✅ 유저 템플릿 매칭
+        // ✅ 유저 조건 매칭을 통해 올바른 양식(템플릿) 찾아주기
         const getConfigForUser = (user, configs) => {
             for (let i = 0; i < configs.length; i++) {
                 const c = configs[i];
@@ -247,7 +166,7 @@
             return fallback || configs[0];
         };
 
-        // ✅ 스캔 사운드 및 진동 피드백
+        // ✅ 스캔 사운드 및 진동
         const beep = () => {
             try {
                 const ctx = new (window.AudioContext || window.webkitAudioContext)();
@@ -264,7 +183,7 @@
         };
         const vibrate = () => { if (navigator.vibrate) navigator.vibrate(40); };
 
-        // ✅ 구글 시트로 전송
+        // ✅ 구글 시트로 데이터 전송 (백그라운드)
         const sendToGAS = (payload) => {
             fetch(GAS_URL, {
                 method: "POST",
@@ -642,7 +561,7 @@
         const ScanView = ({ mode, schedules, targetSessionId, setTargetSessionId, targetBus, setTargetBus, manualBus, setManualBus, isScanning, setIsScanning, processScan, users, isMobile, busList, setBusList }) => {
             const scannerRef = useRef(null);
             const isRunningRef = useRef(false);
-            const lastScanRef = useRef({ text: null, time: 0 }); // ✅ 연속 스캔을 위한 중복방지 딜레이 Ref
+            const lastScanRef = useRef({ text: null, time: 0 });
             const [isStrictBusMode, setIsStrictBusMode] = useState(false);
             
             const filteredSchedules = useMemo(() => {
@@ -1349,6 +1268,7 @@
             };
 
             const getUniqueValues = (key) => {
+                if (!key || key === 'ALL') return [];
                 const vals = new Set();
                 users.forEach(u => {
                     let v = u[key] || (u.options && u.options[key]);
@@ -1379,16 +1299,16 @@
             
             // ✅ 반응형 에디터 스케일 (Auto-Fit)
             const containerRef = useRef(null);
-            const [editorScale, setEditorScale] = useState(0.4);
+            const [editorScale, setEditorScale] = useState(1);
 
             useEffect(() => {
                 const updateScale = () => {
                     if (containerRef.current && activeConfig?.imgWidth) {
                         const containerWidth = containerRef.current.clientWidth;
-                        // 양쪽 패딩 48px 여유를 뺀 가로 폭에 딱 맞춤
+                        // 컨테이너 폭에서 내부 패딩(48px 여유)을 뺀 영역에 100% 꽉 차게 비율 계산
                         const availableWidth = containerWidth - 48; 
                         const scale = availableWidth / activeConfig.imgWidth;
-                        setEditorScale(scale > 0 ? scale : 0.4);
+                        setEditorScale(scale > 0 ? scale : 1);
                     }
                 };
                 
@@ -1431,6 +1351,7 @@
                 const clientY = e.touches ? e.touches[0].clientY : e.clientY;
                 const rect = editorRef.current.getBoundingClientRect();
                 
+                // ✅ scale이 적용된 rect.width/height 이므로 완벽하게 비율이 맞음
                 let newX = ((clientX - rect.left) / rect.width) * 100;
                 let newY = ((clientY - rect.top) / rect.height) * 100;
                 
@@ -1734,7 +1655,13 @@
                             const canvas = await html2canvas(element, { scale: 2, useCORS: true, backgroundColor: null });
                             const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
                             const matchedConfig = getConfigForUser(u, badgeConfigs);
-                            folder.file(`${u.uid}_${u.name}_${matchedConfig.name}.png`, blob);
+                            
+                            // ✅ 적용된 템플릿의 이름으로 폴더를 생성하여 분류
+                            const templateFolderName = matchedConfig.name || "기본양식";
+                            const templateFolder = folder.folder(templateFolderName);
+                            
+                            // 해당 템플릿 폴더 안에 참가자 명찰 저장
+                            templateFolder.file(`${u.uid}_${u.name}.png`, blob);
                         } catch (err) {
                             console.error("Error capturing badge:", u.name, err);
                         }
@@ -1744,9 +1671,9 @@
                 }
 
                 zip.generateAsync({ type: "blob" }).then(content => {
-                    saveAs(content, `명찰_이미지_일괄_${new Date().toISOString().slice(0,10)}.zip`);
+                    saveAs(content, `명찰_이미지_분류됨_${new Date().toISOString().slice(0,10)}.zip`);
                     setIsZipping(false);
-                    alert("다운로드가 완료되었습니다.");
+                    alert("다운로드가 완료되었습니다. 템플릿별로 폴더가 나뉘어 저장되었습니다.");
                 });
             };
 
@@ -1831,7 +1758,6 @@
                                 <div>
                                     <label className="block text-xs font-bold text-slate-400 mb-2">배경 이미지 (2382 x 1527 권장)</label>
                                     <input type="file" accept="image/*" onChange={handleBgImageUpload} className="block w-full text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-incar-light file:text-incar hover:file:bg-indigo-100"/>
-                                    <p className="text-[10px] text-rose-500 font-bold mt-2">* 브라우저 용량 초과 에러 방지를 위해 배경 이미지는 서버에 임시 저장되지 않습니다.</p>
                                 </div>
                                 
                                 {selectedLayer ? (
@@ -2122,7 +2048,7 @@
                     const saved = localStorage.getItem('incar_pro_badge_configs_v4');
                     if (saved) return JSON.parse(saved);
                     
-                    // 기존 버전 마이그레이션 또는 기본 템플릿 제공
+                    // 기존 버전 마이그레이션
                     const oldSaved = JSON.parse(localStorage.getItem('incar_pro_badge_config_v2_9'));
                     if (oldSaved && oldSaved.layers) {
                         return [{ id: 'default', name: '기본 양식', conditionKey: 'ALL', conditionVal: 'ALL', bgImage: null, imgWidth: oldSaved.imgWidth || 2382, imgHeight: oldSaved.imgHeight || 1527, layers: oldSaved.layers }];
@@ -2523,6 +2449,30 @@
                 }); 
             };
 
+            const handleAppBgUpload = (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = (evt) => {
+                        const img = new Image();
+                        img.onload = () => {
+                            const canvas = document.createElement('canvas');
+                            const ctx = canvas.getContext('2d');
+                            let width = img.width, height = img.height;
+                            const MAX = 1920; 
+                            if (width > height && width > MAX) { height *= MAX / width; width = MAX; } 
+                            else if (height > MAX) { width *= MAX / height; height = MAX; }
+                            canvas.width = width; canvas.height = height;
+                            ctx.drawImage(img, 0, 0, width, height);
+                            const dataUrl = canvas.toDataURL('image/jpeg', 0.6);
+                            setAppBgImage(dataUrl);
+                        };
+                        img.src = evt.target.result;
+                    };
+                    reader.readAsDataURL(file);
+                }
+            };
+
             if (isLoading) return <div className="h-screen w-screen flex items-center justify-center font-bold text-incar">시스템 로딩중...</div>;
 
             return (
@@ -2550,7 +2500,7 @@
                                 {activeTab === 'boarding' && <ScanView mode="BOARDING" schedules={schedules} targetSessionId={targetSessionId} setTargetSessionId={setTargetSessionId} targetBus={targetBus} setTargetBus={setTargetBus} manualBus={manualBus} setManualBus={setManualBus} isScanning={isScanning} setIsScanning={setIsScanning} processScan={processScan} users={users} isMobile={isMobile} busList={busList} setBusList={setBusList} />}
                                 {activeTab === 'payment' && <ScanView mode="PAYMENT" schedules={schedules} targetSessionId={targetSessionId} setTargetSessionId={setTargetSessionId} targetBus={targetBus} setTargetBus={setTargetBus} manualBus={manualBus} setManualBus={setManualBus} isScanning={isScanning} setIsScanning={setIsScanning} processScan={processScan} users={users} isMobile={isMobile} busList={busList} setBusList={setBusList} />}
                                 {activeTab === 'change' && <ChangeView searchQuery={searchQuery} setSearchQuery={setSearchQuery} selectedUser={selectedUser} setSelectedUser={setSelectedUser} editForm={editForm} setEditForm={setEditForm} handleUserUpdate={handleUserUpdate} users={users} schedules={schedules} changeLogs={changeLogs} />}
-                                {activeTab === 'manage' && <ManageView users={users} handleUserUpload={handleUserUpload} handleScheduleUpload={handleScheduleUpload} badgeConfigs={badgeConfigs} setBadgeConfigs={setBadgeConfigs} db={db} schedules={schedules} logs={logs} setIsPrintMode={setIsPrintMode} setUsers={setUsers} setSchedules={setSchedules} setLogs={setLogs} setChangeLogs={setChangeLogs} changeLogs={changeLogs} appBgImage={appBgImage} setAppBgImage={setAppBgImage} />} 
+                                {activeTab === 'manage' && <ManageView users={users} handleUserUpload={handleUserUpload} handleScheduleUpload={handleScheduleUpload} badgeConfigs={badgeConfigs} setBadgeConfigs={setBadgeConfigs} db={db} schedules={schedules} logs={logs} setIsPrintMode={setIsPrintMode} setUsers={setUsers} setSchedules={setSchedules} setLogs={setLogs} setChangeLogs={setChangeLogs} changeLogs={changeLogs} appBgImage={appBgImage} setAppBgImage={setAppBgImage} handleAppBgUpload={handleAppBgUpload} />} 
                             </div>
                         </div>
 
