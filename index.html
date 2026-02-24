@@ -292,22 +292,25 @@
     }
 
     /* =========================================================
-       🔥🔥🔥 [NEW] 대만풍 DAY 1~4 버튼 디자인 적용
+       🔥🔥🔥 [NEW] 대만풍 DAY 1~4 버튼 디자인 적용 (완전 중화풍 붉은색+금장)
     ========================================================= */
     .day-buttons {
       display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
     }
 
     .day-btn {
-      /* 대만의 밤거리(홍등) 느낌을 살린 딥 브라운/레드톤 그라데이션 오버레이 + 전통 창살 무늬 패턴 SVG */
-      background: linear-gradient(135deg, rgba(40, 15, 15, 0.45) 0%, rgba(10, 10, 15, 0.6) 100%),
-                  url("data:image/svg+xml,%3Csvg width='24' height='24' viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M12 0L24 12 12 24 0 12 12 0zm0 3.5L3.5 12 12 20.5 20.5 12 12 3.5z' fill='%23c5a059' fill-opacity='0.08' fill-rule='evenodd'/%3E%3C/svg%3E");
-      background-size: cover, 24px 24px;
-      backdrop-filter: blur(15px);
-      -webkit-backdrop-filter: blur(15px);
+      /* 🔥 확 눈에 띄는 중화풍 다크 레드 & 황금 용비늘(전통 구름/파도) 패턴 */
+      background-color: #611818;
+      background-image: 
+        radial-gradient(circle at 100% 0%, rgba(255, 190, 50, 0.25) 0%, transparent 60%), 
+        radial-gradient(circle at 0% 100%, rgba(255, 190, 50, 0.15) 0%, transparent 60%),
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 100 100'%3E%3Cpath fill-rule='evenodd' d='M0 100A50 50 0 0 1 50 50A50 50 0 0 1 100 100A50 50 0 0 1 50 150A50 50 0 0 1 0 100ZM25 100A25 25 0 0 1 50 75A25 25 0 0 1 75 100A25 25 0 0 1 50 125A25 25 0 0 1 25 100Z' fill='%23c5a059' fill-opacity='0.35'/%3E%3Cpath fill-rule='evenodd' d='M-50 50A50 50 0 0 1 0 0A50 50 0 0 1 50 50A50 50 0 0 1 0 100A50 50 0 0 1 -50 50ZM-25 50A25 25 0 0 1 0 25A25 25 0 0 1 25 50A25 25 0 0 1 0 75A25 25 0 0 1 -25 50Z' fill='%23c5a059' fill-opacity='0.35'/%3E%3Cpath fill-rule='evenodd' d='M50 50A50 50 0 0 1 100 0A50 50 0 0 1 150 50A50 50 0 0 1 100 100A50 50 0 0 1 50 50ZM75 50A25 25 0 0 1 100 25A25 25 0 0 1 125 50A25 25 0 0 1 100 75A25 25 0 0 1 75 50Z' fill='%23c5a059' fill-opacity='0.35'/%3E%3C/svg%3E");
+      
+      background-size: cover, cover, 40px 40px; 
+      background-position: top right, bottom left, center center;
       
       /* 테두리를 은은한 샴페인 골드로 주어 고급스러움 극대화 */
-      border: 1px solid rgba(197, 160, 89, 0.25);
+      border: 1px solid rgba(255, 215, 0, 0.4);
       padding: 16px 16px; 
       border-radius: 16px;
       color: #fff; text-align: left;
@@ -319,6 +322,7 @@
       min-height: 100px;
       position: relative;
       overflow: hidden;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.4);
     }
 
     /* 대만 전통 등불의 붉은빛이 번지는 듯한 효과 (상단 우측) */
@@ -329,7 +333,7 @@
       right: -30px;
       width: 100px;
       height: 100px;
-      background: radial-gradient(circle, rgba(229, 62, 62, 0.18) 0%, transparent 70%);
+      background: radial-gradient(circle, rgba(255, 50, 50, 0.5) 0%, transparent 70%);
       border-radius: 50%;
       pointer-events: none;
       z-index: 0;
@@ -343,7 +347,7 @@
       left: -20px;
       width: 80px;
       height: 80px;
-      background: radial-gradient(circle, rgba(197, 160, 89, 0.15) 0%, transparent 70%);
+      background: radial-gradient(circle, rgba(255, 215, 0, 0.4) 0%, transparent 70%);
       border-radius: 50%;
       pointer-events: none;
       z-index: 0;
@@ -353,22 +357,22 @@
     .day-btn-header, .day-btn .day-title { 
       position: relative; 
       z-index: 1; 
+      text-shadow: 1px 1px 4px rgba(0,0,0,0.8); /* 가독성 보장 */
     }
 
     /* 날짜 및 글씨체 가독성 개선 스타일 */
-    .day-btn-header { display: flex; justify-content: space-between; align-items: center; width: 100%; font-size: 18px; font-weight: 800; }
+    .day-btn-header { display: flex; justify-content: space-between; align-items: center; width: 100%; font-size: 18px; font-weight: 800; color: #fff; }
     
-    /* 포인트 날짜 배지도 골드톤 테마에 어울리게 미세 조정 */
-    .btn-date { font-size: 12px; font-weight: 700; color: #fef08a; background: rgba(197, 160, 89, 0.2); padding: 2px 8px; border-radius: 10px; letter-spacing: 0; border: 1px solid rgba(197, 160, 89, 0.2); }
+    /* 포인트 날짜 배지도 완전한 금장 느낌으로 변경 */
+    .btn-date { font-size: 12px; font-weight: 800; color: #fff; background: linear-gradient(135deg, #c5a059, #8c6a31); padding: 3px 10px; border-radius: 12px; letter-spacing: 0; border: 1px solid rgba(255, 215, 0, 0.6); box-shadow: 0 2px 4px rgba(0,0,0,0.4); }
     
-    .day-btn .day-title { font-size: 13.5px; font-weight: 600; color: #f1f5f9; margin-top: 12px; line-height: 1.4; word-break: keep-all; opacity: 1; }
+    .day-btn .day-title { font-size: 13.5px; font-weight: 600; color: #fff; margin-top: 12px; line-height: 1.4; word-break: keep-all; opacity: 1; }
     
     /* ✅ DAY 버튼 클릭 시 쫀득한 애니메이션 효과 */
     .day-btn:active { 
-      background: linear-gradient(135deg, rgba(50, 20, 20, 0.55) 0%, rgba(20, 20, 25, 0.7) 100%),
-                  url("data:image/svg+xml,%3Csvg width='24' height='24' viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M12 0L24 12 12 24 0 12 12 0zm0 3.5L3.5 12 12 20.5 20.5 12 12 3.5z' fill='%23c5a059' fill-opacity='0.12' fill-rule='evenodd'/%3E%3C/svg%3E");
+      background-color: #3b0d0d;
       transform: scale(0.94); 
-      border-color: rgba(197, 160, 89, 0.5);
+      border-color: #ffda70;
     }
     /* ========================================================= */
 
@@ -711,6 +715,7 @@
             <button onclick="openPage('flight')">✈️ <span>항공편 정보</span></button>
             <button onclick="openPage('myTour')">🎒 <span>나의 선택 관광</span></button>
             <button onclick="openPage('dinner')">🍽 <span>만찬 안내</span></button>
+            <button onclick="openPage('request')">📝 <span>요청사항</span></button>
             <button onclick="openPage('contact')">📞 <span>긴급 연락망</span></button>
             <!-- ✅ [수정] 2. 로그아웃 버튼 추가 -->
             <button onclick="logout()" style="border-top:1px solid #eee; margin-top:4px; color:#e53e3e;">🚪 <span>로그아웃</span></button>
