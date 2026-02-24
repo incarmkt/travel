@@ -232,6 +232,22 @@
             return m ? m[1] : text;
         };
 
+        // ✅ 유저의 정보를 기반으로 어떤 템플릿(Config)을 쓸지 결정하는 함수
+        const getConfigForUser = (user, configs) => {
+            for (let i = 0; i < configs.length; i++) {
+                const c = configs[i];
+                if (c.conditionKey && c.conditionKey !== 'ALL') {
+                    const uVal = user[c.conditionKey] || (user.options && user.options[c.conditionKey]);
+                    if (String(uVal).trim() === String(c.conditionVal).trim()) {
+                        return c;
+                    }
+                }
+            }
+            // 맞는 조건이 없으면 ALL 조건인 양식을 반환, 그것도 없으면 무조건 첫번째 양식
+            const fallback = configs.find(c => c.conditionKey === 'ALL' || !c.conditionKey);
+            return fallback || configs[0];
+        };
+
         // ✅ 스캔 사운드 및 진동 피드백
         const beep = () => {
             try {
@@ -1280,7 +1296,43 @@
             );
         };
 
-        const ManageView = ({ users, handleUserUpload, handleScheduleUpload, badgeConfig, setBadgeConfig, db, schedules, logs, setIsPrintMode, setUsers, setSchedules, setLogs, setChangeLogs, changeLogs, appBgImage, setAppBgImage, handleAppBgUpload }) => {
+        const ManageView = ({ users, handleUserUpload, handleScheduleUpload, badgeConfigs, setBadgeConfigs, db, schedules, logs, setIsPrintMode, setUsers, setSchedules, setLogs, setChangeLogs, changeLogs, appBgImage, setAppBgImage, handleAppBgUpload }) => {
+            
+            // ✅ 여러 개의 명찰 양식을 관리하기 위한 상태
+            const [activeIdx, setActiveIdx] = useState(0);
+            const activeConfig = badgeConfigs[activeIdx] || badgeConfigs[0];
+
+            const updateActiveConfig = (key, value) => {
+                const newConfigs = [...badgeConfigs];
+                newConfigs[activeIdx] = { ...newConfigs[activeIdx], [key]: value };
+                setBadgeConfigs(newConfigs);
+            };
+
+            const addTemplate = () => {
+                const newTemplate = {
+                    id: `TPL_${Date.now()}`,
+                    name: `새 양식 ${badgeConfigs.length + 1}`,
+                    conditionKey: 'ALL',
+                    conditionVal: 'ALL',
+                    bgImage: null,
+                    imgWidth: 2382,
+                    imgHeight: 1527,
+                    layers: []
+                };
+                setBadgeConfigs([...badgeConfigs, newTemplate]);
+                setActiveIdx(badgeConfigs.length);
+            };
+
+            const deleteTemplate = (idx, e) => {
+                e.stopPropagation();
+                if(badgeConfigs.length === 1) return alert("최소 1개의 양식은 필요합니다.");
+                if(confirm("이 명찰 디자인 양식을 삭제하시겠습니까?")) {
+                    const newConfigs = badgeConfigs.filter((_, i) => i !== idx);
+                    setBadgeConfigs(newConfigs);
+                    setActiveIdx(Math.max(0, idx - 1));
+                }
+            };
+
             const handleBgImageUpload = (e) => {
                 const file = e.target.files[0];
                 if(file){
@@ -1288,17 +1340,42 @@
                     reader.onload = (evt) => {
                         const img = new Image();
                         img.onload = () => {
-                            setBadgeConfig(prev => ({
-                                ...prev,
+                            const newConfigs = [...badgeConfigs];
+                            newConfigs[activeIdx] = {
+                                ...newConfigs[activeIdx],
                                 bgImage: evt.target.result,
                                 imgWidth: img.naturalWidth,
                                 imgHeight: img.naturalHeight
-                            }));
+                            };
+                            setBadgeConfigs(newConfigs);
                         };
                         img.src = evt.target.result;
                     };
                     reader.readAsDataURL(file);
                 }
+            };
+
+            // ✅ 조건 필드의 고유값(옵션 목록) 추출 함수
+            const getUniqueValues = (key) => {
+                const vals = new Set();
+                users.forEach(u => {
+                    let v = u[key] || (u.options && u.options[key]);
+                    if (v) vals.add(String(v).trim());
+                });
+                return Array.from(vals).sort();
+            };
+
+            // ✅ 기본양식 다운로드 함수 추가
+            const downloadUserTemplate = () => {
+                const csvContent = "\uFEFF사번,성명,소속,버스,항공,만찬테이블번호,선택 관광\n1612001,홍길동,마케팅본부,1호차,대한항공,1번,티엔라이\n1612002,김철수,영업본부,2,아시아나,2,자유일정";
+                const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+                saveAs(blob, "Users_Template.csv");
+            };
+
+            const downloadScheduleTemplate = () => {
+                const csvContent = "\uFEFF일정,장소,타입,지급,타겟옵션,타겟값\nDAY 1,인천 출국 확인,BOARDING,0,ALL,ALL\nDAY 2,자유일정 지원금,PAYMENT,30000,선택 관광,자유일정\nDAY 2,티엔라이 도착,BOARDING,0,선택 관광,티엔라이";
+                const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+                saveAs(blob, "Schedules_Template.csv");
             };
 
             const [selectedId, setSelectedId] = useState(null);
@@ -1309,21 +1386,29 @@
             const [zipProgress, setZipProgress] = useState(0);
             const editorRef = useRef(null);
             
-            // ✅ 반응형 에디터 스케일 (2382px 가로 사이즈 지원)
+            // ✅ 반응형 에디터 스케일 제어 상태
             const containerRef = useRef(null);
-            const [editorScale, setEditorScale] = useState(1);
+            const [editorScale, setEditorScale] = useState(0.4);
 
+            // ✅ 자동 스케일링 (Auto-Fit) 추가
             useEffect(() => {
                 const updateScale = () => {
-                    if (containerRef.current) {
-                        const w = containerRef.current.clientWidth;
-                        setEditorScale(Math.min(1, w / badgeConfig.imgWidth));
+                    if (containerRef.current && activeConfig.imgWidth) {
+                        const availableWidth = containerRef.current.clientWidth - 40; // 양옆 여백 20px씩
+                        const scale = availableWidth / activeConfig.imgWidth;
+                        setEditorScale(scale > 0 ? scale : 0.4);
                     }
                 };
-                updateScale();
+                
+                // DOM 렌더링 직후 크기 측정
+                const timer = setTimeout(updateScale, 50);
                 window.addEventListener('resize', updateScale);
-                return () => window.removeEventListener('resize', updateScale);
-            }, [badgeConfig.imgWidth]);
+                
+                return () => {
+                    clearTimeout(timer);
+                    window.removeEventListener('resize', updateScale);
+                };
+            }, [activeConfig.imgWidth, activeIdx]);
 
             const startDrag = (e, id) => {
                 e.preventDefault();
@@ -1334,8 +1419,8 @@
                 const targets = [];
                 targets.push({ x: 50, y: 50 }); // Canvas Center
 
-                if (badgeConfig.layers) {
-                    badgeConfig.layers.forEach(l => {
+                if (activeConfig.layers) {
+                    activeConfig.layers.forEach(l => {
                         if (l.id !== id) {
                             targets.push({ x: l.x, y: l.y });
                         }
@@ -1375,11 +1460,13 @@
                 
                 setGuides({ x: guideX, y: guideY });
                 
-                setBadgeConfig(prev => ({
-                    ...prev,
-                    layers: prev.layers.map(l => l.id === dragTarget ? { ...l, x: newX, y: newY } : l)
-                }));
-            }, [dragTarget, snapTargets]);
+                const newConfigs = [...badgeConfigs];
+                newConfigs[activeIdx] = {
+                    ...newConfigs[activeIdx],
+                    layers: newConfigs[activeIdx].layers.map(l => l.id === dragTarget ? { ...l, x: newX, y: newY } : l)
+                };
+                setBadgeConfigs(newConfigs);
+            }, [dragTarget, snapTargets, activeConfig, activeIdx, badgeConfigs]);
 
             const stopDrag = () => {
                 setDragTarget(null);
@@ -1392,6 +1479,7 @@
                     window.addEventListener('mousemove', onEditorMove);
                     window.addEventListener('mouseup', stopDrag);
                     window.addEventListener('touchmove', onEditorMove, { passive: false });
+                    window.addEventListener('touchmove', (e)=>{e.preventDefault()}, { passive: false });
                     window.addEventListener('touchend', stopDrag);
                 }
                 return () => {
@@ -1405,7 +1493,7 @@
             const addLayer = (type, subType = null) => {
                 const newId = `${type}_${Date.now()}`;
                 let newLayer = { id: newId, type, x: 50, y: 50 };
-                const baseWidth = badgeConfig.imgWidth || 2382;
+                const baseWidth = activeConfig.imgWidth || 2382;
                 
                 if (type === 'text') {
                     let defaultContent = 'New Text';
@@ -1431,48 +1519,62 @@
                     newLayer = { ...newLayer, w: Math.round(baseWidth * 0.15), h: Math.round(baseWidth * 0.15), fill: '#e2e8f0', borderColor: '#000000', borderWidth: 0, opacity: 1 };
                 }
                 
-                setBadgeConfig(prev => ({ ...prev, layers: [...(prev.layers || []), newLayer] }));
+                const newConfigs = [...badgeConfigs];
+                newConfigs[activeIdx] = {
+                    ...newConfigs[activeIdx],
+                    layers: [...(newConfigs[activeIdx].layers || []), newLayer]
+                };
+                setBadgeConfigs(newConfigs);
                 setSelectedId(newId);
             };
 
             const updateLayer = (key, value) => {
-                setBadgeConfig(prev => ({
-                    ...prev,
-                    layers: prev.layers.map(l => l.id === selectedId ? { ...l, [key]: value } : l)
-                }));
+                const newConfigs = [...badgeConfigs];
+                newConfigs[activeIdx] = {
+                    ...newConfigs[activeIdx],
+                    layers: newConfigs[activeIdx].layers.map(l => l.id === selectedId ? { ...l, [key]: value } : l)
+                };
+                setBadgeConfigs(newConfigs);
             };
 
             const deleteLayer = () => {
                 if(confirm("삭제하시겠습니까?")) {
-                    setBadgeConfig(prev => ({ ...prev, layers: prev.layers.filter(l => l.id !== selectedId) }));
+                    const newConfigs = [...badgeConfigs];
+                    newConfigs[activeIdx] = {
+                        ...newConfigs[activeIdx],
+                        layers: newConfigs[activeIdx].layers.filter(l => l.id !== selectedId)
+                    };
+                    setBadgeConfigs(newConfigs);
                     setSelectedId(null);
                 }
             };
 
             const moveLayer = (direction) => {
                 if (!selectedId) return;
-                setBadgeConfig(prev => {
-                    const idx = prev.layers.findIndex(l => l.id === selectedId);
-                    if (idx < 0) return prev;
-                    let newLayers = [...prev.layers];
-                    const item = newLayers.splice(idx, 1)[0];
+                const newConfigs = [...badgeConfigs];
+                const idx = newConfigs[activeIdx].layers.findIndex(l => l.id === selectedId);
+                if (idx < 0) return;
+                
+                let newLayers = [...newConfigs[activeIdx].layers];
+                const item = newLayers.splice(idx, 1)[0];
 
-                    if (direction === 'top') {
-                        newLayers.push(item);
-                    } else if (direction === 'bottom') {
-                        newLayers.unshift(item);
-                    } else if (direction === 'up' && idx < prev.layers.length - 1) {
-                        newLayers.splice(idx + 1, 0, item);
-                    } else if (direction === 'down' && idx > 0) {
-                        newLayers.splice(idx - 1, 0, item);
-                    } else {
-                        newLayers.splice(idx, 0, item);
-                    }
-                    return { ...prev, layers: newLayers };
-                });
+                if (direction === 'top') {
+                    newLayers.push(item);
+                } else if (direction === 'bottom') {
+                    newLayers.unshift(item);
+                } else if (direction === 'up' && idx < newLayers.length) {
+                    newLayers.splice(idx + 1, 0, item);
+                } else if (direction === 'down' && idx > 0) {
+                    newLayers.splice(idx - 1, 0, item);
+                } else {
+                    newLayers.splice(idx, 0, item);
+                }
+                
+                newConfigs[activeIdx] = { ...newConfigs[activeIdx], layers: newLayers };
+                setBadgeConfigs(newConfigs);
             };
 
-            const selectedLayer = badgeConfig.layers ? badgeConfig.layers.find(l => l.id === selectedId) : null;
+            const selectedLayer = activeConfig.layers ? activeConfig.layers.find(l => l.id === selectedId) : null;
 
             const renderEditorLayer = (layer, index) => {
                 const isSelected = layer.id === selectedId;
@@ -1490,6 +1592,7 @@
                     onClick: (e) => e.stopPropagation()
                 };
 
+                // ✅ 에디터 화면의 QR 가이드에도 문구 추가
                 if (layer.type === 'qr') {
                     return <div key={layer.id} {...handlers} style={{ ...style, width: `${layer.size}px`, height: `${layer.size}px`, display: 'flex', flexWrap: 'wrap', alignContent: 'center', justifyContent: 'center', backgroundColor: 'rgba(255,255,255,0.5)' }}><span style={{fontSize: '30px'}} className="font-bold text-red-500 w-full text-center">QR</span><span style={{fontSize: '20px'}} className="text-red-400 w-full text-center">(자동 생성)</span></div>;
                 } else if (layer.type === 'text') {
@@ -1637,7 +1740,9 @@
                         try {
                             const canvas = await html2canvas(element, { scale: 2, useCORS: true, backgroundColor: null });
                             const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
-                            folder.file(`${u.name}_${u.uid}.png`, blob);
+                            // ✅ 사용된 양식 이름을 파일명에 포함 (예: 1612001_홍길동_대한항공양식.png)
+                            const matchedConfig = getConfigForUser(u, badgeConfigs);
+                            folder.file(`${u.uid}_${u.name}_${matchedConfig.name}.png`, blob);
                         } catch (err) {
                             console.error("Error capturing badge:", u.name, err);
                         }
@@ -1655,10 +1760,56 @@
 
             return (
                 <div className="space-y-6 animate-slide-up no-print">
-                    <div className="bg-white p-6 rounded-3xl shadow-card border border-slate-200">
+                    
+                    {/* ✅ 명찰 템플릿 다중 선택 탭 */}
+                    <div className="flex gap-2 overflow-x-auto border-b border-slate-200 px-4">
+                        {badgeConfigs.map((c, i) => (
+                            <button key={c.id} onClick={() => setActiveIdx(i)} className={`px-5 py-3 rounded-t-2xl font-bold transition-colors flex items-center gap-2 ${activeIdx === i ? 'bg-white text-incar border-t-2 border-l border-r border-slate-200 border-t-incar' : 'bg-slate-100 text-slate-400 hover:bg-slate-200 border border-transparent'}`}>
+                                {c.name}
+                                {badgeConfigs.length > 1 && activeIdx === i && (
+                                    <span onClick={(e) => deleteTemplate(i, e)} className="w-5 h-5 rounded-full bg-rose-100 text-rose-500 flex items-center justify-center hover:bg-rose-500 hover:text-white"><Icon name="x" size={12}/></span>
+                                )}
+                            </button>
+                        ))}
+                        <button onClick={addTemplate} className="px-5 py-3 rounded-t-2xl font-bold bg-indigo-50 text-indigo-500 hover:bg-indigo-100 border border-transparent flex items-center gap-1"><Icon name="plus" size={16}/> 양식 추가</button>
+                    </div>
+
+                    <div className="bg-white p-6 rounded-b-3xl rounded-tr-3xl shadow-card border border-slate-200 -mt-6">
+                        
+                        {/* ✅ 현재 활성화된 양식 조건 설정 패널 */}
+                        <div className="mb-6 p-5 bg-slate-50 rounded-2xl border border-slate-200 flex flex-wrap gap-6 items-end">
+                            <div className="flex-1 min-w-[200px]">
+                                <label className="block text-xs font-bold text-slate-500 mb-1">양식 이름</label>
+                                <input type="text" value={activeConfig.name} onChange={e => updateActiveConfig('name', e.target.value)} className="w-full p-3 border rounded-xl font-bold text-sm bg-white" />
+                            </div>
+                            <div className="w-48">
+                                <label className="block text-xs font-bold text-slate-500 mb-1">적용 조건 (대상 필드)</label>
+                                <select value={activeConfig.conditionKey || 'ALL'} onChange={e => { updateActiveConfig('conditionKey', e.target.value); updateActiveConfig('conditionVal', 'ALL'); }} className="w-full p-3 border rounded-xl font-bold text-sm bg-white">
+                                    <option value="ALL">조건 없음 (모든 참가자)</option>
+                                    <option value="airline">항공 (Airline)</option>
+                                    <option value="bus">버스 (Bus)</option>
+                                    <option value="dinnerTable">만찬테이블번호</option>
+                                    <option value="org">소속 (Org)</option>
+                                    <option value="선택 관광">선택 관광</option>
+                                </select>
+                            </div>
+                            {activeConfig.conditionKey && activeConfig.conditionKey !== 'ALL' && (
+                                <div className="w-48 animate-fade-in">
+                                    <label className="block text-xs font-bold text-slate-500 mb-1">일치 값 (필수 조건)</label>
+                                    <select value={activeConfig.conditionVal} onChange={e => updateActiveConfig('conditionVal', e.target.value)} className="w-full p-3 border rounded-xl font-bold text-sm bg-white">
+                                        <option value="ALL">전체</option>
+                                        {getUniqueValues(activeConfig.conditionKey).map(val => <option key={val} value={val}>{val}</option>)}
+                                    </select>
+                                </div>
+                            )}
+                        </div>
+
                         <div className="flex justify-between items-center mb-4">
-                            <h3 className="font-bold text-lg text-slate-800 flex items-center gap-2"><Icon name="edit" className="text-incar"/> 명찰 디자인 에디터</h3>
-                            <div className="flex gap-2 flex-wrap justify-end max-w-[70%]">
+                            <div className="flex items-center gap-4">
+                                <h3 className="font-bold text-lg text-slate-800 flex items-center gap-2"><Icon name="edit" className="text-incar"/> 에디터 요소 추가</h3>
+                                <span className="text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-1 rounded">자동 맞춤(Auto-Fit)</span>
+                            </div>
+                            <div className="flex gap-2 flex-wrap justify-end max-w-[60%]">
                                 <button onClick={()=>addLayer('text', 'name')} className="px-3 py-1.5 bg-slate-100 text-xs font-bold rounded-lg hover:bg-slate-200">+ 이름</button>
                                 <button onClick={()=>addLayer('text', 'org')} className="px-3 py-1.5 bg-slate-100 text-xs font-bold rounded-lg hover:bg-slate-200">+ 소속</button>
                                 <button onClick={()=>addLayer('text', 'role')} className="px-3 py-1.5 bg-slate-100 text-xs font-bold rounded-lg hover:bg-slate-200">+ 직책</button>
@@ -1673,12 +1824,12 @@
                         </div>
                         
                         <div className="flex flex-col lg:flex-row gap-8 items-start">
-                            {/* ✅ 반응형 캔버스 (크기가 얼마든 화면에 맞게 축소되어 보임) */}
-                            <div ref={containerRef} className="flex-none bg-slate-50 rounded-2xl border-2 border-dashed border-slate-200 p-4 w-full lg:w-3/5 flex justify-center items-center overflow-hidden" onClick={()=>setSelectedId(null)}>
-                                <div style={{ width: `${badgeConfig.imgWidth * editorScale}px`, height: `${badgeConfig.imgHeight * editorScale}px`, position: 'relative' }}>
-                                    <div ref={editorRef} style={{ width: `${badgeConfig.imgWidth}px`, height: `${badgeConfig.imgHeight}px`, transform: `scale(${editorScale})`, transformOrigin: 'top left', position: 'absolute', top: 0, left: 0, backgroundColor: 'white', overflow: 'hidden', boxShadow: '0 25px 50px -12px rgba(0,0,0,0.5)' }}>
-                                        {badgeConfig.bgImage && <img src={badgeConfig.bgImage} className="absolute inset-0 w-full h-full object-cover pointer-events-none" />}
-                                        {badgeConfig.layers && badgeConfig.layers.map((layer, idx) => renderEditorLayer(layer, idx))}
+                            {/* ✅ 반응형 캔버스 박스 (내부는 무조건 100% 원본 해상도 유지, 컨테이너에서 가로에 맞게 자동 축소) */}
+                            <div ref={containerRef} className="flex-none bg-slate-200 border-4 border-slate-300 rounded-2xl w-full lg:w-[65%] flex justify-center items-center relative shadow-inner overflow-hidden" style={{ minHeight: '400px', padding: '20px' }} onClick={()=>setSelectedId(null)}>
+                                <div style={{ width: `${activeConfig.imgWidth * editorScale}px`, height: `${activeConfig.imgHeight * editorScale}px`, position: 'relative', transition: 'width 0.2s, height 0.2s' }}>
+                                    <div ref={editorRef} style={{ width: `${activeConfig.imgWidth}px`, height: `${activeConfig.imgHeight}px`, transform: `scale(${editorScale})`, transformOrigin: 'top left', position: 'absolute', top: 0, left: 0, backgroundColor: 'white', overflow: 'hidden', boxShadow: '0 10px 30px rgba(0,0,0,0.15)', transition: 'transform 0.2s' }}>
+                                        {activeConfig.bgImage && <img src={activeConfig.bgImage} className="absolute inset-0 w-full h-full object-cover pointer-events-none" />}
+                                        {activeConfig.layers && activeConfig.layers.map((layer, idx) => renderEditorLayer(layer, idx))}
                                     </div>
                                 </div>
                             </div>
@@ -1772,7 +1923,7 @@
                                 <div className="mt-4 pt-4 border-t">
                                     <label className="block text-xs font-bold text-slate-400 mb-2">레이어 목록 (위쪽이 앞면)</label>
                                     <div className="max-h-40 overflow-y-auto border rounded-lg text-xs">
-                                        {badgeConfig.layers && [...badgeConfig.layers].reverse().map((l, idx) => (
+                                        {activeConfig.layers && [...activeConfig.layers].reverse().map((l, idx) => (
                                             <div key={l.id} onClick={()=>setSelectedId(l.id)} className={`p-2 border-b cursor-pointer flex justify-between items-center layer-item ${l.id===selectedId?'active':''}`}>
                                                 <span>{l.type === 'text' ? (l.content || 'Text') : l.type.toUpperCase()}</span>
                                                 <span className="text-[9px] text-slate-400">{l.id}</span>
@@ -1791,11 +1942,17 @@
                             <div className="space-y-4 mt-4">
                                 <div className="bg-white/10 rounded-2xl border border-white/20 p-4 flex justify-between items-center">
                                     <div className="flex items-center gap-3"><Icon name="users" className="text-blue-200"/><div><div className="font-bold text-sm">1. 참가자 명단 서버 업로드 (Users.csv)</div></div></div>
-                                    <label className="flex items-center justify-center px-4 py-2 bg-white text-incar font-bold rounded-lg cursor-pointer hover:bg-slate-100 text-xs"><input type="file" accept=".csv" onChange={handleUserUpload} className="hidden" />업로드</label>
+                                    <div className="flex gap-2">
+                                        <button onClick={downloadUserTemplate} className="px-4 py-2 bg-indigo-500 text-white font-bold rounded-lg hover:bg-indigo-400 text-xs transition-colors shadow-sm">기본양식 다운</button>
+                                        <label className="flex items-center justify-center px-4 py-2 bg-white text-incar font-bold rounded-lg cursor-pointer hover:bg-slate-100 text-xs shadow-sm"><input type="file" accept=".csv" onChange={handleUserUpload} className="hidden" />업로드</label>
+                                    </div>
                                 </div>
                                 <div className="bg-white/10 rounded-2xl border border-white/20 p-4 flex justify-between items-center">
                                     <div className="flex items-center gap-3"><Icon name="dashboard" className="text-blue-200"/><div><div className="font-bold text-sm">2. 일정 정보 서버 업로드 (Schedules.csv)</div></div></div>
-                                    <label className="flex items-center justify-center px-4 py-2 bg-white text-incar font-bold rounded-lg cursor-pointer hover:bg-slate-100 text-xs"><input type="file" accept=".csv" onChange={handleScheduleUpload} className="hidden" />업로드</label>
+                                    <div className="flex gap-2">
+                                        <button onClick={downloadScheduleTemplate} className="px-4 py-2 bg-indigo-500 text-white font-bold rounded-lg hover:bg-indigo-400 text-xs transition-colors shadow-sm">기본양식 다운</button>
+                                        <label className="flex items-center justify-center px-4 py-2 bg-white text-incar font-bold rounded-lg cursor-pointer hover:bg-slate-100 text-xs shadow-sm"><input type="file" accept=".csv" onChange={handleScheduleUpload} className="hidden" />업로드</label>
+                                    </div>
                                 </div>
                                 
                                 {/* 앱 전체 배경화면 추가 */}
@@ -1807,8 +1964,8 @@
                                         </div>
                                     </div>
                                     <div className="flex gap-2">
-                                        {appBgImage && <button onClick={() => setAppBgImage(null)} className="px-3 py-2 bg-rose-500/80 text-white font-bold rounded-lg hover:bg-rose-500 text-xs transition-colors">초기화</button>}
-                                        <label className="flex items-center justify-center px-4 py-2 bg-white text-incar font-bold rounded-lg cursor-pointer hover:bg-slate-100 text-xs">
+                                        {appBgImage && <button onClick={() => setAppBgImage(null)} className="px-3 py-2 bg-rose-500/80 text-white font-bold rounded-lg hover:bg-rose-500 text-xs transition-colors shadow-sm">초기화</button>}
+                                        <label className="flex items-center justify-center px-4 py-2 bg-white text-incar font-bold rounded-lg cursor-pointer hover:bg-slate-100 text-xs shadow-sm">
                                             <input type="file" accept="image/*" onChange={handleAppBgUpload} className="hidden" />업로드
                                         </label>
                                     </div>
@@ -1817,6 +1974,7 @@
                         </div>
                     </div>
                     
+                    {/* ✅ 대표님이 원하셨던 [개별 QR 코드 일괄 관리] 뷰 추가 */}
                     <div className="bg-slate-100 border border-slate-200 p-6 rounded-3xl shadow-sm mt-6">
                         <div className="flex justify-between items-center mb-4">
                             <div>
@@ -1838,7 +1996,7 @@
                     </div>
 
                     <div className="bg-slate-800 text-white p-6 rounded-3xl shadow-card flex justify-between items-center relative overflow-hidden group mt-6">
-                        <div className="relative z-10"><h4 className="font-bold text-lg mb-1 flex items-center gap-2"><Icon name="download" /> 명찰 이미지 다운로드</h4><p className="text-xs text-slate-400">에디터로 디자인한 명찰을 ZIP 파일로 다운로드합니다. (QR에 고객용 URL이 자동 삽입됩니다)</p></div>
+                        <div className="relative z-10"><h4 className="font-bold text-lg mb-1 flex items-center gap-2"><Icon name="download" /> 명찰 이미지 일괄 다운로드</h4><p className="text-xs text-slate-400">조건에 맞춰 각 참가자에게 해당하는 명찰 디자인이 적용되어 ZIP 파일로 다운로드됩니다.</p></div>
                         <button onClick={generateZip} className="relative z-10 px-6 py-3 bg-white text-slate-900 rounded-xl font-bold text-sm hover:bg-slate-100 transition-colors shadow-lg">{isZipping ? `생성 중... ${zipProgress}%` : '명찰 이미지 일괄 다운로드 (ZIP)'}</button>
                     </div>
 
@@ -1852,29 +2010,33 @@
 
                     {isZipping && (
                         <div style={{ position: 'fixed', top: '-10000px', left: 0, zIndex: -1000, visibility: 'visible', pointerEvents: 'none' }}>
-                            {users.map(u => (
-                                <div key={u.uid} id={`badge-export-${u.uid}`} style={{ width: `${badgeConfig.imgWidth}px`, height: `${badgeConfig.imgHeight}px`, position: 'relative', overflow: 'hidden', backgroundColor: 'white' }}>
-                                    {badgeConfig.bgImage && <img src={badgeConfig.bgImage} className="absolute inset-0 w-full h-full object-cover" />}
-                                    {badgeConfig.layers && badgeConfig.layers.map((layer, idx) => {
-                                        const commonStyle = { position: 'absolute', top: `${layer.y}%`, left: `${layer.x}%`, transform: 'translate(-50%, -50%)', zIndex: idx, width: layer.width === 'auto' ? 'auto' : `${layer.width}px`, textAlign: layer.align || 'center' };
-                                        if (layer.type === 'qr') return <div key={layer.id} style={{ ...commonStyle, width: `${layer.size}px`, height: `${layer.size}px`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}><QRCodeCanvas text={BASE_URL + u.uid} size={layer.size} transparent={true} /></div>;
-                                        else if (layer.type === 'text') {
-                                            let content = layer.content;
-                                            if (layer.variable) { 
-                                                if (layer.variable === 'name') content = u.name; 
-                                                else if (layer.variable === 'org') content = u.org; 
-                                                else if (layer.variable === 'role') content = u.options && (u.options['직책'] || u.options['Role'] || '-'); 
-                                                else if (layer.variable === 'id') content = u.uid; 
-                                                else if (layer.variable === 'bus') content = u.bus ? (String(u.bus).includes('호차') ? u.bus : `${u.bus}호차`) : '';
-                                                else if (layer.variable === 'dinner') content = u.dinnerTable ? (String(u.dinnerTable).includes('번') ? u.dinnerTable : `${u.dinnerTable}번`) : '';
-                                                else if (layer.variable === 'airline') content = u.airline || '';
-                                            }
-                                            return <div key={layer.id} className={layer.fontFamily} style={{ ...commonStyle, fontSize: `${layer.fontSize}px`, color: layer.color, fontWeight: layer.fontWeight || 'bold', backgroundColor: layer.bgColor || 'transparent', padding: `${layer.padding || 0}px`, borderRadius: `${layer.borderRadius || 0}px`, textShadow: layer.shadow ? '2px 2px 4px rgba(0,0,0,0.5)' : 'none', whiteSpace: 'nowrap', fontFamily: layer.fontFamily }}>{content}</div>;
-                                        } 
-                                        return null;
-                                    })}
-                                </div>
-                            ))}
+                            {users.map(u => {
+                                const c = getConfigForUser(u, badgeConfigs);
+                                if (!c) return null;
+                                return (
+                                    <div key={u.uid} id={`badge-export-${u.uid}`} style={{ width: `${c.imgWidth}px`, height: `${c.imgHeight}px`, position: 'relative', overflow: 'hidden', backgroundColor: 'white' }}>
+                                        {c.bgImage && <img src={c.bgImage} className="absolute inset-0 w-full h-full object-cover" />}
+                                        {c.layers && c.layers.map((layer, idx) => {
+                                            const commonStyle = { position: 'absolute', top: `${layer.y}%`, left: `${layer.x}%`, transform: 'translate(-50%, -50%)', zIndex: idx, width: layer.width === 'auto' ? 'auto' : `${layer.width}px`, textAlign: layer.align || 'center' };
+                                            if (layer.type === 'qr') return <div key={layer.id} style={{ ...commonStyle, width: `${layer.size}px`, height: `${layer.size}px`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}><QRCodeCanvas text={BASE_URL + u.uid} size={layer.size} transparent={true} /></div>;
+                                            else if (layer.type === 'text') {
+                                                let content = layer.content;
+                                                if (layer.variable) { 
+                                                    if (layer.variable === 'name') content = u.name; 
+                                                    else if (layer.variable === 'org') content = u.org; 
+                                                    else if (layer.variable === 'role') content = u.options && (u.options['직책'] || u.options['Role'] || '-'); 
+                                                    else if (layer.variable === 'id') content = u.uid; 
+                                                    else if (layer.variable === 'bus') content = u.bus ? (String(u.bus).includes('호차') ? u.bus : `${u.bus}호차`) : '';
+                                                    else if (layer.variable === 'dinner') content = u.dinnerTable ? (String(u.dinnerTable).includes('번') ? u.dinnerTable : `${u.dinnerTable}번`) : '';
+                                                    else if (layer.variable === 'airline') content = u.airline || '';
+                                                }
+                                                return <div key={layer.id} className={layer.fontFamily} style={{ ...commonStyle, fontSize: `${layer.fontSize}px`, color: layer.color, fontWeight: layer.fontWeight || 'bold', backgroundColor: layer.bgColor || 'transparent', padding: `${layer.padding || 0}px`, borderRadius: `${layer.borderRadius || 0}px`, textShadow: layer.shadow ? '2px 2px 4px rgba(0,0,0,0.5)' : 'none', whiteSpace: 'nowrap', fontFamily: layer.fontFamily }}>{content}</div>;
+                                            } 
+                                            return null;
+                                        })}
+                                    </div>
+                                );
+                            })}
                         </div>
                     )}
                 </div>
@@ -1949,18 +2111,30 @@
 
             const [isPrintMode, setIsPrintMode] = useState(false);
             
-            // ✅ 기본값을 2382 x 1527 (가로형)으로 변경
-            const [badgeConfig, setBadgeConfig] = useState({
-                bgImage: null, imgWidth: 2382, imgHeight: 1527,
-                layers: [
-                    { id: 'qr', type: 'qr', x: 86, y: 20, size: 350 },
-                    { id: 'org', type: 'text', content: '소속 (Org)', variable: 'org', x: 50, y: 30, fontSize: 60, fontFamily: "'Noto Sans KR', sans-serif", color: '#475569', align: 'center', width: 'auto' },
-                    { id: 'name', type: 'text', content: '성 명 (Name)', variable: 'name', x: 50, y: 45, fontSize: 130, fontFamily: "'Noto Sans KR', sans-serif", color: '#000000', align: 'center', width: 'auto' },
-                    { id: 'role', type: 'text', content: '직책 (Role)', variable: 'role', x: 50, y: 60, fontSize: 50, fontFamily: "'Noto Sans KR', sans-serif", color: '#000000', align: 'center', width: 'auto' },
-                    { id: 'bus', type: 'text', content: '1호차', variable: 'bus', x: 30, y: 80, fontSize: 70, fontFamily: "'Noto Sans KR', sans-serif", color: '#ef4444', align: 'center', width: 'auto' },
-                    { id: 'dinner', type: 'text', content: '1번', variable: 'dinner', x: 70, y: 80, fontSize: 70, fontFamily: "'Noto Sans KR', sans-serif", color: '#3b82f6', align: 'center', width: 'auto' },
-                    { id: 'airline', type: 'text', content: '대한항공', variable: 'airline', x: 50, y: 90, fontSize: 60, fontFamily: "'Noto Sans KR', sans-serif", color: '#10b981', align: 'center', width: 'auto' }
-                ]
+            // ✅ 조건별 다중 양식을 지원하기 위해 배열(Array) 형태로 변경
+            const [badgeConfigs, setBadgeConfigs] = useState(() => {
+                const saved = localStorage.getItem('incar_pro_badge_configs_v4');
+                if (saved) return JSON.parse(saved);
+                
+                // 기존 버전 마이그레이션 또는 기본 템플릿 제공
+                const oldSaved = JSON.parse(localStorage.getItem('incar_pro_badge_config_v2_9'));
+                if (oldSaved && oldSaved.layers) {
+                    return [{ id: 'default', name: '기본 양식', conditionKey: 'ALL', conditionVal: 'ALL', bgImage: oldSaved.bgImage, imgWidth: oldSaved.imgWidth || 2382, imgHeight: oldSaved.imgHeight || 1527, layers: oldSaved.layers }];
+                }
+                
+                return [{
+                    id: 'default', name: '기본 양식', conditionKey: 'ALL', conditionVal: 'ALL',
+                    bgImage: null, imgWidth: 2382, imgHeight: 1527,
+                    layers: [
+                        { id: 'qr', type: 'qr', x: 86, y: 20, size: 350 },
+                        { id: 'org', type: 'text', content: '소속 (Org)', variable: 'org', x: 50, y: 30, fontSize: 60, fontFamily: "'Noto Sans KR', sans-serif", color: '#475569', align: 'center', width: 'auto' },
+                        { id: 'name', type: 'text', content: '성 명 (Name)', variable: 'name', x: 50, y: 45, fontSize: 130, fontFamily: "'Noto Sans KR', sans-serif", color: '#000000', align: 'center', width: 'auto' },
+                        { id: 'role', type: 'text', content: '직책 (Role)', variable: 'role', x: 50, y: 60, fontSize: 50, fontFamily: "'Noto Sans KR', sans-serif", color: '#000000', align: 'center', width: 'auto' },
+                        { id: 'bus', type: 'text', content: '1호차', variable: 'bus', x: 30, y: 80, fontSize: 70, fontFamily: "'Noto Sans KR', sans-serif", color: '#ef4444', align: 'center', width: 'auto' },
+                        { id: 'dinner', type: 'text', content: '1번', variable: 'dinner', x: 70, y: 80, fontSize: 70, fontFamily: "'Noto Sans KR', sans-serif", color: '#3b82f6', align: 'center', width: 'auto' },
+                        { id: 'airline', type: 'text', content: '대한항공', variable: 'airline', x: 50, y: 90, fontSize: 60, fontFamily: "'Noto Sans KR', sans-serif", color: '#10b981', align: 'center', width: 'auto' }
+                    ]
+                }];
             });
 
             const [isLoading, setIsLoading] = useState(true);
@@ -2021,15 +2195,12 @@
 
                 initFirebase();
 
-                const loadedBadgeConfig = JSON.parse(localStorage.getItem('incar_pro_badge_config_v2_9') || 'null');
-                if(loadedBadgeConfig && loadedBadgeConfig.layers) setBadgeConfig(loadedBadgeConfig);
-
                 return () => {
                     if (unsubU) unsubU(); if (unsubS) unsubS(); if (unsubL) unsubL(); if (unsubC) unsubC();
                 };
             }, []);
 
-            useEffect(() => { localStorage.setItem('incar_pro_badge_config_v2_9', JSON.stringify(badgeConfig)); }, [badgeConfig]);
+            useEffect(() => { localStorage.setItem('incar_pro_badge_configs_v4', JSON.stringify(badgeConfigs)); }, [badgeConfigs]);
 
             const cleanupOldLogs = async (uid, targetKey, oldVal) => {
                 const relatedSessions = schedules.filter(s => s.targetKey === targetKey);
@@ -2165,7 +2336,14 @@
                 if (!session) return setScanResult({ status: 'error', msg: '세션 미선택', subMsg: '관리자에게 문의하세요' }); 
 
                 if (strictMode && session.type === 'BOARDING') {
-                    if (user.bus && user.bus.trim() !== targetBus.trim()) {
+                    const userBusNum = String(user.bus || '').replace(/[^0-9]/g, '');
+                    const targetBusNum = String(targetBus || '').replace(/[^0-9]/g, '');
+                    
+                    if (userBusNum && targetBusNum) {
+                        if (userBusNum !== targetBusNum) {
+                             return setScanResult({ status: 'error', msg: '탑승 불가 (차량 불일치)', subMsg: `배정: ${user.bus} / 현재: ${targetBus}`, user });
+                        }
+                    } else if (user.bus && String(user.bus).trim() !== String(targetBus).trim()) {
                          return setScanResult({ status: 'error', msg: '탑승 불가 (차량 불일치)', subMsg: `배정: ${user.bus} / 현재: ${targetBus}`, user });
                     }
                 }
@@ -2251,7 +2429,6 @@
                             const org = row['소속'] || row['부서'] || row['Org'] || '-'; 
                             const bus = row['버스'] || row['탑승버스'] || row['Bus'] || '미정'; 
                             
-                            // ✅ 새로 추가된 [항공, 만찬테이블] 열 파싱
                             const airline = row['항공'] || row['항공기'] || row['Airline'] || ''; 
                             const dinnerTable = row['만찬테이블번호'] || row['만찬테이블'] || row['테이블'] || ''; 
 
@@ -2376,13 +2553,13 @@
                                 {activeTab === 'boarding' && <ScanView mode="BOARDING" schedules={schedules} targetSessionId={targetSessionId} setTargetSessionId={setTargetSessionId} targetBus={targetBus} setTargetBus={setTargetBus} manualBus={manualBus} setManualBus={setManualBus} isScanning={isScanning} setIsScanning={setIsScanning} processScan={processScan} users={users} isMobile={isMobile} busList={busList} setBusList={setBusList} />}
                                 {activeTab === 'payment' && <ScanView mode="PAYMENT" schedules={schedules} targetSessionId={targetSessionId} setTargetSessionId={setTargetSessionId} targetBus={targetBus} setTargetBus={setTargetBus} manualBus={manualBus} setManualBus={setManualBus} isScanning={isScanning} setIsScanning={setIsScanning} processScan={processScan} users={users} isMobile={isMobile} busList={busList} setBusList={setBusList} />}
                                 {activeTab === 'change' && <ChangeView searchQuery={searchQuery} setSearchQuery={setSearchQuery} selectedUser={selectedUser} setSelectedUser={setSelectedUser} editForm={editForm} setEditForm={setEditForm} handleUserUpdate={handleUserUpdate} users={users} schedules={schedules} changeLogs={changeLogs} />}
-                                {activeTab === 'manage' && <ManageView users={users} handleUserUpload={handleUserUpload} handleScheduleUpload={handleScheduleUpload} badgeConfig={badgeConfig} setBadgeConfig={setBadgeConfig} db={db} schedules={schedules} logs={logs} setIsPrintMode={setIsPrintMode} setUsers={setUsers} setSchedules={setSchedules} setLogs={setLogs} setChangeLogs={setChangeLogs} changeLogs={changeLogs} appBgImage={appBgImage} setAppBgImage={setAppBgImage} handleAppBgUpload={handleAppBgUpload} />} 
+                                {activeTab === 'manage' && <ManageView users={users} handleUserUpload={handleUserUpload} handleScheduleUpload={handleScheduleUpload} badgeConfigs={badgeConfigs} setBadgeConfigs={setBadgeConfigs} db={db} schedules={schedules} logs={logs} setIsPrintMode={setIsPrintMode} setUsers={setUsers} setSchedules={setSchedules} setLogs={setLogs} setChangeLogs={setChangeLogs} changeLogs={changeLogs} appBgImage={appBgImage} setAppBgImage={setAppBgImage} handleAppBgUpload={handleAppBgUpload} />} 
                             </div>
                         </div>
 
                         { isMobile && <MobileTab activeTab={activeTab} setActiveTab={setActiveTab} /> }
                         
-                        {isPrintMode && <BadgePrintView users={users} config={badgeConfig} onClose={() => setIsPrintMode(false)} />}
+                        {isPrintMode && <BadgePrintView users={users} config={badgeConfigs[0]} onClose={() => setIsPrintMode(false)} />}
                         {selectedSession && <SessionDetailModal session={selectedSession} users={users} logs={logs} onClose={() => setSelectedSession(null)} onManualComplete={handleManualComplete} />}
                         {refundRequest && (<div className="fixed inset-0 z-[300] flex items-center justify-center p-6 bg-slate-900/80 backdrop-blur-sm animate-fade-in no-print"><div className="bg-white w-full max-w-sm rounded-3xl overflow-hidden shadow-2xl animate-slide-up"><div className="bg-rose-50 p-6 text-center border-b border-rose-100"><div className="w-16 h-16 bg-white text-rose-500 rounded-full flex items-center justify-center mx-auto mb-3 shadow-sm text-2xl font-bold">$</div><h3 className="text-xl font-black text-rose-600 mb-1">지급금 반환 필요</h3><p className="text-slate-600 font-bold text-sm">{refundRequest.user.name}님은<br/>이미 <span className="text-rose-600 underline">{CURRENCY}{refundRequest.amount}</span>을 지급받았습니다.</p></div><div className="p-6 space-y-4"><div className="text-center text-xs text-slate-400 mb-2">기존 일정: {refundRequest.oldVal} <br/>▼ <br/>변경 일정: {refundRequest.session.title}</div><button onClick={() => resolveRefundRequest(true)} className="w-full py-4 bg-emerald-500 text-white font-bold rounded-xl shadow-lg active:scale-95 transition-transform flex flex-col items-center justify-center leading-none gap-1"><span>반환 받았습니다</span><span className="text-[10px] opacity-80 font-normal">(패널티 없음)</span></button><button onClick={() => resolveRefundRequest(false)} className="w-full py-4 bg-slate-800 text-white font-bold rounded-xl shadow-lg active:scale-95 transition-transform flex flex-col items-center justify-center leading-none gap-1"><span>반환받지 못했습니다</span><span className="text-[10px] opacity-80 font-normal">(미반환금 패널티 처리)</span></button><button onClick={() => setRefundRequest(null)} className="w-full py-3 text-slate-400 font-bold text-sm hover:bg-slate-50 rounded-xl">취소</button></div></div></div>)}
                         {forfeitRequest && (<div className="fixed inset-0 z-[300] flex items-center justify-center p-6 bg-slate-900/80 backdrop-blur-sm animate-fade-in no-print"><div className="bg-white w-full max-w-sm rounded-3xl overflow-hidden shadow-2xl animate-slide-up"><div className="bg-indigo-50 p-6 text-center border-b border-indigo-100"><div className="w-16 h-16 bg-white text-indigo-500 rounded-full flex items-center justify-center mx-auto mb-3 shadow-sm text-2xl font-bold">?</div><h3 className="text-xl font-black text-indigo-900 mb-1">일정 변경 확인 (Case 2)</h3><p className="text-slate-600 font-bold text-sm">예약된 관광 코스를 취소하고<br/>현금 지급 일정으로 변경합니다.</p></div><div className="p-6 space-y-4"><div className="text-center text-xs text-slate-400 mb-2">기존: {forfeitRequest.oldVal} (예약취소)<br/>▼ <br/>변경: {forfeitRequest.session.title} (지급 {CURRENCY}{forfeitRequest.price})</div><button onClick={() => resolveForfeitRequest(false)} className="w-full py-4 bg-rose-500 text-white font-bold rounded-xl shadow-lg active:scale-95 transition-transform flex flex-col items-center justify-center leading-none gap-1"><span>부지급 (위약금 적용)</span><span className="text-[10px] opacity-80 font-normal">(예약 비용 패널티로 상계 처리)</span></button><button onClick={() => resolveForfeitRequest(true)} className="w-full py-4 bg-slate-800 text-white font-bold rounded-xl shadow-lg active:scale-95 transition-transform flex flex-col items-center justify-center leading-none gap-1"><span>정상 지급</span><span className="text-[10px] opacity-80 font-normal">({CURRENCY}{forfeitRequest.price} 지급 승인)</span></button><button onClick={() => setForfeitRequest(null)} className="w-full py-3 text-slate-400 font-bold text-sm hover:bg-slate-50 rounded-xl">취소</button></div></div></div>)}
