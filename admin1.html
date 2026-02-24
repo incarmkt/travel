@@ -243,7 +243,6 @@
                     }
                 }
             }
-            // 맞는 조건이 없으면 ALL 조건인 양식을 반환, 그것도 없으면 무조건 첫번째 양식
             const fallback = configs.find(c => c.conditionKey === 'ALL' || !c.conditionKey);
             return fallback || configs[0];
         };
@@ -376,13 +375,11 @@
             
             useEffect(() => {
                 if(isSuccess) {
-                    // ✅ 연속 스캔을 위해 팝업을 2초 뒤 자동 닫음
                     const timer = setTimeout(onClose, 2000);
                     return () => clearTimeout(timer);
                 }
             }, [isSuccess, result, onClose]);
 
-            // ✅ 연속 스캔 성공 시, 화면을 가리지 않는 하단 작은 Toast 팝업
             if (isSuccess) {
                 return (
                     <div className="fixed bottom-10 left-1/2 -translate-x-1/2 z-[250] w-[90%] max-w-sm animate-slide-up no-print pointer-events-none">
@@ -402,7 +399,6 @@
                 );
             }
 
-            // ✅ 에러 또는 중복 스캔 시에는 주의를 주기 위해 전체 화면 경고
             return (
                 <div className="fixed inset-0 z-[300] flex items-center justify-center p-6 bg-slate-900/60 backdrop-blur-sm animate-slide-up no-print">
                     <div className="bg-white rounded-3xl w-full max-w-sm overflow-hidden shadow-2xl relative z-[301]">
@@ -532,68 +528,6 @@
             );
         };
 
-        const BadgePrintView = ({ users, onClose, badgeConfigs, baseUrl }) => {
-            return (
-                <div className="fixed inset-0 bg-white z-[100] overflow-auto animate-fade-in print-only-container">
-                    <div className="no-print fixed top-0 left-0 w-full bg-slate-900 text-white p-4 flex justify-between items-center shadow-xl z-50">
-                        <div className="font-bold text-lg flex items-center gap-4">
-                            <span className="bg-incar px-2 py-1 rounded text-xs">PRINT MODE</span> 
-                            <span>명찰 일괄 출력 (총 {users.length}명)</span>
-                        </div>
-                        <div className="flex gap-3">
-                            <button onClick={() => window.print()} className="bg-emerald-500 hover:bg-emerald-600 px-6 py-2 rounded-lg font-bold flex items-center gap-2">
-                                <Icon name="print" /> 인쇄 / PDF저장
-                            </button>
-                            <button onClick={onClose} className="bg-slate-700 hover:bg-slate-600 px-6 py-2 rounded-lg font-bold">닫기</button>
-                        </div>
-                    </div>
-                    
-                    <div className="print-reset-spacing p-8 pt-24 w-full min-h-screen bg-slate-100 flex flex-col items-center gap-8 print:bg-white print:p-0 print:pt-0">
-                        {users.map((u, i) => {
-                            const c = getConfigForUser(u, badgeConfigs);
-                            if (!c) return null;
-                            
-                            const baseW = c.imgWidth || 2382;
-                            const baseH = c.imgHeight || 1527;
-                            const printW = 794; // A4 가로 너비 기준 축소율 계산
-                            const ratio = baseW > printW ? printW / baseW : 1;
-
-                            const renderLayer = (layer, index) => {
-                                const commonStyle = { position: 'absolute', top: `${layer.y}%`, left: `${layer.x}%`, transform: 'translate(-50%, -50%)', zIndex: index, width: layer.width === 'auto' ? 'auto' : `${layer.width}px`, textAlign: layer.align || 'center', whiteSpace: 'nowrap' };
-                                if (layer.type === 'qr') {
-                                    return <div key={layer.id} style={{ ...commonStyle, width: `${layer.size}px`, height: `${layer.size}px`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}><QRCodeCanvas text={baseUrl + u.uid} size={layer.size} transparent={true} /></div>;
-                                } else if (layer.type === 'text') {
-                                    let content = layer.content;
-                                    if (layer.variable) { 
-                                        if (layer.variable === 'name') content = u.name; 
-                                        else if (layer.variable === 'org') content = u.org; 
-                                        else if (layer.variable === 'role') content = u.options && (u.options['직책'] || u.options['Role'] || '-'); 
-                                        else if (layer.variable === 'id') content = u.uid; 
-                                        else if (layer.variable === 'bus') content = u.bus ? (String(u.bus).includes('호차') ? u.bus : `${u.bus}호차`) : '';
-                                        else if (layer.variable === 'dinner') content = u.dinnerTable ? (String(u.dinnerTable).includes('번') ? u.dinnerTable : `${u.dinnerTable}번`) : '';
-                                        else if (layer.variable === 'airline') content = u.airline || '';
-                                    }
-                                    return <div key={layer.id} className={layer.fontFamily} style={{ ...commonStyle, fontSize: `${layer.fontSize}px`, color: layer.color, fontWeight: layer.fontWeight || 'bold', backgroundColor: layer.bgColor || 'transparent', padding: `${layer.padding || 0}px`, borderRadius: `${layer.borderRadius || 0}px`, textShadow: layer.shadow ? '2px 2px 4px rgba(0,0,0,0.5)' : 'none', fontFamily: layer.fontFamily }}>{content}</div>;
-                                } else if (layer.type === 'rect' || layer.type === 'circle') {
-                                    return <div key={layer.id} style={{ ...commonStyle, width: `${layer.w}px`, height: `${layer.h}px`, backgroundColor: layer.fill, border: `${layer.borderWidth}px solid ${layer.borderColor}`, borderRadius: layer.type === 'circle' ? '50%' : `${layer.borderRadius}px`, opacity: layer.opacity }}></div>;
-                                }
-                                return null;
-                            };
-
-                            return (
-                                <div key={u.uid} className="page-wrapper relative" style={{ width: `${baseW * ratio}px`, height: `${baseH * ratio}px` }}>
-                                    <div className="badge-card relative overflow-hidden bg-white shadow-lg print:shadow-none" style={{ width: `${baseW}px`, height: `${baseH}px`, transform: `scale(${ratio})`, transformOrigin: 'top left', position: 'absolute', top: 0, left: 0, border: c.bgImage ? 'none' : '2px solid #0f172a' }}>
-                                        {c.bgImage && <img src={c.bgImage} className="absolute inset-0 w-full h-full object-cover z-0" />}
-                                        {c.layers && c.layers.map((layer, idx) => renderLayer(layer, idx))}
-                                    </div>
-                                </div>
-                            );
-                        })}
-                    </div>
-                </div>
-            );
-        };
-
         const DashboardView = ({ users, logs, scheduleStats, groupedStats, changeLogs, onSessionClick }) => (
             <div className="space-y-6 animate-slide-up">
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -708,7 +642,7 @@
         const ScanView = ({ mode, schedules, targetSessionId, setTargetSessionId, targetBus, setTargetBus, manualBus, setManualBus, isScanning, setIsScanning, processScan, users, isMobile, busList, setBusList }) => {
             const scannerRef = useRef(null);
             const isRunningRef = useRef(false);
-            const lastScanRef = useRef({ text: null, time: 0 }); // ✅ 연속 스캔을 위한 중복방지 딜레이 Ref
+            const lastScanRef = useRef({ text: null, time: 0 }); 
             const [isStrictBusMode, setIsStrictBusMode] = useState(false);
             
             const filteredSchedules = useMemo(() => {
@@ -781,7 +715,7 @@
                     scannerRef.current.start({ facingMode: "environment" }, config, (decodedText) => {
                         const now = Date.now();
                         
-                        // ✅ 동일한 QR 코드는 3초 이내 중복 인식 방지 (연속 스캔을 위함)
+                        // ✅ 연속 스캔 중복 방지 (3초 이내 같은 QR 무시)
                         if (lastScanRef.current.text === decodedText && (now - lastScanRef.current.time) < 3000) {
                             return;
                         }
@@ -790,7 +724,7 @@
                         beep();
                         vibrate();
                         
-                        // stopScanner(); // 🔥 삭제됨: 성공해도 카메라를 끄지 않고 유지합니다.
+                        // 카메라는 계속 켜둔 채로 처리 로직 실행
                         processScan(decodedText, isStrictBusMode); 
                     }, () => {}).then(() => {
                         isRunningRef.current = true;
@@ -879,7 +813,7 @@
                                         </div>
                                     ))}
                                     
-                                    {/* 항상 보이는 추가 버튼 (관리 모드가 아닐 때도 추가 가능) */}
+                                    {/* 항상 보이는 추가 버튼 */}
                                     <button onClick={handleAddBus} className="py-3 rounded-xl text-sm font-bold bg-slate-50 border-2 border-dashed border-slate-200 text-slate-400 hover:bg-slate-100 hover:text-slate-600 hover:border-slate-300 transition-all flex items-center justify-center">
                                         <Icon name="plus" size={20} />
                                     </button>
@@ -905,7 +839,7 @@
                             <div className="scanner-container">
                                 <div id="reader"></div>
                                 
-                                {/* 중앙 가이드라인 (황금비율 스타일) */}
+                                {/* 중앙 가이드라인 */}
                                 <div className="absolute inset-0 pointer-events-none flex items-center justify-center">
                                     <div className="relative w-[70%] h-[70%]">
                                         <div className="absolute top-0 left-0 w-8 h-8 border-t-4 border-l-4 border-white rounded-tl-2xl"></div>
@@ -1290,7 +1224,6 @@
             );
         };
 
-        // 개별 QR 카드를 위한 새로운 컴포넌트 추가
         const UserQRCard = ({ user, baseUrl }) => {
             const canvasRef = useRef(null);
             const qrText = baseUrl + user.uid;
@@ -1346,7 +1279,6 @@
                     </div>
                     <div className="font-bold text-slate-800 text-sm">{user.name}</div>
                     <div className="text-[9px] text-slate-500 mb-1">{user.uid}</div>
-                    {/* ✅ 추가: QR에 심어진 실제 주소를 눈으로 확인 가능하게 함 */}
                     <div className="text-[7px] text-blue-500 mb-3 break-all bg-blue-50 p-1.5 rounded w-full">
                         {qrText}
                     </div>
@@ -1360,7 +1292,6 @@
 
         const ManageView = ({ users, handleUserUpload, handleScheduleUpload, badgeConfigs, setBadgeConfigs, db, schedules, logs, setIsPrintMode, setUsers, setSchedules, setLogs, setChangeLogs, changeLogs, appBgImage, setAppBgImage, handleAppBgUpload }) => {
             
-            // ✅ 여러 개의 명찰 양식을 관리하기 위한 상태
             const [activeIdx, setActiveIdx] = useState(0);
             const activeConfig = badgeConfigs[activeIdx] || badgeConfigs[0];
 
@@ -1417,7 +1348,6 @@
                 }
             };
 
-            // ✅ 조건 필드의 고유값(옵션 목록) 추출 함수
             const getUniqueValues = (key) => {
                 const vals = new Set();
                 users.forEach(u => {
@@ -1427,7 +1357,6 @@
                 return Array.from(vals).sort();
             };
 
-            // ✅ 기본양식 다운로드 함수 추가
             const downloadUserTemplate = () => {
                 const csvContent = "\uFEFF사번,성명,소속,버스,항공,만찬테이블번호,선택 관광\n1612001,홍길동,마케팅본부,1호차,대한항공,1번,티엔라이\n1612002,김철수,영업본부,2,아시아나,2,자유일정";
                 const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
@@ -1448,16 +1377,16 @@
             const [zipProgress, setZipProgress] = useState(0);
             const editorRef = useRef(null);
             
-            // ✅ 반응형 에디터 스케일 제어 상태
+            // ✅ 반응형 에디터 스케일 (슬라이더 삭제, Auto-Fit 적용)
             const containerRef = useRef(null);
             const [editorScale, setEditorScale] = useState(0.4);
 
-            // ✅ 자동 스케일링 (Auto-Fit) 추가
             useEffect(() => {
                 const updateScale = () => {
                     if (containerRef.current && activeConfig?.imgWidth) {
-                        const containerWidth = containerRef.current.getBoundingClientRect().width;
-                        const availableWidth = containerWidth - 48; // padding 24px * 2
+                        const containerWidth = containerRef.current.clientWidth;
+                        // 컨테이너 폭에서 내부 패딩(24px * 2) 여유를 뺀 너비를 기준으로 비율 계산
+                        const availableWidth = containerWidth - 48; 
                         const scale = availableWidth / activeConfig.imgWidth;
                         setEditorScale(scale > 0 ? scale : 0.4);
                     }
@@ -1472,7 +1401,6 @@
                 }
                 
                 updateScale();
-
                 return () => observer.disconnect();
             }, [activeConfig?.imgWidth, activeIdx]);
 
@@ -1502,7 +1430,6 @@
                 const clientY = e.touches ? e.touches[0].clientY : e.clientY;
                 const rect = editorRef.current.getBoundingClientRect();
                 
-                // ✅ scale이 적용된 rect.width/height 이므로 완벽하게 비율이 맞음
                 let newX = ((clientX - rect.left) / rect.width) * 100;
                 let newY = ((clientY - rect.top) / rect.height) * 100;
                 
@@ -1806,7 +1733,6 @@
                         try {
                             const canvas = await html2canvas(element, { scale: 2, useCORS: true, backgroundColor: null });
                             const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
-                            // ✅ 사용된 양식 이름을 파일명에 포함 (예: 1612001_홍길동_대한항공양식.png)
                             const matchedConfig = getConfigForUser(u, badgeConfigs);
                             folder.file(`${u.uid}_${u.name}_${matchedConfig.name}.png`, blob);
                         } catch (err) {
@@ -1890,10 +1816,10 @@
                         </div>
                         
                         <div className="flex flex-col lg:flex-row gap-8 items-start">
-                            {/* ✅ 반응형 캔버스 박스 (내부는 무조건 100% 원본 해상도 유지, 컨테이너에서 가로에 맞게 자동 축소) */}
+                            {/* ✅ 반응형 캔버스 박스 (슬라이더 삭제, Auto-Fit) */}
                             <div ref={containerRef} className="flex-none bg-slate-200 border-4 border-slate-300 rounded-2xl w-full lg:w-[65%] flex justify-center items-center relative shadow-inner p-6 overflow-hidden" onClick={()=>setSelectedId(null)}>
-                                <div style={{ width: `${activeConfig.imgWidth * editorScale}px`, height: `${activeConfig.imgHeight * editorScale}px`, position: 'relative' }}>
-                                    <div ref={editorRef} style={{ width: `${activeConfig.imgWidth}px`, height: `${activeConfig.imgHeight}px`, transform: `scale(${editorScale})`, transformOrigin: 'top left', position: 'absolute', top: 0, left: 0, backgroundColor: 'white', overflow: 'hidden', boxShadow: '0 10px 30px rgba(0,0,0,0.15)' }}>
+                                <div style={{ width: `${activeConfig.imgWidth * editorScale}px`, height: `${activeConfig.imgHeight * editorScale}px`, position: 'relative', transition: 'width 0.2s, height 0.2s' }}>
+                                    <div ref={editorRef} style={{ width: `${activeConfig.imgWidth}px`, height: `${activeConfig.imgHeight}px`, transform: `scale(${editorScale})`, transformOrigin: 'top left', position: 'absolute', top: 0, left: 0, backgroundColor: 'white', overflow: 'hidden', boxShadow: '0 10px 30px rgba(0,0,0,0.15)', transition: 'transform 0.2s' }}>
                                         {activeConfig.bgImage && <img src={activeConfig.bgImage} className="absolute inset-0 w-full h-full object-cover pointer-events-none" />}
                                         {activeConfig.layers && activeConfig.layers.map((layer, idx) => renderEditorLayer(layer, idx))}
                                     </div>
