@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>INCARPASS PRO - Universal Event Platform</title>
+    <title>INCARPASS PRO - 통합 관리자</title>
     
-    <!-- 필수 라이브러리 -->
+    <!-- 필수 라이브러리 (Firebase 제거) -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
     <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
@@ -13,11 +13,8 @@
     <script src="https://unpkg.com/html5-qrcode"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
 
-    <!-- 이미지 및 압축 관련 라이브러리 추가 -->
+    <!-- 이미지 및 압축 관련 라이브러리 -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
@@ -208,6 +205,44 @@
     <script type="text/babel">
         const { useState, useEffect, useMemo, useRef, Fragment, useCallback } = React;
         const CURRENCY = '$';
+
+        // ✅ 연동 핵심 URL 설정
+        const GAS_URL = "https://script.google.com/macros/s/AKfycbx2tVkT00Z8uXQWl6EeTIUUhZ3_NJHx3JDqSCHC5oJWkUCm0OtcTmaV6g20cNKoh0no9w/exec";
+        const EMP_URL = "https://incarmkt.github.io/travel/people/employees.json?ts=" + Date.now();
+        const BASE_URL = "https://incarmkt.github.io/travel/?eid=";
+
+        // ✅ QR URL 파싱 로직 (URL로 스캔되어도 사번만 추출)
+        const extractEid = (text) => {
+            const m = String(text).match(/[?&]eid=([^&]+)/);
+            return m ? m[1] : text;
+        };
+
+        // ✅ 스캔 사운드 및 진동 피드백
+        const beep = () => {
+            try {
+                const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.type = "square";
+                osc.frequency.value = 1200;
+                gain.gain.value = 0.1;
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.start();
+                osc.stop(ctx.currentTime + 0.08);
+            } catch(e){}
+        };
+        const vibrate = () => { if (navigator.vibrate) navigator.vibrate(40); };
+
+        // ✅ 구글 시트로 백그라운드 전송
+        const sendToGAS = (payload) => {
+            fetch(GAS_URL, {
+                method: "POST",
+                mode: "no-cors", // CORS 이슈 무시
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(payload)
+            }).catch(e => console.log("GAS 전송 실패:", e));
+        };
 
         // 폰트 목록 정의
         const AVAILABLE_FONTS = [
@@ -668,6 +703,8 @@
                     }
                     const config = { fps: 10, qrbox: { width: 250, height: 250 }, aspectRatio: 1.0 };
                     scannerRef.current.start({ facingMode: "environment" }, config, (decodedText) => {
+                        beep();
+                        vibrate();
                         stopScanner();
                         processScan(decodedText, isStrictBusMode); // Strict Mode 상태 전달
                     }, () => {}).then(() => {
@@ -771,7 +808,6 @@
                         <button onClick={startScanner} className={`w-full py-6 text-white rounded-3xl font-bold text-xl shadow-xl flex items-center justify-center gap-3 active:scale-95 transition-transform ${mode==='BOARDING'?'bg-incar shadow-incar/30':'bg-emerald-500 shadow-emerald-500/30'}`}>
                             <Icon name="qr" size={28}/> {mode==='BOARDING' ? '탑승 스캔 시작' : '지급 스캔 시작'}
                         </button>
-                        {!isMobile && users.length > 0 && <button onClick={()=>processScan(users[0].uid)} className="mt-4 text-xs text-slate-400 underline text-center">테스트: 첫번째 유저 강제 인식</button>}
                     </div>
 
                     {isScanning && (
@@ -851,6 +887,8 @@
                         { facingMode: "environment" }, 
                         config, 
                         async (decodedText) => {
+                            beep();
+                            vibrate();
                             try {
                                 if (html5QrCode.isScanning) {
                                     await html5QrCode.stop();
@@ -863,11 +901,12 @@
                             setIsLookupScanning(false);
                             html5QrCodeRef.current = null;
 
-                            const found = users.find(u => u.uid === decodedText);
+                            const eId = extractEid(decodedText);
+                            const found = users.find(u => String(u.uid).trim() === String(eId).trim());
                             if (found) {
                                 setSelectedUser(found);
                             } else {
-                                alert(`미등록 사용자입니다. (ID: ${decodedText})`);
+                                alert(`미등록 사용자입니다. (ID: ${eId})`);
                             }
                         }, 
                         (errorMessage) => {}
@@ -983,7 +1022,7 @@
                                 </button>
                                 <button 
                                     onClick={()=>{
-                                        const found = users.find(u => u.uid.includes(searchQuery) || u.name.includes(searchQuery));
+                                        const found = users.find(u => String(u.uid).trim() === String(searchQuery).trim() || u.name.includes(searchQuery));
                                         if(found) setSelectedUser(found); else alert("사용자를 찾을 수 없습니다.");
                                     }} 
                                     className="flex-1 bg-slate-800 text-white px-6 py-4 rounded-2xl font-bold"
@@ -1039,9 +1078,9 @@
                                     </div>
                                     <div className="bg-white border-2 border-dashed border-slate-200 rounded-2xl p-4 flex flex-col items-center justify-center text-center w-full md:w-auto">
                                         <div className="mb-2 w-32 h-32 flex items-center justify-center bg-slate-50">
-                                            <QRCodeCanvas text={selectedUser.uid} />
+                                            <QRCodeCanvas text={BASE_URL + selectedUser.uid} />
                                         </div>
-                                        <p className="text-[10px] font-bold text-slate-400">QR 데이터: {selectedUser.uid}</p>
+                                        <p className="text-[10px] font-bold text-slate-400">안내 URL 포함됨</p>
                                     </div>
                                 </div>
 
@@ -1201,7 +1240,7 @@
                 if (layer.type === 'qr') {
                     return (
                         <div key={layer.id} style={{ ...commonStyle, width: `${layer.size}px`, height: `${layer.size}px`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                            <QRCodeCanvas text={u.uid} size={layer.size} transparent={true} />
+                            <QRCodeCanvas text={BASE_URL + u.uid} size={layer.size} transparent={true} />
                         </div>
                     );
                 } else if (layer.type === 'text') {
@@ -1272,7 +1311,7 @@
             );
         };
 
-        const ManageView = ({ users, handleUserUpload, handleScheduleUpload, badgeConfig, setBadgeConfig, db, serverError, schedules, logs, setIsPrintMode, setUsers, setSchedules, setLogs, setChangeLogs, changeLogs, appBgImage, setAppBgImage, handleAppBgUpload }) => {
+        const ManageView = ({ users, handleUserUpload, handleScheduleUpload, badgeConfig, setBadgeConfig, schedules, logs, setIsPrintMode, setUsers, setSchedules, setLogs, setChangeLogs, changeLogs, appBgImage, setAppBgImage, handleAppBgUpload }) => {
             const handleBgImageUpload = (e) => {
                 const file = e.target.files[0];
                 if(file){
@@ -1367,6 +1406,7 @@
                     window.addEventListener('mousemove', onEditorMove);
                     window.addEventListener('mouseup', stopDrag);
                     window.addEventListener('touchmove', onEditorMove, { passive: false });
+                    window.addEventListener('touchmove', (e)=>{e.preventDefault()}, { passive: false });
                     window.addEventListener('touchend', stopDrag);
                 }
                 return () => {
@@ -1414,7 +1454,6 @@
                 }
             };
 
-            // 레이어 이동 로직 (물리적 z-index 배열 변경)
             const moveLayer = (direction) => {
                 if (!selectedId) return;
                 setBadgeConfig(prev => {
@@ -1424,9 +1463,9 @@
                     const item = newLayers.splice(idx, 1)[0];
 
                     if (direction === 'top') {
-                        newLayers.push(item); // 배열 맨 뒤가 화면 맨 위(Front)
+                        newLayers.push(item);
                     } else if (direction === 'bottom') {
-                        newLayers.unshift(item); // 배열 맨 앞이 화면 맨 아래(Back)
+                        newLayers.unshift(item);
                     } else if (direction === 'up' && idx < prev.layers.length - 1) {
                         newLayers.splice(idx + 1, 0, item);
                     } else if (direction === 'down' && idx > 0) {
@@ -1440,7 +1479,6 @@
 
             const selectedLayer = badgeConfig.layers ? badgeConfig.layers.find(l => l.id === selectedId) : null;
 
-            // Render Layer on Editor
             const renderEditorLayer = (layer, index) => {
                 const isSelected = layer.id === selectedId;
                 const style = {
@@ -1481,16 +1519,9 @@
                 }
             };
 
-            const contentOrPlaceholder = (layer) => {
-                if (!layer.variable) return layer.content;
-                const names = { name: '성 명', org: '소 속', role: '직 책', id: '사 번' };
-                return names[layer.variable] || layer.content;
-            };
-
             const exportAllData = () => {
                 if(logs.length === 0 && changeLogs.length === 0) return alert("내보낼 데이터가 없습니다.");
                 
-                // 날짜 포맷 헬퍼 함수
                 const formatLogDate = (ts) => {
                     if (!ts) return '-';
                     const date = new Date(ts);
@@ -1499,17 +1530,15 @@
                     return `${date.getFullYear()}-${pad(date.getMonth()+1)}-${pad(date.getDate())} ${pad(date.getHours())}:${pad(date.getMinutes())}`;
                 };
 
-                // 데이터 통합 및 정렬
                 const combinedData = [];
 
-                // 일반 로그 (지급/탑승) 추가
                 logs.forEach(l => {
                     combinedData.push({
                         rawTime: l.timestamp,
                         일시: formatLogDate(l.timestamp),
                         사번: l.uid,
                         성명: l.name,
-                        구분: l.action, // '지급' or '탑승'
+                        구분: l.action,
                         일정명: l.sessionTitle,
                         금액: l.finalAmount || 0,
                         패널티: l.penaltyApplied || 0,
@@ -1518,7 +1547,6 @@
                     });
                 });
 
-                // 변경 로그 추가
                 changeLogs.forEach(c => {
                     combinedData.push({
                         rawTime: c.timestamp,
@@ -1526,19 +1554,16 @@
                         사번: c.uid,
                         성명: c.name,
                         구분: '변경',
-                        일정명: c.targetOption, // 변경 대상 옵션키 (예: 2일차 투어)
+                        일정명: c.targetOption, 
                         금액: 0,
                         패널티: c.penalty || 0,
-                        탑승차량: '', // 변경은 차량과 무관하므로 공란
-                        비고: `${c.oldVal} -> ${c.newVal} | ${c.reason}` // 변경 내역과 사유를 비고에 통합
+                        탑승차량: '', 
+                        비고: `${c.oldVal} -> ${c.newVal} | ${c.reason}`
                     });
                 });
 
-                // 시간순 정렬 (내림차순 - 최신순)
                 combinedData.sort((a, b) => new Date(b.rawTime) - new Date(a.rawTime));
 
-                // 2. HTML 테이블 생성 (요청된 컬럼 순서 적용)
-                // 일시 | 사번 | 성명 | 구분 | 일정명 | 금액 | 패널티 | 탑승차량 | 비고
                 const headers = ['일시', '사번', '성명', '구분', '일정명', '금액', '패널티', '탑승차량', '비고'];
                 let rows = '';
                 combinedData.forEach(d => {
@@ -1581,42 +1606,27 @@
                 link.click();
             };
 
-            // 데이터 초기화 기능 (서버 데이터 포함)
             const handleFullReset = async () => {
-                if(!confirm("⚠️ 경고: 로컬 및 서버의 모든 데이터(참가자, 일정, 로그)가 삭제됩니다. 정말 진행하시겠습니까?")) return;
-                const SYSTEM_APP_ID = 'inca-prod-v1';
-                try {
-                    if(db) {
-                        const collections = ['users', 'schedules', 'logs', 'changelogs'];
-                        for (const col of collections) {
-                            const snapshot = await db.collection('artifacts').doc(SYSTEM_APP_ID).collection(col).get();
-                            const batch = db.batch();
-                            snapshot.docs.forEach(doc => batch.delete(doc.ref));
-                            await batch.commit();
-                        }
-                    }
-                    localStorage.clear();
-                    alert("모든 데이터가 초기화되었습니다.");
-                    window.location.reload();
-                } catch(e) { 
-                    console.error(e); 
-                    alert("초기화 중 오류가 발생했습니다: " + e.message);
-                }
+                if(!confirm("⚠️ 경고: 로컬 저장된 모든 데이터(참가자, 일정, 로그)가 삭제됩니다. 정말 진행하시겠습니까?")) return;
+                localStorage.removeItem('incar_pro_users');
+                localStorage.removeItem('incar_pro_schedules');
+                localStorage.removeItem('incar_pro_logs');
+                localStorage.removeItem('incar_pro_changelogs');
+                alert("모든 데이터가 초기화되었습니다.");
+                window.location.reload();
             };
 
-            // Image Export Logic
             const generateZip = async () => {
                 if (users.length === 0) return alert("데이터가 없습니다.");
                 setIsZipping(true);
                 setZipProgress(0);
 
-                await new Promise(resolve => setTimeout(resolve, 1000)); // Allow render
+                await new Promise(resolve => setTimeout(resolve, 1000)); 
 
                 const zip = new JSZip();
                 const folder = zip.folder("badges");
 
-                // 사번(uid) 순으로 정렬
-                const sortedUsers = [...users].sort((a, b) => a.uid.localeCompare(b.uid, undefined, { numeric: true, sensitivity: 'base' }));
+                const sortedUsers = [...users].sort((a, b) => String(a.uid).localeCompare(String(b.uid), undefined, { numeric: true, sensitivity: 'base' }));
 
                 for (let i = 0; i < sortedUsers.length; i++) {
                     const u = sortedUsers[i];
@@ -1760,10 +1770,11 @@
 
                     <div className="bg-incar text-white p-6 rounded-3xl shadow-xl relative overflow-hidden">
                         <div className="relative z-10">
-                            <h3 className="font-black text-2xl">Master Data Setup</h3>
+                            <h3 className="font-black text-2xl">Master Data Setup (GAS 모드)</h3>
+                            <p className="text-xs text-blue-200 mt-2">이 시스템은 파이어베이스를 쓰지 않고, 시트(GAS) 연동 및 로컬 스토리지로 가볍게 동작합니다.</p>
                             <div className="space-y-4 mt-4">
                                 <div className="bg-white/10 rounded-2xl border border-white/20 p-4 flex justify-between items-center">
-                                    <div className="flex items-center gap-3"><Icon name="users" className="text-blue-200"/><div><div className="font-bold text-sm">1. 참가자 명단 (Users.csv)</div></div></div>
+                                    <div className="flex items-center gap-3"><Icon name="users" className="text-blue-200"/><div><div className="font-bold text-sm">1. 참가자 명단 강제 세팅 (Users.csv)</div></div></div>
                                     <label className="flex items-center justify-center px-4 py-2 bg-white text-incar font-bold rounded-lg cursor-pointer hover:bg-slate-100 text-xs"><input type="file" accept=".csv" onChange={handleUserUpload} className="hidden" />업로드</label>
                                 </div>
                                 <div className="bg-white/10 rounded-2xl border border-white/20 p-4 flex justify-between items-center">
@@ -1791,22 +1802,22 @@
                     </div>
                     
                     <div className="bg-slate-100 border border-slate-200 p-6 rounded-3xl shadow-sm flex justify-between items-center">
-                        <div><h4 className="font-bold text-lg text-slate-800 mb-1 flex items-center gap-2"><Icon name="download" /> 데이터 내보내기</h4></div>
+                        <div><h4 className="font-bold text-lg text-slate-800 mb-1 flex items-center gap-2"><Icon name="download" /> 데이터 내보내기</h4><p className="text-xs text-slate-500">앱에 저장된 변경 및 스캔 이력을 엑셀로 저장합니다.</p></div>
                         <div className="flex gap-2">
                              <button onClick={exportAllData} className="px-6 py-3 bg-slate-800 text-white rounded-xl font-bold text-sm hover:bg-slate-900 transition-colors shadow-lg">전체 내역 다운로드</button>
                         </div>
                     </div>
 
                     <div className="bg-slate-800 text-white p-6 rounded-3xl shadow-card flex justify-between items-center relative overflow-hidden group">
-                        <div className="relative z-10"><h4 className="font-bold text-lg mb-1 flex items-center gap-2"><Icon name="download" /> 명찰 이미지 다운로드</h4><p className="text-xs text-slate-400">등록된 {users.length}명의 QR 명찰 이미지를 ZIP 파일로 다운로드합니다.</p></div>
+                        <div className="relative z-10"><h4 className="font-bold text-lg mb-1 flex items-center gap-2"><Icon name="download" /> 명찰 이미지 다운로드</h4><p className="text-xs text-slate-400">등록된 {users.length}명의 QR 명찰 이미지를 다운로드합니다. (고객용 URL 포함됨)</p></div>
                         <button onClick={generateZip} className="relative z-10 px-6 py-3 bg-white text-slate-900 rounded-xl font-bold text-sm hover:bg-slate-100 transition-colors shadow-lg">{isZipping ? `생성 중... ${zipProgress}%` : '이미지 일괄 다운로드 (ZIP)'}</button>
                     </div>
 
                     <div className="bg-white p-6 rounded-3xl shadow-card text-center border border-rose-100">
-                        <h4 className="font-bold text-slate-800 mb-2">데이터 관리 및 초기화</h4>
+                        <h4 className="font-bold text-slate-800 mb-2">데이터 로컬 초기화</h4>
                         <p className="text-xs text-slate-400 mb-4">현재 데이터: {users.length}명 / {schedules.length}개 세션 / {logs.length}개 로그</p>
                         <button onClick={handleFullReset} className="w-full py-3 bg-rose-50 text-rose-600 font-bold rounded-xl hover:bg-rose-100 text-sm flex items-center justify-center gap-2">
-                           <Icon name="trash" size={16} /> 모든 데이터 영구 삭제 (초기화)
+                           <Icon name="trash" size={16} /> 기기에 저장된 캐시 데이터 삭제 (초기화)
                         </button>
                     </div>
 
@@ -1817,7 +1828,7 @@
                                     {badgeConfig.bgImage && <img src={badgeConfig.bgImage} className="absolute inset-0 w-full h-full object-cover" />}
                                     {badgeConfig.layers && badgeConfig.layers.map((layer, idx) => {
                                         const commonStyle = { position: 'absolute', top: `${layer.y}%`, left: `${layer.x}%`, transform: 'translate(-50%, -50%)', zIndex: idx, width: layer.width === 'auto' ? 'auto' : `${layer.width}px`, textAlign: layer.align || 'center' };
-                                        if (layer.type === 'qr') return <div key={layer.id} style={{ ...commonStyle, width: `${layer.size}px`, height: `${layer.size}px`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}><QRCodeCanvas text={u.uid} size={layer.size} transparent={true} /></div>;
+                                        if (layer.type === 'qr') return <div key={layer.id} style={{ ...commonStyle, width: `${layer.size}px`, height: `${layer.size}px`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}><QRCodeCanvas text={BASE_URL + u.uid} size={layer.size} transparent={true} /></div>;
                                         else if (layer.type === 'text') {
                                             let content = layer.content;
                                             if (layer.variable) { if (layer.variable === 'name') content = u.name; else if (layer.variable === 'org') content = u.org; else if (layer.variable === 'role') content = u.options && (u.options['직책'] || u.options['Role'] || '-'); else if (layer.variable === 'id') content = u.uid; }
@@ -1843,52 +1854,14 @@
             // 앱 전체 배경화면 상태
             const [appBgImage, setAppBgImage] = useState(() => localStorage.getItem('incar_pro_app_bg') || null);
 
-            // 차량 목록 관리용 상태 (LocalStorage 저장)
+            // 차량 목록 관리용 상태
             const [busList, setBusList] = useState(() => {
                 const saved = localStorage.getItem('incar_pro_bus_list');
                 return saved ? JSON.parse(saved) : ['1호차', '2호차', '3호차'];
             });
 
-            // 배경화면 및 차량 목록이 변경될 때마다 로컬 스토리지에 저장
-            useEffect(() => {
-                localStorage.setItem('incar_pro_bus_list', JSON.stringify(busList));
-            }, [busList]);
-
-            useEffect(() => {
-                if (appBgImage) localStorage.setItem('incar_pro_app_bg', appBgImage);
-                else localStorage.removeItem('incar_pro_app_bg');
-            }, [appBgImage]);
-
-            const handleAppBgUpload = (e) => {
-                const file = e.target.files[0];
-                if (file) {
-                    const reader = new FileReader();
-                    reader.onload = (evt) => {
-                        const img = new Image();
-                        img.onload = () => {
-                            const canvas = document.createElement('canvas');
-                            const ctx = canvas.getContext('2d');
-                            let width = img.width;
-                            let height = img.height;
-                            const MAX = 1920; // 1920px 이하로 압축
-                            if (width > height && width > MAX) {
-                                height *= MAX / width;
-                                width = MAX;
-                            } else if (height > MAX) {
-                                width *= MAX / height;
-                                height = MAX;
-                            }
-                            canvas.width = width;
-                            canvas.height = height;
-                            ctx.drawImage(img, 0, 0, width, height);
-                            const dataUrl = canvas.toDataURL('image/jpeg', 0.6); // 60% 압축 저장
-                            setAppBgImage(dataUrl);
-                        };
-                        img.src = evt.target.result;
-                    };
-                    reader.readAsDataURL(file);
-                }
-            };
+            useEffect(() => { localStorage.setItem('incar_pro_bus_list', JSON.stringify(busList)); }, [busList]);
+            useEffect(() => { if (appBgImage) localStorage.setItem('incar_pro_app_bg', appBgImage); else localStorage.removeItem('incar_pro_app_bg'); }, [appBgImage]);
 
             const scheduleStats = useMemo(() => {
                 return schedules.map(s => {
@@ -1900,7 +1873,6 @@
                         if (l.sessionId !== s.id) return false;
                         const currentUser = users.find(u => u.uid === l.uid);
                         if (!currentUser) return false; 
-                        
                         if (s.targetKey === 'ALL') return true;
                         const userOpt = currentUser.options?.[s.targetKey];
                         if (!userOpt) return false;
@@ -1937,9 +1909,7 @@
 
             const [isPrintMode, setIsPrintMode] = useState(false);
             const [badgeConfig, setBadgeConfig] = useState({
-                bgImage: null,
-                imgWidth: 545,
-                imgHeight: 697,
+                bgImage: null, imgWidth: 545, imgHeight: 697,
                 layers: [
                     { id: 'qr', type: 'qr', x: 50, y: 20, size: 100 },
                     { id: 'org', type: 'text', content: '소속 (Org)', variable: 'org', x: 50, y: 40, fontSize: 20, fontFamily: "'Noto Sans KR', sans-serif", color: '#475569', align: 'center', width: 'auto' },
@@ -1948,11 +1918,7 @@
                 ]
             });
 
-            const [user, setUser] = useState(null); 
-            const [db, setDb] = useState(null);        
             const [isLoading, setIsLoading] = useState(true);
-            const [serverError, setServerError] = useState(null);
-            
             const [scanResult, setScanResult] = useState(null);
             const [selectedSession, setSelectedSession] = useState(null);
             const [isScanning, setIsScanning] = useState(false);
@@ -1965,19 +1931,6 @@
             const [refundRequest, setRefundRequest] = useState(null);
             const [forfeitRequest, setForfeitRequest] = useState(null);
             const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
-            const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-
-            const SYSTEM_APP_ID = 'inca-prod-v1';
-
-            const firebaseConfig = {
-             apiKey: "AIzaSyAh1dsSNobeF6Wz-0euP5AUggdqJANJ3dQ",
-             authDomain: "incarpass.firebaseapp.com",
-             projectId: "incarpass",
-             storageBucket: "incarpass.firebasestorage.app",
-             messagingSenderId: "955362361998",
-             appId: "1:955362361998:web:166055dd392784f1827fdf",
-             measurementId: "G-SNR3FPPQ7E"
-            };
 
             useEffect(() => {
                 const handleResize = () => setIsMobile(window.innerWidth < 768);
@@ -1987,156 +1940,108 @@
 
             useEffect(() => {
                 const initSystem = async () => {
-                    if (window.location.protocol === 'file:') {
-                        alert("⚠️ 주의: HTML 파일을 직접 열면(file://) 파이어베이스 서버 연결이 차단됩니다.\n\nVS Code의 'Live Server'를 사용하거나, GitHub/Netlify에 올려서(http/https) 실행해주세요.");
-                    }
-
-                    if (firebaseConfig.apiKey && firebaseConfig.projectId) {
-                        try {
-                            if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
-                            const _db = firebase.firestore();
-                            await firebase.auth().signInAnonymously();
-                            
-                            setDb(_db);
-                            setServerError(null);
-
-                            const unsubS = _db.collection('artifacts').doc(SYSTEM_APP_ID).collection('schedules').onSnapshot(snap => {
-                                const list = snap.docs.map(d => ({id:d.id, ...d.data()})).sort((a,b)=>a.date>b.date?1:-1);
-                                setSchedules(list);
-                                if(list.length > 0 && !targetSessionId) setTargetSessionId(list[0].id);
-                            }, err => console.error("Schedules Sync Error:", err));
-
-                            const unsubL = _db.collection('artifacts').doc(SYSTEM_APP_ID).collection('logs').orderBy('timestamp','desc').onSnapshot(snap => {
-                                setLogs(snap.docs.map(d => ({id:d.id, ...d.data()})));
-                            }, err => console.error("Logs Sync Error:", err));
-
-                            const unsubC = _db.collection('artifacts').doc(SYSTEM_APP_ID).collection('changelogs').orderBy('timestamp','desc').onSnapshot(snap => {
-                                setChangeLogs(snap.docs.map(d => ({id:d.id, ...d.data()})));
-                            }, err => console.error("Changelogs Sync Error:", err));
-
-                            const unsubU = _db.collection('artifacts').doc(SYSTEM_APP_ID).collection('users').onSnapshot(snap => {
-                                setUsers(snap.docs.map(d => d.data()));
-                            }, err => console.error("Users Sync Error:", err));
-
-                            firebase.auth().onAuthStateChanged(u => {
-                                setUser(u);
-                                setIsLoading(false);
-                            });
-
-                            return () => { unsubS(); unsubL(); unsubC(); unsubU(); };
-
-                        } catch (e) {
-                            console.error("Firebase Init Failed:", e);
-                            initLocal();
-                        }
-                    } else {
-                        initLocal();
-                    }
-                };
-
-                const initLocal = () => {
-                    const loadedUsers = JSON.parse(localStorage.getItem('incar_pro_users') || '[]');
+                    // 1. 로컬 데이터 불러오기
                     const loadedSched = JSON.parse(localStorage.getItem('incar_pro_schedules') || '[]');
                     const loadedLogs = JSON.parse(localStorage.getItem('incar_pro_logs') || '[]');
                     const loadedChanges = JSON.parse(localStorage.getItem('incar_pro_changelogs') || '[]');
                     
-                    setUsers(loadedUsers);
-                    setSchedules(loadedSched);
+                    if(loadedSched.length === 0) {
+                        const sampleSchedules = [
+                            { id: "S1", date: "2026-03-11", displayDate: "DAY 1", title: "인천 출국 확인", type: "BOARDING", targetKey: "ALL", targetVal: "ALL" },
+                            { id: "S2", date: "2026-03-11", displayDate: "DAY 1", title: "단수이", type: "PAYMENT", price: 10000, targetKey: "ALL", targetVal: "ALL" },
+                            { id: "S3", date: "2026-03-12", displayDate: "DAY 2", title: "티엔라이", type: "BOARDING", targetKey: "선택 관광", targetVal: "티엔라이" },
+                            { id: "S4", date: "2026-03-12", displayDate: "DAY 2", title: "자유일정 중식비", type: "PAYMENT", price: 30000, targetKey: "선택 관광", targetVal: "자유일정" }
+                        ];
+                        setSchedules(sampleSchedules);
+                        setTargetSessionId(sampleSchedules[0].id);
+                    } else {
+                        setSchedules(loadedSched);
+                        setTargetSessionId(loadedSched[0].id);
+                    }
                     setLogs(loadedLogs);
                     setChangeLogs(loadedChanges);
-                    
-                    if (loadedSched.length > 0) setTargetSessionId(loadedSched[0].id);
+
+                    // 2. 직원 JSON 데이터 최신화 (안내사이트와 통일)
+                    try {
+                        const res = await fetch(EMP_URL);
+                        const data = await res.json();
+                        const localUsers = JSON.parse(localStorage.getItem('incar_pro_users') || '[]');
+                        
+                        const mappedUsers = data.map(emp => {
+                            const existing = localUsers.find(lu => String(lu.uid) === String(emp.id));
+                            return {
+                                uid: String(emp.id).trim(),
+                                name: emp.name,
+                                org: emp.org || '-',
+                                bus: emp.bus || '미정',
+                                options: existing && existing.options ? existing.options : { '선택 관광': emp.myTour ? emp.myTour.join(', ') : '' },
+                                penaltyTotal: existing ? existing.penaltyTotal : 0
+                            };
+                        });
+                        setUsers(mappedUsers);
+                    } catch (e) {
+                        console.warn("EMP_URL 로드 실패, 캐시된 유저 사용", e);
+                        setUsers(JSON.parse(localStorage.getItem('incar_pro_users') || '[]'));
+                    }
                     setIsLoading(false);
                 };
 
                 initSystem();
 
                 const loadedBadgeConfig = JSON.parse(localStorage.getItem('incar_pro_badge_config_v2_9') || 'null');
-                if(loadedBadgeConfig) {
-                    if (loadedBadgeConfig.layers) {
-                        setBadgeConfig(loadedBadgeConfig);
-                    } else if (loadedBadgeConfig.name) {
-                        const newLayers = [];
-                        if (loadedBadgeConfig.qr) newLayers.push({ id: 'qr', type: 'qr', x: loadedBadgeConfig.qr.x, y: loadedBadgeConfig.qr.y, size: loadedBadgeConfig.qr.size });
-                        ['org', 'name', 'role'].forEach(key => {
-                            if (loadedBadgeConfig[key] && loadedBadgeConfig[key].show) {
-                                newLayers.push({
-                                    id: key,
-                                    type: 'text',
-                                    variable: key,
-                                    content: key === 'name' ? '성 명' : key === 'org' ? '소 속' : '직 책',
-                                    x: loadedBadgeConfig[key].x,
-                                    y: loadedBadgeConfig[key].y,
-                                    fontSize: loadedBadgeConfig[key].size,
-                                    fontFamily: loadedBadgeConfig[key].font,
-                                    color: loadedBadgeConfig[key].color,
-                                    align: loadedBadgeConfig[key].textAlign,
-                                    width: loadedBadgeConfig[key].width
-                                });
-                            }
-                        });
-                        setBadgeConfig({
-                            bgImage: loadedBadgeConfig.bgImage,
-                            imgWidth: loadedBadgeConfig.imgWidth || 545,
-                            imgHeight: loadedBadgeConfig.imgHeight || 697,
-                            layers: newLayers
-                        });
-                    }
-                }
+                if(loadedBadgeConfig && loadedBadgeConfig.layers) setBadgeConfig(loadedBadgeConfig);
             }, []);
 
-            useEffect(() => { if(!db) localStorage.setItem('incar_pro_users', JSON.stringify(users)); }, [users, db]);
-            useEffect(() => { if(!db) localStorage.setItem('incar_pro_schedules', JSON.stringify(schedules)); }, [schedules, db]);
-            useEffect(() => { if(!db) localStorage.setItem('incar_pro_logs', JSON.stringify(logs)); }, [logs, db]);
-            useEffect(() => { if(!db) localStorage.setItem('incar_pro_changelogs', JSON.stringify(changeLogs)); }, [changeLogs, db]);
-            useEffect(() => { localStorage.setItem('incar_pro_badge_config_v2_9', JSON.stringify(badgeConfig)); }, [badgeConfig]);
+            useEffect(() => { localStorage.setItem('incar_pro_users', JSON.stringify(users)); }, [users]);
+            useEffect(() => { localStorage.setItem('incar_pro_schedules', JSON.stringify(schedules)); }, [schedules]);
+            useEffect(() => { localStorage.setItem('incar_pro_logs', JSON.stringify(logs)); }, [logs]);
+            useEffect(() => { localStorage.setItem('incar_pro_changelogs', JSON.stringify(changeLogs)); }, [changeLogs]);
 
-            const cleanupOldLogs = async (uid, targetKey, oldVal, performUpdate = true) => {
+            const cleanupOldLogs = async (uid, targetKey, oldVal) => {
                 const relatedSessions = schedules.filter(s => s.targetKey === targetKey);
                 const logsToDelete = logs.filter(l => l.uid === uid && relatedSessions.some(s => s.id === l.sessionId));
                 const oldLogIds = logsToDelete.map(l => l.id);
-                if(performUpdate && oldLogIds.length > 0) {
-                    if (db) {
-                        const batch = db.batch();
-                        oldLogIds.forEach(logId => { const ref = db.collection('artifacts').doc(SYSTEM_APP_ID).collection('logs').doc(logId); batch.delete(ref); });
-                        await batch.commit();
-                    } else { setLogs(prevLogs => prevLogs.filter(l => !oldLogIds.includes(l.id))); }
+                if(oldLogIds.length > 0) {
+                    setLogs(prevLogs => prevLogs.filter(l => !oldLogIds.includes(l.id)));
                 }
                 return oldLogIds;
             };
 
             const handleManualComplete = async (user, session) => {
                 if(!confirm(`${user.name}님을 수동으로 [${session.type==='PAYMENT'?'지급완료':'탑승완료'}] 처리하시겠습니까?`)) return;
-                const newLog = { id: `LOG_${Date.now()}_MANUAL`, timestamp: new Date().toLocaleString(), uid: user.uid, name: user.name, org: user.org, action: session.type === 'PAYMENT' ? '지급' : '탑승', sessionId: session.id, sessionTitle: session.title, bus: '수동처리', amount: session.type === 'PAYMENT' ? session.price : 0, penaltyApplied: 0, finalAmount: session.type === 'PAYMENT' ? session.price : 0 };
-                if(db) { await db.collection('artifacts').doc(SYSTEM_APP_ID).collection('logs').add(newLog); } else { setLogs([newLog, ...logs]); }
+                const timeStr = new Date().toLocaleString('ko-KR', { timeZone: 'Asia/Seoul' });
+                
+                // GAS 전송
+                if (session.type === 'PAYMENT') {
+                    sendToGAS({ type: 'meal', id: user.uid, name: user.name, tour: session.title, action: 'APPROVE', time: timeStr });
+                } else {
+                    sendToGAS({ type: 'departure', id: user.uid, name: user.name, category: '수동처리', course: session.title, time: timeStr });
+                }
+
+                const newLog = { id: `LOG_${Date.now()}_MANUAL`, timestamp: timeStr, uid: user.uid, name: user.name, org: user.org, action: session.type === 'PAYMENT' ? '지급' : '탑승', sessionId: session.id, sessionTitle: session.title, bus: '수동처리', amount: session.type === 'PAYMENT' ? session.price : 0, penaltyApplied: 0, finalAmount: session.type === 'PAYMENT' ? session.price : 0 };
+                setLogs([newLog, ...logs]);
                 alert("처리되었습니다.");
             };
 
             const executeUpdate = async (user, session, requiredChoice, penaltyAmount, reason, payoutOverride = null) => {
-                if(!db && !confirm("로컬 모드입니다. 변경사항이 다른 기기에 반영되지 않습니다. 계속하시겠습니까?")) return;
-                
                 const oldVal = user.options[session.targetKey];
-                const logIdsToRemove = await cleanupOldLogs(user.uid, session.targetKey, oldVal, !!db);
+                const logIdsToRemove = await cleanupOldLogs(user.uid, session.targetKey, oldVal);
                 const newPenalty = penaltyAmount;
 
-                if(db) { 
-                    const userRef = db.collection('artifacts').doc(SYSTEM_APP_ID).collection('users').doc(String(user.uid)); 
-                    const updatedOptions = { ...user.options, [session.targetKey]: requiredChoice }; 
-                    await userRef.update({ options: updatedOptions, penaltyTotal: (user.penaltyTotal || 0) + newPenalty }); 
-                } else { 
-                    const updatedUsers = users.map(u => { 
-                        if (u.uid === user.uid) { 
-                            const newOptions = { ...u.options, [session.targetKey]: requiredChoice }; 
-                            return { ...u, options: newOptions, penaltyTotal: (u.penaltyTotal || 0) + newPenalty }; 
-                        } 
-                        return u; 
-                    }); 
-                    setUsers([...updatedUsers]); 
-                }
+                // 유저 옵션/패널티 갱신
+                const updatedUsers = users.map(u => { 
+                    if (u.uid === user.uid) { 
+                        const newOptions = { ...u.options, [session.targetKey]: requiredChoice }; 
+                        return { ...u, options: newOptions, penaltyTotal: (u.penaltyTotal || 0) + newPenalty }; 
+                    } 
+                    return u; 
+                }); 
+                setUsers([...updatedUsers]); 
 
-                const changeLog = { id: `CHG_${Date.now()}`, timestamp: new Date().toLocaleString(), uid: user.uid, name: user.name, targetOption: session.targetKey, oldVal: oldVal || '미선택', newVal: requiredChoice, penalty: newPenalty, reason: reason };
-                if(db) await db.collection('artifacts').doc(SYSTEM_APP_ID).collection('changelogs').add(changeLog); 
-                else setChangeLogs([changeLog, ...changeLogs]);
+                // 변경 이력 추가
+                const timeStr = new Date().toLocaleString('ko-KR', { timeZone: 'Asia/Seoul' });
+                const changeLog = { id: `CHG_${Date.now()}`, timestamp: timeStr, uid: user.uid, name: user.name, targetOption: session.targetKey, oldVal: oldVal || '미선택', newVal: requiredChoice, penalty: newPenalty, reason: reason };
+                setChangeLogs([changeLog, ...changeLogs]);
 
                 let finalAmount = 0; 
                 let penaltyApplied = 0;
@@ -2153,50 +2058,44 @@
                     } 
                 }
 
-                const newLog = { id: `LOG_${Date.now()}_FORCE`, timestamp: new Date().toLocaleString(), uid: user.uid, name: user.name, org: user.org, action: session.type === 'PAYMENT' ? '지급' : '탑승', sessionId: session.id, sessionTitle: session.title, bus: targetBus, amount: session.type === 'PAYMENT' ? session.price : 0, penaltyApplied: penaltyApplied, finalAmount: finalAmount };
-                
-                if(db) { 
-                    await db.collection('artifacts').doc(SYSTEM_APP_ID).collection('logs').add(newLog); 
-                    if (penaltyApplied > 0) { 
-                        const currentPenalty = (user.penaltyTotal || 0) + newPenalty; 
-                        const userRef = db.collection('artifacts').doc(SYSTEM_APP_ID).collection('users').doc(String(user.uid)); 
-                        await userRef.update({ penaltyTotal: currentPenalty - penaltyApplied }); 
-                    } 
-                } else { 
-                    setLogs(prevLogs => { 
-                        const filtered = prevLogs.filter(l => !logIdsToRemove.includes(l.id)); 
-                        return [newLog, ...filtered]; 
-                    }); 
-                    if (penaltyApplied > 0) { 
-                        const currentPenalty = (user.penaltyTotal || 0) + newPenalty; 
-                        const updatedUsers2 = users.map(u => u.uid === user.uid ? { ...u, penaltyTotal: currentPenalty - penaltyApplied } : u); 
-                        setUsers([...updatedUsers2]); 
-                    } 
+                // GAS 전송
+                if (session.type === 'PAYMENT') {
+                    sendToGAS({ type: 'meal', id: user.uid, name: user.name, tour: session.title, action: 'APPROVE', time: timeStr });
+                } else {
+                    sendToGAS({ type: 'departure', id: user.uid, name: user.name, category: '현장변경', course: session.title, time: timeStr });
                 }
 
-                setScanResult(null); 
-                setRefundRequest(null); 
-                setForfeitRequest(null);
+                const newLog = { id: `LOG_${Date.now()}_FORCE`, timestamp: timeStr, uid: user.uid, name: user.name, org: user.org, action: session.type === 'PAYMENT' ? '지급' : '탑승', sessionId: session.id, sessionTitle: session.title, bus: targetBus, amount: session.type === 'PAYMENT' ? session.price : 0, penaltyApplied: penaltyApplied, finalAmount: finalAmount };
                 
-                let alertMsg = `${user.name}님의 일정이 [${requiredChoice}]로 변경되고 탑승 처리되었습니다.`; 
+                setLogs(prevLogs => { 
+                    const filtered = prevLogs.filter(l => !logIdsToRemove.includes(l.id)); 
+                    return [newLog, ...filtered]; 
+                }); 
+                
+                if (penaltyApplied > 0) { 
+                    const currentPenalty = (user.penaltyTotal || 0) + newPenalty; 
+                    const updatedUsers2 = updatedUsers.map(u => u.uid === user.uid ? { ...u, penaltyTotal: currentPenalty - penaltyApplied } : u); 
+                    setUsers([...updatedUsers2]); 
+                } 
+
+                setScanResult(null); setRefundRequest(null); setForfeitRequest(null);
+                
+                let alertMsg = `${user.name}님의 일정이 [${requiredChoice}]로 변경되고 처리되었습니다.`; 
                 if(penaltyAmount > 0) alertMsg += `\n\n⚠️ 미반환 처리: ${CURRENCY}${penaltyAmount}가 패널티로 등록되었습니다.`; 
                 else if (reason.includes('반환')) alertMsg += `\n\n✅ 반환 확인: 기존 지급액이 정상적으로 회수되었습니다.`; 
                 else if (payoutOverride === 0) alertMsg += `\n\nℹ️ 지급 보류: 기존 일정 비용을 고려하여 이번 지급은 생략되었습니다.`; 
-                else alertMsg += `\n(이전 일정에 대한 완료 기록은 삭제되었습니다.)`; 
                 
                 alert(alertMsg);
             };
 
             const handleForceUpdateAndProcess = async (user, session, requiredChoice) => {
-                if(!db && !confirm("로컬 모드입니다. 변경사항이 다른 기기에 반영되지 않습니다. 계속하시겠습니까?")) return;
                 const oldVal = user.options[session.targetKey];
                 const oldPaymentSchedules = schedules.filter(s => s.targetKey === session.targetKey && s.targetVal === oldVal && s.type === 'PAYMENT');
                 const oldPaymentLogs = logs.filter(l => l.uid === user.uid && oldPaymentSchedules.some(s => s.id === l.sessionId));
                 const recoupAmount = oldPaymentLogs.reduce((sum, l) => sum + (l.finalAmount || 0), 0);
                 
                 if (recoupAmount > 0) { 
-                    setScanResult(null); 
-                    setRefundRequest({ user, session, requiredChoice, amount: recoupAmount, oldVal }); 
+                    setScanResult(null); setRefundRequest({ user, session, requiredChoice, amount: recoupAmount, oldVal }); 
                     return; 
                 } 
                 
@@ -2205,11 +2104,9 @@
                 const isToPayment = session.type === 'PAYMENT' && session.price > 0;
                 
                 if (isFromTour && isToPayment) { 
-                    setScanResult(null); 
-                    setForfeitRequest({ user, session, requiredChoice, oldVal, price: session.price }); 
+                    setScanResult(null); setForfeitRequest({ user, session, requiredChoice, oldVal, price: session.price }); 
                     return; 
                 }
-                
                 await executeUpdate(user, session, requiredChoice, 0, '현장 스캔 시 즉시 변경');
             };
 
@@ -2227,12 +2124,106 @@
                 else await executeUpdate(user, session, requiredChoice, 0, `현장 변경 (관광->지급, 예약부도 위약금 적용으로 지급생략)`, 0); 
             };
 
+            const processScan = async (scannedText, strictMode = false) => { 
+                const scannedUid = extractEid(scannedText); // URL 형태에서도 사번 파싱
+                
+                const user = users.find(u => String(u.uid).trim() === String(scannedUid).trim()); 
+                if (!user) return setScanResult({ status: 'error', msg: '미등록 참가자', subMsg: `ID: ${scannedUid}` }); 
+                
+                const session = schedules.find(s => s.id === targetSessionId); 
+                if (!session) return setScanResult({ status: 'error', msg: '세션 미선택', subMsg: '관리자에게 문의하세요' }); 
+
+                if (strictMode && session.type === 'BOARDING') {
+                    if (user.bus && user.bus.trim() !== targetBus.trim()) {
+                         return setScanResult({ status: 'error', msg: '탑승 불가 (차량 불일치)', subMsg: `배정: ${user.bus} / 현재: ${targetBus}`, user });
+                    }
+                }
+                
+                const isDuplicate = logs.some(l => l.uid === user.uid && l.sessionId === session.id); 
+                if (isDuplicate) return setScanResult({ status: 'duplicate', msg: '이미 처리됨', subMsg: `${session.displayDate} - ${session.title}`, user }); 
+                
+                if (session.targetKey !== 'ALL') { 
+                    const userChoice = user.options[session.targetKey]; 
+                    const requiredChoice = session.targetVal; 
+                    if (!userChoice || (requiredChoice !== 'ALL' && !userChoice.includes(requiredChoice))) { 
+                        return setScanResult({ status: 'error', msg: '대상자 아님', subMsg: `필요: ${requiredChoice} / 본인: ${userChoice || '선택없음'}`, user, requiredChoice, session }); 
+                    } 
+                } 
+                
+                let finalAmount = 0; let penaltyApplied = 0; 
+                
+                if (session.type === 'PAYMENT') { 
+                    const baseAmount = session.price; 
+                    const deduction = user.penaltyTotal || 0; 
+                    finalAmount = Math.max(0, baseAmount - deduction); 
+                    penaltyApplied = (baseAmount - finalAmount); 
+                } 
+
+                const timeStr = new Date().toLocaleString('ko-KR', { timeZone: 'Asia/Seoul' });
+                
+                // ✅ 구글 시트로 백그라운드 전송
+                if (session.type === 'PAYMENT') {
+                    sendToGAS({ type: 'meal', id: user.uid, name: user.name, tour: session.title, action: 'APPROVE', time: timeStr });
+                } else {
+                    sendToGAS({ type: 'departure', id: user.uid, name: user.name, category: '현장스캔', course: session.title, time: timeStr });
+                }
+                
+                const newLog = { 
+                    id: `LOG_${Date.now()}_${Math.random().toString(36).substr(2,9)}`, 
+                    timestamp: timeStr, 
+                    uid: user.uid, 
+                    name: user.name, 
+                    org: user.org, 
+                    action: session.type === 'PAYMENT' ? '지급' : '탑승', 
+                    sessionId: session.id, 
+                    sessionTitle: session.title, 
+                    bus: session.type === 'BOARDING' ? targetBus : '-', 
+                    amount: session.type === 'PAYMENT' ? session.price : 0, 
+                    penaltyApplied: penaltyApplied, 
+                    finalAmount: finalAmount 
+                }; 
+                
+                setLogs([newLog, ...logs]); 
+                if (penaltyApplied > 0) { 
+                    const updatedUsers = users.map(u => u.uid === user.uid ? { ...u, penaltyTotal: u.penaltyTotal - penaltyApplied } : u); 
+                    setUsers([...updatedUsers]); 
+                } 
+                
+                const todayLogs = logs.filter(l => l.uid === user.uid && l.timestamp.slice(0, 10) === newLog.timestamp.slice(0, 10) && l.action === '지급'); 
+                setScanResult({ status: 'success', msg: session.type==='PAYMENT'?'지급 완료':'탑승 확인', subMsg: session.title, user, logs: newLog, relatedLogs: todayLogs }); 
+            };
+
+            const handleUserUpdate = async () => { 
+                if (!selectedUser || !editForm.optKey) return; 
+                const oldVal = selectedUser.options[editForm.optKey]; 
+                const logIdsToRemove = await cleanupOldLogs(selectedUser.uid, editForm.optKey, oldVal); 
+                const newPenalty = parseInt(editForm.penalty || 0); 
+                const timeStr = new Date().toLocaleString('ko-KR', { timeZone: 'Asia/Seoul' });
+                const changeLog = { id: `CHG_${Date.now()}`, timestamp: timeStr, uid: selectedUser.uid, name: selectedUser.name, targetOption: editForm.optKey, oldVal: oldVal, newVal: editForm.optVal, penalty: newPenalty, reason: editForm.reason }; 
+                
+                const updatedUsers = users.map(u => { 
+                    if (u.uid === selectedUser.uid) { 
+                        const newOptions = { ...u.options, [editForm.optKey]: editForm.optVal }; 
+                        const totalPenalty = (u.penaltyTotal || 0) + newPenalty; 
+                        const updatedUser = { ...u, options: newOptions, penaltyTotal: totalPenalty }; 
+                        setSelectedUser(updatedUser); 
+                        return updatedUser; 
+                    } 
+                    return u; 
+                }); 
+                setUsers([...updatedUsers]); 
+                setChangeLogs([changeLog, ...changeLogs]); 
+
+                alert("변경 및 패널티 적용이 완료되었습니다."); 
+                setEditForm({ optKey: '', optVal: '', penalty: 0, reason: '' }); 
+                setSearchQuery(''); 
+            };
+
             const handleUserUpload = async (e) => { 
                 const file = e.target.files[0]; 
                 if (!file) return; 
                 Papa.parse(file, { 
-                    header: true, 
-                    skipEmptyLines: true, 
+                    header: true, skipEmptyLines: true, 
                     complete: async (results) => { 
                         const parsed = results.data.map(row => { 
                             const uid = row['사번'] || row['ID'] || row['uid'] || Object.values(row)[0]; 
@@ -2248,16 +2239,9 @@
                             return { uid, name, org, bus, options, penaltyTotal: 0 }; 
                         }).filter(u => u.uid); 
                         
-                        if(confirm(`${parsed.length}명의 참가자 명단을 로드하시겠습니까?`)) { 
-                            if (db) { 
-                                const batch = db.batch(); 
-                                parsed.forEach(u => { const ref = db.collection('artifacts').doc(SYSTEM_APP_ID).collection('users').doc(String(u.uid)); batch.set(ref, u); }); 
-                                await batch.commit(); 
-                                alert("서버 업로드 완료!"); 
-                            } else { 
-                                setUsers(parsed); 
-                                alert("로컬 로드 완료!"); 
-                            } 
+                        if(confirm(`${parsed.length}명의 로컬 명단을 강제 세팅하시겠습니까?`)) { 
+                            setUsers(parsed); 
+                            alert("업로드 완료!"); 
                         } 
                     } 
                 }); 
@@ -2267,13 +2251,11 @@
                 const file = e.target.files[0]; 
                 if (!file) return; 
                 Papa.parse(file, { 
-                    header: true, 
-                    skipEmptyLines: true, 
+                    header: true, skipEmptyLines: true, 
                     complete: async (results) => { 
                         const parsed = results.data.map((row, idx) => { 
                             const rawDate = row['일정'] || row['Date'] || `Day ${idx+1}`; 
-                            const today = new Date(); 
-                            const dateObj = new Date(today); 
+                            const today = new Date(); const dateObj = new Date(today); 
                             if(rawDate.includes('1일')) dateObj.setDate(today.getDate()); 
                             else if(rawDate.includes('2일')) dateObj.setDate(today.getDate()+1); 
                             else if(rawDate.includes('3일')) dateObj.setDate(today.getDate()+2); 
@@ -2286,146 +2268,49 @@
                             if (price > 0) type = 'PAYMENT'; 
                             else if (row['타입'] && (row['타입'].includes('지급') || row['타입'].includes('Payment'))) type = 'PAYMENT'; 
                             return { 
-                                id: `SCHED_${idx}`, 
-                                date: dateStr, 
-                                displayDate: rawDate, 
-                                title: row['장소'] || row['Title'] || '일정', 
-                                type: type, 
-                                price: price, 
-                                targetKey: row['타겟옵션'] || row['OptionKey'] || 'ALL', 
-                                targetVal: row['타겟값'] || row['OptionVal'] || 'ALL' 
+                                id: `SCHED_${idx}`, date: dateStr, displayDate: rawDate, 
+                                title: row['장소'] || row['Title'] || '일정', type: type, price: price, 
+                                targetKey: row['타겟옵션'] || row['OptionKey'] || 'ALL', targetVal: row['타겟값'] || row['OptionVal'] || 'ALL' 
                             }; 
                         }); 
                         
-                        if(confirm(`${parsed.length}개의 스케줄을 로드하시겠습니까?`)) { 
-                            if (db) { 
-                                const batch = db.batch(); 
-                                parsed.forEach(s => { const ref = db.collection('artifacts').doc(SYSTEM_APP_ID).collection('schedules').doc(s.id); batch.set(ref, s); }); 
-                                await batch.commit(); 
-                                alert("서버 업로드 완료!"); 
-                            } else { 
-                                setSchedules(parsed); 
-                                if(parsed.length > 0) setTargetSessionId(parsed[0].id); 
-                                alert("로컬 로드 완료!"); 
-                            } 
+                        if(confirm(`${parsed.length}개의 스케줄을 세팅하시겠습니까?`)) { 
+                            setSchedules(parsed); 
+                            if(parsed.length > 0) setTargetSessionId(parsed[0].id); 
+                            alert("스케줄 로드 완료!"); 
                         } 
                     } 
                 }); 
             };
 
-            const processScan = async (scannedUid, strictMode = false) => { 
-                const user = users.find(u => u.uid === scannedUid); 
-                if (!user) return setScanResult({ status: 'error', msg: '미등록 참가자', subMsg: `ID: ${scannedUid}` }); 
-                
-                const session = schedules.find(s => s.id === targetSessionId); 
-                if (!session) return setScanResult({ status: 'error', msg: '세션 미선택', subMsg: '관리자에게 문의하세요' }); 
-
-                // 차량 배정 검증 로직 추가
-                if (strictMode && session.type === 'BOARDING') {
-                    if (user.bus && user.bus.trim() !== targetBus.trim()) {
-                         return setScanResult({ 
-                             status: 'error', 
-                             msg: '탑승 불가 (차량 불일치)', 
-                             subMsg: `배정: ${user.bus} / 현재: ${targetBus}`, 
-                             user 
-                         });
-                    }
+            const handleAppBgUpload = (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = (evt) => {
+                        const img = new Image();
+                        img.onload = () => {
+                            const canvas = document.createElement('canvas');
+                            const ctx = canvas.getContext('2d');
+                            let width = img.width, height = img.height;
+                            const MAX = 1920; 
+                            if (width > height && width > MAX) { height *= MAX / width; width = MAX; } 
+                            else if (height > MAX) { width *= MAX / height; height = MAX; }
+                            canvas.width = width; canvas.height = height;
+                            ctx.drawImage(img, 0, 0, width, height);
+                            const dataUrl = canvas.toDataURL('image/jpeg', 0.6);
+                            setAppBgImage(dataUrl);
+                        };
+                        img.src = evt.target.result;
+                    };
+                    reader.readAsDataURL(file);
                 }
-                
-                const isDuplicate = logs.some(l => l.uid === user.uid && l.sessionId === session.id); 
-                if (isDuplicate) return setScanResult({ status: 'duplicate', msg: '이미 처리됨', subMsg: `${session.displayDate} - ${session.title}`, user }); 
-                
-                if (session.targetKey !== 'ALL') { 
-                    const userChoice = user.options[session.targetKey]; 
-                    const requiredChoice = session.targetVal; 
-                    if (!userChoice || (requiredChoice !== 'ALL' && !userChoice.includes(requiredChoice))) { 
-                        return setScanResult({ status: 'error', msg: '대상자 아님', subMsg: `필요: ${requiredChoice} / 본인: ${userChoice || '선택없음'}`, user, requiredChoice, session }); 
-                    } 
-                } 
-                
-                let finalAmount = 0; 
-                let penaltyApplied = 0; 
-                
-                if (session.type === 'PAYMENT') { 
-                    const baseAmount = session.price; 
-                    const deduction = user.penaltyTotal || 0; 
-                    finalAmount = Math.max(0, baseAmount - deduction); 
-                    penaltyApplied = (baseAmount - finalAmount); 
-                } 
-                
-                const newLog = { 
-                    id: `LOG_${Date.now()}_${Math.random().toString(36).substr(2,9)}`, 
-                    timestamp: new Date().toLocaleString(), 
-                    uid: user.uid, 
-                    name: user.name, 
-                    org: user.org, 
-                    action: session.type === 'PAYMENT' ? '지급' : '탑승', 
-                    sessionId: session.id, 
-                    sessionTitle: session.title, 
-                    bus: session.type === 'BOARDING' ? targetBus : '-', 
-                    amount: session.type === 'PAYMENT' ? session.price : 0, 
-                    penaltyApplied: penaltyApplied, 
-                    finalAmount: finalAmount 
-                }; 
-                
-                if (db) { 
-                    await db.collection('artifacts').doc(SYSTEM_APP_ID).collection('logs').add(newLog); 
-                    if (penaltyApplied > 0) { 
-                        const userRef = db.collection('artifacts').doc(SYSTEM_APP_ID).collection('users').doc(String(user.uid)); 
-                        await userRef.update({ penaltyTotal: user.penaltyTotal - penaltyApplied }); 
-                    } 
-                } else { 
-                    setLogs([newLog, ...logs]); 
-                    if (penaltyApplied > 0) { 
-                        const updatedUsers = users.map(u => u.uid === user.uid ? { ...u, penaltyTotal: u.penaltyTotal - penaltyApplied } : u); 
-                        setUsers([...updatedUsers]); 
-                    } 
-                } 
-                
-                const todayLogs = logs.filter(l => l.uid === user.uid && l.timestamp.slice(0, 10) === newLog.timestamp.slice(0, 10) && l.action === '지급'); 
-                setScanResult({ status: 'success', msg: session.type==='PAYMENT'?'지급 완료':'탑승 확인', subMsg: session.title, user, logs: newLog, relatedLogs: todayLogs }); 
             };
 
-            const handleUserUpdate = async () => { 
-                if (!selectedUser || !editForm.optKey) return; 
-                const oldVal = selectedUser.options[editForm.optKey]; 
-                const logIdsToRemove = await cleanupOldLogs(selectedUser.uid, editForm.optKey, oldVal, !!db); 
-                const newPenalty = parseInt(editForm.penalty || 0); 
-                const changeLog = { id: `CHG_${Date.now()}`, timestamp: new Date().toLocaleString(), uid: selectedUser.uid, name: selectedUser.name, targetOption: editForm.optKey, oldVal: oldVal, newVal: editForm.optVal, penalty: newPenalty, reason: editForm.reason }; 
-                
-                if (db) { 
-                    const userRef = db.collection('artifacts').doc(SYSTEM_APP_ID).collection('users').doc(String(selectedUser.uid)); 
-                    const updatedOptions = { ...selectedUser.options, [editForm.optKey]: editForm.optVal }; 
-                    await userRef.update({ options: updatedOptions, penaltyTotal: (selectedUser.penaltyTotal || 0) + newPenalty }); 
-                    await db.collection('artifacts').doc(SYSTEM_APP_ID).collection('changelogs').add(changeLog); 
-                } else { 
-                    if(logIdsToRemove.length > 0) { 
-                        setLogs(prevLogs => prevLogs.filter(l => !logIdsToRemove.includes(l.id))); 
-                    } 
-                    const updatedUsers = users.map(u => { 
-                        if (u.uid === selectedUser.uid) { 
-                            const newOptions = { ...u.options, [editForm.optKey]: editForm.optVal }; 
-                            const totalPenalty = (u.penaltyTotal || 0) + newPenalty; 
-                            const updatedUser = { ...u, options: newOptions, penaltyTotal: totalPenalty }; 
-                            setSelectedUser(updatedUser); 
-                            return updatedUser; 
-                        } 
-                        return u; 
-                    }); 
-                    setUsers([...updatedUsers]); 
-                    setChangeLogs([changeLog, ...changeLogs]); 
-                } 
-                alert("변경 및 패널티 적용이 완료되었습니다."); 
-                setEditForm({ optKey: '', optVal: '', penalty: 0, reason: '' }); 
-                setSearchQuery(''); 
-            };
+            if (isLoading) return <div className="h-screen w-screen flex items-center justify-center font-bold text-incar">시스템 로딩중...</div>;
 
             return (
-                <div 
-                    className={`h-full flex flex-row w-full relative ${appBgImage ? 'bg-cover bg-center bg-no-repeat bg-fixed' : 'bg-slate-50'}`} 
-                    style={appBgImage ? {backgroundImage: `url(${appBgImage})`} : {}}
-                >
-                    {/* 전체 배경 오버레이 (사진 적용 시 약간 어둡게 처리) */}
+                <div className={`h-full flex flex-row w-full relative ${appBgImage ? 'bg-cover bg-center bg-no-repeat bg-fixed' : 'bg-slate-50'}`} style={appBgImage ? {backgroundImage: `url(${appBgImage})`} : {}}>
                     {appBgImage && <div className="absolute inset-0 z-0 bg-slate-900/40 backdrop-blur-[2px] pointer-events-none"></div>}
 
                     <div className="z-10 h-full hidden md:block">
@@ -2437,7 +2322,7 @@
                             <header className={`${appBgImage ? 'bg-white/90 backdrop-blur-md' : 'bg-white'} px-6 py-4 shadow-sm flex justify-between items-center z-20 no-print`}>
                                 <div className="flex items-center gap-2">
                                     <div className="w-8 h-8 bg-incar rounded-lg flex items-center justify-center text-white font-black">P</div>
-                                    <h1 className="font-black text-slate-800 tracking-tight">INCARPASS</h1>
+                                    <h1 className="font-black text-slate-800 tracking-tight">ISC 관리자</h1>
                                 </div>
                                 <div className="text-xs font-bold text-slate-400">{users.length}명</div>
                             </header>
@@ -2449,7 +2334,7 @@
                                 {activeTab === 'boarding' && <ScanView mode="BOARDING" schedules={schedules} targetSessionId={targetSessionId} setTargetSessionId={setTargetSessionId} targetBus={targetBus} setTargetBus={setTargetBus} manualBus={manualBus} setManualBus={setManualBus} isScanning={isScanning} setIsScanning={setIsScanning} processScan={processScan} users={users} isMobile={isMobile} busList={busList} setBusList={setBusList} />}
                                 {activeTab === 'payment' && <ScanView mode="PAYMENT" schedules={schedules} targetSessionId={targetSessionId} setTargetSessionId={setTargetSessionId} targetBus={targetBus} setTargetBus={setTargetBus} manualBus={manualBus} setManualBus={setManualBus} isScanning={isScanning} setIsScanning={setIsScanning} processScan={processScan} users={users} isMobile={isMobile} busList={busList} setBusList={setBusList} />}
                                 {activeTab === 'change' && <ChangeView searchQuery={searchQuery} setSearchQuery={setSearchQuery} selectedUser={selectedUser} setSelectedUser={setSelectedUser} editForm={editForm} setEditForm={setEditForm} handleUserUpdate={handleUserUpdate} users={users} schedules={schedules} changeLogs={changeLogs} />}
-                                {activeTab === 'manage' && <ManageView users={users} handleUserUpload={handleUserUpload} handleScheduleUpload={handleScheduleUpload} badgeConfig={badgeConfig} setBadgeConfig={setBadgeConfig} db={db} serverError={serverError} schedules={schedules} logs={logs} setIsPrintMode={setIsPrintMode} setUsers={setUsers} setSchedules={setSchedules} setLogs={setLogs} setChangeLogs={setChangeLogs} changeLogs={changeLogs} appBgImage={appBgImage} setAppBgImage={setAppBgImage} handleAppBgUpload={handleAppBgUpload} />} 
+                                {activeTab === 'manage' && <ManageView users={users} handleUserUpload={handleUserUpload} handleScheduleUpload={handleScheduleUpload} badgeConfig={badgeConfig} setBadgeConfig={setBadgeConfig} schedules={schedules} logs={logs} setIsPrintMode={setIsPrintMode} setUsers={setUsers} setSchedules={setSchedules} setLogs={setLogs} setChangeLogs={setChangeLogs} changeLogs={changeLogs} appBgImage={appBgImage} setAppBgImage={setAppBgImage} handleAppBgUpload={handleAppBgUpload} />} 
                             </div>
                         </div>
 
