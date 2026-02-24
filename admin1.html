@@ -1205,107 +1205,65 @@
             );
         };
 
-        const BadgePrintView = ({ users, onClose, config }) => {
-            const calculateStyle = () => {
-                let w = config.imgWidth || 545;
-                let h = config.imgHeight || 697;
-                const MAX_WIDTH = 794; 
-                if (w > MAX_WIDTH) {
-                    const ratio = h / w;
-                    w = MAX_WIDTH;
-                    h = MAX_WIDTH * ratio;
+        // 개별 QR 카드를 위한 새로운 컴포넌트 추가
+        const UserQRCard = ({ user, baseUrl }) => {
+            const canvasRef = useRef(null);
+            const qrText = baseUrl + user.uid;
+
+            useEffect(() => {
+                if (canvasRef.current && window.QRious) {
+                    new QRious({
+                        element: canvasRef.current,
+                        value: qrText,
+                        size: 140,
+                        level: 'H',
+                        background: 'white',
+                        foreground: 'black'
+                    });
                 }
-                return { 
-                    width: `${w}px`, 
-                    height: `${h}px`,
-                    border: config?.bgImage ? 'none' : '2px solid #0f172a',
-                    borderRadius: '0', 
-                    flexShrink: 0
-                };
+            }, [qrText]);
+
+            const copyLink = async () => {
+                try {
+                    if (navigator.clipboard && window.isSecureContext) {
+                        await navigator.clipboard.writeText(qrText);
+                        alert(`${user.name} 님의 링크가 복사되었습니다.`);
+                    } else {
+                        throw new Error("No clipboard API");
+                    }
+                } catch (e) {
+                    const el = document.createElement('textarea');
+                    el.value = qrText;
+                    document.body.appendChild(el);
+                    el.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(el);
+                    alert(`${user.name} 님의 링크가 복사되었습니다.`);
+                }
             };
 
-            const renderLayer = (layer, u, index) => {
-                const commonStyle = {
-                    position: 'absolute',
-                    top: `${layer.y}%`,
-                    left: `${layer.x}%`,
-                    transform: 'translate(-50%, -50%)',
-                    zIndex: index, 
-                    width: layer.width === 'auto' ? 'auto' : `${layer.width}px`,
-                    textAlign: layer.align || 'center',
-                    cursor: 'default',
-                    whiteSpace: 'nowrap'
-                };
-
-                if (layer.type === 'qr') {
-                    return (
-                        <div key={layer.id} style={{ ...commonStyle, width: `${layer.size}px`, height: `${layer.size}px`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                            <QRCodeCanvas text={BASE_URL + u.uid} size={layer.size} transparent={true} />
-                        </div>
-                    );
-                } else if (layer.type === 'text') {
-                    let content = layer.content;
-                    if (layer.variable) {
-                        if (layer.variable === 'name') content = u.name;
-                        else if (layer.variable === 'org') content = u.org;
-                        else if (layer.variable === 'role') content = u.options && (u.options['직책'] || u.options['Role'] || '-');
-                        else if (layer.variable === 'id') content = u.uid;
-                    }
-                    return (
-                        <div key={layer.id} className={layer.fontFamily} style={{
-                            ...commonStyle,
-                            fontSize: `${layer.fontSize}px`,
-                            color: layer.color,
-                            fontWeight: layer.fontWeight || 'bold',
-                            backgroundColor: layer.bgColor || 'transparent',
-                            padding: `${layer.padding || 0}px`,
-                            borderRadius: `${layer.borderRadius || 0}px`,
-                            textShadow: layer.shadow ? '2px 2px 4px rgba(0,0,0,0.5)' : 'none',
-                            fontFamily: layer.fontFamily 
-                        }}>
-                            {content}
-                        </div>
-                    );
-                } else if (layer.type === 'rect' || layer.type === 'circle') {
-                    return (
-                        <div key={layer.id} style={{
-                            ...commonStyle,
-                            width: `${layer.w}px`,
-                            height: `${layer.h}px`,
-                            backgroundColor: layer.fill,
-                            border: `${layer.borderWidth}px solid ${layer.borderColor}`,
-                            borderRadius: layer.type === 'circle' ? '50%' : `${layer.borderRadius}px`,
-                            opacity: layer.opacity
-                        }}></div>
-                    );
+            const downloadPng = () => {
+                if (canvasRef.current) {
+                    const dataUrl = canvasRef.current.toDataURL("image/png");
+                    const a = document.createElement("a");
+                    a.href = dataUrl;
+                    a.download = `${user.uid}_${user.name}_QR.png`;
+                    document.body.appendChild(a);
+                    a.click();
+                    a.remove();
                 }
-                return null;
             };
 
             return (
-                <div className="fixed inset-0 bg-white z-[100] overflow-auto animate-fade-in print-only-container">
-                    <div className="no-print fixed top-0 left-0 w-full bg-slate-900 text-white p-4 flex justify-between items-center shadow-xl z-50">
-                        <div className="font-bold text-lg flex items-center gap-4">
-                            <span className="bg-incar px-2 py-1 rounded text-xs">PRINT MODE</span> 
-                            <span>명찰 일괄 출력 (총 {users.length}명)</span>
-                        </div>
-                        <div className="flex gap-3">
-                            <button onClick={() => window.print()} className="bg-emerald-500 hover:bg-emerald-600 px-6 py-2 rounded-lg font-bold flex items-center gap-2">
-                                <Icon name="print" /> 인쇄 / PDF저장
-                            </button>
-                            <button onClick={onClose} className="bg-slate-700 hover:bg-slate-600 px-6 py-2 rounded-lg font-bold">닫기</button>
-                        </div>
+                <div className="bg-white rounded-2xl p-4 text-center shadow-sm border border-slate-200 flex flex-col items-center">
+                    <div className="p-2 bg-white rounded-xl border border-slate-100 mb-3 inline-flex justify-center items-center">
+                        <canvas ref={canvasRef}></canvas>
                     </div>
-                    
-                    <div className="print-reset-spacing p-8 pt-24 w-full min-h-screen bg-slate-100 flex flex-col items-center gap-8 print:bg-white">
-                        {users.map((u, i) => (
-                            <div key={u.uid} className="page-wrapper relative">
-                                <div className="badge-card relative overflow-hidden bg-white shadow-lg" style={calculateStyle()}>
-                                    {config.bgImage && <img src={config.bgImage} className="absolute inset-0 w-full h-full object-cover z-0" />}
-                                    {config.layers && config.layers.map((layer, idx) => renderLayer(layer, u, idx))}
-                                </div>
-                            </div>
-                        ))}
+                    <div className="font-bold text-slate-800 text-sm">{user.name}</div>
+                    <div className="text-[10px] text-slate-500 mb-3">{user.uid}</div>
+                    <div className="flex gap-2 w-full justify-center">
+                        <button onClick={copyLink} className="flex-1 py-2 bg-slate-100 text-slate-700 text-[10px] font-bold rounded-lg hover:bg-slate-200 transition-colors">링크복사</button>
+                        <button onClick={downloadPng} className="flex-1 py-2 bg-slate-800 text-white text-[10px] font-bold rounded-lg hover:bg-slate-700 transition-colors">PNG다운</button>
                     </div>
                 </div>
             );
@@ -1495,8 +1453,9 @@
                     onClick: (e) => e.stopPropagation()
                 };
 
+                // ✅ 에디터 화면의 QR 가이드에도 문구 추가
                 if (layer.type === 'qr') {
-                    return <div key={layer.id} {...handlers} style={{ ...style, width: `${layer.size}px`, height: `${layer.size}px`, display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(255,255,255,0.5)' }}><span className="text-[10px] font-bold text-red-500">QR</span></div>;
+                    return <div key={layer.id} {...handlers} style={{ ...style, width: `${layer.size}px`, height: `${layer.size}px`, display: 'flex', flexWrap: 'wrap', alignContent: 'center', justifyContent: 'center', backgroundColor: 'rgba(255,255,255,0.5)' }}><span className="text-[10px] font-bold text-red-500 w-full text-center">QR</span><span className="text-[8px] text-red-400 w-full text-center">(자동 생성)</span></div>;
                 } else if (layer.type === 'text') {
                     return (
                         <div key={layer.id} {...handlers} className={layer.fontFamily} style={{
@@ -1744,7 +1703,11 @@
                                         )}
                                         
                                         {selectedLayer.type === 'qr' && (
-                                            <div><label className="text-[10px] font-bold text-slate-400">크기</label><input type="number" value={selectedLayer.size} onChange={e=>updateLayer('size', Number(e.target.value))} className="w-full p-2 border rounded text-xs"/></div>
+                                            <div>
+                                                <label className="text-[10px] font-bold text-slate-400">크기</label>
+                                                <input type="number" value={selectedLayer.size} onChange={e=>updateLayer('size', Number(e.target.value))} className="w-full p-2 border rounded text-xs"/>
+                                                <p className="text-[10px] text-slate-400 mt-1">* QR 코드는 <br/><code className="bg-slate-100 p-1 rounded">안내사이트URL/?eid=사번</code><br/>형태로 자동 삽입됩니다.</p>
+                                            </div>
                                         )}
                                     </div>
                                 ) : (
@@ -1801,6 +1764,20 @@
                         </div>
                     </div>
                     
+                    {/* ✅ 대표님이 원하셨던 [개별 QR 코드 일괄 관리] 뷰 추가 */}
+                    <div className="bg-slate-100 border border-slate-200 p-6 rounded-3xl shadow-sm mt-6">
+                        <div className="flex justify-between items-center mb-4">
+                            <div>
+                                <h4 className="font-bold text-lg text-slate-800 flex items-center gap-2"><Icon name="qr" /> 개별 QR 코드 생성 및 다운로드</h4>
+                                <p className="text-xs text-slate-500">생성된 QR은 <code className="bg-slate-200 px-1 rounded">{BASE_URL}사번</code> 형식으로, 휴대폰 기본 카메라로 찍으면 자동으로 사이트에 연결됩니다.</p>
+                            </div>
+                        </div>
+                        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 max-h-[500px] overflow-y-auto p-2">
+                            {users.map(u => <UserQRCard key={u.uid} user={u} baseUrl={BASE_URL} />)}
+                            {users.length === 0 && <div className="col-span-full py-8 text-center text-slate-400 text-sm">등록된 참가자가 없습니다.</div>}
+                        </div>
+                    </div>
+
                     <div className="bg-slate-100 border border-slate-200 p-6 rounded-3xl shadow-sm flex justify-between items-center">
                         <div><h4 className="font-bold text-lg text-slate-800 mb-1 flex items-center gap-2"><Icon name="download" /> 데이터 내보내기</h4><p className="text-xs text-slate-500">앱에 저장된 변경 및 스캔 이력을 엑셀로 저장합니다.</p></div>
                         <div className="flex gap-2">
@@ -1809,8 +1786,8 @@
                     </div>
 
                     <div className="bg-slate-800 text-white p-6 rounded-3xl shadow-card flex justify-between items-center relative overflow-hidden group">
-                        <div className="relative z-10"><h4 className="font-bold text-lg mb-1 flex items-center gap-2"><Icon name="download" /> 명찰 이미지 다운로드</h4><p className="text-xs text-slate-400">등록된 {users.length}명의 QR 명찰 이미지를 다운로드합니다. (고객용 URL 포함됨)</p></div>
-                        <button onClick={generateZip} className="relative z-10 px-6 py-3 bg-white text-slate-900 rounded-xl font-bold text-sm hover:bg-slate-100 transition-colors shadow-lg">{isZipping ? `생성 중... ${zipProgress}%` : '이미지 일괄 다운로드 (ZIP)'}</button>
+                        <div className="relative z-10"><h4 className="font-bold text-lg mb-1 flex items-center gap-2"><Icon name="download" /> 명찰 이미지 다운로드</h4><p className="text-xs text-slate-400">에디터로 디자인한 명찰을 ZIP 파일로 다운로드합니다. (QR에 고객용 URL이 자동 삽입됩니다)</p></div>
+                        <button onClick={generateZip} className="relative z-10 px-6 py-3 bg-white text-slate-900 rounded-xl font-bold text-sm hover:bg-slate-100 transition-colors shadow-lg">{isZipping ? `생성 중... ${zipProgress}%` : '명찰 이미지 일괄 다운로드 (ZIP)'}</button>
                     </div>
 
                     <div className="bg-white p-6 rounded-3xl shadow-card text-center border border-rose-100">
