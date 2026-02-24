@@ -532,6 +532,68 @@
             );
         };
 
+        const BadgePrintView = ({ users, onClose, badgeConfigs, baseUrl }) => {
+            return (
+                <div className="fixed inset-0 bg-white z-[100] overflow-auto animate-fade-in print-only-container">
+                    <div className="no-print fixed top-0 left-0 w-full bg-slate-900 text-white p-4 flex justify-between items-center shadow-xl z-50">
+                        <div className="font-bold text-lg flex items-center gap-4">
+                            <span className="bg-incar px-2 py-1 rounded text-xs">PRINT MODE</span> 
+                            <span>명찰 일괄 출력 (총 {users.length}명)</span>
+                        </div>
+                        <div className="flex gap-3">
+                            <button onClick={() => window.print()} className="bg-emerald-500 hover:bg-emerald-600 px-6 py-2 rounded-lg font-bold flex items-center gap-2">
+                                <Icon name="print" /> 인쇄 / PDF저장
+                            </button>
+                            <button onClick={onClose} className="bg-slate-700 hover:bg-slate-600 px-6 py-2 rounded-lg font-bold">닫기</button>
+                        </div>
+                    </div>
+                    
+                    <div className="print-reset-spacing p-8 pt-24 w-full min-h-screen bg-slate-100 flex flex-col items-center gap-8 print:bg-white print:p-0 print:pt-0">
+                        {users.map((u, i) => {
+                            const c = getConfigForUser(u, badgeConfigs);
+                            if (!c) return null;
+                            
+                            const baseW = c.imgWidth || 2382;
+                            const baseH = c.imgHeight || 1527;
+                            const printW = 794; // A4 가로 너비 기준 축소율 계산
+                            const ratio = baseW > printW ? printW / baseW : 1;
+
+                            const renderLayer = (layer, index) => {
+                                const commonStyle = { position: 'absolute', top: `${layer.y}%`, left: `${layer.x}%`, transform: 'translate(-50%, -50%)', zIndex: index, width: layer.width === 'auto' ? 'auto' : `${layer.width}px`, textAlign: layer.align || 'center', whiteSpace: 'nowrap' };
+                                if (layer.type === 'qr') {
+                                    return <div key={layer.id} style={{ ...commonStyle, width: `${layer.size}px`, height: `${layer.size}px`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}><QRCodeCanvas text={baseUrl + u.uid} size={layer.size} transparent={true} /></div>;
+                                } else if (layer.type === 'text') {
+                                    let content = layer.content;
+                                    if (layer.variable) { 
+                                        if (layer.variable === 'name') content = u.name; 
+                                        else if (layer.variable === 'org') content = u.org; 
+                                        else if (layer.variable === 'role') content = u.options && (u.options['직책'] || u.options['Role'] || '-'); 
+                                        else if (layer.variable === 'id') content = u.uid; 
+                                        else if (layer.variable === 'bus') content = u.bus ? (String(u.bus).includes('호차') ? u.bus : `${u.bus}호차`) : '';
+                                        else if (layer.variable === 'dinner') content = u.dinnerTable ? (String(u.dinnerTable).includes('번') ? u.dinnerTable : `${u.dinnerTable}번`) : '';
+                                        else if (layer.variable === 'airline') content = u.airline || '';
+                                    }
+                                    return <div key={layer.id} className={layer.fontFamily} style={{ ...commonStyle, fontSize: `${layer.fontSize}px`, color: layer.color, fontWeight: layer.fontWeight || 'bold', backgroundColor: layer.bgColor || 'transparent', padding: `${layer.padding || 0}px`, borderRadius: `${layer.borderRadius || 0}px`, textShadow: layer.shadow ? '2px 2px 4px rgba(0,0,0,0.5)' : 'none', fontFamily: layer.fontFamily }}>{content}</div>;
+                                } else if (layer.type === 'rect' || layer.type === 'circle') {
+                                    return <div key={layer.id} style={{ ...commonStyle, width: `${layer.w}px`, height: `${layer.h}px`, backgroundColor: layer.fill, border: `${layer.borderWidth}px solid ${layer.borderColor}`, borderRadius: layer.type === 'circle' ? '50%' : `${layer.borderRadius}px`, opacity: layer.opacity }}></div>;
+                                }
+                                return null;
+                            };
+
+                            return (
+                                <div key={u.uid} className="page-wrapper relative" style={{ width: `${baseW * ratio}px`, height: `${baseH * ratio}px` }}>
+                                    <div className="badge-card relative overflow-hidden bg-white shadow-lg print:shadow-none" style={{ width: `${baseW}px`, height: `${baseH}px`, transform: `scale(${ratio})`, transformOrigin: 'top left', position: 'absolute', top: 0, left: 0, border: c.bgImage ? 'none' : '2px solid #0f172a' }}>
+                                        {c.bgImage && <img src={c.bgImage} className="absolute inset-0 w-full h-full object-cover z-0" />}
+                                        {c.layers && c.layers.map((layer, idx) => renderLayer(layer, idx))}
+                                    </div>
+                                </div>
+                            );
+                        })}
+                    </div>
+                </div>
+            );
+        };
+
         const DashboardView = ({ users, logs, scheduleStats, groupedStats, changeLogs, onSessionClick }) => (
             <div className="space-y-6 animate-slide-up">
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -1393,22 +1455,26 @@
             // ✅ 자동 스케일링 (Auto-Fit) 추가
             useEffect(() => {
                 const updateScale = () => {
-                    if (containerRef.current && activeConfig.imgWidth) {
-                        const availableWidth = containerRef.current.clientWidth - 40; // 양옆 여백 20px씩
+                    if (containerRef.current && activeConfig?.imgWidth) {
+                        const containerWidth = containerRef.current.getBoundingClientRect().width;
+                        const availableWidth = containerWidth - 48; // padding 24px * 2
                         const scale = availableWidth / activeConfig.imgWidth;
                         setEditorScale(scale > 0 ? scale : 0.4);
                     }
                 };
                 
-                // DOM 렌더링 직후 크기 측정
-                const timer = setTimeout(updateScale, 50);
-                window.addEventListener('resize', updateScale);
+                const observer = new ResizeObserver(() => {
+                    window.requestAnimationFrame(updateScale);
+                });
+
+                if (containerRef.current) {
+                    observer.observe(containerRef.current);
+                }
                 
-                return () => {
-                    clearTimeout(timer);
-                    window.removeEventListener('resize', updateScale);
-                };
-            }, [activeConfig.imgWidth, activeIdx]);
+                updateScale();
+
+                return () => observer.disconnect();
+            }, [activeConfig?.imgWidth, activeIdx]);
 
             const startDrag = (e, id) => {
                 e.preventDefault();
@@ -1807,7 +1873,7 @@
                         <div className="flex justify-between items-center mb-4">
                             <div className="flex items-center gap-4">
                                 <h3 className="font-bold text-lg text-slate-800 flex items-center gap-2"><Icon name="edit" className="text-incar"/> 에디터 요소 추가</h3>
-                                <span className="text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-1 rounded">자동 맞춤(Auto-Fit)</span>
+                                <span className="text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-1 rounded">자동 맞춤(Auto-Fit) 작동중</span>
                             </div>
                             <div className="flex gap-2 flex-wrap justify-end max-w-[60%]">
                                 <button onClick={()=>addLayer('text', 'name')} className="px-3 py-1.5 bg-slate-100 text-xs font-bold rounded-lg hover:bg-slate-200">+ 이름</button>
@@ -1825,9 +1891,9 @@
                         
                         <div className="flex flex-col lg:flex-row gap-8 items-start">
                             {/* ✅ 반응형 캔버스 박스 (내부는 무조건 100% 원본 해상도 유지, 컨테이너에서 가로에 맞게 자동 축소) */}
-                            <div ref={containerRef} className="flex-none bg-slate-200 border-4 border-slate-300 rounded-2xl w-full lg:w-[65%] flex justify-center items-center relative shadow-inner overflow-hidden" style={{ minHeight: '400px', padding: '20px' }} onClick={()=>setSelectedId(null)}>
-                                <div style={{ width: `${activeConfig.imgWidth * editorScale}px`, height: `${activeConfig.imgHeight * editorScale}px`, position: 'relative', transition: 'width 0.2s, height 0.2s' }}>
-                                    <div ref={editorRef} style={{ width: `${activeConfig.imgWidth}px`, height: `${activeConfig.imgHeight}px`, transform: `scale(${editorScale})`, transformOrigin: 'top left', position: 'absolute', top: 0, left: 0, backgroundColor: 'white', overflow: 'hidden', boxShadow: '0 10px 30px rgba(0,0,0,0.15)', transition: 'transform 0.2s' }}>
+                            <div ref={containerRef} className="flex-none bg-slate-200 border-4 border-slate-300 rounded-2xl w-full lg:w-[65%] flex justify-center items-center relative shadow-inner p-6 overflow-hidden" onClick={()=>setSelectedId(null)}>
+                                <div style={{ width: `${activeConfig.imgWidth * editorScale}px`, height: `${activeConfig.imgHeight * editorScale}px`, position: 'relative' }}>
+                                    <div ref={editorRef} style={{ width: `${activeConfig.imgWidth}px`, height: `${activeConfig.imgHeight}px`, transform: `scale(${editorScale})`, transformOrigin: 'top left', position: 'absolute', top: 0, left: 0, backgroundColor: 'white', overflow: 'hidden', boxShadow: '0 10px 30px rgba(0,0,0,0.15)' }}>
                                         {activeConfig.bgImage && <img src={activeConfig.bgImage} className="absolute inset-0 w-full h-full object-cover pointer-events-none" />}
                                         {activeConfig.layers && activeConfig.layers.map((layer, idx) => renderEditorLayer(layer, idx))}
                                     </div>
