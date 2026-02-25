@@ -8,7 +8,7 @@
   <!-- ✅ [1] 폰트 CDN 추가 (Pretendard) -->
   <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
 
-  <!-- ✅ [추가] 이미지 빠른 로딩을 위한 Preload -->
+  <!-- ✅ [추가] 이미지 빠른 로딩을 위한 Preload (브라우저가 가장 먼저 이미지를 다운로드하도록 지시) -->
   <link rel="preload" as="image" href="assets/images/taiwan.jpg">
   <link rel="preload" as="image" href="assets/images/home2.jpg">
 
@@ -32,6 +32,7 @@
     * {
       box-sizing: border-box;
       -webkit-tap-highlight-color: transparent; 
+      /* ✅ 폰트 적용 */
       font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     }
 
@@ -41,14 +42,16 @@
       background-color: var(--primary-color);
       color: var(--text-main);
       overscroll-behavior: none; 
+      /* ✅ 모바일 꽉 채우기 핵심 설정 */
       width: 100%;
       height: 100%;
-      overflow: hidden; 
+      overflow: hidden; /* 이중 스크롤 방지 */
     }
 
     /* =========================================================
-       [2] 스플래시 & 로그인 & 로딩 화면
+       [2] 스플래시 & 로그인
     ========================================================= */
+    /* 스플래시 스타일은 유지하되 로직에서만 제거 */
     .mobile-splash {
       position: fixed; inset: 0; z-index: 9999;
       background: var(--primary-color);
@@ -58,9 +61,11 @@
 
     .login-hero {
       width: 100%;
+      /* ✅ 모바일 주소창 대응 높이 설정 */
       height: 100vh;
       height: 100dvh; 
       background: url('assets/images/taiwan.jpg') center/cover no-repeat;
+      /* ✅ 배경 고정 (스크롤 시 흔들림 방지) */
       position: fixed;
       top: 0; left: 0;
       z-index: 2000;
@@ -81,15 +86,18 @@
       text-align: center;
       box-shadow: 0 20px 40px rgba(0,0,0,0.2);
     }
+    
+    /* 🔥 [수정] 로그인 화면 로고 스타일: 비율 유지 */
     .hero-logo { 
-        width: 140px;       
-        height: auto;       
-        object-fit: contain;
+        width: 140px;       /* 적절한 가로 크기 설정 */
+        height: auto;       /* 높이는 자동 */
+        object-fit: contain;/* 비율 유지하며 표시 */
         margin-bottom: 12px;
         display: block;
         margin-left: auto;
         margin-right: auto;
     }
+
     .login-box h2 { color: var(--primary-color); margin: 0 0 5px; font-weight: 800; }
     .hero-desc { color: var(--text-sub); margin-bottom: 24px; font-size: 14px; }
     .login-box input {
@@ -106,78 +114,6 @@
     .primary-btn:active { transform: scale(0.98); }
     .error { color: #e53e3e; font-size: 13px; margin-top: 12px; min-height: 18px; }
 
-    /* 🔥 [수정] 풍등 애니메이션 로딩 화면 CSS (카룡이 매달기 & 바로 보이는 애니메이션 적용) */
-    #loadingSection {
-      position: fixed; inset: 0; z-index: 3000;
-      background: linear-gradient(135deg, #1e1b4b 0%, #0f172a 100%);
-      display: none; /* JS로 제어 */
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      overflow: hidden;
-    }
-    .lantern-container {
-      position: absolute; inset: 0; pointer-events: none;
-    }
-    
-    /* 풍등과 매달린 카룡이를 함께 감싸는 래퍼 */
-    .lantern {
-      position: absolute;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      filter: drop-shadow(0 0 15px rgba(251, 191, 36, 0.8));
-      /* 빈 화면이 아니라 처음부터 화면에 떠서 흔들리는 애니메이션 적용 */
-      animation: floatSky ease-in-out infinite alternate; 
-    }
-    
-    .lantern-svg { width: 100%; height: auto; display: block; }
-    
-    /* 카룡이(공룡) 스타일 */
-    .caryong-hanging {
-      width: 70%;
-      margin-top: -8%; /* 풍등 아래 끈 부분과 연결되도록 겹침 */
-      z-index: 2;
-      filter: drop-shadow(0 4px 6px rgba(0,0,0,0.4));
-    }
-    .caryong-svg { width: 100%; height: auto; display: block; }
-
-    /* 화면 진입 시점부터 이미 보이도록 bottom을 화면 내부에 백분율로 배치 */
-    .l-1 { left: 15%; bottom: 25%; width: 60px; animation-duration: 4s; }
-    .l-2 { left: 45%; bottom: 45%; width: 90px; animation-duration: 5s; transform: translateX(-50%); } /* 카룡이가 매달린 메인 풍등 */
-    .l-3 { left: 75%; bottom: 15%; width: 55px; animation-duration: 4.5s; animation-delay: -1s; }
-    .l-4 { left: 25%; bottom: 65%; width: 45px; animation-duration: 3.5s; animation-delay: -2s; }
-    .l-5 { left: 80%; bottom: 60%; width: 50px; animation-duration: 4.2s; animation-delay: -0.5s; }
-
-    /* 부드럽게 위아래로 둥둥 떠다니는 애니메이션 (기존의 밑에서부터 날아오는 방식 제거) */
-    @keyframes floatSky {
-      0% { transform: translateY(10px) rotate(-3deg); }
-      100% { transform: translateY(-30px) rotate(3deg); }
-    }
-    
-    .loading-content {
-      position: relative;
-      z-index: 10;
-      text-align: center;
-    }
-    .loading-content h2 {
-      color: #fde047;
-      font-size: 24px;
-      font-weight: 800;
-      margin: 0 0 8px;
-      text-shadow: 0 2px 10px rgba(0,0,0,0.5);
-      animation: pulseText 1.5s infinite;
-    }
-    .loading-content p {
-      color: #cbd5e1;
-      font-size: 14px;
-      margin: 0;
-    }
-    @keyframes pulseText {
-      0%, 100% { opacity: 1; transform: scale(1); }
-      50% { opacity: 0.7; transform: scale(0.98); }
-    }
-
     /* =========================================================
        [3] 홈 화면 (단일 풀스크린 대시보드 구조)
     ========================================================= */
@@ -186,8 +122,10 @@
         height: 100%; 
         overflow: hidden; 
     }
+    
     .home-view {
       width: 100%;
+      /* ✅ 모바일 주소창 대응 */
       height: 100vh;
       height: 100dvh;
       background: url('assets/images/home2.jpg') center/cover no-repeat;
@@ -195,35 +133,45 @@
       display: flex;
       flex-direction: column;
     }
+    
     .home-overlay {
       position: absolute; inset: 0;
+      /* ✅ 어둡게 깔린 배경 필터 제거 (투명하게 처리) */
       background: transparent;
       z-index: 1;
     }
+
+    /* 상단 헤더 */
     .home-header {
       position: relative; z-index: 100;
       display: flex; justify-content: space-between; align-items: center;
       padding: 20px 24px;
+      /* ✅ 아이폰 노치 영역 대응 */
       padding-top: max(20px, env(safe-area-inset-top));
     }
+    
+    /* 🔥 [수정] 상단 헤더 로고 스타일: 비율 유지 및 원본 색상 출력 */
     .header-logo { 
-        height: 36px;       
-        width: auto;        
-        object-fit: contain;
+        height: 36px;       /* 헤더 높이에 맞춤 */
+        width: auto;        /* 가로는 비율대로 */
+        object-fit: contain;/* 찌그러짐 방지 */
     }
     
     /* =========================================================
        [4] 우측 상단 카테고리 (팝업 드롭다운 스타일) 
+       🔥🔥 여백 및 컬러풀 아이콘 완벽 정비
     ========================================================= */
     .menu-wrapper { 
         position: relative; 
+        /* ✅ 로고 유무와 상관없이 메뉴를 우측 끝으로 고정 */
         margin-left: auto;
     }
 
     .menu-btn {
+      /* 🔥 [수정] 눈에 확 띄는 황금빛 그라데이션 및 입체 효과 적용 */
       background: linear-gradient(135deg, #fde047 0%, #f59e0b 100%);
       border: 1px solid #fef08a;
-      color: #1e293b;
+      color: #1e293b; /* 가독성을 위한 짙은 남색 글씨 */
       padding: 8px 18px; 
       border-radius: 24px; 
       font-weight: 800; 
@@ -232,8 +180,10 @@
       display: flex; align-items: center; gap: 6px;
       transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
       position: relative; z-index: 101; 
+      /* 은은하게 빛나는 골드 글로우(후광) 효과 */
       box-shadow: 0 4px 14px rgba(245, 158, 11, 0.4), inset 0 1px 2px rgba(255, 255, 255, 0.6);
     }
+    /* ✅ 메뉴 버튼 클릭 시 효과 */
     .menu-btn:active { 
       background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
       border-color: #f59e0b;
@@ -241,6 +191,7 @@
       box-shadow: 0 2px 6px rgba(245, 158, 11, 0.5);
     }
 
+    /* 메뉴 열릴 때 화면 어둡게 해주는 레이어 */
     .menu-dim {
       position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 90;
       backdrop-filter: blur(3px); -webkit-backdrop-filter: blur(3px);
@@ -248,12 +199,13 @@
     }
     body.menu-open .menu-dim { opacity: 1; visibility: visible; }
 
+    /* 메뉴 드롭다운 박스 뼈대 */
     .category-dropdown {
       position: absolute; top: calc(100% + 12px); right: 0;
-      width: 240px;
+      width: 240px; /* 적당한 너비로 고정 */
       background: #fff; border-radius: 20px;
       box-shadow: 0 12px 40px rgba(0,0,0,0.25);
-      padding: 12px;
+      padding: 12px; /* 바깥 패딩 12px */
       z-index: 100;
       opacity: 0; visibility: hidden; transform: translateY(-10px);
       transition: all 0.3s cubic-bezier(0.32, 0.72, 0, 1);
@@ -263,6 +215,7 @@
       opacity: 1; visibility: visible; transform: translateY(0);
     }
 
+    /* 헤더 좌우 여백을 정확히 8px로 맞춤 (버튼 내부와 라인 일치) */
     .dropdown-header {
       font-size: 13px; font-weight: 700; color: #94a3b8;
       padding: 4px 8px 10px; 
@@ -270,15 +223,18 @@
       margin-bottom: 6px;
     }
 
+    /* 버튼 여백 및 정렬 완벽 수정 */
     .drop-nav button {
       width: 100%; text-align: left; background: none; border: none;
-      padding: 10px 8px;
+      padding: 10px 8px; /* 위아래 10px, 좌우 8px 정렬 맞춤 */
       font-size: 15px; font-weight: 600; color: var(--text-main);
       border-radius: 12px; cursor: pointer; 
-      display: flex; align-items: center; gap: 14px;
+      display: flex; align-items: center; gap: 14px; /* 아이콘과 텍스트 사이 간격 고정 */
+      /* ✅ 카테고리 버튼 누를 때 효과 (transition 추가) */
       transition: background-color 0.1s, transform 0.1s cubic-bezier(0.4, 0, 0.2, 1);
     }
     
+    /* 🔥 컬러풀한 아이콘 배경 박스 (앱 아이콘 스타일) */
     .menu-icon {
       width: 32px; 
       height: 32px;
@@ -287,12 +243,13 @@
       align-items: center; 
       justify-content: center;
       flex-shrink: 0; 
-      font-size: 16px;
+      font-size: 16px; /* 이모지 크기 */
       box-shadow: inset 0 2px 4px rgba(0,0,0,0.04);
     }
 
     .drop-nav button span { flex: 1; letter-spacing: -0.3px; }
     
+    /* ✅ 카테고리 항목 클릭 시 쫀득한 효과 */
     .drop-nav button:active { 
       background: #f1f5f9; 
       transform: scale(0.96); 
@@ -306,18 +263,22 @@
       flex: 1; 
       display: flex; flex-direction: column; justify-content: flex-end;
       padding: 0 24px 60px; 
+      /* ✅ 하단 안전영역 대응 */
       padding-bottom: max(60px, env(safe-area-inset-bottom));
       color: #fff;
     }
     
     .welcome-text { margin-bottom: 30px; }
     .welcome-text p { font-size: 18px; margin: 0; opacity: 0.95; font-weight: 500; letter-spacing: -0.5px; }
+    /* ✅ 이름 글씨 색상을 고급스러운 샴페인 골드(#e6c27a)로 변경하고 살짝의 그림자로 가독성을 높임 */
     .welcome-text strong { color: #e6c27a; font-weight: 900; font-size: 20px; letter-spacing: -0.5px; text-shadow: 0 2px 6px rgba(0,0,0,0.4); }
     .welcome-text h2 { font-size: 36px; font-weight: 900; margin: 6px 0 12px; line-height: 1.2; letter-spacing: -1px; }
     
+    /* 🔥 [날씨 위젯 배치] 날짜와 날씨를 나란히 묶는 래퍼 */
     .meta-badges { display: flex; align-items: center; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
     .welcome-text .sub-date { display: inline-block; padding: 6px 14px; background: rgba(0,0,0,0.4); border-radius: 20px; font-size: 13px; border: 1px solid rgba(255,255,255,0.1); font-weight: 600; }
 
+    /* 🔥 [날씨 위젯 스타일] 기존 테마와 어울리는 글래스모피즘 버튼 */
     .weather-badge {
       display: inline-flex; align-items: center; gap: 6px;
       background: rgba(0, 0, 0, 0.4); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
@@ -328,6 +289,7 @@
     .weather-badge:active { transform: scale(0.95); background: rgba(0, 0, 0, 0.6); }
     .weather-badge strong { color: #e6c27a; font-size: 14px; font-weight: 800; letter-spacing: -0.3px; }
 
+    /* 🔥 [추가] 메인 화면 공항 안내 문구 스타일 (배경과 자연스럽게 어울리는 유리 효과) */
     .home-notice {
       display: flex;
       align-items: center;
@@ -341,30 +303,48 @@
       margin-bottom: 20px;
       box-shadow: 0 4px 15px rgba(0,0,0,0.25);
     }
-    .home-notice .notice-icon { font-size: 20px; }
-    .home-notice p { margin: 0; font-size: 13.5px; color: rgba(255, 255, 255, 0.95); line-height: 1.45; font-weight: 500; word-break: keep-all; }
-    .home-notice p strong { color: #fde047; font-weight: 800; text-shadow: 0 1px 3px rgba(0,0,0,0.8); }
+    .home-notice .notice-icon {
+      font-size: 20px;
+    }
+    .home-notice p {
+      margin: 0;
+      font-size: 13.5px;
+      color: rgba(255, 255, 255, 0.95);
+      line-height: 1.45;
+      font-weight: 500;
+      word-break: keep-all;
+    }
+    .home-notice p strong {
+      color: #fde047;
+      font-weight: 800;
+      text-shadow: 0 1px 3px rgba(0,0,0,0.8);
+    }
 
     /* =========================================================
-       🔥🔥 대만풍 DAY 1~4 버튼 전통 동전(칠보문) 패턴 적용 
+       🔥🔥 대만풍 DAY 1~4 버튼 (야경 배경과 어울리는 프리미엄 글래스 & 찻집 창살 패턴)
     ========================================================= */
     .day-buttons {
       display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
     }
 
     .day-btn {
-      background-color: rgba(90, 25, 15, 0.85); 
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
+      /* ✅ 배경 사진이 은은하게 비치는 어두운 투명 글래스 */
+      background-color: rgba(15, 23, 42, 0.65); 
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
       
+      /* ✅ 우측상단 홍등 붉은빛 + 좌측하단 따뜻한 금빛 + 은은한 대만 전통 마름모 창살 무늬 */
       background-image: 
-        radial-gradient(circle at 0% 0%, rgba(251, 191, 36, 0.3) 0%, transparent 60%),
-        radial-gradient(circle at 100% 100%, rgba(251, 191, 36, 0.15) 0%, transparent 60%),
-        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='50' height='50' viewBox='0 0 50 50'%3E%3Cg fill='none' stroke='%23fcd34d' stroke-width='6' stroke-opacity='0.15'%3E%3Ccircle cx='25' cy='25' r='25'/%3E%3Ccircle cx='0' cy='0' r='25'/%3E%3Ccircle cx='50' cy='0' r='25'/%3E%3Ccircle cx='0' cy='50' r='25'/%3E%3Ccircle cx='50' cy='50' r='25'/%3E%3C/g%3E%3C/svg%3E");
+        radial-gradient(circle at 90% 10%, rgba(225, 29, 72, 0.35) 0%, transparent 60%),
+        radial-gradient(circle at 10% 90%, rgba(251, 191, 36, 0.15) 0%, transparent 50%),
+        url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M20 0l20 20-20 20L0 20z' stroke='rgba(255, 215, 0, 0.05)' fill='none' stroke-width='1'/%3E%3Cpath d='M20 10l10 10-10 10-10-10z' stroke='rgba(255, 215, 0, 0.03)' fill='none' stroke-width='0.5'/%3E%3C/svg%3E");
       
-      background-size: cover, cover, 50px 50px;
+      background-size: cover, cover, 40px 40px;
       
-      border: 1px solid rgba(251, 191, 36, 0.4);
+      /* 고급스러운 반투명 화이트 & 골드 테두리 조합 */
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-top: 1px solid rgba(255, 255, 255, 0.3);
+      border-bottom: 1px solid rgba(251, 191, 36, 0.25);
       padding: 18px 16px; 
       border-radius: 18px;
       color: #fff; text-align: left;
@@ -375,27 +355,29 @@
       min-height: 105px;
       position: relative;
       overflow: hidden;
-      box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.3);
     }
     
     .day-btn-header, .day-btn .day-title { 
       position: relative; 
       z-index: 1; 
-      text-shadow: 1px 1px 3px rgba(0,0,0,0.8); 
+      text-shadow: 0 2px 4px rgba(0,0,0,0.8); 
     }
 
     .day-btn-header { display: flex; justify-content: space-between; align-items: center; width: 100%; font-size: 19px; font-weight: 800; color: #fff; letter-spacing: -0.3px; }
     
-    .btn-date { font-size: 12px; font-weight: 800; color: #fde047; background: rgba(0, 0, 0, 0.4); padding: 4px 10px; border-radius: 14px; letter-spacing: 0; border: 1px solid rgba(251, 191, 36, 0.4); box-shadow: inset 0 1px 2px rgba(255,255,255,0.1); backdrop-filter: blur(4px); text-shadow: none; }
+    /* 날짜 배지: 투명도 있는 블랙 베이스 + 금빛 글씨로 세련되게 */
+    .btn-date { font-size: 12px; font-weight: 700; color: #fde047; background: rgba(0, 0, 0, 0.4); padding: 4px 10px; border-radius: 12px; letter-spacing: 0; border: 1px solid rgba(251, 191, 36, 0.3); box-shadow: inset 0 1px 2px rgba(255,255,255,0.1); backdrop-filter: blur(4px); text-shadow: none; }
     
-    .day-btn .day-title { font-size: 14px; font-weight: 600; color: rgba(255, 255, 255, 0.95); margin-top: 14px; line-height: 1.45; word-break: keep-all; }
+    .day-btn .day-title { font-size: 14px; font-weight: 500; color: rgba(255, 255, 255, 0.9); margin-top: 14px; line-height: 1.45; word-break: keep-all; }
     
     .day-btn:active { 
       transform: scale(0.96); 
-      background-color: rgba(70, 15, 10, 0.9);
-      border-color: rgba(251, 191, 36, 0.7);
+      background-color: rgba(10, 15, 20, 0.8);
+      border-color: rgba(251, 191, 36, 0.6);
       box-shadow: 0 4px 12px rgba(0,0,0,0.5);
     }
+    /* ========================================================= */
 
     /* =========================================================
        [6] Bottom Sheet (Detail Page)
@@ -467,6 +449,7 @@
     .fx-box input { width: 100%; padding: 12px; border: 1px solid var(--border-light); border-radius: 10px; text-align: right; font-weight: 600; font-size: 16px; }
     .fx-eq { font-size: 20px; color: var(--text-sub); }
 
+    /* 🔥 [수정] 2. 선택관광 사진형 카드 CSS 개선 */
     .tour-card-photo { position: relative; border-radius: 20px; overflow: hidden; margin-bottom: 20px; box-shadow: 0 8px 20px rgba(0,0,0,0.1); background-color: #000; height: 240px; color: #fff; }
     .tour-card-bg { position: absolute; inset: 0; background-size: cover; background-position: center; transition: transform 0.4s; }
     .tour-card-photo:active .tour-card-bg { transform: scale(1.05); }
@@ -480,6 +463,7 @@
     .tour-meta-items { display: flex; gap: 8px; font-size: 12px; }
     .tour-meta-items span { background: rgba(0,0,0,0.3); padding: 2px 6px; border-radius: 4px; }
 
+    /* ✅ 중식비 상태 색상 CSS 추가 */
     .status.pending { color: #ff4d4f; font-weight: 700; text-shadow: 0 1px 2px rgba(0,0,0,0.5); }
     .status.done { color: #22c55e; font-weight: 700; text-shadow: 0 1px 2px rgba(0,0,0,0.5); }
     .meal-status-btn { background: #fff; color: #1a233a; border: none; font-size: 12px; font-weight: 700; padding: 6px 12px; border-radius: 8px; }
@@ -487,6 +471,7 @@
 
     #requestInput { width: 100%; height: 120px; padding: 16px; border: 1px solid var(--border-light); border-radius: 12px; resize: none; font-size: 15px; margin-bottom: 12px; }
 
+    /* 🔥 [새기능] 필수 여행 회화 CSS (이미지 기반 스타일 완벽 적용) */
     .conv-category {
       background: var(--card-bg);
       border-radius: 16px;
@@ -593,7 +578,7 @@
 <body>
 
 <!-- ================= LOGIN ================= -->
-<section id="loginSection" class="login-hero" style="display:none;">
+<section id="loginSection" class="login-hero">
   <div class="hero-overlay">
     <div class="login-box">
       <!-- 🔥 [수정] 내장 데이터 제거하고 로컬 경로 복원 -->
@@ -605,107 +590,6 @@
       <button class="primary-btn" onclick="login()">로그인</button>
       <p id="loginError" class="error"></p>
     </div>
-  </div>
-</section>
-
-<!-- ================= LOADING (풍등) ================= -->
-<section id="loadingSection">
-  <div class="lantern-container">
-    <!-- ✅ 공통 SVG 디자인 정의: 빛나는 오렌지/옐로우 그라데이션 -->
-    <svg style="width:0;height:0;position:absolute;">
-      <defs>
-        <radialGradient id="lanternGlow" cx="50%" cy="70%" r="50%">
-          <stop offset="0%" stop-color="#fef08a"/>
-          <stop offset="60%" stop-color="#f59e0b"/>
-          <stop offset="100%" stop-color="#ea580c"/>
-        </radialGradient>
-      </defs>
-    </svg>
-
-    <!-- 풍등 1 -->
-    <div class="lantern l-1">
-      <svg viewBox="0 0 100 130" class="lantern-svg">
-        <path d="M 20 10 Q 50 -5 80 10 L 95 90 Q 50 115 5 90 Z" fill="url(#lanternGlow)" opacity="0.95"/>
-        <path d="M 20 10 L 5 90 M 80 10 L 95 90 M 50 -1 L 50 105" stroke="#9a3412" stroke-width="1" opacity="0.3" fill="none"/>
-        <text x="50" y="70" fill="#78350f" font-family="Arial, sans-serif" font-weight="900" font-style="italic" font-size="34px" text-anchor="middle" opacity="0.85">in</text>
-        <rect x="35" y="102" width="30" height="6" fill="#451a03" rx="2"/>
-      </svg>
-    </div>
-    
-    <!-- 풍등 2 (메인: 카룡이가 매달림!) -->
-    <div class="lantern l-2">
-      <svg viewBox="0 0 100 130" class="lantern-svg">
-        <path d="M 20 10 Q 50 -5 80 10 L 95 90 Q 50 115 5 90 Z" fill="url(#lanternGlow)" opacity="0.95"/>
-        <path d="M 20 10 L 5 90 M 80 10 L 95 90 M 50 -1 L 50 105" stroke="#9a3412" stroke-width="1" opacity="0.3" fill="none"/>
-        <text x="50" y="70" fill="#78350f" font-family="Arial, sans-serif" font-weight="900" font-style="italic" font-size="34px" text-anchor="middle" opacity="0.85">in</text>
-        <rect x="35" y="102" width="30" height="6" fill="#451a03" rx="2"/>
-      </svg>
-      <!-- 🔥 매달린 카룡이 캐릭터 SVG (하늘색 베이스 + 하얀 수염) -->
-      <div class="caryong-hanging">
-        <svg viewBox="0 0 100 100" class="caryong-svg">
-          <!-- 꼬리 -->
-          <path d="M 60 70 Q 90 90 85 40" fill="none" stroke="#60a5fa" stroke-width="12" stroke-linecap="round"/>
-          <!-- 몸통 -->
-          <rect x="30" y="40" width="40" height="40" rx="15" fill="#3b82f6"/>
-          <!-- 배(밝은색) -->
-          <rect x="38" y="50" width="24" height="25" rx="10" fill="#bfdbfe"/>
-          <!-- 머리 -->
-          <circle cx="50" cy="35" r="22" fill="#3b82f6"/>
-          <!-- 수염/뿔 (하얀색) -->
-          <path d="M 35 35 Q 20 30 15 45" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round"/>
-          <path d="M 65 35 Q 80 30 85 45" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round"/>
-          <!-- 볼터치 -->
-          <circle cx="36" cy="42" r="4" fill="#fca5a5"/>
-          <circle cx="64" cy="42" r="4" fill="#fca5a5"/>
-          <!-- 눈 -->
-          <path d="M 38 32 Q 41 28 44 32" fill="none" stroke="#1e3a8a" stroke-width="2" stroke-linecap="round"/>
-          <path d="M 56 32 Q 59 28 62 32" fill="none" stroke="#1e3a8a" stroke-width="2" stroke-linecap="round"/>
-          <!-- 입 -->
-          <path d="M 45 42 Q 50 50 55 42" fill="none" stroke="#1e3a8a" stroke-width="2" stroke-linecap="round"/>
-          <path d="M 35 45 Q 30 15 40 5" fill="none" stroke="#3b82f6" stroke-width="6" stroke-linecap="round"/>
-          <!-- 매달린 팔 -->
-          <path d="M 65 45 Q 70 15 60 5" fill="none" stroke="#3b82f6" stroke-width="6" stroke-linecap="round"/>
-          <!-- 발 -->
-          <circle cx="40" cy="80" r="6" fill="#3b82f6"/>
-          <circle cx="60" cy="80" r="6" fill="#3b82f6"/>
-        </svg>
-      </div>
-    </div>
-
-    <!-- 풍등 3 -->
-    <div class="lantern l-3">
-      <svg viewBox="0 0 100 130" class="lantern-svg">
-        <path d="M 20 10 Q 50 -5 80 10 L 95 90 Q 50 115 5 90 Z" fill="url(#lanternGlow)" opacity="0.95"/>
-        <path d="M 20 10 L 5 90 M 80 10 L 95 90 M 50 -1 L 50 105" stroke="#9a3412" stroke-width="1" opacity="0.3" fill="none"/>
-        <text x="50" y="70" fill="#78350f" font-family="Arial, sans-serif" font-weight="900" font-style="italic" font-size="34px" text-anchor="middle" opacity="0.85">in</text>
-        <rect x="35" y="102" width="30" height="6" fill="#451a03" rx="2"/>
-      </svg>
-    </div>
-
-    <!-- 풍등 4 -->
-    <div class="lantern l-4">
-      <svg viewBox="0 0 100 130" class="lantern-svg">
-        <path d="M 20 10 Q 50 -5 80 10 L 95 90 Q 50 115 5 90 Z" fill="url(#lanternGlow)" opacity="0.95"/>
-        <path d="M 20 10 L 5 90 M 80 10 L 95 90 M 50 -1 L 50 105" stroke="#9a3412" stroke-width="1" opacity="0.3" fill="none"/>
-        <text x="50" y="70" fill="#78350f" font-family="Arial, sans-serif" font-weight="900" font-style="italic" font-size="34px" text-anchor="middle" opacity="0.85">in</text>
-        <rect x="35" y="102" width="30" height="6" fill="#451a03" rx="2"/>
-      </svg>
-    </div>
-
-    <!-- 풍등 5 -->
-    <div class="lantern l-5">
-      <svg viewBox="0 0 100 130" class="lantern-svg">
-        <path d="M 20 10 Q 50 -5 80 10 L 95 90 Q 50 115 5 90 Z" fill="url(#lanternGlow)" opacity="0.95"/>
-        <path d="M 20 10 L 5 90 M 80 10 L 95 90 M 50 -1 L 50 105" stroke="#9a3412" stroke-width="1" opacity="0.3" fill="none"/>
-        <text x="50" y="70" fill="#78350f" font-family="Arial, sans-serif" font-weight="900" font-style="italic" font-size="34px" text-anchor="middle" opacity="0.85">in</text>
-        <rect x="35" y="102" width="30" height="6" fill="#451a03" rx="2"/>
-      </svg>
-    </div>
-  </div>
-  
-  <div class="loading-content">
-    <h2>여행을 준비하고 있습니다</h2>
-    <p>잠시만 기다려주세요...</p>
   </div>
 </section>
 
@@ -838,47 +722,13 @@
 </main>
 
 <script>
-/* ================= 초기화면 제어 ================= */
-const initialParams = new URLSearchParams(window.location.search);
-if (initialParams.has("eid")) {
-  document.getElementById("loadingSection").style.display = "flex";
-} else {
-  document.getElementById("loginSection").style.display = "block";
-}
-
 /* ================= 공통 ================= */
 let pageHistory = [];
 let employees = [];
 let currentUser = null;
 const ADMIN_PASSWORD = "0000";
 
-/* 🔥 로컬 테스트 및 API 오류 방지용 내장 데이터 (박상현 님) */
-const EMBEDDED_EMPLOYEES = [
-  {
-    "id": "1612156",
-    "name": "박상현",
-    "flight": {
-      "departure": {
-        "date": "2026.03.11",
-        "time": "09:00",
-        "from": "인천",
-        "to": "타이베이",
-        "airline": "대한항공",
-        "flightNo": "KE 2021"
-      },
-      "return": {
-        "date": "2026.03.14",
-        "time": "12:25",
-        "from": "타이베이",
-        "to": "인천",
-        "airline": "대한항공",
-        "flightNo": "KE 2022"
-      }
-    },
-    "myTour": [] /* 선택 관광이 없을 시 에러 방지용으로 빈 배열 추가 */
-  }
-];
-    
+
 function toggleMenu() {
   document.body.classList.toggle('menu-open');
 }
@@ -1129,7 +979,6 @@ function login() {
 
   currentUser = user;
   document.getElementById("loginSection").style.display = "none";
-  document.getElementById("loadingSection").style.display = "none"; 
   document.getElementById("mainSection").style.display = "block";
   document.getElementById("employeeName").textContent = user.name;
   document.body.classList.add("logged-in");
@@ -1157,16 +1006,10 @@ function tryAutoLogin() {
 
   const user = employees.find(e => String(e.id) === String(eid));
   if (!user) {
-    document.getElementById("loadingSection").style.display = "none";
-    document.getElementById("loginSection").style.display = "block";
     document.getElementById("loginError").textContent = "QR 사번이 유효하지 않습니다.";
     return;
   }
-  
-  setTimeout(() => {
-    document.getElementById("loadingSection").style.display = "none";
-    login();
-  }, 2500);
+  login();
 }
 
 const travelSchedule = [
@@ -1524,8 +1367,8 @@ function openPage(type, fromHistory = false) {
       {
         title: "교통 / 길찾기", icon: "🚇",
         items: [
-          { ko: "화장실이 어디인가요?", cn: "洗手間在哪裡", pr: "시쇼우지엔 짜이 나리" },
-          { ko: "역이 어디인가요?", cn: "捷運站在哪裡", pr: "지에윈짠 짜이 나리" },
+          { ko: "화장실이 어디인가요?", cn: "洗手間在哪裡", pr: "시쇼우지엔 짜이 날" },
+          { ko: "역이 어디인가요?", cn: "捷運站在哪裡", pr: "지에윈짠 짜이 날" },
           { ko: "타이베이 메인역으로 가주세요", cn: "請到台北車站", pr: "칭 따오 타이베이 처짠" },
           { ko: "여기서 세워주세요", cn: "請在這裡停", pr: "칭 짜이 쩌리 팅" },
           { ko: "얼마나 걸리나요?", cn: "需要多久時間", pr: "쉬야오 뚜어지우 스지엔" }
@@ -1746,7 +1589,7 @@ function initExchangeCalculatorAuto() {
   }
 
   twdEl.addEventListener("input", updateFromTWD);
-  krwaddEventListener("input", updateFromKRW);
+  krwEl.addEventListener("input", updateFromKRW);
 
   async function renderRate(force = false) {
     rateText.textContent = "가져오는 중…";
