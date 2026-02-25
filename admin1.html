@@ -166,7 +166,7 @@
             return fallback || configs[0];
         };
 
-        // ✅ 스캔 사운드 및 진동
+        // ✅ 스캔 사운드 및 진동 피드백
         const beep = () => {
             try {
                 const ctx = new (window.AudioContext || window.webkitAudioContext)();
@@ -183,7 +183,7 @@
         };
         const vibrate = () => { if (navigator.vibrate) navigator.vibrate(40); };
 
-        // ✅ 구글 시트로 데이터 전송 (백그라운드)
+        // ✅ 구글 시트로 전송
         const sendToGAS = (payload) => {
             fetch(GAS_URL, {
                 method: "POST",
@@ -561,7 +561,7 @@
         const ScanView = ({ mode, schedules, targetSessionId, setTargetSessionId, targetBus, setTargetBus, manualBus, setManualBus, isScanning, setIsScanning, processScan, users, isMobile, busList, setBusList }) => {
             const scannerRef = useRef(null);
             const isRunningRef = useRef(false);
-            const lastScanRef = useRef({ text: null, time: 0 });
+            const lastScanRef = useRef({ text: null, time: 0 }); // ✅ 연속 스캔을 위한 중복방지 딜레이 Ref
             const [isStrictBusMode, setIsStrictBusMode] = useState(false);
             
             const filteredSchedules = useMemo(() => {
@@ -1214,10 +1214,13 @@
             const [activeIdx, setActiveIdx] = useState(0);
             const activeConfig = badgeConfigs[activeIdx] || badgeConfigs[0];
 
-            const updateActiveConfig = (key, value) => {
-                const newConfigs = [...badgeConfigs];
-                newConfigs[activeIdx] = { ...newConfigs[activeIdx], [key]: value };
-                setBadgeConfigs(newConfigs);
+            // ✅ 상태 업데이트 방식 개선 (덮어쓰기 버그 수정)
+            const updateActiveConfig = (updates) => {
+                setBadgeConfigs(prev => {
+                    const newConfigs = [...prev];
+                    newConfigs[activeIdx] = { ...newConfigs[activeIdx], ...updates };
+                    return newConfigs;
+                });
             };
 
             const addTemplate = () => {
@@ -1231,7 +1234,7 @@
                     imgHeight: 1527,
                     layers: []
                 };
-                setBadgeConfigs([...badgeConfigs, newTemplate]);
+                setBadgeConfigs(prev => [...prev, newTemplate]);
                 setActiveIdx(badgeConfigs.length);
             };
 
@@ -1239,8 +1242,7 @@
                 e.stopPropagation();
                 if(badgeConfigs.length === 1) return alert("최소 1개의 양식은 필요합니다.");
                 if(confirm("이 명찰 디자인 양식을 삭제하시겠습니까?")) {
-                    const newConfigs = badgeConfigs.filter((_, i) => i !== idx);
-                    setBadgeConfigs(newConfigs);
+                    setBadgeConfigs(prev => prev.filter((_, i) => i !== idx));
                     setActiveIdx(Math.max(0, idx - 1));
                 }
             };
@@ -1252,14 +1254,11 @@
                     reader.onload = (evt) => {
                         const img = new Image();
                         img.onload = () => {
-                            const newConfigs = [...badgeConfigs];
-                            newConfigs[activeIdx] = {
-                                ...newConfigs[activeIdx],
+                            updateActiveConfig({
                                 bgImage: evt.target.result,
                                 imgWidth: img.naturalWidth,
                                 imgHeight: img.naturalHeight
-                            };
-                            setBadgeConfigs(newConfigs);
+                            });
                         };
                         img.src = evt.target.result;
                     };
@@ -1278,7 +1277,7 @@
             };
 
             const downloadUserTemplate = () => {
-                const csvContent = "\uFEFF사번,성명,소속,버스,항공,만찬테이블번호,선택 관광\n1612001,홍길동,마케팅본부,1호차,대한항공,1번,티엔라이\n1612002,김철수,영업본부,2,아시아나,2,자유일정";
+                const csvContent = "\uFEFF사번,성명,소속,버스,1일차,2일차,3일차,항공,만찬테이블\n1612001,홍길동,마케팅본부,1호차,시내관광,티엔라이,자유일정,대한항공,1번\n1612002,김철수,영업본부,2호차,시내관광,고궁박물관,자유일정,아시아나,2번";
                 const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
                 saveAs(blob, "Users_Template.csv");
             };
@@ -1299,20 +1298,19 @@
             
             // ✅ 반응형 에디터 스케일 (Auto-Fit)
             const containerRef = useRef(null);
-            const [editorScale, setEditorScale] = useState(1);
+            const [editorScale, setEditorScale] = useState(0.4);
 
             useEffect(() => {
                 const updateScale = () => {
                     if (containerRef.current && activeConfig?.imgWidth) {
                         const containerWidth = containerRef.current.clientWidth;
-                        // 컨테이너 폭에서 내부 패딩(48px 여유)을 뺀 영역에 100% 꽉 차게 비율 계산
+                        // 컨테이너 폭에서 내부 패딩 여유를 뺀 너비를 기준으로 완벽하게 비율 계산
                         const availableWidth = containerWidth - 48; 
                         const scale = availableWidth / activeConfig.imgWidth;
-                        setEditorScale(scale > 0 ? scale : 1);
+                        setEditorScale(scale > 0 ? scale : 0.4);
                     }
                 };
                 
-                // 크기 변경 감지 시 스케일 자동 업데이트
                 const observer = new ResizeObserver(() => {
                     window.requestAnimationFrame(updateScale);
                 });
@@ -1332,7 +1330,7 @@
                 setDragTarget(id);
 
                 const targets = [];
-                targets.push({ x: 50, y: 50 }); // Canvas Center
+                targets.push({ x: 50, y: 50 });
 
                 if (activeConfig.layers) {
                     activeConfig.layers.forEach(l => {
@@ -1351,7 +1349,6 @@
                 const clientY = e.touches ? e.touches[0].clientY : e.clientY;
                 const rect = editorRef.current.getBoundingClientRect();
                 
-                // ✅ scale이 적용된 rect.width/height 이므로 완벽하게 비율이 맞음
                 let newX = ((clientX - rect.left) / rect.width) * 100;
                 let newY = ((clientY - rect.top) / rect.height) * 100;
                 
@@ -1375,13 +1372,15 @@
                 
                 setGuides({ x: guideX, y: guideY });
                 
-                const newConfigs = [...badgeConfigs];
-                newConfigs[activeIdx] = {
-                    ...newConfigs[activeIdx],
-                    layers: newConfigs[activeIdx].layers.map(l => l.id === dragTarget ? { ...l, x: newX, y: newY } : l)
-                };
-                setBadgeConfigs(newConfigs);
-            }, [dragTarget, snapTargets, activeConfig, activeIdx, badgeConfigs]);
+                setBadgeConfigs(prev => {
+                    const newConfigs = [...prev];
+                    newConfigs[activeIdx] = {
+                        ...newConfigs[activeIdx],
+                        layers: newConfigs[activeIdx].layers.map(l => l.id === dragTarget ? { ...l, x: newX, y: newY } : l)
+                    };
+                    return newConfigs;
+                });
+            }, [dragTarget, snapTargets, activeIdx]);
 
             const stopDrag = () => {
                 setDragTarget(null);
@@ -1434,59 +1433,67 @@
                     newLayer = { ...newLayer, w: Math.round(baseWidth * 0.15), h: Math.round(baseWidth * 0.15), fill: '#e2e8f0', borderColor: '#000000', borderWidth: 0, opacity: 1 };
                 }
                 
-                const newConfigs = [...badgeConfigs];
-                newConfigs[activeIdx] = {
-                    ...newConfigs[activeIdx],
-                    layers: [...(newConfigs[activeIdx].layers || []), newLayer]
-                };
-                setBadgeConfigs(newConfigs);
+                setBadgeConfigs(prev => {
+                    const newConfigs = [...prev];
+                    newConfigs[activeIdx] = {
+                        ...newConfigs[activeIdx],
+                        layers: [...(newConfigs[activeIdx].layers || []), newLayer]
+                    };
+                    return newConfigs;
+                });
                 setSelectedId(newId);
             };
 
             const updateLayer = (key, value) => {
-                const newConfigs = [...badgeConfigs];
-                newConfigs[activeIdx] = {
-                    ...newConfigs[activeIdx],
-                    layers: newConfigs[activeIdx].layers.map(l => l.id === selectedId ? { ...l, [key]: value } : l)
-                };
-                setBadgeConfigs(newConfigs);
+                setBadgeConfigs(prev => {
+                    const newConfigs = [...prev];
+                    newConfigs[activeIdx] = {
+                        ...newConfigs[activeIdx],
+                        layers: newConfigs[activeIdx].layers.map(l => l.id === selectedId ? { ...l, [key]: value } : l)
+                    };
+                    return newConfigs;
+                });
             };
 
             const deleteLayer = () => {
                 if(confirm("삭제하시겠습니까?")) {
-                    const newConfigs = [...badgeConfigs];
-                    newConfigs[activeIdx] = {
-                        ...newConfigs[activeIdx],
-                        layers: newConfigs[activeIdx].layers.filter(l => l.id !== selectedId)
-                    };
-                    setBadgeConfigs(newConfigs);
+                    setBadgeConfigs(prev => {
+                        const newConfigs = [...prev];
+                        newConfigs[activeIdx] = {
+                            ...newConfigs[activeIdx],
+                            layers: newConfigs[activeIdx].layers.filter(l => l.id !== selectedId)
+                        };
+                        return newConfigs;
+                    });
                     setSelectedId(null);
                 }
             };
 
             const moveLayer = (direction) => {
                 if (!selectedId) return;
-                const newConfigs = [...badgeConfigs];
-                const idx = newConfigs[activeIdx].layers.findIndex(l => l.id === selectedId);
-                if (idx < 0) return;
-                
-                let newLayers = [...newConfigs[activeIdx].layers];
-                const item = newLayers.splice(idx, 1)[0];
+                setBadgeConfigs(prev => {
+                    const newConfigs = [...prev];
+                    const idx = newConfigs[activeIdx].layers.findIndex(l => l.id === selectedId);
+                    if (idx < 0) return prev;
+                    
+                    let newLayers = [...newConfigs[activeIdx].layers];
+                    const item = newLayers.splice(idx, 1)[0];
 
-                if (direction === 'top') {
-                    newLayers.push(item);
-                } else if (direction === 'bottom') {
-                    newLayers.unshift(item);
-                } else if (direction === 'up' && idx < newLayers.length) {
-                    newLayers.splice(idx + 1, 0, item);
-                } else if (direction === 'down' && idx > 0) {
-                    newLayers.splice(idx - 1, 0, item);
-                } else {
-                    newLayers.splice(idx, 0, item);
-                }
-                
-                newConfigs[activeIdx] = { ...newConfigs[activeIdx], layers: newLayers };
-                setBadgeConfigs(newConfigs);
+                    if (direction === 'top') {
+                        newLayers.push(item);
+                    } else if (direction === 'bottom') {
+                        newLayers.unshift(item);
+                    } else if (direction === 'up' && idx < newLayers.length) {
+                        newLayers.splice(idx + 1, 0, item);
+                    } else if (direction === 'down' && idx > 0) {
+                        newLayers.splice(idx - 1, 0, item);
+                    } else {
+                        newLayers.splice(idx, 0, item);
+                    }
+                    
+                    newConfigs[activeIdx] = { ...newConfigs[activeIdx], layers: newLayers };
+                    return newConfigs;
+                });
             };
 
             const selectedLayer = activeConfig.layers ? activeConfig.layers.find(l => l.id === selectedId) : null;
@@ -1656,7 +1663,7 @@
                             const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
                             const matchedConfig = getConfigForUser(u, badgeConfigs);
                             
-                            // ✅ 적용된 템플릿의 이름으로 폴더를 생성하여 분류
+                            // ✅ 적용된 템플릿의 이름으로 폴더를 생성하여 자동 분류
                             const templateFolderName = matchedConfig.name || "기본양식";
                             const templateFolder = folder.folder(templateFolderName);
                             
@@ -1699,11 +1706,11 @@
                         <div className="mb-6 p-5 bg-slate-50 rounded-2xl border border-slate-200 flex flex-wrap gap-6 items-end">
                             <div className="flex-1 min-w-[200px]">
                                 <label className="block text-xs font-bold text-slate-500 mb-1">양식 이름</label>
-                                <input type="text" value={activeConfig.name} onChange={e => updateActiveConfig('name', e.target.value)} className="w-full p-3 border rounded-xl font-bold text-sm bg-white" />
+                                <input type="text" value={activeConfig.name} onChange={e => updateActiveConfig({ name: e.target.value })} className="w-full p-3 border rounded-xl font-bold text-sm bg-white" />
                             </div>
                             <div className="w-48">
                                 <label className="block text-xs font-bold text-slate-500 mb-1">적용 조건 (대상 필드)</label>
-                                <select value={activeConfig.conditionKey || 'ALL'} onChange={e => { updateActiveConfig('conditionKey', e.target.value); updateActiveConfig('conditionVal', 'ALL'); }} className="w-full p-3 border rounded-xl font-bold text-sm bg-white">
+                                <select value={activeConfig.conditionKey || 'ALL'} onChange={e => updateActiveConfig({ conditionKey: e.target.value, conditionVal: 'ALL' })} className="w-full p-3 border rounded-xl font-bold text-sm bg-white">
                                     <option value="ALL">조건 없음 (모든 참가자)</option>
                                     <option value="airline">항공 (Airline)</option>
                                     <option value="bus">버스 (Bus)</option>
@@ -1715,7 +1722,7 @@
                             {activeConfig.conditionKey && activeConfig.conditionKey !== 'ALL' && (
                                 <div className="w-48 animate-fade-in">
                                     <label className="block text-xs font-bold text-slate-500 mb-1">일치 값 (필수 조건)</label>
-                                    <select value={activeConfig.conditionVal} onChange={e => updateActiveConfig('conditionVal', e.target.value)} className="w-full p-3 border rounded-xl font-bold text-sm bg-white">
+                                    <select value={activeConfig.conditionVal} onChange={e => updateActiveConfig({ conditionVal: e.target.value })} className="w-full p-3 border rounded-xl font-bold text-sm bg-white">
                                         <option value="ALL">전체</option>
                                         {getUniqueValues(activeConfig.conditionKey).map(val => <option key={val} value={val}>{val}</option>)}
                                     </select>
@@ -1758,6 +1765,7 @@
                                 <div>
                                     <label className="block text-xs font-bold text-slate-400 mb-2">배경 이미지 (2382 x 1527 권장)</label>
                                     <input type="file" accept="image/*" onChange={handleBgImageUpload} className="block w-full text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-incar-light file:text-incar hover:file:bg-indigo-100"/>
+                                    <p className="text-[10px] text-rose-500 font-bold mt-2">* 브라우저 용량 초과 에러 방지를 위해 배경 이미지는 서버에 임시 저장되지 않습니다.</p>
                                 </div>
                                 
                                 {selectedLayer ? (
@@ -1893,7 +1901,7 @@
                         </div>
                     </div>
                     
-                    {/* ✅ 대표님이 원하셨던 [개별 QR 코드 일괄 관리] 뷰 추가 */}
+                    {/* ✅ 개별 QR 코드 일괄 관리 */}
                     <div className="bg-slate-100 border border-slate-200 p-6 rounded-3xl shadow-sm mt-6">
                         <div className="flex justify-between items-center mb-4">
                             <div>
