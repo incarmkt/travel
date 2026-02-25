@@ -24,7 +24,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
     
-    <!-- 폰트 다양화 (20종 추가) -->
+    <!-- 폰트 다양화 -->
     <link href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Cute+Font&family=Do+Hyeon&family=Dongle&family=Gaegu&family=Gamja+Flower&family=Gowun+Batang&family=Gowun+Dodum&family=Gugi&family=Hi+Melody&family=Jua&family=Nanum+Brush+Script&family=Nanum+Gothic&family=Nanum+Myeongjo&family=Nanum+Pen+Script&family=Noto+Sans+KR:wght@100;300;400;500;700;900&family=Poor+Story&family=Single+Day&family=Song+Myung&family=Stylish&family=Sunflower:wght@300;500;700&family=Yeon+Sung&display=swap" rel="stylesheet">
     
     <script>
@@ -72,7 +72,6 @@
         .data-table td { padding: 14px 16px; border-bottom: 1px solid #f1f5f9; font-size: 0.85rem; font-weight: 500; color: #334155; }
         .data-table tr:hover td { background-color: #f8fafc; }
 
-        /* 스캐너 UI 강제 스타일 (정사각형 및 꽉 채우기) */
         .scanner-container {
             position: relative;
             width: 100%;
@@ -101,104 +100,24 @@
             border-radius: 1.2rem;
         }
 
-        /* 인쇄 스타일 */
         @media print {
             @page { size: auto; margin: 0; }
-            
-            html, body, #root, main, .overflow-y-auto {
-                width: 100%;
-                height: auto !important;
-                min-height: auto !important;
-                overflow: visible !important;
-                margin: 0 !important;
-                padding: 0 !important;
-                background: white !important;
-                position: static !important;
-            }
-
+            html, body, #root, main, .overflow-y-auto { width: 100%; height: auto !important; min-height: auto !important; overflow: visible !important; margin: 0 !important; padding: 0 !important; background: white !important; position: static !important; }
             body * { visibility: hidden; }
-
             .print-only-container, .print-only-container * { visibility: visible !important; }
-
-            .print-only-container {
-                position: absolute !important;
-                top: 0 !important;
-                left: 0 !important;
-                width: 100% !important;
-                height: auto !important;
-                background: white;
-                z-index: 9999;
-                display: block !important;
-                overflow: visible !important;
-            }
-
-            .print-reset-spacing {
-                display: block !important;
-                overflow: visible !important;
-                height: auto !important;
-                padding: 0 !important;
-            }
-
+            .print-only-container { position: absolute !important; top: 0 !important; left: 0 !important; width: 100% !important; height: auto !important; background: white; z-index: 9999; display: block !important; overflow: visible !important; }
+            .print-reset-spacing { display: block !important; overflow: visible !important; height: auto !important; padding: 0 !important; }
             .no-print { display: none !important; }
-
-            .page-wrapper {
-                width: 100%;
-                display: flex !important;
-                justify-content: center;
-                align-items: center;
-                break-after: page;
-                page-break-after: always;
-                page-break-inside: avoid;
-                margin: 0;
-                padding: 0;
-                position: relative !important;
-            }
-            
-            .page-wrapper:last-child {
-                break-after: auto;
-                page-break-after: auto;
-            }
-
-            .badge-card {
-                border: none !important;
-                box-shadow: none !important;
-                page-break-inside: avoid;
-            }
+            .page-wrapper { width: 100%; display: flex !important; justify-content: center; align-items: center; break-after: page; page-break-after: always; page-break-inside: avoid; margin: 0; padding: 0; position: relative !important; }
+            .page-wrapper:last-child { break-after: auto; page-break-after: auto; }
+            .badge-card { border: none !important; box-shadow: none !important; page-break-inside: avoid; }
         }
         .print-only { display: none; }
         
-        /* 가이드라인 스타일 */
-        .smart-guide-x {
-            position: absolute;
-            left: 50%;
-            top: 0;
-            bottom: 0;
-            width: 1px;
-            background-color: #ef4444;
-            z-index: 200; /* Ensure it is above layers */
-            pointer-events: none;
-            border-left: 1px dashed #ef4444;
-        }
-        .smart-guide-y {
-            position: absolute;
-            top: 50%;
-            left: 0;
-            right: 0;
-            height: 1px;
-            background-color: #ef4444;
-            z-index: 200; /* Ensure it is above layers */
-            pointer-events: none;
-            border-top: 1px dashed #ef4444;
-        }
-        
+        .smart-guide-x { position: absolute; left: 50%; top: 0; bottom: 0; width: 1px; background-color: #ef4444; z-index: 200; pointer-events: none; border-left: 1px dashed #ef4444; }
+        .smart-guide-y { position: absolute; top: 50%; left: 0; right: 0; height: 1px; background-color: #ef4444; z-index: 200; pointer-events: none; border-top: 1px dashed #ef4444; }
         .layer-item:hover { background-color: #f1f5f9; }
         .layer-item.active { background-color: #eef2ff; border-color: #27398C; }
-        
-        /* 스크롤바 숨기기 (프린트시) */
-        @media print {
-            ::-webkit-scrollbar { display: none; }
-        }
-        /* 데이터 테이블 인쇄용 */
         .no-print-scroll { -ms-overflow-style: none; scrollbar-width: none; }
         .no-print-scroll::-webkit-scrollbar { display: none; }
     </style>
@@ -226,13 +145,13 @@
             measurementId: "G-SNR3FPPQ7E"
         };
 
-        // ✅ QR URL 파싱 로직 (사번만 정확하게 추출)
+        // ✅ QR URL 파싱 로직
         const extractEid = (text) => {
             const m = String(text).match(/[?&]eid=([^&]+)/);
             return m ? m[1] : text;
         };
 
-        // ✅ 유저 조건 매칭을 통해 올바른 양식(템플릿) 찾아주기
+        // ✅ 유저 조건 매칭 템플릿 반환
         const getConfigForUser = (user, configs) => {
             for (let i = 0; i < configs.length; i++) {
                 const c = configs[i];
@@ -247,7 +166,7 @@
             return fallback || configs[0];
         };
 
-        // ✅ 스캔 사운드 및 진동 피드백
+        // ✅ 스캔 사운드 및 진동
         const beep = () => {
             try {
                 const ctx = new (window.AudioContext || window.webkitAudioContext)();
@@ -642,7 +561,7 @@
         const ScanView = ({ mode, schedules, targetSessionId, setTargetSessionId, targetBus, setTargetBus, manualBus, setManualBus, isScanning, setIsScanning, processScan, users, isMobile, busList, setBusList }) => {
             const scannerRef = useRef(null);
             const isRunningRef = useRef(false);
-            const lastScanRef = useRef({ text: null, time: 0 }); // ✅ 연속 스캔을 위한 중복방지 딜레이 Ref
+            const lastScanRef = useRef({ text: null, time: 0 }); // ✅ 연속 스캔 중복방지
             const [isStrictBusMode, setIsStrictBusMode] = useState(false);
             
             const filteredSchedules = useMemo(() => {
@@ -1295,6 +1214,7 @@
             const [activeIdx, setActiveIdx] = useState(0);
             const activeConfig = badgeConfigs[activeIdx] || badgeConfigs[0];
 
+            // ✅ 상태 업데이트 방식 개선 (덮어쓰기 버그 수정)
             const updateActiveConfig = (updates) => {
                 setBadgeConfigs(prev => {
                     const newConfigs = [...prev];
@@ -1404,6 +1324,7 @@
             const [zipProgress, setZipProgress] = useState(0);
             const editorRef = useRef(null);
             
+            // ✅ 반응형 에디터 스케일 (Auto-Fit)
             const containerRef = useRef(null);
             const [editorScale, setEditorScale] = useState(0.4);
 
@@ -1411,12 +1332,14 @@
                 const updateScale = () => {
                     if (containerRef.current && activeConfig?.imgWidth) {
                         const containerWidth = containerRef.current.clientWidth;
+                        // 컨테이너 폭에서 내부 패딩(48px 여유)을 뺀 영역에 100% 꽉 차게 비율 계산
                         const availableWidth = containerWidth - 48; 
                         const scale = availableWidth / activeConfig.imgWidth;
-                        setEditorScale(scale > 0 ? scale : 0.4);
+                        setEditorScale(scale > 0 ? scale : 1);
                     }
                 };
                 
+                // 크기 변경 감지 시 스케일 자동 업데이트
                 const observer = new ResizeObserver(() => {
                     window.requestAnimationFrame(updateScale);
                 });
@@ -1436,7 +1359,7 @@
                 setDragTarget(id);
 
                 const targets = [];
-                targets.push({ x: 50, y: 50 });
+                targets.push({ x: 50, y: 50 }); // Canvas Center
 
                 if (activeConfig.layers) {
                     activeConfig.layers.forEach(l => {
@@ -1455,6 +1378,7 @@
                 const clientY = e.touches ? e.touches[0].clientY : e.clientY;
                 const rect = editorRef.current.getBoundingClientRect();
                 
+                // ✅ scale이 적용된 rect.width/height 이므로 완벽하게 비율이 맞음
                 let newX = ((clientX - rect.left) / rect.width) * 100;
                 let newY = ((clientY - rect.top) / rect.height) * 100;
                 
@@ -1748,46 +1672,74 @@
                 window.location.reload();
             };
 
+            // ✅ ZIP 생성 로직 (1배수 스케일 렌더링으로 메모리 터짐 방지 + 자동 폴더 생성)
             const generateZip = async () => {
                 if (users.length === 0) return alert("데이터가 없습니다.");
                 setIsZipping(true);
                 setZipProgress(0);
 
-                await new Promise(resolve => setTimeout(resolve, 1000)); 
+                // UI가 화면에 확실히 렌더링되도록 2초 대기
+                await new Promise(resolve => setTimeout(resolve, 2000)); 
 
-                const zip = new JSZip();
-                const folder = zip.folder("badges");
+                try {
+                    const zip = new JSZip();
+                    const rootFolder = zip.folder("명찰_출력본");
 
-                const sortedUsers = [...users].sort((a, b) => String(a.uid).localeCompare(String(b.uid), undefined, { numeric: true, sensitivity: 'base' }));
+                    const sortedUsers = [...users].sort((a, b) => String(a.uid).localeCompare(String(b.uid), undefined, { numeric: true, sensitivity: 'base' }));
+                    let successCount = 0;
 
-                for (let i = 0; i < sortedUsers.length; i++) {
-                    const u = sortedUsers[i];
-                    const element = document.getElementById(`badge-export-${u.uid}`);
-                    if (element) {
-                        try {
-                            const canvas = await html2canvas(element, { scale: 2, useCORS: true, backgroundColor: null });
-                            const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
-                            const matchedConfig = getConfigForUser(u, badgeConfigs);
-                            
-                            // ✅ 적용된 템플릿의 이름으로 폴더를 생성하여 자동 분류
-                            const templateFolderName = matchedConfig.name || "기본양식";
-                            const templateFolder = folder.folder(templateFolderName);
-                            
-                            // 해당 템플릿 폴더 안에 참가자 명찰 저장
-                            templateFolder.file(`${u.uid}_${u.name}.png`, blob);
-                        } catch (err) {
-                            console.error("Error capturing badge:", u.name, err);
+                    for (let i = 0; i < sortedUsers.length; i++) {
+                        const u = sortedUsers[i];
+                        const element = document.getElementById(`badge-export-${u.uid}`);
+                        
+                        if (element) {
+                            try {
+                                // 🌟 scale을 1로 조정하여 메모리 초과 방지
+                                const canvas = await html2canvas(element, { 
+                                    scale: 1, 
+                                    backgroundColor: null,
+                                    logging: false
+                                });
+                                
+                                const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
+                                const matchedConfig = getConfigForUser(u, badgeConfigs);
+                                
+                                // ✅ 적용된 템플릿 이름으로 안전하게 폴더 생성
+                                let folderName = String(matchedConfig.name || "기본양식").replace(/[\\\/:*?"<>|]/g, "_");
+                                const templateFolder = rootFolder.folder(folderName);
+                                
+                                const safeUserName = String(u.name).replace(/[\\\/:*?"<>|]/g, "_");
+                                const fileName = `${u.uid}_${safeUserName}.png`;
+                                
+                                templateFolder.file(fileName, blob);
+                                successCount++;
+                            } catch (err) {
+                                console.error("Error capturing badge:", u.name, err);
+                            }
                         }
+                        setZipProgress(Math.round(((i + 1) / sortedUsers.length) * 100));
+                        
+                        // 브라우저가 뻗지 않도록 딜레이
+                        await new Promise(resolve => setTimeout(resolve, 30)); 
                     }
-                    setZipProgress(Math.round(((i + 1) / sortedUsers.length) * 100));
-                    await new Promise(resolve => setTimeout(resolve, 10)); 
-                }
 
-                zip.generateAsync({ type: "blob" }).then(content => {
+                    if (successCount === 0) {
+                        alert("다운로드할 명찰 이미지를 하나도 생성하지 못했습니다.");
+                        setIsZipping(false);
+                        return;
+                    }
+
+                    const content = await zip.generateAsync({ type: "blob" });
                     saveAs(content, `명찰_이미지_분류됨_${new Date().toISOString().slice(0,10)}.zip`);
+                    alert(`총 ${successCount}명의 명찰이 성공적으로 다운로드되었습니다.\n[${badgeConfigs.map(c=>c.name).join(', ')}] 등의 폴더로 자동 분류되었습니다!`);
+
+                } catch (error) {
+                    console.error("ZIP Generation Error:", error);
+                    alert("ZIP 파일 생성 중 오류가 발생했습니다.");
+                } finally {
                     setIsZipping(false);
-                    alert("다운로드가 완료되었습니다. 템플릿별로 폴더가 나뉘어 저장되었습니다.");
-                });
+                    setZipProgress(0);
+                }
             };
 
             return (
@@ -2031,7 +1983,7 @@
                     </div>
 
                     <div className="bg-slate-800 text-white p-6 rounded-3xl shadow-card flex justify-between items-center relative overflow-hidden group mt-6">
-                        <div className="relative z-10"><h4 className="font-bold text-lg mb-1 flex items-center gap-2"><Icon name="download" /> 명찰 이미지 일괄 다운로드</h4><p className="text-xs text-slate-400">조건에 맞춰 각 참가자에게 해당하는 명찰 디자인이 적용되어 ZIP 파일로 다운로드됩니다.</p></div>
+                        <div className="relative z-10"><h4 className="font-bold text-lg mb-1 flex items-center gap-2"><Icon name="download" /> 명찰 이미지 일괄 다운로드</h4><p className="text-xs text-slate-400">조건에 맞춰 각 참가자에게 해당하는 명찰 디자인이 적용되어 ZIP 파일로 자동 분류됩니다.</p></div>
                         <button onClick={generateZip} className="relative z-10 px-6 py-3 bg-white text-slate-900 rounded-xl font-bold text-sm hover:bg-slate-100 transition-colors shadow-lg">{isZipping ? `생성 중... ${zipProgress}%` : '명찰 이미지 일괄 다운로드 (ZIP)'}</button>
                     </div>
 
@@ -2043,6 +1995,7 @@
                         </button>
                     </div>
 
+                    {/* ✅ 다운로드를 위해 그려지는 숨겨진 렌더링 캔버스 (화면 밖으로 밀어내어 메모리 누수 방지) */}
                     {isZipping && (
                         <div style={{ position: 'fixed', top: '-10000px', left: 0, zIndex: -1000, visibility: 'visible', pointerEvents: 'none' }}>
                             {users.map(u => {
