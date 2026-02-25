@@ -106,7 +106,7 @@
     .primary-btn:active { transform: scale(0.98); }
     .error { color: #e53e3e; font-size: 13px; margin-top: 12px; min-height: 18px; }
 
-    /* 🔥 [새기능] 풍등 애니메이션 로딩 화면 CSS */
+    /* 🔥 [수정] 풍등 애니메이션 로딩 화면 CSS (카룡이 매달기 & 바로 보이는 애니메이션 적용) */
     #loadingSection {
       position: fixed; inset: 0; z-index: 3000;
       background: linear-gradient(135deg, #1e1b4b 0%, #0f172a 100%);
@@ -119,24 +119,40 @@
     .lantern-container {
       position: absolute; inset: 0; pointer-events: none;
     }
+    
+    /* 풍등과 매달린 카룡이를 함께 감싸는 래퍼 */
     .lantern {
       position: absolute;
-      bottom: -100px;
-      font-size: 50px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
       filter: drop-shadow(0 0 15px rgba(251, 191, 36, 0.8));
-      animation: floatUp ease-in infinite;
-      opacity: 0;
+      /* 빈 화면이 아니라 처음부터 화면에 떠서 흔들리는 애니메이션 적용 */
+      animation: floatSky ease-in-out infinite alternate; 
     }
-    .l-1 { left: 20%; animation-duration: 4s; animation-delay: 0s; font-size: 60px; }
-    .l-2 { left: 50%; animation-duration: 3.5s; animation-delay: 0.3s; font-size: 80px; }
-    .l-3 { left: 80%; animation-duration: 4.5s; animation-delay: 0.1s; font-size: 50px; }
-    .l-4 { left: 35%; animation-duration: 5s; animation-delay: 0.6s; font-size: 45px; }
+    
+    .lantern-svg { width: 100%; height: auto; display: block; }
+    
+    /* 카룡이(공룡) 스타일 */
+    .caryong-hanging {
+      width: 70%;
+      margin-top: -8%; /* 풍등 아래 끈 부분과 연결되도록 겹침 */
+      z-index: 2;
+      filter: drop-shadow(0 4px 6px rgba(0,0,0,0.4));
+    }
+    .caryong-svg { width: 100%; height: auto; display: block; }
 
-    @keyframes floatUp {
-      0% { transform: translateY(0) rotate(-5deg); opacity: 0; }
-      20% { opacity: 1; }
-      80% { opacity: 0.8; }
-      100% { transform: translateY(-110vh) rotate(10deg); opacity: 0; }
+    /* 화면 진입 시점부터 이미 보이도록 bottom을 화면 내부에 백분율로 배치 */
+    .l-1 { left: 15%; bottom: 25%; width: 60px; animation-duration: 4s; }
+    .l-2 { left: 45%; bottom: 45%; width: 90px; animation-duration: 5s; transform: translateX(-50%); } /* 카룡이가 매달린 메인 풍등 */
+    .l-3 { left: 75%; bottom: 15%; width: 55px; animation-duration: 4.5s; animation-delay: -1s; }
+    .l-4 { left: 25%; bottom: 65%; width: 45px; animation-duration: 3.5s; animation-delay: -2s; }
+    .l-5 { left: 80%; bottom: 60%; width: 50px; animation-duration: 4.2s; animation-delay: -0.5s; }
+
+    /* 부드럽게 위아래로 둥둥 떠다니는 애니메이션 (기존의 밑에서부터 날아오는 방식 제거) */
+    @keyframes floatSky {
+      0% { transform: translateY(10px) rotate(-3deg); }
+      100% { transform: translateY(-30px) rotate(3deg); }
     }
     
     .loading-content {
@@ -198,7 +214,6 @@
     
     /* =========================================================
        [4] 우측 상단 카테고리 (팝업 드롭다운 스타일) 
-       🔥🔥 여백 및 컬러풀 아이콘 완벽 정비
     ========================================================= */
     .menu-wrapper { 
         position: relative; 
@@ -596,11 +611,98 @@
 <!-- ================= LOADING (풍등) ================= -->
 <section id="loadingSection">
   <div class="lantern-container">
-    <div class="lantern l-1">🏮</div>
-    <div class="lantern l-2">🏮</div>
-    <div class="lantern l-3">🏮</div>
-    <div class="lantern l-4">🏮</div>
+    <!-- ✅ 공통 SVG 디자인 정의: 빛나는 오렌지/옐로우 그라데이션 -->
+    <svg style="width:0;height:0;position:absolute;">
+      <defs>
+        <radialGradient id="lanternGlow" cx="50%" cy="70%" r="50%">
+          <stop offset="0%" stop-color="#fef08a"/>
+          <stop offset="60%" stop-color="#f59e0b"/>
+          <stop offset="100%" stop-color="#ea580c"/>
+        </radialGradient>
+      </defs>
+    </svg>
+
+    <!-- 풍등 1 -->
+    <div class="lantern l-1">
+      <svg viewBox="0 0 100 130" class="lantern-svg">
+        <path d="M 20 10 Q 50 -5 80 10 L 95 90 Q 50 115 5 90 Z" fill="url(#lanternGlow)" opacity="0.95"/>
+        <path d="M 20 10 L 5 90 M 80 10 L 95 90 M 50 -1 L 50 105" stroke="#9a3412" stroke-width="1" opacity="0.3" fill="none"/>
+        <text x="50" y="70" fill="#78350f" font-family="Arial, sans-serif" font-weight="900" font-style="italic" font-size="34px" text-anchor="middle" opacity="0.85">in</text>
+        <rect x="35" y="102" width="30" height="6" fill="#451a03" rx="2"/>
+      </svg>
+    </div>
+    
+    <!-- 풍등 2 (메인: 카룡이가 매달림!) -->
+    <div class="lantern l-2">
+      <svg viewBox="0 0 100 130" class="lantern-svg">
+        <path d="M 20 10 Q 50 -5 80 10 L 95 90 Q 50 115 5 90 Z" fill="url(#lanternGlow)" opacity="0.95"/>
+        <path d="M 20 10 L 5 90 M 80 10 L 95 90 M 50 -1 L 50 105" stroke="#9a3412" stroke-width="1" opacity="0.3" fill="none"/>
+        <text x="50" y="70" fill="#78350f" font-family="Arial, sans-serif" font-weight="900" font-style="italic" font-size="34px" text-anchor="middle" opacity="0.85">in</text>
+        <rect x="35" y="102" width="30" height="6" fill="#451a03" rx="2"/>
+      </svg>
+      <!-- 🔥 매달린 카룡이 캐릭터 SVG (하늘색 베이스 + 하얀 수염) -->
+      <div class="caryong-hanging">
+        <svg viewBox="0 0 100 100" class="caryong-svg">
+          <!-- 꼬리 -->
+          <path d="M 60 70 Q 90 90 85 40" fill="none" stroke="#60a5fa" stroke-width="12" stroke-linecap="round"/>
+          <!-- 몸통 -->
+          <rect x="30" y="40" width="40" height="40" rx="15" fill="#3b82f6"/>
+          <!-- 배(밝은색) -->
+          <rect x="38" y="50" width="24" height="25" rx="10" fill="#bfdbfe"/>
+          <!-- 머리 -->
+          <circle cx="50" cy="35" r="22" fill="#3b82f6"/>
+          <!-- 수염/뿔 (하얀색) -->
+          <path d="M 35 35 Q 20 30 15 45" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round"/>
+          <path d="M 65 35 Q 80 30 85 45" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round"/>
+          <!-- 볼터치 -->
+          <circle cx="36" cy="42" r="4" fill="#fca5a5"/>
+          <circle cx="64" cy="42" r="4" fill="#fca5a5"/>
+          <!-- 눈 -->
+          <path d="M 38 32 Q 41 28 44 32" fill="none" stroke="#1e3a8a" stroke-width="2" stroke-linecap="round"/>
+          <path d="M 56 32 Q 59 28 62 32" fill="none" stroke="#1e3a8a" stroke-width="2" stroke-linecap="round"/>
+          <!-- 입 -->
+          <path d="M 45 42 Q 50 50 55 42" fill="none" stroke="#1e3a8a" stroke-width="2" stroke-linecap="round"/>
+          <path d="M 35 45 Q 30 15 40 5" fill="none" stroke="#3b82f6" stroke-width="6" stroke-linecap="round"/>
+          <!-- 매달린 팔 -->
+          <path d="M 65 45 Q 70 15 60 5" fill="none" stroke="#3b82f6" stroke-width="6" stroke-linecap="round"/>
+          <!-- 발 -->
+          <circle cx="40" cy="80" r="6" fill="#3b82f6"/>
+          <circle cx="60" cy="80" r="6" fill="#3b82f6"/>
+        </svg>
+      </div>
+    </div>
+
+    <!-- 풍등 3 -->
+    <div class="lantern l-3">
+      <svg viewBox="0 0 100 130" class="lantern-svg">
+        <path d="M 20 10 Q 50 -5 80 10 L 95 90 Q 50 115 5 90 Z" fill="url(#lanternGlow)" opacity="0.95"/>
+        <path d="M 20 10 L 5 90 M 80 10 L 95 90 M 50 -1 L 50 105" stroke="#9a3412" stroke-width="1" opacity="0.3" fill="none"/>
+        <text x="50" y="70" fill="#78350f" font-family="Arial, sans-serif" font-weight="900" font-style="italic" font-size="34px" text-anchor="middle" opacity="0.85">in</text>
+        <rect x="35" y="102" width="30" height="6" fill="#451a03" rx="2"/>
+      </svg>
+    </div>
+
+    <!-- 풍등 4 -->
+    <div class="lantern l-4">
+      <svg viewBox="0 0 100 130" class="lantern-svg">
+        <path d="M 20 10 Q 50 -5 80 10 L 95 90 Q 50 115 5 90 Z" fill="url(#lanternGlow)" opacity="0.95"/>
+        <path d="M 20 10 L 5 90 M 80 10 L 95 90 M 50 -1 L 50 105" stroke="#9a3412" stroke-width="1" opacity="0.3" fill="none"/>
+        <text x="50" y="70" fill="#78350f" font-family="Arial, sans-serif" font-weight="900" font-style="italic" font-size="34px" text-anchor="middle" opacity="0.85">in</text>
+        <rect x="35" y="102" width="30" height="6" fill="#451a03" rx="2"/>
+      </svg>
+    </div>
+
+    <!-- 풍등 5 -->
+    <div class="lantern l-5">
+      <svg viewBox="0 0 100 130" class="lantern-svg">
+        <path d="M 20 10 Q 50 -5 80 10 L 95 90 Q 50 115 5 90 Z" fill="url(#lanternGlow)" opacity="0.95"/>
+        <path d="M 20 10 L 5 90 M 80 10 L 95 90 M 50 -1 L 50 105" stroke="#9a3412" stroke-width="1" opacity="0.3" fill="none"/>
+        <text x="50" y="70" fill="#78350f" font-family="Arial, sans-serif" font-weight="900" font-style="italic" font-size="34px" text-anchor="middle" opacity="0.85">in</text>
+        <rect x="35" y="102" width="30" height="6" fill="#451a03" rx="2"/>
+      </svg>
+    </div>
   </div>
+  
   <div class="loading-content">
     <h2>여행을 준비하고 있습니다</h2>
     <p>잠시만 기다려주세요...</p>
@@ -1644,7 +1746,7 @@ function initExchangeCalculatorAuto() {
   }
 
   twdEl.addEventListener("input", updateFromTWD);
-  krwEl.addEventListener("input", updateFromKRW);
+  krwaddEventListener("input", updateFromKRW);
 
   async function renderRate(force = false) {
     rateText.textContent = "가져오는 중…";
