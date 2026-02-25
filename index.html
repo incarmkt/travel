@@ -286,8 +286,39 @@
     .weather-badge:active { transform: scale(0.95); background: rgba(0, 0, 0, 0.6); }
     .weather-badge strong { color: #e6c27a; font-size: 14px; font-weight: 800; letter-spacing: -0.3px; }
 
+    /* 🔥 [추가] 메인 화면 공항 안내 문구 스타일 (배경과 자연스럽게 어울리는 유리 효과) */
+    .home-notice {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: rgba(20, 24, 34, 0.55);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(251, 191, 36, 0.4);
+      border-radius: 14px;
+      padding: 14px 16px;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.25);
+    }
+    .home-notice .notice-icon {
+      font-size: 20px;
+    }
+    .home-notice p {
+      margin: 0;
+      font-size: 13.5px;
+      color: rgba(255, 255, 255, 0.95);
+      line-height: 1.45;
+      font-weight: 500;
+      word-break: keep-all;
+    }
+    .home-notice p strong {
+      color: #fde047;
+      font-weight: 800;
+      text-shadow: 0 1px 3px rgba(0,0,0,0.8);
+    }
+
     /* =========================================================
-       🔥🔥 대만풍 DAY 1~4 버튼 (야경 배경과 어울리는 프리미엄 글래스 & 찻집 창살 패턴)
+       🔥🔥 대만풍 DAY 1~4 버튼 전통 동전(칠보문) 패턴 적용 
     ========================================================= */
     .day-buttons {
       display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
@@ -640,6 +671,12 @@
             ⏳ 날씨 연동중...
           </button>
         </div>
+      </div>
+
+      <!-- 🔥 [추가] 메인 홈 화면 공항 도착 안내 문구 -->
+      <div class="home-notice">
+        <span class="notice-icon">⏰</span>
+        <p>원활한 출국 수속을 위해 반드시 <strong style="color: #fde047;">출발 3시간 전</strong>까지 공항에 도착해 주세요!</p>
       </div>
 
       <div class="day-buttons">
@@ -1002,7 +1039,7 @@ const travelSchedule = [
   {
     day: "DAY 1", date: "2026.03.11 (수)", title: "설레는 시작, 타이베이",
     items: [
-      { time:"08:00/9:00", icon:"✈️", title:"인천 국제공항 출발", desc:"OZ 711 / KE 2021" },
+      { time:"08:00/9:00", icon:"✈️", title:"인천 국제공항 출발", desc:"<span style='color:#dc2626; font-weight:700;'>⚠️ 출발 3시간 전 공항 도착 필수</span><br>OZ 711 / KE 2021" },
       { time:"12:30/13:30", icon:"🍜", title:"중식 | 우육면", desc:"대만의 소울 푸드, 진한 국물의 우욱면" },
       { time:"13:30/14:30", icon:"🏛️", title:"단수이 옛거리/홍마오청/진리대학", desc:"붉은 별돌의 역사와 영화 말할 수 없는 비밀 촬영지" },
       { time:"16:30/17:30", icon:"🏨", title:"호텔 체크인", desc:"타이베이 메리어트 호텔[5성급]" },
@@ -1166,6 +1203,15 @@ function openPage(type, fromHistory = false) {
     t.textContent = "✈️ 항공편 정보";
     c.innerHTML = `
       <div class="detail-content-wrap">
+        <!-- 🔥 [추가] 공항 도착 안내 강조 박스 -->
+        <div style="background: #fffef0; border: 1px solid #fde047; border-radius: 16px; padding: 16px; margin-bottom: 20px; display: flex; align-items: flex-start; gap: 12px; box-shadow: 0 4px 12px rgba(253,224,71,0.1);">
+          <div style="font-size: 22px; line-height: 1;">⏰</div>
+          <div>
+            <strong style="color: #b45309; font-size: 15px; font-weight: 800; display: block; margin-bottom: 4px;">공항 도착 시간 안내</strong>
+            <span style="color: #92400e; font-size: 13px; line-height: 1.4; font-weight: 600;">원활한 탑승 수속을 위해 <strong style="color:#dc2626; font-weight:800;">출발 3시간 전까지</strong> 반드시 공항에 도착해 주시기 바랍니다.</span>
+          </div>
+        </div>
+        
         <div class="day-card"><h3>출국편</h3><div class="schedule-item"><div class="schedule-card"><div class="schedule-time">${dep.time}</div><div class="schedule-body"><div class="schedule-title">✈️ ${dep.from} → ${dep.to}</div><div class="schedule-desc">${dep.airline} ${dep.flightNo}</div><div class="schedule-desc">${dep.date}</div></div></div></div></div>
         <div class="day-card"><h3>귀국편</h3><div class="schedule-item"><div class="schedule-card"><div class="schedule-time">${ret.time}</div><div class="schedule-body"><div class="schedule-title">🏠 ${ret.from} → ${ret.to}</div><div class="schedule-desc">${ret.airline} ${ret.flightNo}</div><div class="schedule-desc">${ret.date}</div></div></div></div></div>
       </div>`;
