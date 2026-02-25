@@ -725,32 +725,6 @@ let employees = [];
 let currentUser = null;
 const ADMIN_PASSWORD = "0000";
 
-/* 🔥 로컬 테스트 및 API 오류 방지용 내장 데이터 (박상현 님) */
-const EMBEDDED_EMPLOYEES = [
-  {
-    "id": "1612156",
-    "name": "박상현",
-    "flight": {
-      "departure": {
-        "date": "2026.03.11",
-        "time": "09:00",
-        "from": "인천",
-        "to": "타이베이",
-        "airline": "대한항공",
-        "flightNo": "KE 2021"
-      },
-      "return": {
-        "date": "2026.03.14",
-        "time": "12:25",
-        "from": "타이베이",
-        "to": "인천",
-        "airline": "대한항공",
-        "flightNo": "KE 2022"
-      }
-    },
-    "myTour": [] /* 선택 관광이 없을 시 에러 방지용으로 빈 배열 추가 */
-  }
-];
     
 function toggleMenu() {
   document.body.classList.toggle('menu-open');
