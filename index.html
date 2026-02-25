@@ -8,7 +8,7 @@
   <!-- ✅ [1] 폰트 CDN 추가 (Pretendard) -->
   <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
 
-  <!-- ✅ [추가] 이미지 빠른 로딩을 위한 Preload -->
+  <!-- ✅ [추가] 이미지 빠른 로딩을 위한 Preload (브라우저가 가장 먼저 이미지를 다운로드하도록 지시) -->
   <link rel="preload" as="image" href="assets/images/taiwan.jpg">
   <link rel="preload" as="image" href="assets/images/home2.jpg">
 
@@ -32,6 +32,7 @@
     * {
       box-sizing: border-box;
       -webkit-tap-highlight-color: transparent; 
+      /* ✅ 폰트 적용 */
       font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     }
 
@@ -41,14 +42,16 @@
       background-color: var(--primary-color);
       color: var(--text-main);
       overscroll-behavior: none; 
+      /* ✅ 모바일 꽉 채우기 핵심 설정 */
       width: 100%;
       height: 100%;
-      overflow: hidden; 
+      overflow: hidden; /* 이중 스크롤 방지 */
     }
 
     /* =========================================================
        [2] 스플래시 & 로그인
     ========================================================= */
+    /* 스플래시 스타일은 유지하되 로직에서만 제거 */
     .mobile-splash {
       position: fixed; inset: 0; z-index: 9999;
       background: var(--primary-color);
@@ -58,9 +61,11 @@
 
     .login-hero {
       width: 100%;
+      /* ✅ 모바일 주소창 대응 높이 설정 */
       height: 100vh;
       height: 100dvh; 
       background: url('assets/images/taiwan.jpg') center/cover no-repeat;
+      /* ✅ 배경 고정 (스크롤 시 흔들림 방지) */
       position: fixed;
       top: 0; left: 0;
       z-index: 2000;
@@ -81,15 +86,18 @@
       text-align: center;
       box-shadow: 0 20px 40px rgba(0,0,0,0.2);
     }
+    
+    /* 🔥 [수정] 로그인 화면 로고 스타일: 비율 유지 */
     .hero-logo { 
-        width: 140px;       
-        height: auto;       
-        object-fit: contain;
+        width: 140px;       /* 적절한 가로 크기 설정 */
+        height: auto;       /* 높이는 자동 */
+        object-fit: contain;/* 비율 유지하며 표시 */
         margin-bottom: 12px;
         display: block;
         margin-left: auto;
         margin-right: auto;
     }
+
     .login-box h2 { color: var(--primary-color); margin: 0 0 5px; font-weight: 800; }
     .hero-desc { color: var(--text-sub); margin-bottom: 24px; font-size: 14px; }
     .login-box input {
@@ -114,8 +122,10 @@
         height: 100%; 
         overflow: hidden; 
     }
+    
     .home-view {
       width: 100%;
+      /* ✅ 모바일 주소창 대응 */
       height: 100vh;
       height: 100dvh;
       background: url('assets/images/home2.jpg') center/cover no-repeat;
@@ -123,21 +133,28 @@
       display: flex;
       flex-direction: column;
     }
+    
     .home-overlay {
       position: absolute; inset: 0;
+      /* ✅ 어둡게 깔린 배경 필터 제거 (투명하게 처리) */
       background: transparent;
       z-index: 1;
     }
+
+    /* 상단 헤더 */
     .home-header {
       position: relative; z-index: 100;
       display: flex; justify-content: space-between; align-items: center;
       padding: 20px 24px;
+      /* ✅ 아이폰 노치 영역 대응 */
       padding-top: max(20px, env(safe-area-inset-top));
     }
+    
+    /* 🔥 [수정] 상단 헤더 로고 스타일: 비율 유지 및 원본 색상 출력 */
     .header-logo { 
-        height: 36px;       
-        width: auto;        
-        object-fit: contain;
+        height: 36px;       /* 헤더 높이에 맞춤 */
+        width: auto;        /* 가로는 비율대로 */
+        object-fit: contain;/* 찌그러짐 방지 */
     }
     
     /* =========================================================
@@ -146,6 +163,7 @@
     ========================================================= */
     .menu-wrapper { 
         position: relative; 
+        /* ✅ 로고 유무와 상관없이 메뉴를 우측 끝으로 고정 */
         margin-left: auto;
     }
 
@@ -160,14 +178,17 @@
       font-size: 14px;
       cursor: pointer;
       display: flex; align-items: center; gap: 6px;
+      /* ✅ 메뉴 버튼 누를 때 효과 (transition 추가) */
       transition: transform 0.1s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.1s;
       position: relative; z-index: 101; 
     }
+    /* ✅ 메뉴 버튼 클릭 시 효과 */
     .menu-btn:active { 
       background: rgba(255,255,255,0.3); 
       transform: scale(0.94);
     }
 
+    /* 메뉴 열릴 때 화면 어둡게 해주는 레이어 */
     .menu-dim {
       position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 90;
       backdrop-filter: blur(3px); -webkit-backdrop-filter: blur(3px);
@@ -206,6 +227,7 @@
       font-size: 15px; font-weight: 600; color: var(--text-main);
       border-radius: 12px; cursor: pointer; 
       display: flex; align-items: center; gap: 14px; /* 아이콘과 텍스트 사이 간격 고정 */
+      /* ✅ 카테고리 버튼 누를 때 효과 (transition 추가) */
       transition: background-color 0.1s, transform 0.1s cubic-bezier(0.4, 0, 0.2, 1);
     }
     
@@ -224,6 +246,7 @@
 
     .drop-nav button span { flex: 1; letter-spacing: -0.3px; }
     
+    /* ✅ 카테고리 항목 클릭 시 쫀득한 효과 */
     .drop-nav button:active { 
       background: #f1f5f9; 
       transform: scale(0.96); 
@@ -237,18 +260,22 @@
       flex: 1; 
       display: flex; flex-direction: column; justify-content: flex-end;
       padding: 0 24px 60px; 
+      /* ✅ 하단 안전영역 대응 */
       padding-bottom: max(60px, env(safe-area-inset-bottom));
       color: #fff;
     }
     
     .welcome-text { margin-bottom: 30px; }
     .welcome-text p { font-size: 18px; margin: 0; opacity: 0.95; font-weight: 500; letter-spacing: -0.5px; }
+    /* ✅ 이름 글씨 색상을 고급스러운 샴페인 골드(#e6c27a)로 변경하고 살짝의 그림자로 가독성을 높임 */
     .welcome-text strong { color: #e6c27a; font-weight: 900; font-size: 20px; letter-spacing: -0.5px; text-shadow: 0 2px 6px rgba(0,0,0,0.4); }
     .welcome-text h2 { font-size: 36px; font-weight: 900; margin: 6px 0 12px; line-height: 1.2; letter-spacing: -1px; }
     
+    /* 🔥 [날씨 위젯 배치] 날짜와 날씨를 나란히 묶는 래퍼 */
     .meta-badges { display: flex; align-items: center; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
     .welcome-text .sub-date { display: inline-block; padding: 6px 14px; background: rgba(0,0,0,0.4); border-radius: 20px; font-size: 13px; border: 1px solid rgba(255,255,255,0.1); font-weight: 600; }
 
+    /* 🔥 [날씨 위젯 스타일] 기존 테마와 어울리는 글래스모피즘 버튼 */
     .weather-badge {
       display: inline-flex; align-items: center; gap: 6px;
       background: rgba(0, 0, 0, 0.4); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
@@ -260,56 +287,61 @@
     .weather-badge strong { color: #e6c27a; font-size: 14px; font-weight: 800; letter-spacing: -0.3px; }
 
     /* =========================================================
-       🔥🔥 대만풍 DAY 1~4 버튼 전통 동전(칠보문) 패턴 적용 
+       🔥🔥 대만풍 DAY 1~4 버튼 (야경 배경과 어울리는 프리미엄 글래스 & 찻집 창살 패턴)
     ========================================================= */
     .day-buttons {
       display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
     }
 
     .day-btn {
-      /* 딥한 붉은 갈색 베이스 */
-      background-color: #581c10; 
+      /* ✅ 배경 사진이 은은하게 비치는 어두운 투명 글래스 */
+      background-color: rgba(15, 23, 42, 0.65); 
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
       
-      /* 동전(칠보문) 교차 패턴 SVG + 양 끝단 조명 효과 그라데이션 */
+      /* ✅ 우측상단 홍등 붉은빛 + 좌측하단 따뜻한 금빛 + 은은한 대만 전통 마름모 창살 무늬 */
       background-image: 
-        radial-gradient(ellipse at top left, rgba(234, 179, 8, 0.25) 0%, transparent 60%),
-        radial-gradient(ellipse at bottom right, rgba(220, 38, 38, 0.35) 0%, transparent 60%),
-        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 60 60'%3E%3Cg fill='none' stroke='%239a3412' stroke-width='4' stroke-opacity='0.7'%3E%3Ccircle cx='30' cy='30' r='30'/%3E%3Ccircle cx='0' cy='0' r='30'/%3E%3Ccircle cx='60' cy='0' r='30'/%3E%3Ccircle cx='0' cy='60' r='30'/%3E%3Ccircle cx='60' cy='60' r='30'/%3E%3C/g%3E%3Cg fill='%237c2d12' opacity='0.4'%3E%3Ccircle cx='30' cy='0' r='8'/%3E%3Ccircle cx='30' cy='60' r='8'/%3E%3Ccircle cx='0' cy='30' r='8'/%3E%3Ccircle cx='60' cy='30' r='8'/%3E%3C/g%3E%3C/svg%3E");
+        radial-gradient(circle at 90% 10%, rgba(225, 29, 72, 0.35) 0%, transparent 60%),
+        radial-gradient(circle at 10% 90%, rgba(251, 191, 36, 0.15) 0%, transparent 50%),
+        url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M20 0l20 20-20 20L0 20z' stroke='rgba(255, 215, 0, 0.05)' fill='none' stroke-width='1'/%3E%3Cpath d='M20 10l10 10-10 10-10-10z' stroke='rgba(255, 215, 0, 0.03)' fill='none' stroke-width='0.5'/%3E%3C/svg%3E");
       
-      background-size: cover, cover, 60px 60px;
+      background-size: cover, cover, 40px 40px;
       
-      /* 사진처럼 금장 테두리 살짝 부여 */
-      border: 1px solid rgba(234, 179, 8, 0.5);
-      padding: 16px 16px; 
-      border-radius: 16px;
+      /* 고급스러운 반투명 화이트 & 골드 테두리 조합 */
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-top: 1px solid rgba(255, 255, 255, 0.3);
+      border-bottom: 1px solid rgba(251, 191, 36, 0.25);
+      padding: 18px 16px; 
+      border-radius: 18px;
       color: #fff; text-align: left;
       
-      transition: transform 0.1s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.1s;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
       cursor: pointer;
       display: flex; flex-direction: column; justify-content: space-between;
-      min-height: 100px;
+      min-height: 105px;
       position: relative;
       overflow: hidden;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.3);
     }
     
     .day-btn-header, .day-btn .day-title { 
       position: relative; 
       z-index: 1; 
-      text-shadow: 1px 1px 4px rgba(0,0,0,0.8); 
+      text-shadow: 0 2px 4px rgba(0,0,0,0.8); 
     }
 
-    .day-btn-header { display: flex; justify-content: space-between; align-items: center; width: 100%; font-size: 18px; font-weight: 900; color: #fff; }
+    .day-btn-header { display: flex; justify-content: space-between; align-items: center; width: 100%; font-size: 19px; font-weight: 800; color: #fff; letter-spacing: -0.3px; }
     
-    /* 날짜 배지: 금박 느낌 */
-    .btn-date { font-size: 12px; font-weight: 800; color: #fff; background: linear-gradient(135deg, rgba(202, 138, 4, 0.9), rgba(161, 98, 7, 0.9)); padding: 3px 10px; border-radius: 12px; letter-spacing: 0; border: 1px solid rgba(253, 224, 71, 0.4); box-shadow: 0 2px 4px rgba(0,0,0,0.3); text-shadow: 1px 1px 2px rgba(0,0,0,0.4); }
+    /* 날짜 배지: 투명도 있는 블랙 베이스 + 금빛 글씨로 세련되게 */
+    .btn-date { font-size: 12px; font-weight: 700; color: #fde047; background: rgba(0, 0, 0, 0.4); padding: 4px 10px; border-radius: 12px; letter-spacing: 0; border: 1px solid rgba(251, 191, 36, 0.3); box-shadow: inset 0 1px 2px rgba(255,255,255,0.1); backdrop-filter: blur(4px); text-shadow: none; }
     
-    .day-btn .day-title { font-size: 13.5px; font-weight: 600; color: #fff; margin-top: 12px; line-height: 1.4; word-break: keep-all; opacity: 0.95; }
+    .day-btn .day-title { font-size: 14px; font-weight: 500; color: rgba(255, 255, 255, 0.9); margin-top: 14px; line-height: 1.45; word-break: keep-all; }
     
     .day-btn:active { 
       transform: scale(0.96); 
-      box-shadow: 0 2px 8px rgba(0,0,0,0.6);
-      background-color: #451308;
+      background-color: rgba(10, 15, 20, 0.8);
+      border-color: rgba(251, 191, 36, 0.6);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.5);
     }
     /* ========================================================= */
 
@@ -383,19 +415,21 @@
     .fx-box input { width: 100%; padding: 12px; border: 1px solid var(--border-light); border-radius: 10px; text-align: right; font-weight: 600; font-size: 16px; }
     .fx-eq { font-size: 20px; color: var(--text-sub); }
 
+    /* 🔥 [수정] 2. 선택관광 사진형 카드 CSS 개선 */
     .tour-card-photo { position: relative; border-radius: 20px; overflow: hidden; margin-bottom: 20px; box-shadow: 0 8px 20px rgba(0,0,0,0.1); background-color: #000; height: 240px; color: #fff; }
     .tour-card-bg { position: absolute; inset: 0; background-size: cover; background-position: center; transition: transform 0.4s; }
     .tour-card-photo:active .tour-card-bg { transform: scale(1.05); }
     .tour-card-overlay { position: absolute; inset: 0; background: linear-gradient(to bottom, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.1) 40%, rgba(0,0,0,0.5) 100%); }
     .tour-info { position: absolute; inset: 0; z-index: 2; padding: 20px; display: flex; flex-direction: column; align-items: flex-start; }
     .tour-badge { display: inline-block; background: var(--accent-color); color: #fff; font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 100px; margin-bottom: 8px; text-transform: uppercase; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
-    .tour-badge.red { background: #e53e3e; }
+    .tour-badge.red { background: #e53e3e; } 
     .tour-info h3 { margin: 0 0 6px; font-size: 22px; font-weight: 800; line-height: 1.2; text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
     .tour-desc { font-size: 13px; opacity: 0.9; margin: 0; line-height: 1.4; text-shadow: 0 1px 3px rgba(0,0,0,0.5); }
     .tour-meta-box { margin-top: auto; width: 100%; background: rgba(255,255,255,0.15); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); border-radius: 12px; padding: 10px 14px; display: flex; justify-content: space-between; align-items: center; font-size: 13px; }
     .tour-meta-items { display: flex; gap: 8px; font-size: 12px; }
     .tour-meta-items span { background: rgba(0,0,0,0.3); padding: 2px 6px; border-radius: 4px; }
 
+    /* ✅ 중식비 상태 색상 CSS 추가 */
     .status.pending { color: #ff4d4f; font-weight: 700; text-shadow: 0 1px 2px rgba(0,0,0,0.5); }
     .status.done { color: #22c55e; font-weight: 700; text-shadow: 0 1px 2px rgba(0,0,0,0.5); }
     .meal-status-btn { background: #fff; color: #1a233a; border: none; font-size: 12px; font-weight: 700; padding: 6px 12px; border-radius: 8px; }
@@ -571,12 +605,11 @@
               <span>나의 선택 관광</span>
             </button>
 
-            <!-- 🔥 [새기능] 6. 필수 여행 회화 -->
+            <!-- 🔥 [새기능] 6. 필수 여행 회화 (초록색 글씨 제거) -->
             <button onclick="openPage('conversation')">
               <div class="menu-icon" style="background: #d1fae5;">💬</div>
-              <span style="color: #059669; font-weight: 800;">필수 여행 회화</span>
+              <span>필수 여행 회화</span>
             </button>
-            
             
             <!-- 8. 긴급 연락망 -->
             <button onclick="openPage('contact')">
@@ -612,19 +645,19 @@
       <div class="day-buttons">
         <button class="day-btn" onclick="openPage('day_0')">
           <div class="day-btn-header">DAY 1 <span class="btn-date">03.11</span></div>
-          <span class="day-title">인천 출발 &<br>시내 하이라이트</span>
+          <span class="day-title">설레는 시작,<br>타이베이</span>
         </button>
         <button class="day-btn" onclick="openPage('day_1')">
           <div class="day-btn-header">DAY 2 <span class="btn-date">03.12</span></div>
-          <span class="day-title">선택 관광 &<br>ISC 공식 만찬</span>
+          <span class="day-title">힐링과 화합의 밤,<br>ISC 공식 만찬</span>
         </button>
         <button class="day-btn" onclick="openPage('day_2')">
           <div class="day-btn-header">DAY 3 <span class="btn-date">03.13</span></div>
-          <span class="day-title">근교 관광 &<br>자유 일정</span>
+          <span class="day-title">대만의 자연과 낭만<br></span>
         </button>
         <button class="day-btn" onclick="openPage('day_3')">
           <div class="day-btn-header">DAY 4 <span class="btn-date">03.14</span></div>
-          <span class="day-title">타이베이 출발 &<br>인천 귀국</span>
+          <span class="day-title">굿바이,<br>타이베이</span>
         </button>
       </div>
     </div>
@@ -970,11 +1003,11 @@ const travelSchedule = [
     day: "DAY 1", date: "2026.03.11 (수)", title: "설레는 시작, 타이베이",
     items: [
       { time:"08:00/9:00", icon:"✈️", title:"인천 국제공항 출발", desc:"OZ 711 / KE 2021" },
-      { time:"12:30/13:30", icon:"🍜", title:"중식 | 우육면", desc:"현지 인기 중식당" },
-      { time:"13:30/14:30", icon:"🏛️", title:"단수이 옛거리/홍마오청/진리대학", desc:"홍마오청·옛거리 관광" },
+      { time:"12:30/13:30", icon:"🍜", title:"중식 | 우육면", desc:"대만의 소울 푸드, 진한 국물의 우욱면" },
+      { time:"13:30/14:30", icon:"🏛️", title:"단수이 옛거리/홍마오청/진리대학", desc:"붉은 별돌의 역사와 영화 말할 수 없는 비밀 촬영지" },
       { time:"16:30/17:30", icon:"🏨", title:"호텔 체크인", desc:"타이베이 메리어트 호텔[5성급]" },
-      { time:"18:00/18:30", icon:"🍽️", title:"석식 | 타카오 샤브샤브", desc:"무제한 샤브샤브" },
-      { time:"19:30/20:00", icon:"🌃", title:"타이베이 101 전망대", desc:"야경 관람" },
+      { time:"18:00/18:30", icon:"🍽️", title:"석식 | 타카오 샤브샤브", desc:"1인 1냄비로 즐기는 프리미엄 샤브샤브" },
+      { time:"19:30/20:00", icon:"🌃", title:"타이베이 101 전망대", desc:"타이베이의 야경을 한눈에 담는 랜드마크" },
       { time:"21:00/21:30", icon:"🏨", title:"호텔복귀", desc:"타이베이 메리어트 호텔[5성급]" }
     ]
   },
@@ -982,23 +1015,23 @@ const travelSchedule = [
     day: "DAY 2", date: "2026.03.12 (목)", title: "힐링과 화합의 밤",
     items: [
       { time:"08:30/9:00", icon:"🚌", title:"선택 관광", desc:"개인 선택 일정" },
-      { time:"08:30", icon:"🚌", title:"티엔라이 온천", desc:"선택 1안" },
-      { time:"9:00", icon:"🏛️", title:"고궁박물관", desc:"선택 2안" },
-      { time:"13:00", icon:"🍽️", title:"중식", desc:"베이징덕" },
-      { time:"14:30", icon:"🛍️", title:"서문정", desc:"개인 선택 일정" },
+      { time:"08:30", icon:"🚌", title:"티엔라이 온천", desc:"양명산의 자연을 바라보며 즐기는 유황 온천" },
+      { time:"9:00", icon:"🏛️", title:"고궁박물관", desc:"중국 5천년 역사의 보물 창고" },
+      { time:"13:00", icon:"🍽️", title:"중식", desc:"바삭한 껍질과 촉촉한 속살의 조화" },
+      { time:"14:30", icon:"🛍️", title:"서문정", desc:"타이베이의 명동, 젊음과 활기의 거리" },
       { time:"08:30/9:00", icon:"🧭", title:"자유시간", desc:"중식비 지급" },
-      { time:"18:00", icon:"🎉", title:"ISC 만찬", desc:"필수 참석" }
+      { time:"18:00", icon:"🎉", title:"ISC 만찬", desc:"필수 참석-화합과 축하의 밤" }
     ]
   },
   {
     day: "DAY 3", date: "2026.03.13 (금)", title: "대만의 자연과 낭만",
     items: [
       { time:"10:00", icon:"🏨🍽️", title:"호텔 조식 후 출발", desc:"타이베이 메리어트 호텔[5성급]" },
-      { time:"11:00", icon:"🌊", title:"야류 해상공원", desc:"기암괴석 관광" },
-      { time:"12:30", icon:"🦐", title:"중식 : 씨푸드", desc:"현지 해산물 특식" },
-      { time:"14:30", icon:"🏮", title:"스펀 천등날리기", desc:"소원천등 날리기" },
-      { time:"17:00", icon:"🏮", title:"지우펀 야경", desc:"홍등마을" },
-      { time:"20:00", icon:"🌊", title:"야시장 및 석식", desc:"야시장 자유식 및 쇼핑" },
+      { time:"11:00", icon:"🌊", title:"야류 해상공원", desc:"자연이 조각한 기암괴석" },
+      { time:"12:30", icon:"🦐", title:"중식 : 씨푸드", desc:"바다 향 가득한 신선한 현지 해산물" },
+      { time:"14:30", icon:"🏮", title:"스펀 천등날리기", desc:"기찻길 위에서 소원을 담아 날리는 천등" },
+      { time:"17:00", icon:"🏮", title:"지우펀 야경", desc:"홍등이 밝히는 좁은 골목의 몽환적 분위기" },
+      { time:"20:00", icon:"🌊", title:"야시장 및 석식", desc:"지파이, 망고빙수 등 대만 길거리 음식 정복" },
       { time:"21:30", icon:"🏨", title:"호텔복귀", desc:"타이베이 메리어트 호텔[5성급]" },
       { time:"전일", icon:"🧭", title:"자유일정 선택시", desc:"전체 개인부담(중식비 지급 X)" }
     ]
@@ -1280,21 +1313,6 @@ function openPage(type, fromHistory = false) {
     initExchangeCalculatorAuto();
   }
 
-  if (type === "dinner") {
-    t.textContent = "🍽 만찬 안내";
-    c.innerHTML = `
-      <div class="detail-content-wrap">
-        <div class="day-card">
-          <h3>ISC 공식 만찬</h3>
-          <p style="margin-top:10px; font-size:14px; color:var(--text-sub);">ISC 공식 만찬장 배치도 및 상세 안내입니다.</p>
-          
-          <div style="margin-top:16px; border-radius:12px; overflow:hidden; border:1px solid var(--border-light); background:#f8fafc;">
-            <img src="assets/images/dinner_map.jpg" alt="만찬장 배치도" style="width:100%; height:auto; display:block;" onerror="this.style.display='none'">
-          </div>
-        </div>
-      </div>`;
-  }
-
   /* 🔥 [추가] 필수 여행 회화 렌더링 로직 (내용 대폭 확장) */
   if (type === "conversation") {
     t.textContent = "💬 필수 여행 회화";
@@ -1389,11 +1407,6 @@ function openPage(type, fromHistory = false) {
     });
     convHtml += '</div>';
     c.innerHTML = convHtml;
-  }
-   
-  if (type === "request") {
-    t.textContent = "📝 요청사항";
-    c.innerHTML = `<div class="detail-content-wrap"><div class="day-card"><textarea id="requestInput" placeholder="요청사항을 자유롭게 입력해주세요."></textarea><button class="primary-btn" onclick="submitRequest()">제출하기</button></div></div>`;
   }
    
   if (type === "contact") {
