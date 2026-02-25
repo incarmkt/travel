@@ -24,7 +24,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
     
-    <!-- 폰트 다양화 -->
+    <!-- 폰트 다양화 (20종 추가) -->
     <link href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Cute+Font&family=Do+Hyeon&family=Dongle&family=Gaegu&family=Gamja+Flower&family=Gowun+Batang&family=Gowun+Dodum&family=Gugi&family=Hi+Melody&family=Jua&family=Nanum+Brush+Script&family=Nanum+Gothic&family=Nanum+Myeongjo&family=Nanum+Pen+Script&family=Noto+Sans+KR:wght@100;300;400;500;700;900&family=Poor+Story&family=Single+Day&family=Song+Myung&family=Stylish&family=Sunflower:wght@300;500;700&family=Yeon+Sung&display=swap" rel="stylesheet">
     
     <script>
@@ -72,6 +72,7 @@
         .data-table td { padding: 14px 16px; border-bottom: 1px solid #f1f5f9; font-size: 0.85rem; font-weight: 500; color: #334155; }
         .data-table tr:hover td { background-color: #f8fafc; }
 
+        /* 스캐너 UI 강제 스타일 (정사각형 및 꽉 채우기) */
         .scanner-container {
             position: relative;
             width: 100%;
@@ -100,24 +101,104 @@
             border-radius: 1.2rem;
         }
 
+        /* 인쇄 스타일 */
         @media print {
             @page { size: auto; margin: 0; }
-            html, body, #root, main, .overflow-y-auto { width: 100%; height: auto !important; min-height: auto !important; overflow: visible !important; margin: 0 !important; padding: 0 !important; background: white !important; position: static !important; }
+            
+            html, body, #root, main, .overflow-y-auto {
+                width: 100%;
+                height: auto !important;
+                min-height: auto !important;
+                overflow: visible !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                background: white !important;
+                position: static !important;
+            }
+
             body * { visibility: hidden; }
+
             .print-only-container, .print-only-container * { visibility: visible !important; }
-            .print-only-container { position: absolute !important; top: 0 !important; left: 0 !important; width: 100% !important; height: auto !important; background: white; z-index: 9999; display: block !important; overflow: visible !important; }
-            .print-reset-spacing { display: block !important; overflow: visible !important; height: auto !important; padding: 0 !important; }
+
+            .print-only-container {
+                position: absolute !important;
+                top: 0 !important;
+                left: 0 !important;
+                width: 100% !important;
+                height: auto !important;
+                background: white;
+                z-index: 9999;
+                display: block !important;
+                overflow: visible !important;
+            }
+
+            .print-reset-spacing {
+                display: block !important;
+                overflow: visible !important;
+                height: auto !important;
+                padding: 0 !important;
+            }
+
             .no-print { display: none !important; }
-            .page-wrapper { width: 100%; display: flex !important; justify-content: center; align-items: center; break-after: page; page-break-after: always; page-break-inside: avoid; margin: 0; padding: 0; position: relative !important; }
-            .page-wrapper:last-child { break-after: auto; page-break-after: auto; }
-            .badge-card { border: none !important; box-shadow: none !important; page-break-inside: avoid; }
+
+            .page-wrapper {
+                width: 100%;
+                display: flex !important;
+                justify-content: center;
+                align-items: center;
+                break-after: page;
+                page-break-after: always;
+                page-break-inside: avoid;
+                margin: 0;
+                padding: 0;
+                position: relative !important;
+            }
+            
+            .page-wrapper:last-child {
+                break-after: auto;
+                page-break-after: auto;
+            }
+
+            .badge-card {
+                border: none !important;
+                box-shadow: none !important;
+                page-break-inside: avoid;
+            }
         }
         .print-only { display: none; }
         
-        .smart-guide-x { position: absolute; left: 50%; top: 0; bottom: 0; width: 1px; background-color: #ef4444; z-index: 200; pointer-events: none; border-left: 1px dashed #ef4444; }
-        .smart-guide-y { position: absolute; top: 50%; left: 0; right: 0; height: 1px; background-color: #ef4444; z-index: 200; pointer-events: none; border-top: 1px dashed #ef4444; }
+        /* 가이드라인 스타일 */
+        .smart-guide-x {
+            position: absolute;
+            left: 50%;
+            top: 0;
+            bottom: 0;
+            width: 1px;
+            background-color: #ef4444;
+            z-index: 200; /* Ensure it is above layers */
+            pointer-events: none;
+            border-left: 1px dashed #ef4444;
+        }
+        .smart-guide-y {
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background-color: #ef4444;
+            z-index: 200; /* Ensure it is above layers */
+            pointer-events: none;
+            border-top: 1px dashed #ef4444;
+        }
+        
         .layer-item:hover { background-color: #f1f5f9; }
         .layer-item.active { background-color: #eef2ff; border-color: #27398C; }
+        
+        /* 스크롤바 숨기기 (프린트시) */
+        @media print {
+            ::-webkit-scrollbar { display: none; }
+        }
+        /* 데이터 테이블 인쇄용 */
         .no-print-scroll { -ms-overflow-style: none; scrollbar-width: none; }
         .no-print-scroll::-webkit-scrollbar { display: none; }
     </style>
@@ -1214,7 +1295,6 @@
             const [activeIdx, setActiveIdx] = useState(0);
             const activeConfig = badgeConfigs[activeIdx] || badgeConfigs[0];
 
-            // ✅ 상태 업데이트 방식 개선 (덮어쓰기 버그 수정)
             const updateActiveConfig = (updates) => {
                 setBadgeConfigs(prev => {
                     const newConfigs = [...prev];
@@ -1266,6 +1346,34 @@
                 }
             };
 
+            // ✅ 엑셀 데이터에서 동적으로 조건 필드 추출
+            const availableConditionKeys = useMemo(() => {
+                const keys = new Set();
+                keys.add('airline');
+                keys.add('bus');
+                keys.add('dinnerTable');
+                keys.add('org');
+                
+                if (users && users.length > 0) {
+                    users.forEach(u => {
+                        if (u.options) {
+                            Object.keys(u.options).forEach(k => keys.add(k));
+                        }
+                    });
+                }
+                return Array.from(keys);
+            }, [users]);
+
+            const getConditionLabel = (key) => {
+                const labels = {
+                    'airline': '항공 (Airline)',
+                    'bus': '버스 (Bus)',
+                    'dinnerTable': '만찬테이블번호',
+                    'org': '소속 (Org)'
+                };
+                return labels[key] || `[추가항목] ${key}`;
+            };
+
             const getUniqueValues = (key) => {
                 if (!key || key === 'ALL') return [];
                 const vals = new Set();
@@ -1296,7 +1404,6 @@
             const [zipProgress, setZipProgress] = useState(0);
             const editorRef = useRef(null);
             
-            // ✅ 반응형 에디터 스케일 (Auto-Fit)
             const containerRef = useRef(null);
             const [editorScale, setEditorScale] = useState(0.4);
 
@@ -1304,7 +1411,6 @@
                 const updateScale = () => {
                     if (containerRef.current && activeConfig?.imgWidth) {
                         const containerWidth = containerRef.current.clientWidth;
-                        // 컨테이너 폭에서 내부 패딩 여유를 뺀 너비를 기준으로 완벽하게 비율 계산
                         const availableWidth = containerWidth - 48; 
                         const scale = availableWidth / activeConfig.imgWidth;
                         setEditorScale(scale > 0 ? scale : 0.4);
@@ -1712,11 +1818,10 @@
                                 <label className="block text-xs font-bold text-slate-500 mb-1">적용 조건 (대상 필드)</label>
                                 <select value={activeConfig.conditionKey || 'ALL'} onChange={e => updateActiveConfig({ conditionKey: e.target.value, conditionVal: 'ALL' })} className="w-full p-3 border rounded-xl font-bold text-sm bg-white">
                                     <option value="ALL">조건 없음 (모든 참가자)</option>
-                                    <option value="airline">항공 (Airline)</option>
-                                    <option value="bus">버스 (Bus)</option>
-                                    <option value="dinnerTable">만찬테이블번호</option>
-                                    <option value="org">소속 (Org)</option>
-                                    <option value="선택 관광">선택 관광</option>
+                                    {/* 엑셀 파일에서 읽어들인 항목들을 조건으로 쓸 수 있게 자동 출력 */}
+                                    {availableConditionKeys.map(k => (
+                                        <option key={k} value={k}>{getConditionLabel(k)}</option>
+                                    ))}
                                 </select>
                             </div>
                             {activeConfig.conditionKey && activeConfig.conditionKey !== 'ALL' && (
@@ -1800,6 +1905,9 @@
                                                         <option value="bus">버스 {`{bus}`}</option>
                                                         <option value="dinner">만찬테이블 {`{dinner}`}</option>
                                                         <option value="airline">항공기 {`{airline}`}</option>
+                                                        {availableConditionKeys.filter(k => !['org', 'bus', 'airline', 'dinnerTable'].includes(k)).map(k => (
+                                                            <option key={k} value={`opt_${k}`}>[엑셀항목] {k}</option>
+                                                        ))}
                                                     </select>
                                                 </div>
                                                 <div>
@@ -1901,7 +2009,7 @@
                         </div>
                     </div>
                     
-                    {/* ✅ 개별 QR 코드 일괄 관리 */}
+                    {/* ✅ 대표님이 원하셨던 [개별 QR 코드 일괄 관리] 뷰 추가 */}
                     <div className="bg-slate-100 border border-slate-200 p-6 rounded-3xl shadow-sm mt-6">
                         <div className="flex justify-between items-center mb-4">
                             <div>
@@ -1956,6 +2064,10 @@
                                                     else if (layer.variable === 'bus') content = u.bus ? (String(u.bus).includes('호차') ? u.bus : `${u.bus}호차`) : '';
                                                     else if (layer.variable === 'dinner') content = u.dinnerTable ? (String(u.dinnerTable).includes('번') ? u.dinnerTable : `${u.dinnerTable}번`) : '';
                                                     else if (layer.variable === 'airline') content = u.airline || '';
+                                                    else if (layer.variable.startsWith('opt_')) {
+                                                        const optKey = layer.variable.replace('opt_', '');
+                                                        content = (u.options && u.options[optKey]) ? String(u.options[optKey]) : '';
+                                                    }
                                                 }
                                                 return <div key={layer.id} className={layer.fontFamily} style={{ ...commonStyle, fontSize: `${layer.fontSize}px`, color: layer.color, fontWeight: layer.fontWeight || 'bold', backgroundColor: layer.bgColor || 'transparent', padding: `${layer.padding || 0}px`, borderRadius: `${layer.borderRadius || 0}px`, textShadow: layer.shadow ? '2px 2px 4px rgba(0,0,0,0.5)' : 'none', whiteSpace: 'nowrap', fontFamily: layer.fontFamily }}>{content}</div>;
                                             } 
