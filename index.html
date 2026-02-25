@@ -570,12 +570,6 @@
               <div class="menu-icon" style="background: #fce7f3;">🎒</div>
               <span>나의 선택 관광</span>
             </button>
-            
-            <!-- 5. 만찬 안내 -->
-            <button onclick="openPage('dinner')">
-              <div class="menu-icon" style="background: #fef3c7;">🍽️</div>
-              <span>만찬 안내</span>
-            </button>
 
             <!-- 🔥 [새기능] 6. 필수 여행 회화 -->
             <button onclick="openPage('conversation')">
@@ -583,11 +577,6 @@
               <span style="color: #059669; font-weight: 800;">필수 여행 회화</span>
             </button>
             
-            <!-- 7. 요청사항 -->
-            <button onclick="openPage('request')">
-              <div class="menu-icon" style="background: #f3e8ff;">📝</div>
-              <span>요청사항</span>
-            </button>
             
             <!-- 8. 긴급 연락망 -->
             <button onclick="openPage('contact')">
@@ -978,7 +967,7 @@ function tryAutoLogin() {
 
 const travelSchedule = [
   {
-    day: "DAY 1", date: "2026.03.11 (수)", title: "인천 → 타이베이 / 시내 하이라이트",
+    day: "DAY 1", date: "2026.03.11 (수)", title: "설레는 시작, 타이베이",
     items: [
       { time:"08:00/9:00", icon:"✈️", title:"인천 국제공항 출발", desc:"OZ 711 / KE 2021" },
       { time:"12:30/13:30", icon:"🍜", title:"중식 | 우육면", desc:"현지 인기 중식당" },
@@ -990,7 +979,7 @@ const travelSchedule = [
     ]
   },
   {
-    day: "DAY 2", date: "2026.03.12 (목)", title: "선택 관광 / 만찬",
+    day: "DAY 2", date: "2026.03.12 (목)", title: "힐링과 화합의 밤",
     items: [
       { time:"08:30/9:00", icon:"🚌", title:"선택 관광", desc:"개인 선택 일정" },
       { time:"08:30", icon:"🚌", title:"티엔라이 온천", desc:"선택 1안" },
@@ -1002,7 +991,7 @@ const travelSchedule = [
     ]
   },
   {
-    day: "DAY 3", date: "2026.03.13 (금)", title: "근교 관광",
+    day: "DAY 3", date: "2026.03.13 (금)", title: "대만의 자연과 낭만",
     items: [
       { time:"10:00", icon:"🏨🍽️", title:"호텔 조식 후 출발", desc:"타이베이 메리어트 호텔[5성급]" },
       { time:"11:00", icon:"🌊", title:"야류 해상공원", desc:"기암괴석 관광" },
@@ -1015,7 +1004,7 @@ const travelSchedule = [
     ]
   },
   {
-    day: "DAY 4", date: "2026.03.14 (토)", title: "귀국",
+    day: "DAY 4", date: "2026.03.14 (토)", title: "굿바이 타이베이",
     items: [
       { time:"08:00/9:00", icon:"🏨", title:"호텔 체크아웃", desc:"타이베이 메리어트 호텔[5성급]" },
       { time:"11:40/12:25", icon:"✈️", title:"타이베이 출발", desc:"OZ 712 / KE 2022" },
@@ -1411,9 +1400,9 @@ function openPage(type, fromHistory = false) {
     t.textContent = "📞 긴급 연락망";
     c.innerHTML = `
       <div class="detail-content-wrap"><div class="day-card"><h3>비상 연락망</h3><div class="timeline">
-      <div class="schedule-item"><div class="timeline-dot"></div><div class="schedule-card"><div class="schedule-body"><div class="schedule-title">📞 인카블루투어</div><div class="schedule-desc">담당자 홍길동 | 010-0000-0000</div></div></div></div>
-      <div class="schedule-item"><div class="timeline-dot"></div><div class="schedule-card"><div class="schedule-body"><div class="schedule-title">📞 인카 마케팅부</div><div class="schedule-desc">담당자 현보라과장 | 02-6214-0000</div></div></div></div>
-      <div class="schedule-item"><div class="timeline-dot"></div><div class="schedule-card"><div class="schedule-body"><div class="schedule-title">📞 현지 가이드</div><div class="schedule-desc">담당자 Jason | +886-900-222-222</div></div></div></div>
+      <div class="schedule-item"><div class="timeline-dot"></div><div class="schedule-card"><div class="schedule-body"><div class="schedule-title">📞 현지 담당자</div><div class="schedule-desc"> 주영균 소장 | +886 987 770 987</div></div></div></div>
+      <div class="schedule-item"><div class="timeline-dot"></div><div class="schedule-card"><div class="schedule-body"><div class="schedule-title">📞 모두투어</div><div class="schedule-desc"> 성주현 매니저 | +82 10 3213 8377</div></div></div></div>
+      <div class="schedule-item"><div class="timeline-dot"></div><div class="schedule-card"><div class="schedule-body"><div class="schedule-title">📞 타이베이 메리어트 호텔 </div><div class="schedule-desc"> +886 2 8502 9999</div></div></div></div>
       </div></div></div>`;
   }
 }
