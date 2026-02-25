@@ -8,7 +8,7 @@
   <!-- ✅ [1] 폰트 CDN 추가 (Pretendard) -->
   <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
 
-  <!-- ✅ [추가] 이미지 빠른 로딩을 위한 Preload (브라우저가 가장 먼저 이미지를 다운로드하도록 지시) -->
+  <!-- ✅ [추가] 이미지 빠른 로딩을 위한 Preload -->
   <link rel="preload" as="image" href="assets/images/taiwan.jpg">
   <link rel="preload" as="image" href="assets/images/home2.jpg">
 
@@ -32,7 +32,6 @@
     * {
       box-sizing: border-box;
       -webkit-tap-highlight-color: transparent; 
-      /* ✅ 폰트 적용 */
       font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     }
 
@@ -42,16 +41,14 @@
       background-color: var(--primary-color);
       color: var(--text-main);
       overscroll-behavior: none; 
-      /* ✅ 모바일 꽉 채우기 핵심 설정 */
       width: 100%;
       height: 100%;
-      overflow: hidden; /* 이중 스크롤 방지 */
+      overflow: hidden; 
     }
 
     /* =========================================================
        [2] 스플래시 & 로그인
     ========================================================= */
-    /* 스플래시 스타일은 유지하되 로직에서만 제거 */
     .mobile-splash {
       position: fixed; inset: 0; z-index: 9999;
       background: var(--primary-color);
@@ -61,11 +58,9 @@
 
     .login-hero {
       width: 100%;
-      /* ✅ 모바일 주소창 대응 높이 설정 */
       height: 100vh;
       height: 100dvh; 
       background: url('assets/images/taiwan.jpg') center/cover no-repeat;
-      /* ✅ 배경 고정 (스크롤 시 흔들림 방지) */
       position: fixed;
       top: 0; left: 0;
       z-index: 2000;
@@ -86,18 +81,15 @@
       text-align: center;
       box-shadow: 0 20px 40px rgba(0,0,0,0.2);
     }
-    
-    /* 🔥 [수정] 로그인 화면 로고 스타일: 비율 유지 */
     .hero-logo { 
-        width: 140px;       /* 적절한 가로 크기 설정 */
-        height: auto;       /* 높이는 자동 */
-        object-fit: contain;/* 비율 유지하며 표시 */
+        width: 140px;       
+        height: auto;       
+        object-fit: contain;
         margin-bottom: 12px;
         display: block;
         margin-left: auto;
         margin-right: auto;
     }
-
     .login-box h2 { color: var(--primary-color); margin: 0 0 5px; font-weight: 800; }
     .hero-desc { color: var(--text-sub); margin-bottom: 24px; font-size: 14px; }
     .login-box input {
@@ -122,10 +114,8 @@
         height: 100%; 
         overflow: hidden; 
     }
-    
     .home-view {
       width: 100%;
-      /* ✅ 모바일 주소창 대응 */
       height: 100vh;
       height: 100dvh;
       background: url('assets/images/home2.jpg') center/cover no-repeat;
@@ -133,36 +123,29 @@
       display: flex;
       flex-direction: column;
     }
-    
     .home-overlay {
       position: absolute; inset: 0;
-      /* ✅ 어둡게 깔린 배경 필터 제거 (투명하게 처리) */
       background: transparent;
       z-index: 1;
     }
-
-    /* 상단 헤더 */
     .home-header {
       position: relative; z-index: 100;
       display: flex; justify-content: space-between; align-items: center;
       padding: 20px 24px;
-      /* ✅ 아이폰 노치 영역 대응 */
       padding-top: max(20px, env(safe-area-inset-top));
     }
-    
-    /* 🔥 [수정] 상단 헤더 로고 스타일: 비율 유지 및 원본 색상 출력 */
     .header-logo { 
-        height: 36px;       /* 헤더 높이에 맞춤 */
-        width: auto;        /* 가로는 비율대로 */
-        object-fit: contain;/* 찌그러짐 방지 */
+        height: 36px;       
+        width: auto;        
+        object-fit: contain;
     }
     
     /* =========================================================
-       [4] 우측 상단 카테고리 (팝업 드롭다운 스타일)
+       [4] 우측 상단 카테고리 (팝업 드롭다운 스타일) 
+       🔥🔥 여백 및 컬러풀 아이콘 완벽 정비
     ========================================================= */
     .menu-wrapper { 
         position: relative; 
-        /* ✅ 로고 유무와 상관없이 메뉴를 우측 끝으로 고정 */
         margin-left: auto;
     }
 
@@ -177,17 +160,14 @@
       font-size: 14px;
       cursor: pointer;
       display: flex; align-items: center; gap: 6px;
-      /* ✅ 메뉴 버튼 누를 때 효과 (transition 추가) */
       transition: transform 0.1s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.1s;
       position: relative; z-index: 101; 
     }
-    /* ✅ 메뉴 버튼 클릭 시 효과 */
     .menu-btn:active { 
       background: rgba(255,255,255,0.3); 
       transform: scale(0.94);
     }
 
-    /* 메뉴 열릴 때 화면 어둡게 해주는 레이어 */
     .menu-dim {
       position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 90;
       backdrop-filter: blur(3px); -webkit-backdrop-filter: blur(3px);
@@ -195,12 +175,14 @@
     }
     body.menu-open .menu-dim { opacity: 1; visibility: visible; }
 
-    /* 카테고리 드롭다운 박스 */
+    /* 메뉴 드롭다운 박스 뼈대 */
     .category-dropdown {
       position: absolute; top: calc(100% + 12px); right: 0;
-      width: 250px; background: #fff; border-radius: 20px;
-      box-shadow: 0 12px 40px rgba(0,0,0,0.3);
-      padding: 8px; z-index: 100;
+      width: 240px; /* 적당한 너비로 고정 */
+      background: #fff; border-radius: 20px;
+      box-shadow: 0 12px 40px rgba(0,0,0,0.25);
+      padding: 12px; /* 바깥 패딩 12px */
+      z-index: 100;
       opacity: 0; visibility: hidden; transform: translateY(-10px);
       transition: all 0.3s cubic-bezier(0.32, 0.72, 0, 1);
       transform-origin: top right;
@@ -209,25 +191,42 @@
       opacity: 1; visibility: visible; transform: translateY(0);
     }
 
+    /* 헤더 좌우 여백을 정확히 8px로 맞춤 (버튼 내부와 라인 일치) */
     .dropdown-header {
-      font-size: 13px; font-weight: 700; color: var(--text-sub);
-      padding: 12px 14px 8px; border-bottom: 1px solid var(--border-light);
-      margin-bottom: 4px;
+      font-size: 13px; font-weight: 700; color: #94a3b8;
+      padding: 4px 8px 10px; 
+      border-bottom: 1px solid var(--border-light);
+      margin-bottom: 6px;
     }
 
+    /* 버튼 여백 및 정렬 완벽 수정 */
     .drop-nav button {
       width: 100%; text-align: left; background: none; border: none;
-      padding: 14px; font-size: 15px; font-weight: 600; color: var(--text-main);
+      padding: 10px 8px; /* 위아래 10px, 좌우 8px 정렬 맞춤 */
+      font-size: 15px; font-weight: 600; color: var(--text-main);
       border-radius: 12px; cursor: pointer; 
-      display: flex; align-items: center; gap: 12px;
-      /* ✅ 카테고리 버튼 누를 때 효과 (transition 추가) */
-      transition: transform 0.1s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.1s;
+      display: flex; align-items: center; gap: 14px; /* 아이콘과 텍스트 사이 간격 고정 */
+      transition: background-color 0.1s, transform 0.1s cubic-bezier(0.4, 0, 0.2, 1);
     }
-    .drop-nav button span { flex: 1; }
-    /* ✅ 카테고리 항목 클릭 시 쫀득한 효과 */
+    
+    /* 🔥 컬러풀한 아이콘 배경 박스 (앱 아이콘 스타일) */
+    .menu-icon {
+      width: 32px; 
+      height: 32px;
+      border-radius: 10px;
+      display: flex; 
+      align-items: center; 
+      justify-content: center;
+      flex-shrink: 0; 
+      font-size: 16px; /* 이모지 크기 */
+      box-shadow: inset 0 2px 4px rgba(0,0,0,0.04);
+    }
+
+    .drop-nav button span { flex: 1; letter-spacing: -0.3px; }
+    
     .drop-nav button:active { 
       background: #f1f5f9; 
-      transform: scale(0.95); 
+      transform: scale(0.96); 
     }
 
     /* =========================================================
@@ -238,85 +237,54 @@
       flex: 1; 
       display: flex; flex-direction: column; justify-content: flex-end;
       padding: 0 24px 60px; 
-      /* ✅ 하단 안전영역 대응 */
       padding-bottom: max(60px, env(safe-area-inset-bottom));
       color: #fff;
     }
     
-    .welcome-text { 
-      margin-bottom: 30px; 
-    }
+    .welcome-text { margin-bottom: 30px; }
     .welcome-text p { font-size: 18px; margin: 0; opacity: 0.95; font-weight: 500; letter-spacing: -0.5px; }
-    /* ✅ 이름 글씨 색상을 고급스러운 샴페인 골드(#e6c27a)로 변경하고 살짝의 그림자로 가독성을 높임 */
     .welcome-text strong { color: #e6c27a; font-weight: 900; font-size: 20px; letter-spacing: -0.5px; text-shadow: 0 2px 6px rgba(0,0,0,0.4); }
     .welcome-text h2 { font-size: 36px; font-weight: 900; margin: 6px 0 12px; line-height: 1.2; letter-spacing: -1px; }
     
-    /* 🔥 [날씨 위젯 배치] 날짜와 날씨를 나란히 묶는 래퍼 */
-    .meta-badges {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      margin-top: 12px;
-      flex-wrap: wrap;
-    }
-    .welcome-text .sub-date { 
-      display: inline-block; padding: 6px 14px; background: rgba(0,0,0,0.4); border-radius: 20px; font-size: 13px; border: 1px solid rgba(255,255,255,0.1); font-weight: 600;
-    }
+    .meta-badges { display: flex; align-items: center; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
+    .welcome-text .sub-date { display: inline-block; padding: 6px 14px; background: rgba(0,0,0,0.4); border-radius: 20px; font-size: 13px; border: 1px solid rgba(255,255,255,0.1); font-weight: 600; }
 
-    /* 🔥 [날씨 위젯 스타일] 기존 테마와 어울리는 글래스모피즘 버튼 */
     .weather-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      background: rgba(0, 0, 0, 0.4);
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      color: #fff;
-      padding: 6px 14px;
-      border-radius: 20px;
-      font-size: 13px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: transform 0.1s, background 0.1s;
+      display: inline-flex; align-items: center; gap: 6px;
+      background: rgba(0, 0, 0, 0.4); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.15); color: #fff;
+      padding: 6px 14px; border-radius: 20px; font-size: 13px; font-weight: 600;
+      cursor: pointer; transition: transform 0.1s, background 0.1s;
     }
-    .weather-badge:active {
-      transform: scale(0.95);
-      background: rgba(0, 0, 0, 0.6);
-    }
-    .weather-badge strong {
-      color: #e6c27a; /* 샴페인 골드 */
-      font-size: 14px;
-      font-weight: 800;
-      letter-spacing: -0.3px;
-    }
+    .weather-badge:active { transform: scale(0.95); background: rgba(0, 0, 0, 0.6); }
+    .weather-badge strong { color: #e6c27a; font-size: 14px; font-weight: 800; letter-spacing: -0.3px; }
 
     /* =========================================================
-       🔥🔥🔥 [NEW] 대만풍 DAY 1~4 버튼 디자인 적용 (완전 중화풍 붉은색+금장)
+       🔥🔥 대만풍 DAY 1~4 버튼 전통 동전(칠보문) 패턴 적용 
     ========================================================= */
     .day-buttons {
       display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
     }
 
     .day-btn {
-      /* 🔥 확 눈에 띄는 중화풍 다크 레드 & 황금 용비늘(전통 구름/파도) 패턴 */
-      background-color: #611818;
+      /* 딥한 붉은 갈색 베이스 */
+      background-color: #581c10; 
+      
+      /* 동전(칠보문) 교차 패턴 SVG + 양 끝단 조명 효과 그라데이션 */
       background-image: 
-        radial-gradient(circle at 100% 0%, rgba(255, 190, 50, 0.25) 0%, transparent 60%), 
-        radial-gradient(circle at 0% 100%, rgba(255, 190, 50, 0.15) 0%, transparent 60%),
-        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 100 100'%3E%3Cpath fill-rule='evenodd' d='M0 100A50 50 0 0 1 50 50A50 50 0 0 1 100 100A50 50 0 0 1 50 150A50 50 0 0 1 0 100ZM25 100A25 25 0 0 1 50 75A25 25 0 0 1 75 100A25 25 0 0 1 50 125A25 25 0 0 1 25 100Z' fill='%23c5a059' fill-opacity='0.35'/%3E%3Cpath fill-rule='evenodd' d='M-50 50A50 50 0 0 1 0 0A50 50 0 0 1 50 50A50 50 0 0 1 0 100A50 50 0 0 1 -50 50ZM-25 50A25 25 0 0 1 0 25A25 25 0 0 1 25 50A25 25 0 0 1 0 75A25 25 0 0 1 -25 50Z' fill='%23c5a059' fill-opacity='0.35'/%3E%3Cpath fill-rule='evenodd' d='M50 50A50 50 0 0 1 100 0A50 50 0 0 1 150 50A50 50 0 0 1 100 100A50 50 0 0 1 50 50ZM75 50A25 25 0 0 1 100 25A25 25 0 0 1 125 50A25 25 0 0 1 100 75A25 25 0 0 1 75 50Z' fill='%23c5a059' fill-opacity='0.35'/%3E%3C/svg%3E");
+        radial-gradient(ellipse at top left, rgba(234, 179, 8, 0.25) 0%, transparent 60%),
+        radial-gradient(ellipse at bottom right, rgba(220, 38, 38, 0.35) 0%, transparent 60%),
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 60 60'%3E%3Cg fill='none' stroke='%239a3412' stroke-width='4' stroke-opacity='0.7'%3E%3Ccircle cx='30' cy='30' r='30'/%3E%3Ccircle cx='0' cy='0' r='30'/%3E%3Ccircle cx='60' cy='0' r='30'/%3E%3Ccircle cx='0' cy='60' r='30'/%3E%3Ccircle cx='60' cy='60' r='30'/%3E%3C/g%3E%3Cg fill='%237c2d12' opacity='0.4'%3E%3Ccircle cx='30' cy='0' r='8'/%3E%3Ccircle cx='30' cy='60' r='8'/%3E%3Ccircle cx='0' cy='30' r='8'/%3E%3Ccircle cx='60' cy='30' r='8'/%3E%3C/g%3E%3C/svg%3E");
       
-      background-size: cover, cover, 40px 40px; 
-      background-position: top right, bottom left, center center;
+      background-size: cover, cover, 60px 60px;
       
-      /* 테두리를 은은한 샴페인 골드로 주어 고급스러움 극대화 */
-      border: 1px solid rgba(255, 215, 0, 0.4);
+      /* 사진처럼 금장 테두리 살짝 부여 */
+      border: 1px solid rgba(234, 179, 8, 0.5);
       padding: 16px 16px; 
       border-radius: 16px;
       color: #fff; text-align: left;
       
-      /* ✅ DAY 버튼 누를 때 효과를 위한 transition 설정 */
-      transition: transform 0.1s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.1s, border-color 0.1s;
+      transition: transform 0.1s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.1s;
       cursor: pointer;
       display: flex; flex-direction: column; justify-content: space-between;
       min-height: 100px;
@@ -324,136 +292,53 @@
       overflow: hidden;
       box-shadow: 0 4px 15px rgba(0,0,0,0.4);
     }
-
-    /* 대만 전통 등불의 붉은빛이 번지는 듯한 효과 (상단 우측) */
-    .day-btn::before {
-      content: '';
-      position: absolute;
-      top: -30px;
-      right: -30px;
-      width: 100px;
-      height: 100px;
-      background: radial-gradient(circle, rgba(255, 50, 50, 0.5) 0%, transparent 70%);
-      border-radius: 50%;
-      pointer-events: none;
-      z-index: 0;
-    }
-
-    /* 금빛 빛 번짐 효과 (하단 좌측) */
-    .day-btn::after {
-      content: '';
-      position: absolute;
-      bottom: -20px;
-      left: -20px;
-      width: 80px;
-      height: 80px;
-      background: radial-gradient(circle, rgba(255, 215, 0, 0.4) 0%, transparent 70%);
-      border-radius: 50%;
-      pointer-events: none;
-      z-index: 0;
-    }
     
-    /* 내부 텍스트 겹침 방지 (빛번짐 효과보다 위로) */
     .day-btn-header, .day-btn .day-title { 
       position: relative; 
       z-index: 1; 
-      text-shadow: 1px 1px 4px rgba(0,0,0,0.8); /* 가독성 보장 */
+      text-shadow: 1px 1px 4px rgba(0,0,0,0.8); 
     }
 
-    /* 날짜 및 글씨체 가독성 개선 스타일 */
-    .day-btn-header { display: flex; justify-content: space-between; align-items: center; width: 100%; font-size: 18px; font-weight: 800; color: #fff; }
+    .day-btn-header { display: flex; justify-content: space-between; align-items: center; width: 100%; font-size: 18px; font-weight: 900; color: #fff; }
     
-    /* 포인트 날짜 배지도 완전한 금장 느낌으로 변경 */
-    .btn-date { font-size: 12px; font-weight: 800; color: #fff; background: linear-gradient(135deg, #c5a059, #8c6a31); padding: 3px 10px; border-radius: 12px; letter-spacing: 0; border: 1px solid rgba(255, 215, 0, 0.6); box-shadow: 0 2px 4px rgba(0,0,0,0.4); }
+    /* 날짜 배지: 금박 느낌 */
+    .btn-date { font-size: 12px; font-weight: 800; color: #fff; background: linear-gradient(135deg, rgba(202, 138, 4, 0.9), rgba(161, 98, 7, 0.9)); padding: 3px 10px; border-radius: 12px; letter-spacing: 0; border: 1px solid rgba(253, 224, 71, 0.4); box-shadow: 0 2px 4px rgba(0,0,0,0.3); text-shadow: 1px 1px 2px rgba(0,0,0,0.4); }
     
-    .day-btn .day-title { font-size: 13.5px; font-weight: 600; color: #fff; margin-top: 12px; line-height: 1.4; word-break: keep-all; opacity: 1; }
+    .day-btn .day-title { font-size: 13.5px; font-weight: 600; color: #fff; margin-top: 12px; line-height: 1.4; word-break: keep-all; opacity: 0.95; }
     
-    /* ✅ DAY 버튼 클릭 시 쫀득한 애니메이션 효과 */
     .day-btn:active { 
-      background-color: #3b0d0d;
-      transform: scale(0.94); 
-      border-color: #ffda70;
+      transform: scale(0.96); 
+      box-shadow: 0 2px 8px rgba(0,0,0,0.6);
+      background-color: #451308;
     }
     /* ========================================================= */
 
-
     /* =========================================================
-       [6] Bottom Sheet (Detail Page) - 🔥 화면 꽉 채움 유지
+       [6] Bottom Sheet (Detail Page)
     ========================================================= */
-    #detailPage {
-      position: fixed; inset: 0; z-index: 3000;
-      display: none; 
-    }
-    
-    /* pointer-events: none 추가하여 투명할때 클릭 방해 방지 */
-    .detail-dim {
-      position: absolute; inset: 0;
-      background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(4px);
-      opacity: 0; transition: opacity 0.3s ease;
-      pointer-events: none; 
-    }
-    
-    .detail-sheet__inner {
-      position: absolute; bottom: 0; left: 0; right: 0;
-      
-      /* ✅ 수정: 높이를 100%로 변경하여 화면 꽉 채움 */
-      height: 100%; 
-      height: 100dvh;
-      background: var(--bg-main);
-      
-      /* ✅ 수정: 꽉 찬 화면이므로 둥근 모서리 제거 */
-      border-radius: 0;
-      
-      display: flex; flex-direction: column;
-      transform: translateY(100%); 
-      transition: transform 0.4s cubic-bezier(0.32, 0.72, 0, 1);
-    }
-
+    #detailPage { position: fixed; inset: 0; z-index: 3000; display: none; }
+    .detail-dim { position: absolute; inset: 0; background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(4px); opacity: 0; transition: opacity 0.3s ease; pointer-events: none; }
+    .detail-sheet__inner { position: absolute; bottom: 0; left: 0; right: 0; height: 100%; height: 100dvh; background: var(--bg-main); border-radius: 0; display: flex; flex-direction: column; transform: translateY(100%); transition: transform 0.4s cubic-bezier(0.32, 0.72, 0, 1); }
     body.detail-open .detail-dim { opacity: 1; pointer-events: auto; }
     body.detail-open .detail-sheet__inner { transform: translateY(0); }
 
-    .detail-header {
-      display: flex; justify-content: space-between; align-items: center;
-      padding: 20px 24px; background: #fff;
-      
-      /* ✅ 수정: 노치 영역 대응 및 모서리 제거 */
-      padding-top: max(20px, env(safe-area-inset-top));
-      border-radius: 0; 
-      
-      border-bottom: 1px solid var(--border-light); flex-shrink: 0; 
-    }
+    .detail-header { display: flex; justify-content: space-between; align-items: center; padding: 20px 24px; background: #fff; padding-top: max(20px, env(safe-area-inset-top)); border-radius: 0; border-bottom: 1px solid var(--border-light); flex-shrink: 0; }
     .detail-title { font-size: 18px; font-weight: 700; color: var(--primary-color); }
-    .detail-actions button {
-      background: none; border: none; font-size: 14px; color: var(--text-sub);
-      margin-left: 12px; cursor: pointer; font-weight: 600;
-    }
-    #detailContent {
-      flex: 1; overflow-y: auto; padding: 20px 20px calc(20px + var(--safe-bottom));
-      -webkit-overflow-scrolling: touch;
-    }
+    .detail-actions button { background: none; border: none; font-size: 14px; color: var(--text-sub); margin-left: 12px; cursor: pointer; font-weight: 600; }
+    #detailContent { flex: 1; overflow-y: auto; padding: 20px 20px calc(20px + var(--safe-bottom)); -webkit-overflow-scrolling: touch; }
 
     /* =========================================================
        [7] 상세 컨텐츠 스타일 (일정, 환율 등)
     ========================================================= */
-    .day-card {
-      background: var(--card-bg); border-radius: 16px; padding: 20px;
-      margin-bottom: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.03);
-    }
-    .day-card h3 {
-      margin: 0 0 10px; font-size: 18px; color: var(--primary-color);
-      display: flex; align-items: baseline; gap: 8px; font-weight: 800;
-    }
+    .day-card { background: var(--card-bg); border-radius: 16px; padding: 20px; margin-bottom: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); }
+    .day-card h3 { margin: 0 0 10px; font-size: 18px; color: var(--primary-color); display: flex; align-items: baseline; gap: 8px; font-weight: 800; }
     .day-card h3 span { font-size: 13px; color: var(--text-sub); font-weight: 500; }
     .day-title { margin: 0 0 20px; font-weight: 600; color: var(--accent-color); font-size: 15px; }
 
     .timeline { border-left: 2px solid var(--border-light); margin-left: 10px; padding-left: 20px; }
     .schedule-item { position: relative; margin-bottom: 24px; }
     .schedule-item:last-child { margin-bottom: 0; }
-    .timeline-dot {
-      position: absolute; left: -26px; top: 0;
-      width: 10px; height: 10px; border-radius: 50%;
-      background: var(--accent-color); border: 2px solid #fff;
-    }
+    .timeline-dot { position: absolute; left: -26px; top: 0; width: 10px; height: 10px; border-radius: 50%; background: var(--accent-color); border: 2px solid #fff; }
     .schedule-card { display: flex; flex-direction: column; gap: 4px; }
     .schedule-time { font-size: 13px; font-weight: 700; color: var(--text-sub); }
     .schedule-title { font-size: 15px; font-weight: 600; color: var(--text-main); }
@@ -474,13 +359,8 @@
     .country-list li span { color: var(--text-sub); font-weight: 600; font-size: 12px; white-space: nowrap; }
     .country-list li strong { font-weight: 700; color: var(--text-main); font-size: 13px; white-space: nowrap; text-align: right; letter-spacing: -0.3px; }
 
-    /* 🔥 [추가] 대만 상세 날씨 및 일기예보 CSS */
     .weather-detail-wrapper { margin-bottom: 20px; }
-    .weather-current-row {
-      display: flex; justify-content: space-around; align-items: center;
-      background: var(--card-bg); border-radius: 16px; padding: 16px; 
-      box-shadow: 0 4px 12px rgba(0,0,0,0.04); margin-bottom: 12px;
-    }
+    .weather-current-row { display: flex; justify-content: space-around; align-items: center; background: var(--card-bg); border-radius: 16px; padding: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.04); margin-bottom: 12px; }
     .w-city { text-align: center; flex: 1; }
     .w-city span { font-size: 12px; color: var(--text-sub); font-weight: 600; display:block; margin-bottom: 4px; }
     .w-city strong { font-size: 20px; font-weight: 800; color: var(--primary-color); display:flex; align-items:center; gap:4px; justify-content:center; }
@@ -497,179 +377,137 @@
     .f-temp { font-size: 13px; font-weight: 800; color: #e53e3e; display:block; }
     .f-temp-min { font-size: 12px; color: #3182ce; font-weight: 700; display:block; margin-top:2px; }
 
-    .exchange-row {
-      background: var(--primary-color); color: #fff; padding: 18px 20px;
-      border-radius: 16px; text-align: center; margin-bottom: 16px;
-      box-shadow: 0 4px 12px rgba(26,35,58,0.15);
-    }
+    .exchange-row { background: var(--primary-color); color: #fff; padding: 18px 20px; border-radius: 16px; text-align: center; margin-bottom: 16px; box-shadow: 0 4px 12px rgba(26,35,58,0.15); }
     .exchange-row strong { font-size: 18px; font-weight: 800; letter-spacing: -0.5px; }
     .fx-grid { display: grid; grid-template-columns: 1fr auto 1fr; gap: 10px; align-items: center; margin-top: 16px;}
-    .fx-box input {
-      width: 100%; padding: 12px; border: 1px solid var(--border-light);
-      border-radius: 10px; text-align: right; font-weight: 600; font-size: 16px;
-    }
+    .fx-box input { width: 100%; padding: 12px; border: 1px solid var(--border-light); border-radius: 10px; text-align: right; font-weight: 600; font-size: 16px; }
     .fx-eq { font-size: 20px; color: var(--text-sub); }
 
-    /* 🔥 [수정] 2. 선택관광 사진형 카드 CSS 개선 */
-    .tour-card-photo {
-      position: relative;
-      border-radius: 20px;
-      overflow: hidden;
-      margin-bottom: 20px;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.1);
-      background-color: #000;
-      height: 240px; /* 카드가 넉넉해 보이도록 높이 약간 증가 */
-      color: #fff;
-    }
-    
-    .tour-card-bg {
-      position: absolute; inset: 0;
-      background-size: cover; background-position: center;
-      transition: transform 0.4s;
-    }
+    .tour-card-photo { position: relative; border-radius: 20px; overflow: hidden; margin-bottom: 20px; box-shadow: 0 8px 20px rgba(0,0,0,0.1); background-color: #000; height: 240px; color: #fff; }
+    .tour-card-bg { position: absolute; inset: 0; background-size: cover; background-position: center; transition: transform 0.4s; }
     .tour-card-photo:active .tour-card-bg { transform: scale(1.05); }
-
-    .tour-card-overlay {
-      position: absolute; inset: 0;
-      /* ✅ 위쪽(글씨)과 아래쪽(박스) 양끝을 어둡게 처리하여 가독성 확보 */
-      background: linear-gradient(to bottom, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.1) 40%, rgba(0,0,0,0.5) 100%);
-    }
-
-    /* ✅ .tour-info가 전체 높이를 차지하게 하여 위/아래 요소 배치를 컨트롤 */
-    .tour-info {
-      position: absolute; inset: 0; z-index: 2;
-      padding: 20px;
-      display: flex;
-      flex-direction: column;
-      align-items: flex-start;
-    }
-
-    .tour-badge {
-      display: inline-block;
-      background: var(--accent-color); color: #fff;
-      font-size: 11px; font-weight: 700;
-      padding: 4px 10px; border-radius: 100px;
-      margin-bottom: 8px; text-transform: uppercase;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-    }
-    .tour-badge.red { background: #e53e3e; } /* 자유일정 */
-
+    .tour-card-overlay { position: absolute; inset: 0; background: linear-gradient(to bottom, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.1) 40%, rgba(0,0,0,0.5) 100%); }
+    .tour-info { position: absolute; inset: 0; z-index: 2; padding: 20px; display: flex; flex-direction: column; align-items: flex-start; }
+    .tour-badge { display: inline-block; background: var(--accent-color); color: #fff; font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 100px; margin-bottom: 8px; text-transform: uppercase; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+    .tour-badge.red { background: #e53e3e; }
     .tour-info h3 { margin: 0 0 6px; font-size: 22px; font-weight: 800; line-height: 1.2; text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
     .tour-desc { font-size: 13px; opacity: 0.9; margin: 0; line-height: 1.4; text-shadow: 0 1px 3px rgba(0,0,0,0.5); }
-
-    /* ✅ 포함/불포함 박스 (margin-top: auto를 줘서 카드 맨 아래로 밀어냅니다) */
-    .tour-meta-box {
-      margin-top: auto; 
-      width: 100%;
-      background: rgba(255,255,255,0.15);
-      backdrop-filter: blur(4px);
-      -webkit-backdrop-filter: blur(4px);
-      border-radius: 12px;
-      padding: 10px 14px;
-      display: flex; justify-content: space-between; align-items: center;
-      font-size: 13px;
-    }
+    .tour-meta-box { margin-top: auto; width: 100%; background: rgba(255,255,255,0.15); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); border-radius: 12px; padding: 10px 14px; display: flex; justify-content: space-between; align-items: center; font-size: 13px; }
     .tour-meta-items { display: flex; gap: 8px; font-size: 12px; }
     .tour-meta-items span { background: rgba(0,0,0,0.3); padding: 2px 6px; border-radius: 4px; }
 
-    /* ✅ 중식비 상태 색상 CSS 추가 */
     .status.pending { color: #ff4d4f; font-weight: 700; text-shadow: 0 1px 2px rgba(0,0,0,0.5); }
     .status.done { color: #22c55e; font-weight: 700; text-shadow: 0 1px 2px rgba(0,0,0,0.5); }
-
-    .meal-status-btn {
-      background: #fff; color: #1a233a; border: none;
-      font-size: 12px; font-weight: 700; padding: 6px 12px; border-radius: 8px;
-    }
+    .meal-status-btn { background: #fff; color: #1a233a; border: none; font-size: 12px; font-weight: 700; padding: 6px 12px; border-radius: 8px; }
     .meal-status-btn.done { background: #38a169; color: #fff; }
 
-    #requestInput {
-      width: 100%; height: 120px; padding: 16px; border: 1px solid var(--border-light);
-      border-radius: 12px; resize: none; font-size: 15px; margin-bottom: 12px;
+    #requestInput { width: 100%; height: 120px; padding: 16px; border: 1px solid var(--border-light); border-radius: 12px; resize: none; font-size: 15px; margin-bottom: 12px; }
+
+    /* 🔥 [새기능] 필수 여행 회화 CSS (이미지 기반 스타일 완벽 적용) */
+    .conv-category {
+      background: var(--card-bg);
+      border-radius: 16px;
+      margin-bottom: 14px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+      border: 1px solid var(--border-light);
+      overflow: hidden;
     }
+    .conv-header {
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 16px;
+      font-weight: 800;
+      color: var(--primary-color);
+      cursor: pointer;
+      background: #fff;
+      transition: background 0.2s;
+    }
+    .conv-header:active { background: #f8fafc; }
+    .conv-header-left { display: flex; align-items: center; gap: 10px; }
+    .conv-icon-bg {
+      background: #f1f5f9; width: 32px; height: 32px; border-radius: 10px; 
+      display: flex; align-items: center; justify-content: center; font-size: 16px; 
+    }
+    .conv-header svg { transition: transform 0.3s; width: 20px; height: 20px; stroke: #94a3b8; }
+    .conv-category.open .conv-header svg { transform: rotate(180deg); }
+    .conv-list {
+      display: none;
+      padding: 0 20px 10px;
+      background: #fff;
+    }
+    .conv-category.open .conv-list {
+      display: block;
+    }
+    .conv-item {
+      padding: 16px 0;
+      border-top: 1px dashed var(--border-light);
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+    }
+    .conv-text-box { flex: 1; }
+    .conv-ko { font-size: 13px; font-weight: 700; color: var(--text-sub); margin-bottom: 6px; }
+    .conv-cn { font-size: 22px; font-weight: 900; color: var(--primary-color); margin-bottom: 8px; letter-spacing: 0.5px; }
+    .conv-pr-box { display: flex; align-items: center; gap: 8px; }
+    .conv-pr-badge { background: #dcfce7; color: #15803d; font-size: 11px; font-weight: 800; padding: 2px 6px; border-radius: 6px; }
+    .conv-pr { font-size: 14px; font-weight: 800; color: #16a34a; letter-spacing: -0.3px;}
+    .conv-copy-btn {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      color: #64748b;
+      font-size: 13px;
+      font-weight: 700;
+      padding: 8px 12px;
+      border-radius: 10px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: transform 0.1s, background 0.1s;
+      white-space: nowrap;
+    }
+    .conv-copy-btn:active { background: #e2e8f0; transform: scale(0.95); }
+    .conv-copy-btn svg { width: 14px; height: 14px; }
+
 
     /* =========================================================
-       [8] 데스크탑 (PC) 대응 - 🔥 오버라이드 (여기서 모든 브라우저 호환 및 디자인 완성)
+       [8] 데스크탑 (PC) 대응
     ========================================================= */
     @media (min-width: 768px) {
-      /* 1. 메인 레이아웃 및 크기 조정 */
-      .home-main-content { 
-        max-width: 1000px; 
-        margin: 0 auto; 
-        width: 100%; 
-        padding-bottom: 80px; /* PC는 하단 여백을 시원하게 */
-      }
-      .home-header { 
-        max-width: 1000px; 
-        margin: 0 auto; 
-        width: 100%; 
-        padding-top: 30px; /* PC에서는 노치(env) 여백 무시하고 고정 여백 */
-      }
-      
-      /* 2. 환영 문구 폰트 확대 */
+      .home-main-content { max-width: 1000px; margin: 0 auto; width: 100%; padding-bottom: 80px; }
+      .home-header { max-width: 1000px; margin: 0 auto; width: 100%; padding-top: 30px; }
       .welcome-text h2 { font-size: 48px; }
       .welcome-text p { font-size: 20px; }
-
-      /* 3. DAY 버튼 4열 유지 및 큼직하게 변경 */
-      .day-buttons { 
-        grid-template-columns: repeat(4, 1fr); 
-        gap: 16px; 
-      }
-      .day-btn {
-        min-height: 120px;
-        padding: 20px;
-      }
+      .day-buttons { grid-template-columns: repeat(4, 1fr); gap: 16px; }
+      .day-btn { min-height: 120px; padding: 20px; }
       .day-btn-header { font-size: 20px; }
       .day-btn .day-title { font-size: 15px; margin-top: 16px; }
+      
+      .category-dropdown { width: 240px; padding: 12px; }
+      .drop-nav button { font-size: 16px; padding: 12px 10px; }
 
-      /* 4. 카테고리 메뉴 팝업 사이즈 최적화 */
-      .category-dropdown {
-        width: 280px; /* PC는 마우스 조작이 편하게 조금 넓게 */
-        padding: 12px;
-      }
-      .drop-nav button { font-size: 16px; padding: 16px; }
-
-      /* 5. 바텀 시트 -> 중앙 팝업 모달(Modal)로 완벽하게 변환 */
       .detail-sheet__inner {
-        top: 50%; left: 50%;
-        bottom: auto; right: auto;
-        /* 화면 중앙에서 살짝 위에서 아래로 내려오며 나타나는 애니메이션 */
+        top: 50%; left: 50%; bottom: auto; right: auto;
         transform: translate(-50%, -48%) scale(0.95); 
-        width: 100%; 
-        max-width: 600px; /* PC에서 너무 퍼지지 않게 팝업 창 가로 고정 */
-        height: 85vh;     /* 높이도 화면의 85% 정도로 제한 */
-        max-height: 800px; 
-        border-radius: 24px; /* 둥근 모서리 복구 */
-        opacity: 0;
-        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); /* 입체감 부여 */
+        width: 100%; max-width: 600px; height: 85vh; max-height: 800px; 
+        border-radius: 24px; opacity: 0;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); 
         transition: transform 0.4s cubic-bezier(0.32, 0.72, 0, 1), opacity 0.4s;
       }
-      body.detail-open .detail-sheet__inner {
-        transform: translate(-50%, -50%) scale(1); 
-        opacity: 1;
-      }
-
-      /* 6. 모달 내부 헤더 및 여백 복구 (PC 맞춤) */
-      .detail-header {
-        padding: 24px;
-        padding-top: 24px; /* 노치 무시 */
-        border-radius: 24px 24px 0 0; /* 위쪽만 둥글게 복구 */
-      }
-      #detailContent {
-        padding: 24px 24px 40px; /* 스크롤 여백 넉넉하게 */
-      }
-
-      /* 7. 상세 컨텐츠 내부 요소 PC 사이즈 맞춤 */
+      body.detail-open .detail-sheet__inner { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+      .detail-header { padding: 24px; padding-top: 24px; border-radius: 24px 24px 0 0; }
+      #detailContent { padding: 24px 24px 40px; }
       .country-compare-grid { gap: 20px; }
-      .tour-card-photo { height: 320px; } /* 사진 카드 높이 증가 */
-      .fx-box input { padding: 16px; font-size: 18px; } /* 환율 계산기 입력칸 확대 */
+      .tour-card-photo { height: 320px; } 
+      .fx-box input { padding: 16px; font-size: 18px; }
     }
   </style>
 </head>
 
 <body>
-  
-<!-- ✅ 1. 스플래시 HTML 태그는 남겨두되 주석처리하거나, JS에서 제어하지 않음 -->
-<!-- <div id="mobileSplash" class="mobile-splash" style="display:none;">...</div> -->
 
 <!-- ================= LOGIN ================= -->
 <section id="loginSection" class="login-hero">
@@ -699,26 +537,69 @@
     
     <!-- 1️⃣ 상단 헤더 & 메뉴 버튼 -->
     <header class="home-header">
-      <!-- 🔥 [수정] 원본 로고가 무조건 100% 보이도록 수정 (에러 시 숨김 처리 및 필터링 제거) -->
       <img src="assets/images/logo.png" class="header-logo" alt="INCAR Logo">
       
       <!-- 우측 상단 카테고리 묶음 -->
       <div class="menu-wrapper">
         <button class="menu-btn" onclick="toggleMenu()">☰ 카테고리</button>
         
-        <!-- 버튼 누르면 아래로 떨어지는 드롭다운 팝업 메뉴 -->
+        <!-- 드롭다운 팝업 메뉴 -->
         <div id="categoryDropdown" class="category-dropdown">
-          <div class="dropdown-header">카테고리 메뉴</div>
+          <div class="dropdown-header">메뉴</div>
           <nav class="drop-nav">
-            <button onclick="openPage('taiwan')">🇹🇼 <span>대만의 모든 것</span></button>
-            <button onclick="openPage('exchange')">💱 <span>환율 계산기</span></button>  
-            <button onclick="openPage('flight')">✈️ <span>항공편 정보</span></button>
-            <button onclick="openPage('myTour')">🎒 <span>나의 선택 관광</span></button>
-            <button onclick="openPage('dinner')">🍽 <span>만찬 안내</span></button>
-            <button onclick="openPage('request')">📝 <span>요청사항</span></button>
-            <button onclick="openPage('contact')">📞 <span>긴급 연락망</span></button>
-            <!-- ✅ [수정] 2. 로그아웃 버튼 추가 -->
-            <button onclick="logout()" style="border-top:1px solid #eee; margin-top:4px; color:#e53e3e;">🚪 <span>로그아웃</span></button>
+            <!-- 1. 대만의 모든 것 -->
+            <button onclick="openPage('taiwan')">
+              <div class="menu-icon" style="background: #fee2e2;">🇹🇼</div>
+              <span>대만의 모든 것</span>
+            </button>
+            
+            <!-- 2. 환율 계산기 -->
+            <button onclick="openPage('exchange')">
+              <div class="menu-icon" style="background: #dcfce7;">💱</div>
+              <span>환율 계산기</span>
+            </button>  
+            
+            <!-- 3. 항공편 정보 -->
+            <button onclick="openPage('flight')">
+              <div class="menu-icon" style="background: #e0e7ff;">✈️</div>
+              <span>항공편 정보</span>
+            </button>
+            
+            <!-- 4. 나의 선택 관광 -->
+            <button onclick="openPage('myTour')">
+              <div class="menu-icon" style="background: #fce7f3;">🎒</div>
+              <span>나의 선택 관광</span>
+            </button>
+            
+            <!-- 5. 만찬 안내 -->
+            <button onclick="openPage('dinner')">
+              <div class="menu-icon" style="background: #fef3c7;">🍽️</div>
+              <span>만찬 안내</span>
+            </button>
+
+            <!-- 🔥 [새기능] 6. 필수 여행 회화 -->
+            <button onclick="openPage('conversation')">
+              <div class="menu-icon" style="background: #d1fae5;">💬</div>
+              <span style="color: #059669; font-weight: 800;">필수 여행 회화</span>
+            </button>
+            
+            <!-- 7. 요청사항 -->
+            <button onclick="openPage('request')">
+              <div class="menu-icon" style="background: #f3e8ff;">📝</div>
+              <span>요청사항</span>
+            </button>
+            
+            <!-- 8. 긴급 연락망 -->
+            <button onclick="openPage('contact')">
+              <div class="menu-icon" style="background: #ffe4e6;">📞</div>
+              <span>긴급 연락망</span>
+            </button>
+            
+            <!-- 9. 로그아웃 -->
+            <button onclick="logout()" style="border-top:1px solid #eee; margin-top:6px; padding-top:12px;">
+              <div class="menu-icon" style="background: #f1f5f9;">🚪</div>
+              <span style="color: #ef4444;">로그아웃</span>
+            </button>
           </nav>
         </div>
       </div>
@@ -730,7 +611,6 @@
         <p><strong id="employeeName"></strong> 님, 환영합니다</p>
         <h2>ISC Taiwan<br>여정의 시작</h2>
         
-        <!-- 🔥 [날씨 위젯 추가] 여행 날짜 옆에 배치하여 레이아웃 유지 -->
         <div class="meta-badges">
           <span class="sub-date">2026.03.11 ~ 03.14</span>
           <!-- 클릭 시 대만의 모든 것(taiwan) 페이지로 이동 -->
@@ -763,12 +643,9 @@
 
 <!-- ================= DETAIL OVERLAY ================= -->
 <section id="detailPage" class="detail-sheet">
-  <!-- 🔹 dim 영역 (여기만 홈으로) -->
   <div class="detail-dim" onclick="goHome()"></div>
 
-  <!-- 🔹 실제 시트 -->
   <div class="detail-sheet__inner" onclick="event.stopPropagation()">
-      <!-- ✅ 상단 헤더 -->
       <div class="detail-header">
         <div class="detail-title" id="detailTitle"></div>
         <div class="detail-actions">
@@ -788,14 +665,38 @@ let pageHistory = [];
 let employees = [];
 let currentUser = null;
 const ADMIN_PASSWORD = "0000";
+
+/* 🔥 로컬 테스트 및 API 오류 방지용 내장 데이터 (박상현 님) */
+const EMBEDDED_EMPLOYEES = [
+  {
+    "id": "1612156",
+    "name": "박상현",
+    "flight": {
+      "departure": {
+        "date": "2026.03.11",
+        "time": "09:00",
+        "from": "인천",
+        "to": "타이베이",
+        "airline": "대한항공",
+        "flightNo": "KE 2021"
+      },
+      "return": {
+        "date": "2026.03.14",
+        "time": "12:25",
+        "from": "타이베이",
+        "to": "인천",
+        "airline": "대한항공",
+        "flightNo": "KE 2022"
+      }
+    },
+    "myTour": [] /* 선택 관광이 없을 시 에러 방지용으로 빈 배열 추가 */
+  }
+];
     
-/* ================= 카테고리 메뉴 토글 ================= */
 function toggleMenu() {
   document.body.classList.toggle('menu-open');
 }
 
-/* ================= 선택관광 템플릿 (🔥 수정 2. 사진 카드 디자인 적용) ================= */
-/* 이미지 경로는 assets/images/ 폴더를 기준으로 잡았으며, 없을 경우 Unsplash 이미지가 뜨도록 onerror를 설정했습니다. */
 const myTourTemplates = [
   { 
     keyword: "티엔라이", 
@@ -849,7 +750,6 @@ const myTourTemplates = [
           <p class="tour-desc">자유일정 대만 (중식비 지급)</p>
           <div class="tour-meta-box">
              <div class="meal-check" data-tour="자유일정" style="width:100%; display:flex; justify-content:space-between; align-items:center;">
-                <!-- ✅ 고정된 흰색 글씨를 지우고 CSS 클래스를 통해 색상 제어 -->
                 <span class="status pending">중식비 미지급</span>
                 <button class="meal-status-btn" onclick="handleMealClick(this)">지급 확인</button>
              </div>
@@ -859,7 +759,6 @@ const myTourTemplates = [
   }
 ];
 
-/* ================= 선택관광 렌더링 함수 ================= */
 function renderMyTour() {
   const selected = currentUser.myTour || [];
   const matchedCards = myTourTemplates.filter(t => selected.some(input => input.includes(t.keyword)));
@@ -867,7 +766,6 @@ function renderMyTour() {
   return matchedCards.map(t => t.html).join("");
 }
 
-// 로컬 파일 시도 후 실패하면 위 데이터 사용
 fetch("people/employees.json?ts=" + Date.now())
   .then(res => res.json())
   .then(data => {
@@ -880,7 +778,6 @@ fetch("people/employees.json?ts=" + Date.now())
     tryAutoLogin();
   });
 
-/* ================= 중식비 지급 로직 ================= */
 function handleMealClick(btn) {
   const wrap = btn.closest(".meal-check");
   const tour = wrap.dataset.tour;
@@ -947,23 +844,20 @@ function logMealPaymentToSheet(payload) {
   }).catch(console.error);
 }
 
-/* ================= WMO 날씨 코드 -> 이모지 변환 함수 ================= */
 function getWeatherEmoji(code) {
   if (code === 0) return "☀️"; 
   if (code >= 1 && code <= 3) return "⛅"; 
   if (code >= 45 && code <= 48) return "🌫️"; 
   if ((code >= 51 && code <= 67) || (code >= 80 && code <= 82)) return "🌧️"; 
   if (code >= 71 && code <= 77) return "❄️"; 
-  if (code >= 85 && code <= 86) return "❄️"; /* 추가된 눈보라 처리 */
-  if (code >= 95 && code <= 99) return "⛈️"; /* 96, 99 폭풍우 처리 보강 */
+  if (code >= 85 && code <= 86) return "❄️"; 
+  if (code >= 95 && code <= 99) return "⛈️"; 
   return "☁️";
 }
 
-/* ================= 🔥 실시간 날씨 연동 (캐시 완벽 제거) ================= */
 async function fetchTaipeiWeather() {
   try {
     const url = `https://api.open-meteo.com/v1/forecast?latitude=25.0330&longitude=121.5654&current=temperature_2m,weather_code&timezone=Asia%2FTaipei&_t=${Date.now()}`;
-    // 캐시를 절대 타지 않도록 강제 설정
     const res = await fetch(url, { cache: "no-store" });
     const data = await res.json();
     const temp = Math.round(data.current.temperature_2m);
@@ -981,13 +875,11 @@ async function fetchTaipeiWeather() {
 
 async function renderDetailedWeather() {
   try {
-    // 서울 실시간 (캐시 방지 및 타임존 고정)
     const resSeoul = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=37.5665&longitude=126.9780&current=temperature_2m,weather_code&timezone=Asia%2FSeoul&_t=${Date.now()}`, { cache: "no-store" });
     const dataSeoul = await resSeoul.json();
     const seoulTemp = Math.round(dataSeoul.current.temperature_2m);
     const seoulIcon = getWeatherEmoji(dataSeoul.current.weather_code);
     
-    // 타이베이 실시간 + 주간 (캐시 방지 및 타임존 고정)
     const resTaipei = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=25.0330&longitude=121.5654&current=temperature_2m,weather_code&daily=weather_code,temperature_2m_max,temperature_2m_min&timezone=Asia%2FTaipei&forecast_days=5&_t=${Date.now()}`, { cache: "no-store" });
     const dataTaipei = await resTaipei.json();
     const taipeiTemp = Math.round(dataTaipei.current.temperature_2m);
@@ -1000,14 +892,12 @@ async function renderDetailedWeather() {
     if(elSeoul) elSeoul.innerHTML = `${seoulIcon} ${seoulTemp}°C`;
     if(elTaipei) elTaipei.innerHTML = `${taipeiIcon} ${taipeiTemp}°C`;
     
-    // 새로고침 했다는 것을 눈으로 즉시 볼 수 있게 "초 단위"까지 표시
     const now = new Date();
     const timeStr = new Intl.DateTimeFormat("ko-KR", { hour: "2-digit", minute: "2-digit", second: "2-digit" }).format(now);
     if(elUpdate) elUpdate.textContent = `오늘 ${timeStr} 기준`;
 
     const daily = dataTaipei.daily;
     const forecastHtml = daily.time.slice(0, 5).map((dateStr, idx) => {
-      // Date 객체 생성 시 문자열을 잘라서 로컬 시간 기준으로 강제 생성 (하루 밀림 현상 방지)
       const parts = dateStr.split("-");
       const d = new Date(parts[0], parts[1] - 1, parts[2]);
       
@@ -1040,10 +930,8 @@ async function renderDetailedWeather() {
   }
 }
 
-// 스크립트 로드 시 홈화면 날씨 바로 호출
 fetchTaipeiWeather();
     
-/* ================= 로그인 (스플래시 삭제) ================= */
 function login() {
   const id = document.getElementById("employeeId").value.trim();
   const user = employees.find(e => e.id === id);
@@ -1054,41 +942,29 @@ function login() {
   }
 
   currentUser = user;
-
-  // 로그인 화면 제거
   document.getElementById("loginSection").style.display = "none";
-
-  // 📱 모바일: 스플래시 없이 즉시 메인으로 진입하도록 수정
   document.getElementById("mainSection").style.display = "block";
-
   document.getElementById("employeeName").textContent = user.name;
   document.body.classList.add("logged-in");
 }
 
-/* ================= 로그아웃 ================= */
 function logout() {
   if(!confirm("로그아웃 하시겠습니까?")) return;
-  
   currentUser = null;
   document.body.classList.remove("logged-in");
   document.body.classList.remove("menu-open");
   
-  // 메인 숨기고 로그인 화면 보이기
   document.getElementById("mainSection").style.display = "none";
   document.getElementById("loginSection").style.display = "block";
   document.getElementById("employeeId").value = "";
-  
-  // 열려있는 상세페이지 닫기
   goHome(); 
 }
 
 function tryAutoLogin() {
   const params = new URLSearchParams(window.location.search);
   const eid = params.get("eid");
-
   if (!eid) return;
 
-  // input에 사번 주입
   const input = document.getElementById("employeeId");
   if (input) input.value = eid;
 
@@ -1097,12 +973,9 @@ function tryAutoLogin() {
     document.getElementById("loginError").textContent = "QR 사번이 유효하지 않습니다.";
     return;
   }
-
-  // 🔥 여기서 끝
   login();
 }
 
-/* ================= 여행 일정 데이터 ================= */
 const travelSchedule = [
   {
     day: "DAY 1", date: "2026.03.11 (수)", title: "인천 → 타이베이 / 시내 하이라이트",
@@ -1199,13 +1072,28 @@ function pickFlightDescByAirline(desc, airline) {
   return isKoreanAir ? (parts[1] || s) : (parts[0] || s);
 }
 
-/* ================= 페이지 오픈 로직 (브라우저 히스토리 추가 반영) ================= */
+/* 🔥 [추가] 회화 텍스트 복사 함수 (안전하게 기존 로직 유지) */
+function copyConvText(btn, text) {
+  const textArea = document.createElement("textarea");
+  textArea.value = text;
+  document.body.appendChild(textArea);
+  textArea.select();
+  try {
+    document.execCommand('copy');
+    const originalHtml = btn.innerHTML;
+    btn.innerHTML = '<span style="color:#16a34a">✅ 복사됨</span>';
+    setTimeout(() => { btn.innerHTML = originalHtml; }, 1500);
+  } catch (err) {
+    console.error('복사 실패', err);
+  }
+  document.body.removeChild(textArea);
+}
+
 function openPage(type, fromHistory = false) {
-  document.body.classList.remove('menu-open'); // 메뉴 열려있으면 닫기
+  document.body.classList.remove('menu-open'); 
 
   const userAirline = currentUser?.flight?.departure?.airline || ""; 
   
-  // 폰 자체 뒤로가기를 위한 History pushState 추가
   if (!fromHistory) {
     pageHistory.push(type);
     history.pushState({ page: type }, "", "");
@@ -1218,7 +1106,6 @@ function openPage(type, fromHistory = false) {
   const t = document.getElementById("detailTitle");
   const c = document.getElementById("detailContent");
 
-  // ✅ DAY 1 ~ 4 버튼 처리 (프리미엄 디자인 적용부)
   if (type.startsWith("day_")) {
     const idx = parseInt(type.split("_")[1]);
     const day = travelSchedule[idx];
@@ -1251,7 +1138,6 @@ function openPage(type, fromHistory = false) {
     return;
   }
 
-  // 메뉴 처리
   if (type === "flight") {
     const dep = currentUser.flight.departure;
     const ret = currentUser.flight.return;
@@ -1280,7 +1166,6 @@ function openPage(type, fromHistory = false) {
     c.innerHTML = `
       <div class="detail-content-wrap">
         <div class="country-compare-grid">
-          <!-- 대한민국 -->
           <div class="country-card">
             <div class="country-header">
               <img src="assets/images/flag-kr.jpg" class="flag-img" onerror="this.style.display='none'">
@@ -1297,8 +1182,6 @@ function openPage(type, fromHistory = false) {
               <li><span>GDP</span><strong>약 1.7조 달러</strong></li>
             </ul>
           </div>
-
-          <!-- 대만 -->
           <div class="country-card">
             <div class="country-header">
               <img src="assets/images/flag-tw.jpg" class="flag-img" onerror="this.style.display='none'">
@@ -1317,7 +1200,6 @@ function openPage(type, fromHistory = false) {
           </div>
         </div>
 
-        <!-- 🔥 [추가] 실시간 날씨 및 주간 일기예보 -->
         <div class="weather-detail-wrapper">
           <div class="weather-current-row">
             <div class="w-city">
@@ -1342,14 +1224,12 @@ function openPage(type, fromHistory = false) {
           </div>
         </div>
 
-        <!-- 실시간 환율 정보 표시 -->
         <div class="exchange-row">
             실시간 환율: <strong>1 TWD ≈ <span id="twFxRate">로딩중..</span>원</strong>
             <br><span style="font-size:12px; opacity:0.8;">(업데이트: <span id="twFxTime">-</span>)</span>
         </div>
         <p class="exchange-note" style="text-align:center; font-size:13px; font-weight:600; color:var(--text-sub);">※ 환율은 실시간 변동될 수 있습니다</p>
         
-        <!-- 대만 기본 정보 -->
         <div class="day-card" style="margin-top:20px;">
           <h3 style="margin: 0 0 16px; font-size: 18px; color: var(--primary-color); font-weight: 800; display:flex; align-items:center; gap:6px;">
             <span style="font-size:20px;">💡</span> 대만 여행 필수 정보
@@ -1361,19 +1241,16 @@ function openPage(type, fromHistory = false) {
                <p style="margin:0; font-size:15px; font-weight:800; color:var(--primary-color); letter-spacing:-0.5px;">110V / 60Hz</p>
                <span style="font-size:12px; color:#e53e3e; font-weight:700; margin-top:4px; display:block; letter-spacing:-0.5px;">※ 11자형(돼지코) 필수</span>
             </div>
-            
             <div style="background:var(--bg-main); padding:16px; border-radius:12px; border:1px solid var(--border-light);">
                <h4 style="margin:0 0 8px; font-size:13px; color:var(--text-sub); font-weight:700;">🛂 비자 (Visa)</h4>
                <p style="margin:0; font-size:15px; font-weight:800; color:var(--primary-color); letter-spacing:-0.5px;">90일 무비자</p>
                <span style="font-size:12px; color:var(--text-sub); font-weight:600; margin-top:4px; display:block; letter-spacing:-0.5px;">한국 여권 소지자 기준</span>
             </div>
-            
             <div style="background:var(--bg-main); padding:16px; border-radius:12px; border:1px solid var(--border-light);">
                <h4 style="margin:0 0 8px; font-size:13px; color:var(--text-sub); font-weight:700;">🪙 팁 문화</h4>
                <p style="margin:0; font-size:15px; font-weight:800; color:var(--primary-color); letter-spacing:-0.5px;">팁 문화 없음</p>
                <span style="font-size:12px; color:var(--text-sub); font-weight:600; margin-top:4px; display:block; letter-spacing:-0.5px;">대부분 10% 봉사료 포함</span>
             </div>
-            
             <div style="background:var(--bg-main); padding:16px; border-radius:12px; border:1px solid var(--border-light);">
                <h4 style="margin:0 0 8px; font-size:13px; color:var(--text-sub); font-weight:700;">🗣️ 사용 언어</h4>
                <p style="margin:0; font-size:15px; font-weight:800; color:var(--primary-color); letter-spacing:-0.5px;">중국어(번체)</p>
@@ -1393,13 +1270,9 @@ function openPage(type, fromHistory = false) {
         </div>
       </div>`;
       
-    // 기능 1: 시계 동작
     startWorldClock();
-    
-    // 기능 2: 대만 상세 날씨 가져오기
     renderDetailedWeather();
 
-    // 기능 3: 환율 API 호출
     getFxRate().then(data => {
         const r = document.getElementById("twFxRate");
         const t = document.getElementById("twFxTime");
@@ -1426,12 +1299,107 @@ function openPage(type, fromHistory = false) {
           <h3>ISC 공식 만찬</h3>
           <p style="margin-top:10px; font-size:14px; color:var(--text-sub);">ISC 공식 만찬장 배치도 및 상세 안내입니다.</p>
           
-          <!-- ✅ 만찬장 배치도 이미지가 들어가는 자리입니다 -->
           <div style="margin-top:16px; border-radius:12px; overflow:hidden; border:1px solid var(--border-light); background:#f8fafc;">
             <img src="assets/images/dinner_map.jpg" alt="만찬장 배치도" style="width:100%; height:auto; display:block;" onerror="this.style.display='none'">
           </div>
         </div>
       </div>`;
+  }
+
+  /* 🔥 [추가] 필수 여행 회화 렌더링 로직 (내용 대폭 확장) */
+  if (type === "conversation") {
+    t.textContent = "💬 필수 여행 회화";
+    const convData = [
+      {
+        title: "식당 / 야시장", icon: "🥟",
+        items: [
+          { ko: "메뉴판 주세요", cn: "請給我菜單", pr: "칭 게이 워 차이딴" },
+          { ko: "이것 주세요", cn: "我要這個", pr: "워 야오 쩌거" },
+          { ko: "고수 빼주세요", cn: "不要香菜", pr: "부야오 샹차이" },
+          { ko: "고수 많이 주세요", cn: "多加香菜", pr: "뚜어 쟈 샹차이" },
+          { ko: "맵지 않게 해주세요", cn: "請不要加辣", pr: "칭 부야오 쟈 라" },
+          { ko: "포장해 주세요", cn: "我要外帶", pr: "워 야오 와이따이" },
+          { ko: "맛있어요!", cn: "很好吃", pr: "헌 하오 츠" },
+          { ko: "계산해 주세요", cn: "買單", pr: "마이 딴" }
+        ]
+      },
+      {
+        title: "쇼핑 / 계산", icon: "🛍️",
+        items: [
+          { ko: "얼마인가요?", cn: "多少錢", pr: "뚜어사오 첸" },
+          { ko: "비싸요, 깎아주세요", cn: "太貴了, 便宜一點", pr: "타이 꾸이 러, 피엔이 이디엔" },
+          { ko: "입어봐도 되나요?", cn: "可以試穿嗎", pr: "커이 스 촨 마" },
+          { ko: "다른 색상 있나요?", cn: "有別的顏色嗎", pr: "여우 비에 더 옌써 마" },
+          { ko: "카드 결제 되나요?", cn: "可以刷卡嗎", pr: "커이 슈아 카 마" },
+          { ko: "봉투 주세요", cn: "請給我袋子", pr: "칭 게이 워 따이즈" }
+        ]
+      },
+      {
+        title: "교통 / 길찾기", icon: "🚇",
+        items: [
+          { ko: "화장실이 어디인가요?", cn: "洗手間在哪裡", pr: "시쇼우지엔 짜이 나리" },
+          { ko: "역이 어디인가요?", cn: "捷運站在哪裡", pr: "지에윈짠 짜이 나리" },
+          { ko: "타이베이 메인역으로 가주세요", cn: "請到台北車站", pr: "칭 따오 타이베이 처짠" },
+          { ko: "여기서 세워주세요", cn: "請在這裡停", pr: "칭 짜이 쩌리 팅" },
+          { ko: "얼마나 걸리나요?", cn: "需要多久時間", pr: "쉬야오 뚜어지우 스지엔" }
+        ]
+      },
+      {
+        title: "호텔 / 숙박", icon: "🏨",
+        items: [
+          { ko: "체크인 부탁드립니다", cn: "我要辦理入住", pr: "워 야오 빤리 루주" },
+          { ko: "짐을 보관해줄 수 있나요?", cn: "可以寄放行李嗎", pr: "커이 지팡 싱리 마" },
+          { ko: "수건 좀 더 주세요", cn: "請多給我毛巾", pr: "칭 뚜어 게이 워 마오진" },
+          { ko: "체크아웃 할게요", cn: "我要退房", pr: "워 야오 투이팡" }
+        ]
+      },
+      {
+        title: "기본 인사", icon: "👋",
+        items: [
+          { ko: "안녕하세요", cn: "你好", pr: "니하오" },
+          { ko: "감사합니다", cn: "謝謝", pr: "시에시에" },
+          { ko: "죄송합니다", cn: "對不起", pr: "뚜이부치" },
+          { ko: "괜찮습니다", cn: "沒關係", pr: "메이꽌시" },
+          { ko: "한국어 할 줄 아세요?", cn: "你會說韓文嗎", pr: "니 후이 슈어 한원 마" }
+        ]
+      }
+    ];
+
+    let convHtml = '<div class="detail-content-wrap">';
+    convData.forEach((cat, idx) => {
+      // ✅ 첫 번째 항목(식당/야시장)만 기본적으로 열려있게 설정
+      convHtml += `
+        <div class="conv-category ${idx === 0 ? 'open' : ''}">
+          <div class="conv-header" onclick="this.parentElement.classList.toggle('open')">
+            <div class="conv-header-left">
+              <div class="conv-icon-bg">${cat.icon}</div>
+              <span>${cat.title}</span>
+            </div>
+            <svg viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <div class="conv-list">
+            ${cat.items.map(item => `
+              <div class="conv-item">
+                <div class="conv-text-box">
+                  <div class="conv-ko">${item.ko}</div>
+                  <div class="conv-cn">${item.cn}</div>
+                  <div class="conv-pr-box">
+                    <span class="conv-pr-badge">발음</span>
+                    <span class="conv-pr">${item.pr}</span>
+                  </div>
+                </div>
+                <button class="conv-copy-btn" onclick="copyConvText(this, '${item.cn}')">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                  복사
+                </button>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      `;
+    });
+    convHtml += '</div>';
+    c.innerHTML = convHtml;
   }
    
   if (type === "request") {
@@ -1459,59 +1427,36 @@ async function syncMealStatusFromServer(userId, tour, wrap) {
   else setMealUI(wrap, "PENDING");
 }
 
-/* ================= 홈으로 (브라우저 히스토리 초기화 추가) ================= */
 function goHome() {
   const steps = pageHistory.length;
   pageHistory = [];
-
-  // 쌓여있는 브라우저 뒤로가기 기록을 한 번에 날려줌 (폰 자체 뒤로가기 최적화)
-  if (steps > 0) {
-    history.go(-steps);
-  }
-
+  if (steps > 0) { history.go(-steps); }
   document.body.classList.remove("detail-open");
   document.body.classList.remove("menu-open");
-
-  // 애니메이션(0.4초)이 끝난 후 완전히 숨겨서 터치 방해 방지
-  setTimeout(() => {
-    document.getElementById("detailPage").style.display = "none";
-  }, 400); 
+  setTimeout(() => { document.getElementById("detailPage").style.display = "none"; }, 400); 
 }
 
-/* ================= 뒤로가기 (브라우저 뒤로가기 로직 연동) ================= */
 function goBack() {
-  if (pageHistory.length > 0) {
-    // 앱 내 뒤로가기 버튼도 스마트폰 브라우저 뒤로가기와 동일한 로직(popstate)을 타게 만듦
-    history.back(); 
-  } else {
-    goHome();
-  }
+  if (pageHistory.length > 0) { history.back(); } 
+  else { goHome(); }
 }
 
-/* ================= 폰 자체 뒤로가기(하드웨어 버튼) 감지 및 연동 ================= */
 window.addEventListener("popstate", (event) => {
-  // 1. 메뉴가 열려있을 때 뒤로가기 누르면 메뉴만 닫음
   if (document.body.classList.contains("menu-open")) {
     document.body.classList.remove("menu-open");
   }
-
-  // 2. 히스토리가 남아있으면 이전 페이지 또는 홈으로 이동
   if (pageHistory.length > 0) {
-    pageHistory.pop(); // 내부 배열 최신화
-    
+    pageHistory.pop(); 
     if (pageHistory.length === 0) {
-      // 더이상 뒤로갈 페이지가 없으면 홈 화면으로 닫기
       document.body.classList.remove("detail-open");
       setTimeout(() => { document.getElementById("detailPage").style.display = "none"; }, 400); 
     } else {
-      // 이전 상세 페이지 다시 열기 (히스토리에 다시 쌓지 않도록 true 파라미터 전달)
       const prevType = pageHistory[pageHistory.length - 1];
       openPage(prevType, true);
     }
   }
 });
 
-/* ================= 요청사항 전송 ================= */
 function submitRequest() {
   const requestText = document.getElementById("requestInput").value.trim();
   if (!requestText) { alert("요청사항을 입력해주세요."); return; }
@@ -1552,9 +1497,7 @@ function fxFmt(n) {
   return (isInt ? Math.round(n) : n).toLocaleString("ko-KR", { maximumFractionDigits: 2 });
 }
 
-/* ================= 🔥 환율 실시간 갱신 완벽 적용 ================= */
 async function fetchTwdToKrwRate() {
-  // 타임스탬프를 URL에 붙여서 브라우저 캐시 무력화
   const url = `https://open.er-api.com/v6/latest/USD?_t=${Date.now()}`;
   const res = await fetch(url, { cache: "no-store" });
   if (!res.ok) throw new Error("환율 API 실패: " + res.status);
@@ -1565,14 +1508,8 @@ async function fetchTwdToKrwRate() {
   
   if (!isFinite(krwPerUsd) || !isFinite(twdPerUsd)) throw new Error("KRW/TWD 환율 데이터 없음");
   
-  // API의 구형 업데이트 시간이 아니라, 사용자가 버튼을 누른 즉시 현재 한국 시간을 생성
   const nowKST = new Intl.DateTimeFormat("ko-KR", { 
-    timeZone: "Asia/Seoul", 
-    month: "2-digit", 
-    day: "2-digit", 
-    hour: "2-digit", 
-    minute: "2-digit", 
-    second: "2-digit" 
+    timeZone: "Asia/Seoul", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", second: "2-digit" 
   }).format(new Date());
 
   return { rate: krwPerUsd / twdPerUsd, updatedUtc: `오늘 ${nowKST}` };
@@ -1594,7 +1531,6 @@ function saveFxCache(payload) {
 }
 
 async function getFxRate({ force = false } = {}) {
-  // force(새로고침 버튼) 일 경우 무조건 서버에서 새로 가져옴
   if (!force) { 
     const cached = loadFxCache(); 
     if (cached) return cached; 
