@@ -36,16 +36,24 @@
       font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     }
 
+    /* 🔥 [수정] 모바일 하단바/상단바에 의해 화면이 밀리거나 잘리는 현상 완벽 방지 */
     html, body {
       margin: 0;
       padding: 0;
       background-color: var(--primary-color);
       color: var(--text-main);
       overscroll-behavior: none; 
-      /* ✅ 모바일 꽉 채우기 핵심 설정 */
       width: 100%;
       height: 100%;
+      height: 100dvh; /* 모바일 동적 높이 대응 */
       overflow: hidden; /* 이중 스크롤 방지 */
+    }
+
+    /* iOS Safari 전용 하단바 완벽 대응 코드 */
+    @supports (-webkit-touch-callout: none) {
+      html, body {
+        height: -webkit-fill-available;
+      }
     }
 
     /* =========================================================
@@ -61,11 +69,8 @@
 
     .login-hero {
       width: 100%;
-      /* ✅ 모바일 주소창 대응 높이 설정 */
-      height: 100vh;
-      height: 100dvh; 
+      height: 100%; /* 부모(body) 크기에 맞춰 하단바 잘림 방지 */
       background: url('assets/images/taiwan.jpg') center/cover no-repeat;
-      /* ✅ 배경 고정 (스크롤 시 흔들림 방지) */
       position: fixed;
       top: 0; left: 0;
       z-index: 2000;
@@ -87,11 +92,10 @@
       box-shadow: 0 20px 40px rgba(0,0,0,0.2);
     }
     
-    /* 🔥 [수정] 로그인 화면 로고 스타일: 비율 유지 */
     .hero-logo { 
-        width: 140px;       /* 적절한 가로 크기 설정 */
-        height: auto;       /* 높이는 자동 */
-        object-fit: contain;/* 비율 유지하며 표시 */
+        width: 140px;       
+        height: auto;       
+        object-fit: contain;
         margin-bottom: 12px;
         display: block;
         margin-left: auto;
@@ -125,9 +129,7 @@
     
     .home-view {
       width: 100%;
-      /* ✅ 모바일 주소창 대응 */
-      height: 100vh;
-      height: 100dvh;
+      height: 100%; /* 모바일 주소창 대응 위해 100vh 대신 100% 사용 */
       background: url('assets/images/home2.jpg') center/cover no-repeat;
       position: relative;
       display: flex;
@@ -136,7 +138,6 @@
     
     .home-overlay {
       position: absolute; inset: 0;
-      /* ✅ 어둡게 깔린 배경 필터 제거 (투명하게 처리) */
       background: transparent;
       z-index: 1;
     }
@@ -146,52 +147,42 @@
       position: relative; z-index: 100;
       display: flex; justify-content: space-between; align-items: center;
       padding: 20px 24px;
-      /* ✅ 아이폰 노치 영역 대응 */
       padding-top: max(20px, env(safe-area-inset-top));
     }
     
-    /* 🔥 [수정] 상단 헤더 로고 스타일: 비율 유지 및 원본 색상 출력 */
     .header-logo { 
-        height: 36px;       /* 헤더 높이에 맞춤 */
-        width: auto;        /* 가로는 비율대로 */
-        object-fit: contain;/* 찌그러짐 방지 */
+        height: 36px;       
+        width: auto;        
+        object-fit: contain;
     }
     
     /* =========================================================
        [4] 우측 상단 카테고리 (팝업 드롭다운 스타일) 
-       🔥🔥 여백 및 컬러풀 아이콘 완벽 정비
     ========================================================= */
     .menu-wrapper { 
         position: relative; 
-        /* ✅ 로고 유무와 상관없이 메뉴를 우측 끝으로 고정 */
         margin-left: auto;
     }
 
     .menu-btn {
-      /* 🔥 [수정] 눈에 확 띄는 황금빛 그라데이션 및 입체 효과 적용 */
-      background: linear-gradient(135deg, #fde047 0%, #f59e0b 100%);
-      border: 1px solid #fef08a;
-      color: #1e293b; /* 가독성을 위한 짙은 남색 글씨 */
-      padding: 8px 18px; 
-      border-radius: 24px; 
-      font-weight: 800; 
-      font-size: 14.5px;
+      background: rgba(255,255,255,0.15); 
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,0.3); 
+      color: #fff;
+      padding: 8px 16px; 
+      border-radius: 20px; 
+      font-weight: 600; 
+      font-size: 14px;
       cursor: pointer;
       display: flex; align-items: center; gap: 6px;
-      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      transition: transform 0.1s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.1s;
       position: relative; z-index: 101; 
-      /* 은은하게 빛나는 골드 글로우(후광) 효과 */
-      box-shadow: 0 4px 14px rgba(245, 158, 11, 0.4), inset 0 1px 2px rgba(255, 255, 255, 0.6);
     }
-    /* ✅ 메뉴 버튼 클릭 시 효과 */
     .menu-btn:active { 
-      background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
-      border-color: #f59e0b;
+      background: rgba(255,255,255,0.3); 
       transform: scale(0.94);
-      box-shadow: 0 2px 6px rgba(245, 158, 11, 0.5);
     }
 
-    /* 메뉴 열릴 때 화면 어둡게 해주는 레이어 */
     .menu-dim {
       position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 90;
       backdrop-filter: blur(3px); -webkit-backdrop-filter: blur(3px);
@@ -199,13 +190,12 @@
     }
     body.menu-open .menu-dim { opacity: 1; visibility: visible; }
 
-    /* 메뉴 드롭다운 박스 뼈대 */
     .category-dropdown {
       position: absolute; top: calc(100% + 12px); right: 0;
-      width: 240px; /* 적당한 너비로 고정 */
+      width: 240px;
       background: #fff; border-radius: 20px;
       box-shadow: 0 12px 40px rgba(0,0,0,0.25);
-      padding: 12px; /* 바깥 패딩 12px */
+      padding: 12px;
       z-index: 100;
       opacity: 0; visibility: hidden; transform: translateY(-10px);
       transition: all 0.3s cubic-bezier(0.32, 0.72, 0, 1);
@@ -215,7 +205,6 @@
       opacity: 1; visibility: visible; transform: translateY(0);
     }
 
-    /* 헤더 좌우 여백을 정확히 8px로 맞춤 (버튼 내부와 라인 일치) */
     .dropdown-header {
       font-size: 13px; font-weight: 700; color: #94a3b8;
       padding: 4px 8px 10px; 
@@ -223,18 +212,15 @@
       margin-bottom: 6px;
     }
 
-    /* 버튼 여백 및 정렬 완벽 수정 */
     .drop-nav button {
       width: 100%; text-align: left; background: none; border: none;
-      padding: 10px 8px; /* 위아래 10px, 좌우 8px 정렬 맞춤 */
+      padding: 10px 8px;
       font-size: 15px; font-weight: 600; color: var(--text-main);
       border-radius: 12px; cursor: pointer; 
-      display: flex; align-items: center; gap: 14px; /* 아이콘과 텍스트 사이 간격 고정 */
-      /* ✅ 카테고리 버튼 누를 때 효과 (transition 추가) */
+      display: flex; align-items: center; gap: 14px; 
       transition: background-color 0.1s, transform 0.1s cubic-bezier(0.4, 0, 0.2, 1);
     }
     
-    /* 🔥 컬러풀한 아이콘 배경 박스 (앱 아이콘 스타일) */
     .menu-icon {
       width: 32px; 
       height: 32px;
@@ -243,13 +229,12 @@
       align-items: center; 
       justify-content: center;
       flex-shrink: 0; 
-      font-size: 16px; /* 이모지 크기 */
+      font-size: 16px; 
       box-shadow: inset 0 2px 4px rgba(0,0,0,0.04);
     }
 
     .drop-nav button span { flex: 1; letter-spacing: -0.3px; }
     
-    /* ✅ 카테고리 항목 클릭 시 쫀득한 효과 */
     .drop-nav button:active { 
       background: #f1f5f9; 
       transform: scale(0.96); 
@@ -262,23 +247,19 @@
       position: relative; z-index: 10;
       flex: 1; 
       display: flex; flex-direction: column; justify-content: flex-end;
-      padding: 0 24px 60px; 
-      /* ✅ 하단 안전영역 대응 */
-      padding-bottom: max(60px, env(safe-area-inset-bottom));
+      padding: 0 24px 40px; /* ✅ 여백을 살짝 줄여서 모바일 하단 잘림 방지 */
+      padding-bottom: max(40px, env(safe-area-inset-bottom));
       color: #fff;
     }
     
     .welcome-text { margin-bottom: 30px; }
     .welcome-text p { font-size: 18px; margin: 0; opacity: 0.95; font-weight: 500; letter-spacing: -0.5px; }
-    /* ✅ 이름 글씨 색상을 고급스러운 샴페인 골드(#e6c27a)로 변경하고 살짝의 그림자로 가독성을 높임 */
     .welcome-text strong { color: #e6c27a; font-weight: 900; font-size: 20px; letter-spacing: -0.5px; text-shadow: 0 2px 6px rgba(0,0,0,0.4); }
     .welcome-text h2 { font-size: 36px; font-weight: 900; margin: 6px 0 12px; line-height: 1.2; letter-spacing: -1px; }
     
-    /* 🔥 [날씨 위젯 배치] 날짜와 날씨를 나란히 묶는 래퍼 */
     .meta-badges { display: flex; align-items: center; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
     .welcome-text .sub-date { display: inline-block; padding: 6px 14px; background: rgba(0,0,0,0.4); border-radius: 20px; font-size: 13px; border: 1px solid rgba(255,255,255,0.1); font-weight: 600; }
 
-    /* 🔥 [날씨 위젯 스타일] 기존 테마와 어울리는 글래스모피즘 버튼 */
     .weather-badge {
       display: inline-flex; align-items: center; gap: 6px;
       background: rgba(0, 0, 0, 0.4); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
@@ -289,10 +270,10 @@
     .weather-badge:active { transform: scale(0.95); background: rgba(0, 0, 0, 0.6); }
     .weather-badge strong { color: #e6c27a; font-size: 14px; font-weight: 800; letter-spacing: -0.3px; }
 
-    /* 🔥 [추가] 메인 화면 공항 안내 문구 스타일 (배경과 자연스럽게 어울리는 유리 효과) */
+    /* 🔥 [수정] 메인 화면 공항 안내 문구 스타일 (레이아웃 깨짐 해결) */
     .home-notice {
       display: flex;
-      align-items: center;
+      align-items: flex-start;
       gap: 12px;
       background: rgba(20, 24, 34, 0.55);
       backdrop-filter: blur(12px);
@@ -305,6 +286,7 @@
     }
     .home-notice .notice-icon {
       font-size: 20px;
+      margin-top: 2px;
     }
     .home-notice p {
       margin: 0;
@@ -320,7 +302,33 @@
       text-shadow: 0 1px 3px rgba(0,0,0,0.8);
     }
 
-    /* =========================================================
+    /* 🔥 [추가] 출발 장소 강조 배지 스타일 (자연스럽고 예쁜 폰트/디자인) */
+    .loc-badge {
+      display: inline-flex;
+      background: rgba(220, 38, 38, 0.15);
+      border: 1px solid rgba(220, 38, 38, 0.35);
+      color: #fca5a5;
+      font-size: 12.5px;
+      font-weight: 700;
+      padding: 5px 10px;
+      border-radius: 8px;
+      margin-top: 8px; /* 위 텍스트와 간격 띄움 */
+      letter-spacing: -0.3px;
+    }
+    .loc-badge-flight {
+      display: inline-flex;
+      background: #fee2e2;
+      border: 1px solid #fca5a5;
+      color: #991b1b;
+      font-size: 12.5px;
+      font-weight: 700;
+      padding: 5px 10px;
+      border-radius: 8px;
+      margin-top: 8px; /* 위 텍스트와 간격 띄움 */
+      letter-spacing: -0.3px;
+    }
+
+        /* =========================================================
        🔥🔥 대만풍 DAY 1~4 버튼 (야경 배경과 어울리는 프리미엄 글래스 & 찻집 창살 패턴)
     ========================================================= */
     .day-buttons {
@@ -378,7 +386,6 @@
       box-shadow: 0 4px 12px rgba(0,0,0,0.5);
     }
     /* ========================================================= */
-
     /* =========================================================
        [6] Bottom Sheet (Detail Page)
     ========================================================= */
@@ -471,7 +478,7 @@
 
     #requestInput { width: 100%; height: 120px; padding: 16px; border: 1px solid var(--border-light); border-radius: 12px; resize: none; font-size: 15px; margin-bottom: 12px; }
 
-    /* 🔥 [새기능] 필수 여행 회화 CSS (이미지 기반 스타일 완벽 적용) */
+    /* 🔥 필수 여행 회화 CSS */
     .conv-category {
       background: var(--card-bg);
       border-radius: 16px;
@@ -639,7 +646,7 @@
               <span>나의 선택 관광</span>
             </button>
 
-            <!-- 🔥 [새기능] 6. 필수 여행 회화 (초록색 글씨 제거) -->
+            <!-- 6. 필수 여행 회화 -->
             <button onclick="openPage('conversation')">
               <div class="menu-icon" style="background: #d1fae5;">💬</div>
               <span>필수 여행 회화</span>
@@ -676,11 +683,13 @@
         </div>
       </div>
 
-      <!-- 🔥 [추가] 메인 홈 화면 공항 도착 안내 문구 -->
-      <div class="home-notice">
-        <span class="notice-icon">⏰</span>
-        <p>원활한 출국 수속을 위해 반드시 <strong style="color: #fde047;">출발 3시간 전</strong>까지 공항에 도착해 주세요!</p>
-        <span style="color: #991b1b; font-size: 13px; line-height: 1.4; font-weight: 600;">*출발 장소 : 인천공항 2터미널.</span>
+      <!-- 🔥 [수정] 메인 홈 화면 공항 도착 안내 문구 (가독성 향상 + 구조 분리) -->
+      <div class="home-notice" style="align-items: flex-start;">
+        <span class="notice-icon" style="margin-top: 2px;">⏰</span>
+        <div>
+          <p>원활한 출국 수속을 위해 반드시 <strong style="color: #fde047;">출발 3시간 전</strong>까지 공항에 도착해 주세요!</p>
+          <span class="loc-badge">📍 출발 장소 : 인천공항 2터미널</span>
+        </div>
       </div>
 
       <div class="day-buttons">
@@ -729,7 +738,33 @@ let employees = [];
 let currentUser = null;
 const ADMIN_PASSWORD = "0000";
 
-
+/* 🔥 로컬 테스트 및 API 오류 방지용 내장 데이터 (박상현 님) */
+const EMBEDDED_EMPLOYEES = [
+  {
+    "id": "1612156",
+    "name": "박상현",
+    "flight": {
+      "departure": {
+        "date": "2026.03.11",
+        "time": "09:00",
+        "from": "인천",
+        "to": "타이베이",
+        "airline": "대한항공",
+        "flightNo": "KE 2021"
+      },
+      "return": {
+        "date": "2026.03.14",
+        "time": "12:25",
+        "from": "타이베이",
+        "to": "인천",
+        "airline": "대한항공",
+        "flightNo": "KE 2022"
+      }
+    },
+    "myTour": [] /* 선택 관광이 없을 시 에러 방지용으로 빈 배열 추가 */
+  }
+];
+    
 function toggleMenu() {
   document.body.classList.toggle('menu-open');
 }
@@ -1017,7 +1052,7 @@ const travelSchedule = [
   {
     day: "DAY 1", date: "2026.03.11 (수)", title: "설레는 시작, 타이베이",
     items: [
-      { time:"08:00/9:00", icon:"✈️", title:"인천 국제공항 2터미널 출발", desc:"OZ 711 / KE 2021" },
+      { time:"08:00/9:00", icon:"✈️", title:"인천 국제공항 출발", desc:"<span style='color:#dc2626; font-weight:700;'>⚠️ 출발 3시간 전 공항 도착 필수</span><br>OZ 711 / KE 2021" },
       { time:"12:30/13:30", icon:"🍜", title:"중식 | 우육면", desc:"대만의 소울 푸드, 진한 국물의 우육면" },
       { time:"13:30/14:30", icon:"🏛️", title:"단수이 옛거리/홍마오청/진리대학", desc:"붉은 별돌의 역사와 영화 말할 수 없는 비밀 촬영지" },
       { time:"16:30/17:30", icon:"🏨", title:"호텔 체크인", desc:"타이베이 메리어트 호텔[5성급]" },
@@ -1181,14 +1216,15 @@ function openPage(type, fromHistory = false) {
     t.textContent = "✈️ 항공편 정보";
     c.innerHTML = `
       <div class="detail-content-wrap">
-        <!-- 🔥 [추가] 공항 도착 안내 강조 박스 -->
+        <!-- 🔥 [수정] 공항 도착 안내 강조 박스 (가독성 향상 + 구조 분리) -->
         <div style="background: #fffef0; border: 1px solid #fde047; border-radius: 16px; padding: 16px; margin-bottom: 20px; display: flex; align-items: flex-start; gap: 12px; box-shadow: 0 4px 12px rgba(253,224,71,0.1);">
           <div style="font-size: 22px; line-height: 1;">⏰</div>
-          <div>
-            <strong style="color: #b45309; font-size: 15px; font-weight: 800; display: block; margin-bottom: 4px;">공항 도착 시간 안내</strong>
-            <span style="color: #92400e; font-size: 13px; line-height: 1.4; font-weight: 600;">원활한 탑승 수속을 위해 <strong style="color:#dc2626; font-weight:800;">출발 3시간 전까지</strong> 반드시 공항에 도착해 주시기 바랍니다.</span>
-            <span style="color: #991b1b; font-size: 13px; line-height: 1.4; font-weight: 600;">*출발 장소 : 인천공항 2터미널.</span>
-            
+          <div style="display: flex; flex-direction: column; gap: 8px;">
+            <div>
+              <strong style="color: #b45309; font-size: 15px; font-weight: 800; display: block; margin-bottom: 4px;">공항 도착 시간 안내</strong>
+              <span style="color: #92400e; font-size: 13px; line-height: 1.4; font-weight: 600; display: block;">원활한 탑승 수속을 위해 <strong style="color:#dc2626; font-weight:800;">출발 3시간 전까지</strong> 반드시 공항에 도착해 주시기 바랍니다.</span>
+            </div>
+            <span class="loc-badge-flight">📍 출발 장소 : 인천공항 2터미널</span>
           </div>
         </div>
         
@@ -1370,8 +1406,8 @@ function openPage(type, fromHistory = false) {
       {
         title: "교통 / 길찾기", icon: "🚇",
         items: [
-          { ko: "화장실이 어디인가요?", cn: "洗手間在哪裡", pr: "시쇼우지엔 짜이 날" },
-          { ko: "역이 어디인가요?", cn: "捷運站在哪裡", pr: "지에윈짠 짜이 날" },
+          { ko: "화장실이 어디인가요?", cn: "洗手間在哪裡", pr: "시쇼우지엔 짜이 나리" },
+          { ko: "역이 어디인가요?", cn: "捷運站在哪裡", pr: "지에윈짠 짜이 나리" },
           { ko: "타이베이 메인역으로 가주세요", cn: "請到台北車站", pr: "칭 따오 타이베이 처짠" },
           { ko: "여기서 세워주세요", cn: "請在這裡停", pr: "칭 짜이 쩌리 팅" },
           { ko: "얼마나 걸리나요?", cn: "需要多久時間", pr: "쉬야오 뚜어지우 스지엔" }
@@ -1592,7 +1628,7 @@ function initExchangeCalculatorAuto() {
   }
 
   twdEl.addEventListener("input", updateFromTWD);
-  krwEl.addEventListener("input", updateFromKRW);
+  krwaddEventListener("input", updateFromKRW);
 
   async function renderRate(force = false) {
     rateText.textContent = "가져오는 중…";
