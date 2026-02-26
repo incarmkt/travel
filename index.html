@@ -273,7 +273,7 @@
     .weather-badge:active { transform: scale(0.95); background: rgba(0, 0, 0, 0.6); }
     .weather-badge strong { color: #e6c27a; font-size: 14px; font-weight: 800; letter-spacing: -0.3px; }
 
-    /* 🔥 [수정] 메인 화면 공항 안내 문구 스타일 (공간 확보) */
+    /* 🔥 메인 화면 공항 안내 문구 스타일 */
     .home-notice {
       display: flex;
       align-items: flex-start;
@@ -283,8 +283,8 @@
       -webkit-backdrop-filter: blur(12px);
       border: 1px solid rgba(251, 191, 36, 0.4);
       border-radius: 14px;
-      padding: 12px 14px; /* 🔥 패딩 축소 */
-      margin-bottom: 16px; /* 🔥 하단 여백 축소 */
+      padding: 12px 14px; 
+      margin-bottom: 16px; 
       box-shadow: 0 4px 15px rgba(0,0,0,0.25);
     }
     .home-notice .notice-icon {
@@ -685,10 +685,10 @@
       <!-- 🔥 메인 홈 화면 공항 안내 문구 (로그인 후 JS에서 내용 채워짐) -->
       <div class="home-notice" style="align-items: flex-start;">
         <span class="notice-icon" style="margin-top: 2px;">⏰</span>
-        <div>
+        <div style="width: 100%;">
           <p>원활한 출국 수속을 위해 반드시 <strong style="color: #fde047;">출발 3시간 전</strong>까지 공항에 도착해 주세요!</p>
-          <div id="dynamicHomeMeeting" style="margin-top: 8px;">
-            <!-- JS가 이 위치에 맞춤 미팅 장소를 렌더링합니다 -->
+          <div id="dynamicHomeMeeting">
+            <!-- JS가 이 위치에 맞춤 미팅 장소 카드를 렌더링합니다 -->
           </div>
         </div>
       </div>
@@ -990,23 +990,32 @@ function login() {
 
   currentUser = user;
   
-  // 🔥 [추가] 로그인 후 유저의 항공사 정보에 맞춰 홈 화면 공항 미팅 안내 동적 변경
+  // 🔥 [수정] 로그인 후 유저의 항공사 정보에 맞춰 홈 화면 공항 미팅 안내 동적 변경 (고급 카드형 배지 디자인)
   const airline = currentUser?.flight?.departure?.airline || "";
   const isKorean = String(airline).includes("대한항공");
   const isAsiana = String(airline).includes("아시아나");
   
-  let meetingText = "- 공항 미팅 장소를 개별 확인해 주세요.";
+  let homeMeetingHtml = `<span style="display:block; font-size:13px; color:#fca5a5; font-weight:600; letter-spacing:-0.5px; word-break:keep-all; margin-top:4px;">- 공항 미팅 장소를 개별 확인해 주세요.</span>`;
+  
   if (isKorean) {
-    meetingText = "- 대한항공 미팅 장소 : A카운터 1번출구 앞 1~2번 테이블 미팅";
+    homeMeetingHtml = `
+      <div style="margin-top:8px; background:rgba(0, 0, 0, 0.3); border:1px solid rgba(96, 165, 250, 0.3); border-radius:10px; padding:10px; display:flex; align-items:center; gap:10px;">
+        <span style="background:#005eb8; color:#fff; font-size:12px; font-weight:800; padding:4px 8px; border-radius:6px; flex-shrink:0; box-shadow:0 2px 4px rgba(0,0,0,0.2);">대한항공</span>
+        <span style="font-size:13px; color:rgba(255,255,255,0.95); font-weight:500; line-height:1.4; letter-spacing:-0.3px;">A카운터 1번출구 앞<br><strong style="color:#93c5fd; font-weight:800;">1~2번 테이블</strong> 미팅</span>
+      </div>`;
   } else if (isAsiana) {
-    meetingText = "- 아시아나 미팅 장소 : N카운터 12번출구 앞 25~26번 테이블 미팅";
+    homeMeetingHtml = `
+      <div style="margin-top:8px; background:rgba(0, 0, 0, 0.3); border:1px solid rgba(248, 113, 113, 0.3); border-radius:10px; padding:10px; display:flex; align-items:center; gap:10px;">
+        <span style="background:#dc2626; color:#fff; font-size:12px; font-weight:800; padding:4px 8px; border-radius:6px; flex-shrink:0; box-shadow:0 2px 4px rgba(0,0,0,0.2);">아시아나</span>
+        <span style="font-size:13px; color:rgba(255,255,255,0.95); font-weight:500; line-height:1.4; letter-spacing:-0.3px;">N카운터 12번출구 앞<br><strong style="color:#fca5a5; font-weight:800;">25~26번 테이블</strong> 미팅</span>
+      </div>`;
   }
   
   const meetingBox = document.getElementById("dynamicHomeMeeting");
   if (meetingBox) {
     meetingBox.innerHTML = `
-      <span class="loc-badge" style="display:inline-flex; margin-bottom:4px; margin-top:0;">📍 인천국제공항 2청사</span>
-      <span style="display:block; font-size:13px; color:#fca5a5; font-weight:600; letter-spacing:-0.5px; word-break:keep-all;">${meetingText}</span>
+      <span class="loc-badge" style="display:inline-flex; margin-bottom:2px; margin-top:8px;">📍 인천국제공항 2청사</span>
+      ${homeMeetingHtml}
     `;
   }
 
@@ -1211,28 +1220,38 @@ function openPage(type, fromHistory = false) {
     const ret = currentUser.flight.return;
     t.textContent = "✈️ 항공편 정보";
     
-    // 🔥 [수정] 상세 페이지에서도 로그인 정보에 따라 미팅 장소 자동 표시
+    // 🔥 [수정] 상세 페이지 전용: 로그인 정보에 따라 미팅 장소를 고급스럽게 표시
     const isKorean = String(userAirline).includes("대한항공");
     const isAsiana = String(userAirline).includes("아시아나");
-    let meetingText = "- 공항 미팅 장소를 개별 확인해 주세요.";
+    
+    let detailMeetingHtml = `<span style="display:block; font-size:13px; color:#991b1b; font-weight:700; letter-spacing:-0.5px; margin-top:4px;">- 공항 미팅 장소를 개별 확인해 주세요.</span>`;
+    
     if (isKorean) {
-      meetingText = "- 대한항공 미팅 장소 : A카운터 1번출구 앞 1~2번 테이블 미팅";
+      detailMeetingHtml = `
+        <div style="margin-top:8px; background:#eff6ff; border:1px solid #bfdbfe; border-radius:10px; padding:12px; display:flex; align-items:center; gap:10px;">
+          <span style="background:#005eb8; color:#fff; font-size:12px; font-weight:800; padding:4px 8px; border-radius:6px; flex-shrink:0; box-shadow:0 2px 4px rgba(0,0,0,0.1);">대한항공</span>
+          <span style="font-size:13.5px; color:#1e293b; font-weight:600; line-height:1.4; letter-spacing:-0.3px;">A카운터 1번출구 앞<br><strong style="color:#1d4ed8; font-weight:800;">1~2번 테이블</strong> 미팅</span>
+        </div>`;
     } else if (isAsiana) {
-      meetingText = "- 아시아나 미팅 장소 : N카운터 12번출구 앞 25~26번 테이블 미팅";
+      detailMeetingHtml = `
+        <div style="margin-top:8px; background:#fef2f2; border:1px solid #fecaca; border-radius:10px; padding:12px; display:flex; align-items:center; gap:10px;">
+          <span style="background:#dc2626; color:#fff; font-size:12px; font-weight:800; padding:4px 8px; border-radius:6px; flex-shrink:0; box-shadow:0 2px 4px rgba(0,0,0,0.1);">아시아나</span>
+          <span style="font-size:13.5px; color:#1e293b; font-weight:600; line-height:1.4; letter-spacing:-0.3px;">N카운터 12번출구 앞<br><strong style="color:#b91c1c; font-weight:800;">25~26번 테이블</strong> 미팅</span>
+        </div>`;
     }
 
     c.innerHTML = `
       <div class="detail-content-wrap">
         <div style="background: #fffef0; border: 1px solid #fde047; border-radius: 16px; padding: 16px; margin-bottom: 20px; display: flex; align-items: flex-start; gap: 12px; box-shadow: 0 4px 12px rgba(253,224,71,0.1);">
           <div style="font-size: 22px; line-height: 1;">⏰</div>
-          <div style="display: flex; flex-direction: column; gap: 8px;">
+          <div style="display: flex; flex-direction: column; gap: 8px; width: 100%;">
             <div>
               <strong style="color: #b45309; font-size: 15px; font-weight: 800; display: block; margin-bottom: 4px;">공항 도착 시간 안내</strong>
               <span style="color: #92400e; font-size: 13px; line-height: 1.4; font-weight: 600; display: block;">원활한 탑승 수속을 위해 <strong style="color:#dc2626; font-weight:800;">출발 3시간 전까지</strong> 반드시 공항에 도착해 주시기 바랍니다.</span>
             </div>
-            <div>
-              <span class="loc-badge-flight" style="margin-top:0; margin-bottom:4px;">📍 인천국제공항 2청사</span>
-              <span style="display:block; font-size:12.5px; color:#991b1b; font-weight:700; line-height:1.4; word-break:keep-all;">${meetingText}</span>
+            <div style="margin-top: 4px;">
+              <span class="loc-badge-flight" style="margin-top:0; margin-bottom:0;">📍 인천국제공항 2청사</span>
+              ${detailMeetingHtml}
             </div>
           </div>
         </div>
