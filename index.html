@@ -164,22 +164,25 @@
         margin-left: auto;
     }
 
+    /* 🔥 [수정] 여행정보 메뉴 버튼 시인성 개선 (배경대비 확 눈에 띄게) */
     .menu-btn {
-      background: rgba(255,255,255,0.15); 
-      backdrop-filter: blur(10px);
-      border: 1px solid rgba(255,255,255,0.3); 
+      background: rgba(0, 0, 0, 0.55); /* 다크 글래스로 배경색과 분리 */
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(251, 191, 36, 0.4); /* 은은한 골드 테두리 */
       color: #fff;
       padding: 8px 16px; 
       border-radius: 20px; 
-      font-weight: 600; 
+      font-weight: 700; /* 글씨를 살짝 굵게 */
       font-size: 14px;
       cursor: pointer;
       display: flex; align-items: center; gap: 6px;
       transition: transform 0.1s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.1s;
       position: relative; z-index: 101; 
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3); /* 그림자 강화 */
     }
     .menu-btn:active { 
-      background: rgba(255,255,255,0.3); 
+      background: rgba(0, 0, 0, 0.7); 
       transform: scale(0.94);
     }
 
@@ -679,12 +682,14 @@
         </div>
       </div>
 
-      <!-- 🔥 [수정] 메인 홈 화면 공항 도착 안내 문구 (가독성 향상 + 구조 분리) -->
+      <!-- 🔥 메인 홈 화면 공항 안내 문구 (로그인 후 JS에서 내용 채워짐) -->
       <div class="home-notice" style="align-items: flex-start;">
         <span class="notice-icon" style="margin-top: 2px;">⏰</span>
         <div>
           <p>원활한 출국 수속을 위해 반드시 <strong style="color: #fde047;">출발 3시간 전</strong>까지 공항에 도착해 주세요!</p>
-          <span class="loc-badge">📍 출발 장소 : 인천공항 2터미널</span>
+          <div id="dynamicHomeMeeting" style="margin-top: 8px;">
+            <!-- JS가 이 위치에 맞춤 미팅 장소를 렌더링합니다 -->
+          </div>
         </div>
       </div>
 
@@ -984,6 +989,27 @@ function login() {
   }
 
   currentUser = user;
+  
+  // 🔥 [추가] 로그인 후 유저의 항공사 정보에 맞춰 홈 화면 공항 미팅 안내 동적 변경
+  const airline = currentUser?.flight?.departure?.airline || "";
+  const isKorean = String(airline).includes("대한항공");
+  const isAsiana = String(airline).includes("아시아나");
+  
+  let meetingText = "- 공항 미팅 장소를 개별 확인해 주세요.";
+  if (isKorean) {
+    meetingText = "- 대한항공 미팅 장소 : A카운터 1번출구 앞 1~2번 테이블 미팅";
+  } else if (isAsiana) {
+    meetingText = "- 아시아나 미팅 장소 : N카운터 12번출구 앞 25~26번 테이블 미팅";
+  }
+  
+  const meetingBox = document.getElementById("dynamicHomeMeeting");
+  if (meetingBox) {
+    meetingBox.innerHTML = `
+      <span class="loc-badge" style="display:inline-flex; margin-bottom:4px; margin-top:0;">📍 인천국제공항 2청사</span>
+      <span style="display:block; font-size:13px; color:#fca5a5; font-weight:600; letter-spacing:-0.5px; word-break:keep-all;">${meetingText}</span>
+    `;
+  }
+
   document.getElementById("loginSection").style.display = "none";
   document.getElementById("mainSection").style.display = "block";
   document.getElementById("employeeName").textContent = user.name;
@@ -1184,9 +1210,19 @@ function openPage(type, fromHistory = false) {
     const dep = currentUser.flight.departure;
     const ret = currentUser.flight.return;
     t.textContent = "✈️ 항공편 정보";
+    
+    // 🔥 [수정] 상세 페이지에서도 로그인 정보에 따라 미팅 장소 자동 표시
+    const isKorean = String(userAirline).includes("대한항공");
+    const isAsiana = String(userAirline).includes("아시아나");
+    let meetingText = "- 공항 미팅 장소를 개별 확인해 주세요.";
+    if (isKorean) {
+      meetingText = "- 대한항공 미팅 장소 : A카운터 1번출구 앞 1~2번 테이블 미팅";
+    } else if (isAsiana) {
+      meetingText = "- 아시아나 미팅 장소 : N카운터 12번출구 앞 25~26번 테이블 미팅";
+    }
+
     c.innerHTML = `
       <div class="detail-content-wrap">
-        <!-- 🔥 [수정] 공항 도착 안내 강조 박스 (가독성 향상 + 구조 분리) -->
         <div style="background: #fffef0; border: 1px solid #fde047; border-radius: 16px; padding: 16px; margin-bottom: 20px; display: flex; align-items: flex-start; gap: 12px; box-shadow: 0 4px 12px rgba(253,224,71,0.1);">
           <div style="font-size: 22px; line-height: 1;">⏰</div>
           <div style="display: flex; flex-direction: column; gap: 8px;">
@@ -1194,7 +1230,10 @@ function openPage(type, fromHistory = false) {
               <strong style="color: #b45309; font-size: 15px; font-weight: 800; display: block; margin-bottom: 4px;">공항 도착 시간 안내</strong>
               <span style="color: #92400e; font-size: 13px; line-height: 1.4; font-weight: 600; display: block;">원활한 탑승 수속을 위해 <strong style="color:#dc2626; font-weight:800;">출발 3시간 전까지</strong> 반드시 공항에 도착해 주시기 바랍니다.</span>
             </div>
-            <span class="loc-badge-flight">📍 출발 장소 : 인천공항 2터미널</span>
+            <div>
+              <span class="loc-badge-flight" style="margin-top:0; margin-bottom:4px;">📍 인천국제공항 2청사</span>
+              <span style="display:block; font-size:12.5px; color:#991b1b; font-weight:700; line-height:1.4; word-break:keep-all;">${meetingText}</span>
+            </div>
           </div>
         </div>
         
