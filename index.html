@@ -580,19 +580,20 @@
       .fx-box input { padding: 16px; font-size: 18px; }
     }
 
-    /* 🔥 [추가] 9. QR 로그인 로딩 애니메이션 (대만 풍등 & 카룡이 드로잉) CSS */
+    /* 🔥 [수정] 9. QR 로그인 풍등 로딩 애니메이션 (속도 조절 및 카룡이 제거) */
     .lantern-loading {
       position: fixed; inset: 0; z-index: 99999;
       display: none; align-items: center; justify-content: center;
       background: linear-gradient(to top, #0f172a, #000000); /* 대만 야경 밤하늘 느낌 (글귀 제거) */
-      transition: opacity 0.5s ease-out; /* 부드럽게 사라지기 위함 */
+      transition: opacity 1s ease-out; /* 부드럽게 사라지도록 시간 연장 (1초) */
     }
     .lanterns-wrapper {
       position: absolute; inset: 0; overflow: hidden; pointer-events: none;
     }
     .lantern {
       position: absolute; bottom: -100px;
-      animation: floatUp 2.5s ease-in forwards;
+      /* 2.5s에서 8s로 대폭 연장하여 은은하고 천천히 올라가게 설정 */
+      animation: floatUp 8s ease-in forwards; 
       opacity: 0;
       filter: drop-shadow(0 0 12px rgba(255, 120, 0, 0.8));
       display: flex;
@@ -601,97 +602,37 @@
     }
     @keyframes floatUp {
       0% { transform: translateY(0) rotate(-5deg); opacity: 0; }
-      15% { opacity: 1; }
+      20% { opacity: 1; } /* 천천히 밝아지게 */
+      80% { opacity: 1; }
       100% { transform: translateY(-120vh) rotate(5deg); opacity: 0; }
-    }
-
-    /* 🔥 카룡이가 매달려 달랑거리는 줄과 래퍼 애니메이션 */
-    .karyong-string {
-      width: 2px;
-      height: 12px;
-      background: rgba(255, 255, 255, 0.6);
-      margin-top: -5px; /* 풍등 바로 밑에서 시작되도록 */
-      z-index: 2;
-    }
-    .karyong-wrap {
-      animation: swing 1.8s ease-in-out infinite alternate;
-      transform-origin: top center;
-      margin-top: -2px;
-      z-index: 10;
-    }
-    @keyframes swing {
-      0% { transform: rotate(-12deg); }
-      100% { transform: rotate(12deg); }
     }
   </style>
 </head>
 
 <body>
 
-<!-- 🔥 [추가] 풍성한 풍등 & 카룡이(CSS 드로잉) 로딩 애니메이션 마크업 -->
+<!-- 🔥 [추가] 풍성하고 은은한 풍등 로딩 애니메이션 마크업 (카룡이 삭제) -->
 <div id="lanternLoading" class="lantern-loading">
   <div class="lanterns-wrapper">
-    <!-- 배경을 채워줄 다양한 크기와 딜레이를 가진 풍등 14개 -->
+    <!-- 배경을 채워줄 다양한 크기와 딜레이를 가진 풍등 14개 (은은하게 올라가도록 딜레이 분산) -->
     <span class="lantern" style="left: 10%; animation-delay: 0.2s; font-size: 30px;">🏮</span>
-    <span class="lantern" style="left: 25%; animation-delay: 0.7s; font-size: 45px;">🏮</span>
-    <span class="lantern" style="left: 40%; animation-delay: 0.1s; font-size: 25px;">🏮</span>
-    <span class="lantern" style="left: 65%; animation-delay: 0.8s; font-size: 35px;">🏮</span>
-    <span class="lantern" style="left: 80%; animation-delay: 0.4s; font-size: 40px;">🏮</span>
-    <span class="lantern" style="left: 90%; animation-delay: 0.9s; font-size: 28px;">🏮</span>
-    <span class="lantern" style="left: 5%; animation-delay: 1.1s; font-size: 33px;">🏮</span>
-    <span class="lantern" style="left: 20%; animation-delay: 0.6s; font-size: 48px;">🏮</span>
+    <span class="lantern" style="left: 25%; animation-delay: 1.5s; font-size: 45px;">🏮</span>
+    <span class="lantern" style="left: 40%; animation-delay: 0.8s; font-size: 25px;">🏮</span>
+    <span class="lantern" style="left: 65%; animation-delay: 2.1s; font-size: 35px;">🏮</span>
+    <span class="lantern" style="left: 80%; animation-delay: 0.5s; font-size: 40px;">🏮</span>
+    <span class="lantern" style="left: 90%; animation-delay: 3.0s; font-size: 28px;">🏮</span>
+    <span class="lantern" style="left: 5%; animation-delay: 2.5s; font-size: 33px;">🏮</span>
+    <span class="lantern" style="left: 20%; animation-delay: 3.8s; font-size: 48px;">🏮</span>
     <span class="lantern" style="left: 35%; animation-delay: 1.2s; font-size: 22px;">🏮</span>
-    <span class="lantern" style="left: 55%; animation-delay: 1.0s; font-size: 38px;">🏮</span>
-    <span class="lantern" style="left: 70%; animation-delay: 0.5s; font-size: 50px;">🏮</span>
-    <span class="lantern" style="left: 85%; animation-delay: 1.3s; font-size: 30px;">🏮</span>
-    <span class="lantern" style="left: 15%; animation-delay: 1.4s; font-size: 26px;">🏮</span>
-    <span class="lantern" style="left: 95%; animation-delay: 0.2s; font-size: 42px;">🏮</span>
-        <!-- 🔥 포인트: 카룡이(Inline SVG)가 달랑거리며 매달려있는 특별한 메인 중앙 풍등 -->
-    <div class="lantern" style="left: 50%; animation-delay: 0.1s; font-size: 65px; z-index: 100; animation-duration: 2.8s;">
+    <span class="lantern" style="left: 55%; animation-delay: 2.8s; font-size: 38px;">🏮</span>
+    <span class="lantern" style="left: 70%; animation-delay: 1.7s; font-size: 50px;">🏮</span>
+    <span class="lantern" style="left: 85%; animation-delay: 4.2s; font-size: 30px;">🏮</span>
+    <span class="lantern" style="left: 15%; animation-delay: 4.8s; font-size: 26px;">🏮</span>
+    <span class="lantern" style="left: 95%; animation-delay: 1.0s; font-size: 42px;">🏮</span>
+    
+    <!-- 메인 중앙 풍등 (duration을 더 길게 주어 가장 은은하게 올라감) -->
+    <div class="lantern" style="left: 50%; animation-delay: 0.1s; font-size: 65px; z-index: 100; animation-duration: 9s;">
       🏮
-      <div class="karyong-string"></div>
-      <div class="karyong-wrap">
-        <!-- 🎨 직접 그린 카룡이 (하얀 수염, 파란 몸, 웃는 표정) -->
-        <svg viewBox="0 0 100 120" width="55" height="65" style="filter: drop-shadow(0 4px 8px rgba(0,0,0,0.5)); transform: translateY(-5px);">
-          <!-- 줄과 이어지는 뒤쪽 팔 -->
-          <path d="M 35 65 Q 20 30 45 35" fill="none" stroke="#1E3A8A" stroke-width="12" stroke-linecap="round"/>
-          <path d="M 35 65 Q 20 30 45 35" fill="none" stroke="#5DB3F0" stroke-width="6" stroke-linecap="round"/>
-          
-          <!-- 통통한 꼬리 -->
-          <path d="M 70 80 Q 100 90 95 60 Q 80 75 65 75" fill="#5DB3F0" stroke="#1E3A8A" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>
-
-          <!-- 다리 두 개 -->
-          <rect x="35" y="85" width="12" height="15" rx="6" fill="#5DB3F0" stroke="#1E3A8A" stroke-width="3"/>
-          <rect x="53" y="85" width="12" height="15" rx="6" fill="#5DB3F0" stroke="#1E3A8A" stroke-width="3"/>
-
-          <!-- 파란색 몸통 -->
-          <rect x="25" y="45" width="50" height="50" rx="20" fill="#5DB3F0" stroke="#1E3A8A" stroke-width="3"/>
-          <!-- 하얀 배 -->
-          <rect x="32" y="55" width="36" height="35" rx="15" fill="#D6F0FF"/>
-
-          <!-- 앞쪽 팔 (풍등 줄을 잡은 모습) -->
-          <path d="M 65 65 Q 80 30 55 35" fill="none" stroke="#1E3A8A" stroke-width="12" stroke-linecap="round"/>
-          <path d="M 65 65 Q 80 30 55 35" fill="none" stroke="#5DB3F0" stroke-width="6" stroke-linecap="round"/>
-
-          <!-- 머리 위 뿔/돌기 -->
-          <path d="M 25 35 L 15 25 L 30 20 Z" fill="#5DB3F0" stroke="#1E3A8A" stroke-width="3" stroke-linejoin="round"/>
-          <path d="M 75 35 L 85 25 L 70 20 Z" fill="#5DB3F0" stroke="#1E3A8A" stroke-width="3" stroke-linejoin="round"/>
-
-          <!-- 동그란 머리 -->
-          <ellipse cx="50" cy="35" rx="32" ry="26" fill="#5DB3F0" stroke="#1E3A8A" stroke-width="3"/>
-
-          <!-- 웃는 눈 (^ ^) -->
-          <path d="M 36 32 Q 40 26 44 32" fill="none" stroke="#1E3A8A" stroke-width="3" stroke-linecap="round"/>
-          <path d="M 56 32 Q 60 26 64 32" fill="none" stroke="#1E3A8A" stroke-width="3" stroke-linecap="round"/>
-
-          <!-- 활짝 웃는 입 -->
-          <path d="M 40 40 Q 50 55 60 40 Z" fill="#FF7B9C" stroke="#1E3A8A" stroke-width="2" stroke-linejoin="round"/>
-          
-          <!-- ⭐️ 카룡이의 핵심 포인트: 양볼의 뾰족한 하얀 수염 -->
-          <path d="M 32 40 C 15 45 5 25 15 35 C 20 45 25 45 32 45 Z" fill="#FFFFFF" stroke="#1E3A8A" stroke-width="2" stroke-linejoin="round"/>
-          <path d="M 68 40 C 85 45 95 25 85 35 C 80 45 75 45 68 45 Z" fill="#FFFFFF" stroke="#1E3A8A" stroke-width="2" stroke-linejoin="round"/>
-        </svg>
-      </div>
     </div>
   </div>
 </div>
@@ -1167,7 +1108,7 @@ function logout() {
   goHome(); 
 }
 
-/* 🔥 [수정] QR 스캔을 통한 자동 로그인 시 로딩 애니메이션 흐름 제어 추가 */
+/* 🔥 [수정] QR 스캔을 통한 자동 로그인 시 로딩 애니메이션 흐름 제어 추가 및 딜레이 수정 */
 function tryAutoLogin() {
   const params = new URLSearchParams(window.location.search);
   const eid = params.get("eid");
@@ -1186,7 +1127,7 @@ function tryAutoLogin() {
     return;
   }
 
-  // ✅ 정상 로그인 일 때: 이미 켜져있는 풍등 로딩창을 2초간 구경시켜준 뒤 화면 전환
+  // ✅ 정상 로그인 일 때: 이미 켜져있는 풍등 로딩창을 3초간 은은하게 구경시켜준 뒤 화면 전환
   setTimeout(() => {
     login(); // 실제 메인화면으로 전환하는 함수 실행
     
@@ -1200,9 +1141,9 @@ function tryAutoLogin() {
       loader.style.opacity = '1'; 
       const tempStyle = document.getElementById("hideLoginTemp");
       if(tempStyle) tempStyle.remove();
-    }, 500); // CSS opacity transition 시간이 0.5초임
+    }, 1000); // CSS opacity transition 시간을 1초로 늘렸으므로 맞춰서 삭제
     
-  }, 2200); // 풍등+카룡이 올라가는 거 감상하는 시간을 2.2초로 약간 연장
+  }, 3000); // 은은하게 감상하는 시간을 3초로 대폭 연장
 }
 
 const travelSchedule = [
