@@ -591,7 +591,8 @@
       position: absolute; inset: 0; overflow: hidden; pointer-events: none;
     }
     .lantern {
-      position: absolute; bottom: -100px;
+      position: absolute; 
+      bottom: 35%; /* 🔥 화면 밑바닥이 아닌 중간(35%) 쯤에서 나타나기 시작하도록 수정 */
       /* 2.5s에서 8s로 대폭 연장하여 은은하고 천천히 올라가게 설정 */
       animation: floatUp 8s ease-in forwards; 
       opacity: 0;
@@ -602,9 +603,9 @@
     }
     @keyframes floatUp {
       0% { transform: translateY(0) rotate(-5deg); opacity: 0; }
-      20% { opacity: 1; } /* 천천히 밝아지게 */
+      10% { opacity: 1; } /* 🔥 더 빨리 선명해지게 하여 화면이 비어 보이지 않게 조정 */
       80% { opacity: 1; }
-      100% { transform: translateY(-120vh) rotate(5deg); opacity: 0; }
+      100% { transform: translateY(-80vh) rotate(5deg); opacity: 0; } /* 🔥 시작 위치가 올라갔으므로 이동 거리(-80vh) 약간 조정 */
     }
   </style>
 </head>
