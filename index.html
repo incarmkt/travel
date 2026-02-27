@@ -580,7 +580,7 @@
       .fx-box input { padding: 16px; font-size: 18px; }
     }
 
-    /* 🔥 [수정] 9. QR 로그인 풍등 로딩 애니메이션 (속도 조절 및 카룡이 제거) */
+    /* 🔥 [수정] 9. QR 로그인 풍등 로딩 애니메이션 (화면 전체에 깔린 상태로 위로 이동) */
     .lantern-loading {
       position: fixed; inset: 0; z-index: 99999;
       display: none; align-items: center; justify-content: center;
@@ -592,20 +592,19 @@
     }
     .lantern {
       position: absolute; 
-      bottom: 35%; /* 🔥 화면 밑바닥이 아닌 중간(35%) 쯤에서 나타나기 시작하도록 수정 */
-      /* 2.5s에서 8s로 대폭 연장하여 은은하고 천천히 올라가게 설정 */
-      animation: floatUp 8s ease-in forwards; 
-      opacity: 0;
+      opacity: 0.9; /* 🔥 처음부터 투명하지 않게(선명하게) 보이도록 고정 */
+      animation-name: floatUp;
+      animation-timing-function: ease-in-out;
+      animation-iteration-count: infinite;
       filter: drop-shadow(0 0 12px rgba(255, 120, 0, 0.8));
       display: flex;
       flex-direction: column;
       align-items: center;
     }
     @keyframes floatUp {
-      0% { transform: translateY(0) rotate(-5deg); opacity: 0; }
-      10% { opacity: 1; } /* 🔥 더 빨리 선명해지게 하여 화면이 비어 보이지 않게 조정 */
-      80% { opacity: 1; }
-      100% { transform: translateY(-80vh) rotate(5deg); opacity: 0; } /* 🔥 시작 위치가 올라갔으므로 이동 거리(-80vh) 약간 조정 */
+      0% { transform: translateY(0) rotate(-3deg); }
+      50% { transform: translateY(-15vh) rotate(3deg); }
+      100% { transform: translateY(-30vh) rotate(-3deg); }
     }
   </style>
 </head>
@@ -615,24 +614,24 @@
 <!-- 🔥 [추가] 풍성하고 은은한 풍등 로딩 애니메이션 마크업 (카룡이 삭제) -->
 <div id="lanternLoading" class="lantern-loading">
   <div class="lanterns-wrapper">
-    <!-- 배경을 채워줄 다양한 크기와 딜레이를 가진 풍등 14개 (은은하게 올라가도록 딜레이 분산) -->
-    <span class="lantern" style="left: 10%; animation-delay: 0.2s; font-size: 30px;">🏮</span>
-    <span class="lantern" style="left: 25%; animation-delay: 1.5s; font-size: 45px;">🏮</span>
-    <span class="lantern" style="left: 40%; animation-delay: 0.8s; font-size: 25px;">🏮</span>
-    <span class="lantern" style="left: 65%; animation-delay: 2.1s; font-size: 35px;">🏮</span>
-    <span class="lantern" style="left: 80%; animation-delay: 0.5s; font-size: 40px;">🏮</span>
-    <span class="lantern" style="left: 90%; animation-delay: 3.0s; font-size: 28px;">🏮</span>
-    <span class="lantern" style="left: 5%; animation-delay: 2.5s; font-size: 33px;">🏮</span>
-    <span class="lantern" style="left: 20%; animation-delay: 3.8s; font-size: 48px;">🏮</span>
-    <span class="lantern" style="left: 35%; animation-delay: 1.2s; font-size: 22px;">🏮</span>
-    <span class="lantern" style="left: 55%; animation-delay: 2.8s; font-size: 38px;">🏮</span>
-    <span class="lantern" style="left: 70%; animation-delay: 1.7s; font-size: 50px;">🏮</span>
-    <span class="lantern" style="left: 85%; animation-delay: 4.2s; font-size: 30px;">🏮</span>
-    <span class="lantern" style="left: 15%; animation-delay: 4.8s; font-size: 26px;">🏮</span>
-    <span class="lantern" style="left: 95%; animation-delay: 1.0s; font-size: 42px;">🏮</span>
+    <!-- 🔥 화면 위/중간/아래 전체에 풍등이 골고루 흩어져 있도록 bottom과 속도를 모두 다르게 부여 -->
+    <span class="lantern" style="left: 10%; bottom: 15%; animation-duration: 10s; font-size: 30px;">🏮</span>
+    <span class="lantern" style="left: 25%; bottom: 65%; animation-duration: 14s; font-size: 45px;">🏮</span>
+    <span class="lantern" style="left: 40%; bottom: 25%; animation-duration: 11s; font-size: 25px;">🏮</span>
+    <span class="lantern" style="left: 65%; bottom: 80%; animation-duration: 16s; font-size: 35px;">🏮</span>
+    <span class="lantern" style="left: 80%; bottom: 35%; animation-duration: 12s; font-size: 40px;">🏮</span>
+    <span class="lantern" style="left: 90%; bottom: 70%; animation-duration: 13s; font-size: 28px;">🏮</span>
+    <span class="lantern" style="left: 5%; bottom: 45%; animation-duration: 15s; font-size: 33px;">🏮</span>
+    <span class="lantern" style="left: 20%; bottom: 85%; animation-duration: 17s; font-size: 48px;">🏮</span>
+    <span class="lantern" style="left: 35%; bottom: 50%; animation-duration: 12s; font-size: 22px;">🏮</span>
+    <span class="lantern" style="left: 55%; bottom: 10%; animation-duration: 9s; font-size: 38px;">🏮</span>
+    <span class="lantern" style="left: 70%; bottom: 55%; animation-duration: 14s; font-size: 50px;">🏮</span>
+    <span class="lantern" style="left: 85%; bottom: 20%; animation-duration: 11s; font-size: 30px;">🏮</span>
+    <span class="lantern" style="left: 15%; bottom: 5%; animation-duration: 10s; font-size: 26px;">🏮</span>
+    <span class="lantern" style="left: 95%; bottom: 40%; animation-duration: 13s; font-size: 42px;">🏮</span>
     
-    <!-- 메인 중앙 풍등 (duration을 더 길게 주어 가장 은은하게 올라감) -->
-    <div class="lantern" style="left: 50%; animation-delay: 0.1s; font-size: 65px; z-index: 100; animation-duration: 9s;">
+    <!-- 메인 중앙 풍등 (크기가 크고 가장 은은하게 움직임) -->
+    <div class="lantern" style="left: 50%; bottom: 40%; animation-duration: 18s; font-size: 65px; z-index: 100;">
       🏮
     </div>
   </div>
