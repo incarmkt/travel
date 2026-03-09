@@ -287,6 +287,7 @@
       padding: 10px 12px; /* 🔥 패딩 축소 */
       margin-bottom: 14px; /* 🔥 하단 여백 축소 */
       box-shadow: 0 4px 15px rgba(0,0,0,0.25);
+      transition: transform 0.1s ease;
     }
     .home-notice .notice-icon {
       font-size: 18px; /* 🔥 아이콘 크기 축소 */
@@ -305,6 +306,7 @@
       font-weight: 800;
       text-shadow: 0 1px 3px rgba(0,0,0,0.8);
     }
+    .home-notice:active { transform: scale(0.98); }
 
     .loc-badge {
       display: inline-flex;
@@ -753,7 +755,7 @@
       </div>
 
       <!-- 🔥 메인 홈 화면 공항 안내 문구 (로그인 후 JS에서 내용 채워짐) -->
-      <div class="home-notice" style="align-items: flex-start;">
+      <div class="home-notice" style="align-items: flex-start; cursor: pointer;" onclick="openPage('flight')">
         <span class="notice-icon" style="margin-top: 2px;">⏰</span>
         <div style="width: 100%;">
           <p>원활한 출국 수속을 위해 반드시 <strong style="color: #fde047;">출발 3시간 전</strong>까지 공항에 도착해 주세요!</p>
@@ -1621,7 +1623,7 @@ function openPage(type, fromHistory = false) {
           { ko: "비싸요, 깎아주세요", cn: "太貴了, 便宜一點", pr: "타이 꾸이 러, 피엔이 이디엔" },
           { ko: "입어봐도 되나요?", cn: "可以試穿嗎", pr: "커이 스 촨 마" },
           { ko: "다른 색상 있나요?", cn: "有別的顏色嗎", pr: "여우 비에 더 옌써 마" },
-          { ko: "카드 결제 되나요?", cn: "可以刷卡嗎", pr: "커이 슈아 카 마" },
+          { ko: "카드 결제 되나요?", cn: "可以刷卡嗎", pr: "커이 슈아 시 마" },
           { ko: "봉투 주세요", cn: "請給我袋子", pr: "칭 게이 워 따이즈" }
         ]
       },
