@@ -1508,8 +1508,55 @@ function openPage(type, fromHistory = false) {
     t.textContent = "💱 환율 계산기";
     c.innerHTML = `
       <div class="detail-content-wrap">
-        <div class="exchange-row">환율: <strong>1 TWD ≈ <span id="fxRateText">불러오는 중…</span>원</strong><br><span style="font-size:12px; color:#6b7280;">업데이트: <span id="fxUpdatedText">-</span></span><div style="margin-top:10px;"><button class="primary-btn" id="fxRefreshBtn" style="max-width:220px;">환율 새로고침</button></div></div>
-        <div class="day-card"><h3 class="section-title">TWD ↔ KRW 계산</h3><div class="fx-grid"><div class="fx-box"><label>대만달러 (TWD)</label><input id="inputTWD" type="text" inputmode="decimal" placeholder="예: 1000"></div><div class="fx-eq">⇄</div><div class="fx-box"><label>원화 (KRW)</label><input id="inputKRW" type="text" inputmode="decimal" placeholder="예: 42000"></div></div><p class="fx-note" style="margin-top:10px; font-size:13px; color:#6b7280; text-align:center;">※ 숫자 입력 시 자동 계산됩니다.</p></div>
+        <!-- 상단 환율 정보 카드 -->
+        <div style="background: linear-gradient(135deg, #1a233a 0%, #2d3748 100%); color: #fff; padding: 24px 20px; border-radius: 16px; text-align: center; margin-bottom: 20px; box-shadow: 0 10px 20px rgba(26,35,58,0.15); position: relative; overflow: hidden;">
+          <div style="position: relative; z-index: 2;">
+            <span style="font-size: 13px; opacity: 0.8; font-weight: 500; display: block; margin-bottom: 8px;">실시간 환율</span>
+            <div style="font-size: 24px; font-weight: 800; letter-spacing: -0.5px; margin-bottom: 12px; display: flex; align-items: center; justify-content: center; gap: 8px;">
+              <span style="font-size: 20px;">1 TWD</span> <span style="color: #c5a059;">=</span> <span id="fxRateText" style="color: #fde047;">로딩중...</span><span style="font-size: 20px;">원</span>
+            </div>
+            <span style="font-size: 11px; opacity: 0.6; display: block; margin-bottom: 16px;">업데이트: <span id="fxUpdatedText">-</span></span>
+            <button id="fxRefreshBtn" style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: #fff; padding: 8px 16px; border-radius: 20px; font-size: 12px; font-weight: 600; cursor: pointer; transition: all 0.2s;">🔄 새로고침</button>
+          </div>
+          <!-- 배경 데코 -->
+          <div style="position: absolute; right: -20px; bottom: -20px; font-size: 100px; opacity: 0.05; transform: rotate(-15deg);">💱</div>
+        </div>
+
+        <!-- 계산기 입력 영역 -->
+        <div style="background: #fff; border-radius: 16px; padding: 24px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); border: 1px solid #edf2f7;">
+          <div style="display: flex; flex-direction: column; gap: 16px;">
+            
+            <!-- 대만 달러 입력 -->
+            <div style="position: relative;">
+              <label style="display: block; font-size: 12px; font-weight: 700; color: #718096; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
+                <span style="font-size: 16px;">🇹🇼</span> 대만 달러 (TWD)
+              </label>
+              <div style="position: relative;">
+                <input id="inputTWD" type="text" inputmode="decimal" placeholder="0" style="width: 100%; padding: 16px 20px; padding-right: 60px; border: 2px solid #edf2f7; border-radius: 12px; font-size: 20px; font-weight: 800; color: #1a233a; text-align: right; outline: none; transition: border-color 0.2s;">
+                <span style="position: absolute; right: 20px; top: 50%; transform: translateY(-50%); font-size: 16px; font-weight: 700; color: #a0aec0;">$</span>
+              </div>
+            </div>
+
+            <!-- 전환 아이콘 -->
+            <div style="display: flex; justify-content: center; margin: -8px 0; position: relative; z-index: 10;">
+              <div style="background: #f5f7fa; border: 2px solid #fff; border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; color: #c5a059; font-size: 18px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+                ⇅
+              </div>
+            </div>
+
+            <!-- 한국 원화 입력 -->
+            <div style="position: relative;">
+              <label style="display: block; font-size: 12px; font-weight: 700; color: #718096; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
+                <span style="font-size: 16px;">🇰🇷</span> 대한민국 원 (KRW)
+              </label>
+              <div style="position: relative;">
+                <input id="inputKRW" type="text" inputmode="decimal" placeholder="0" style="width: 100%; padding: 16px 20px; padding-right: 60px; border: 2px solid #edf2f7; border-radius: 12px; font-size: 20px; font-weight: 800; color: #1a233a; text-align: right; outline: none; transition: border-color 0.2s;">
+                <span style="position: absolute; right: 20px; top: 50%; transform: translateY(-50%); font-size: 16px; font-weight: 700; color: #a0aec0;">₩</span>
+              </div>
+            </div>
+          </div>
+          <p style="margin: 16px 0 0; font-size: 12px; color: #a0aec0; text-align: center; font-weight: 500;">금액을 입력하면 자동으로 계산됩니다.</p>
+        </div>
       </div>`;
     initExchangeCalculatorAuto();
   }
@@ -1613,11 +1660,60 @@ function openPage(type, fromHistory = false) {
   if (type === "contact") {
     t.textContent = "📞 긴급 연락망";
     c.innerHTML = `
-      <div class="detail-content-wrap"><div class="day-card"><h3>비상 연락망</h3><div class="timeline">
-      <div class="schedule-item"><div class="timeline-dot"></div><div class="schedule-card"><div class="schedule-body"><div class="schedule-title">📞 현지 담당자</div><div class="schedule-desc"> 주영균 소장 | +886 987 770 987</div></div></div></div>
-      <div class="schedule-item"><div class="timeline-dot"></div><div class="schedule-card"><div class="schedule-body"><div class="schedule-title">📞 모두투어</div><div class="schedule-desc"> 성주현 매니저 | +82 10 3213 8377</div></div></div></div>
-      <div class="schedule-item"><div class="timeline-dot"></div><div class="schedule-card"><div class="schedule-body"><div class="schedule-title">📞 타이베이 메리어트 호텔 </div><div class="schedule-desc"> +886 2 8502 9999</div></div></div></div>
-      </div></div></div>`;
+      <div class="detail-content-wrap">
+        <div style="margin-bottom: 24px;">
+          <p style="font-size: 14px; color: var(--text-sub); line-height: 1.5; margin: 0;">도움이 필요하실 때 언제든 연락해 주세요.<br>우측의 <span style="color:#22c55e; font-weight:bold;">초록색 통화 버튼</span>을 누르면 바로 연결됩니다.</p>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 12px;">
+          
+          <!-- 현지 담당자 -->
+          <div style="background: var(--card-bg); border-radius: 16px; padding: 20px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 4px 12px rgba(0,0,0,0.03); border: 1px solid var(--border-light);">
+            <div style="display: flex; align-items: center; gap: 16px;">
+              <div style="width: 48px; height: 48px; border-radius: 14px; background: #e0e7ff; color: #4f46e5; display: flex; align-items: center; justify-content: center; font-size: 24px;">👨‍💼</div>
+              <div>
+                <div style="font-size: 12px; color: var(--text-sub); font-weight: 700; margin-bottom: 4px;">현지 담당자</div>
+                <div style="font-size: 16px; font-weight: 800; color: var(--text-main);">주영균 소장</div>
+                <div style="font-size: 14px; color: var(--text-main); font-weight: 500; margin-top: 2px;">+886 987 770 987</div>
+              </div>
+            </div>
+            <a href="tel:+886987770987" style="width: 44px; height: 44px; border-radius: 50%; background: #22c55e; color: #fff; display: flex; align-items: center; justify-content: center; text-decoration: none; box-shadow: 0 4px 10px rgba(34, 197, 94, 0.3); transition: transform 0.2s;">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+            </a>
+          </div>
+
+          <!-- 모두투어 -->
+          <div style="background: var(--card-bg); border-radius: 16px; padding: 20px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 4px 12px rgba(0,0,0,0.03); border: 1px solid var(--border-light);">
+            <div style="display: flex; align-items: center; gap: 16px;">
+              <div style="width: 48px; height: 48px; border-radius: 14px; background: #dcfce7; color: #16a34a; display: flex; align-items: center; justify-content: center; font-size: 24px;">👩‍💼</div>
+              <div>
+                <div style="font-size: 12px; color: var(--text-sub); font-weight: 700; margin-bottom: 4px;">모두투어 매니저</div>
+                <div style="font-size: 16px; font-weight: 800; color: var(--text-main);">성주현 매니저</div>
+                <div style="font-size: 14px; color: var(--text-main); font-weight: 500; margin-top: 2px;">+82 10 3213 8377</div>
+              </div>
+            </div>
+            <a href="tel:+821032138377" style="width: 44px; height: 44px; border-radius: 50%; background: #22c55e; color: #fff; display: flex; align-items: center; justify-content: center; text-decoration: none; box-shadow: 0 4px 10px rgba(34, 197, 94, 0.3); transition: transform 0.2s;">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+            </a>
+          </div>
+
+          <!-- 호텔 -->
+          <div style="background: var(--card-bg); border-radius: 16px; padding: 20px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 4px 12px rgba(0,0,0,0.03); border: 1px solid var(--border-light);">
+            <div style="display: flex; align-items: center; gap: 16px;">
+              <div style="width: 48px; height: 48px; border-radius: 14px; background: #fee2e2; color: #dc2626; display: flex; align-items: center; justify-content: center; font-size: 24px;">🏨</div>
+              <div>
+                <div style="font-size: 12px; color: var(--text-sub); font-weight: 700; margin-bottom: 4px;">숙소 (5성급)</div>
+                <div style="font-size: 15px; font-weight: 800; color: var(--text-main);">타이베이 메리어트 호텔</div>
+                <div style="font-size: 14px; color: var(--text-main); font-weight: 500; margin-top: 2px;">+886 2 8502 9999</div>
+              </div>
+            </div>
+            <a href="tel:+886285029999" style="width: 44px; height: 44px; border-radius: 50%; background: #22c55e; color: #fff; display: flex; align-items: center; justify-content: center; text-decoration: none; box-shadow: 0 4px 10px rgba(34, 197, 94, 0.3); transition: transform 0.2s;">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+            </a>
+          </div>
+
+        </div>
+      </div>`;
   }
 }
 
