@@ -1367,8 +1367,44 @@ function openPage(type, fromHistory = false) {
           </div>
         </div>
         
-        <div class="day-card"><h3>출국편</h3><div class="schedule-item"><div class="schedule-card"><div class="schedule-time">${dep.time}</div><div class="schedule-body"><div class="schedule-title">✈️ ${dep.from} → ${dep.to}</div><div class="schedule-desc">${dep.airline} ${dep.flightNo}</div><div class="schedule-desc">${dep.date}</div></div></div></div></div>
-        <div class="day-card"><h3>귀국편</h3><div class="schedule-item"><div class="schedule-card"><div class="schedule-time">${ret.time}</div><div class="schedule-body"><div class="schedule-title">🏠 ${ret.from} → ${ret.to}</div><div class="schedule-desc">${ret.airline} ${ret.flightNo}</div><div class="schedule-desc">${ret.date}</div></div></div></div></div>
+        <!-- 출국편 카드 -->
+        <div class="tour-card-photo" style="height: 200px;">
+          <div class="tour-card-bg" style="background-image: url('assets/images/flight_dep.jpg');" onerror="this.style.backgroundImage='url(https://images.unsplash.com/photo-1436491865332-7a61a109cc05?auto=format&fit=crop&w=800&q=80)'"></div>
+          <div class="tour-card-overlay" style="background: linear-gradient(to bottom, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0.2) 40%, rgba(0,0,0,0.7) 100%);"></div>
+          <div class="tour-info" style="justify-content: space-between;">
+            <div>
+              <span class="tour-badge" style="background: #3b82f6;">출국편</span>
+              <h3 style="font-size: 24px;">${dep.from} ✈️ ${dep.to}</h3>
+            </div>
+            <div class="tour-meta-box" style="flex-direction: column; align-items: flex-start; gap: 6px;">
+              <div style="font-size: 14px; font-weight: 700; color: #fff;">${dep.date} ${dep.time}</div>
+              <div class="tour-meta-items">
+                <span style="background: rgba(255,255,255,0.2); color: #fff; font-weight: 600;">${dep.airline}</span>
+                <span style="background: rgba(255,255,255,0.2); color: #fff; font-weight: 600;">${dep.flightNo}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 귀국편 카드 -->
+        <div class="tour-card-photo" style="height: 200px; margin-bottom: 0;">
+          <div class="tour-card-bg" style="background-image: url('assets/images/flight_ret.jpg');" onerror="this.style.backgroundImage='url(https://images.unsplash.com/photo-1542296332-2e4473faf563?auto=format&fit=crop&w=800&q=80)'"></div>
+          <div class="tour-card-overlay" style="background: linear-gradient(to bottom, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0.2) 40%, rgba(0,0,0,0.7) 100%);"></div>
+          <div class="tour-info" style="justify-content: space-between;">
+            <div>
+              <span class="tour-badge" style="background: #10b981;">귀국편</span>
+              <h3 style="font-size: 24px;">${ret.from} 🏠 ${ret.to}</h3>
+            </div>
+            <div class="tour-meta-box" style="flex-direction: column; align-items: flex-start; gap: 6px;">
+              <div style="font-size: 14px; font-weight: 700; color: #fff;">${ret.date} ${ret.time}</div>
+              <div class="tour-meta-items">
+                <span style="background: rgba(255,255,255,0.2); color: #fff; font-weight: 600;">${ret.airline}</span>
+                <span style="background: rgba(255,255,255,0.2); color: #fff; font-weight: 600;">${ret.flightNo}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
       </div>`;
   }
 
@@ -1622,9 +1658,9 @@ function openPage(type, fromHistory = false) {
 
     let convHtml = '<div class="detail-content-wrap">';
     convData.forEach((cat, idx) => {
-      // ✅ 첫 번째 항목(식당/야시장)만 기본적으로 열려있게 설정
+      // ✅ 모든 항목 기본적으로 닫힌 상태로 시작
       convHtml += `
-        <div class="conv-category ${idx === 0 ? 'open' : ''}">
+        <div class="conv-category">
           <div class="conv-header" onclick="this.parentElement.classList.toggle('open')">
             <div class="conv-header-left">
               <div class="conv-icon-bg">${cat.icon}</div>
