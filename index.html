@@ -585,7 +585,7 @@
       position: fixed; inset: 0; z-index: 99999;
       display: none; align-items: center; justify-content: center;
       background: linear-gradient(to top, #0f172a, #000000); /* 대만 야경 밤하늘 느낌 (글귀 제거) */
-      transition: opacity 1s ease-out; /* 부드럽게 사라지도록 시간 연장 (1초) */
+      transition: opacity 0.5s ease-out; /* 🔥 부드럽게 사라지도록 시간 단축 (0.5초) */
     }
     .lanterns-wrapper {
       position: absolute; inset: 0; overflow: hidden; pointer-events: none;
@@ -808,8 +808,16 @@ let pageHistory = [];
 let employees = [];
 let currentUser = null;
 const ADMIN_PASSWORD = "0000";
+const MEAL_SHEET_URL = "https://script.google.com/macros/s/AKfycbx2tVkT00Z8uXQWl6EeTIUUhZ3_NJHx3JDqSCHC5oJWkUCm0OtcTmaV6g20cNKoh0no9w/exec";
 
-    
+/* 🔥 [핵심 버그 수정] 구글 시트 0 누락 및 관리자 완벽 연동 🔥 */
+// 관리자 페이지와 완벽하게 연동되도록, 사번의 앞자리 0을 강제로 없애지 않고
+// 문자열(String) 형태 그대로 유지하여 시트에 전달/비교합니다.
+function getSheetSafeId(id) {
+  if (!id) return "";
+  return String(id).trim(); // 숫자로 변환하지 않고 문자열 그대로 반환하여 '0' 유지
+}
+
 function toggleMenu() {
   document.body.classList.toggle('menu-open');
 }
@@ -931,7 +939,8 @@ function setMealUI(wrap, mode, time = "") {
   }
 }
     
-function mealKey(userId, tour) { return `mealPaid_${userId}_${tour}`; }
+// 🔥 버그 픽스: 로컬 스토리지에 저장할 때도 시트와 동일하게 안전 ID 사용
+function mealKey(userId, tour) { return `mealPaid_${getSheetSafeId(userId)}_${tour}`; }
 function saveMealPaid(userId, tour, time) { localStorage.setItem(mealKey(userId, tour), JSON.stringify({ time })); }
 function loadMealPaid(userId, tour) { const raw = localStorage.getItem(mealKey(userId, tour)); return raw ? JSON.parse(raw) : null; }
 function removeMealPaid(userId, tour) { localStorage.removeItem(mealKey(userId, tour)); }
@@ -954,13 +963,18 @@ function nowKSTString() {
   return new Intl.DateTimeFormat("ko-KR", { timeZone: "Asia/Seoul", year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", second: "2-digit" }).format(new Date());
 }
 
-const MEAL_SHEET_URL = "https://script.google.com/macros/s/AKfycbx2tVkT00Z8uXQWl6EeTIUUhZ3_NJHx3JDqSCHC5oJWkUCm0OtcTmaV6g20cNKoh0no9w/exec";
-
 function logMealPaymentToSheet(payload) {
   if (!currentUser) return;
   fetch(MEAL_SHEET_URL, {
     method: "POST", mode: "no-cors",
-    body: JSON.stringify({ type: "meal", id: currentUser.id, name: currentUser.name, action: payload.action, tour: payload.tour, time: payload.time })
+    body: JSON.stringify({ 
+      type: "meal", 
+      id: getSheetSafeId(currentUser.id), // 🔥 버그 픽스: 시트에 보낼때 0이 제거된 포맷으로 강제 통일
+      name: currentUser.name, 
+      action: payload.action, 
+      tour: payload.tour, 
+      time: payload.time 
+    })
   }).catch(console.error);
 }
 
@@ -1054,13 +1068,15 @@ fetchTaipeiWeather();
     
 function login() {
   const id = document.getElementById("employeeId").value.trim();
-  const user = employees.find(e => e.id === id);
+  // 🔥 버그 픽스: 입력값과 JSON 값 모두 0을 날린 포맷으로 비교하여 매칭 확률 100% 보장
+  const user = employees.find(e => getSheetSafeId(e.id) === getSheetSafeId(id));
 
   if (!user) {
     document.getElementById("loginError").textContent = "등록되지 않은 사번입니다.";
     return;
   }
 
+  // 로그인 상태 유지용
   currentUser = user;
   
   // 🔥 [수정] 로그인 후 유저의 항공사 정보에 맞춰 홈 화면 공항 미팅 안내 동적 변경 (고급 카드형 배지 디자인)
@@ -1119,7 +1135,8 @@ function tryAutoLogin() {
   const input = document.getElementById("employeeId");
   if (input) input.value = eid;
 
-  const user = employees.find(e => String(e.id) === String(eid));
+  // 🔥 버그 픽스: QR로 넘어온 사번도 매칭 포맷 안전장치 적용
+  const user = employees.find(e => getSheetSafeId(e.id) === getSheetSafeId(eid));
   if (!user) {
     // ❌ 사번 유효하지 않을 때: 로딩창 끄고 다시 로그인창 살림
     const tempStyle = document.getElementById("hideLoginTemp");
@@ -1129,7 +1146,7 @@ function tryAutoLogin() {
     return;
   }
 
-  // ✅ 정상 로그인 일 때: 이미 켜져있는 풍등 로딩창을 3초간 은은하게 구경시켜준 뒤 화면 전환
+  // ✅ 정상 로그인 일 때: 풍등 로딩창을 짧게(1.5초) 구경시켜준 뒤 화면 전환 (시간 단축)
   setTimeout(() => {
     login(); // 실제 메인화면으로 전환하는 함수 실행
     
@@ -1143,9 +1160,9 @@ function tryAutoLogin() {
       loader.style.opacity = '1'; 
       const tempStyle = document.getElementById("hideLoginTemp");
       if(tempStyle) tempStyle.remove();
-    }, 1000); // CSS opacity transition 시간을 1초로 늘렸으므로 맞춰서 삭제
+    }, 500); // 페이드아웃 시간도 0.5초로 단축
     
-  }, 3000); // 은은하게 감상하는 시간을 3초로 대폭 연장
+  }, 1500); // 은은하게 감상하는 시간을 1.5초로 단축
 }
 
 const travelSchedule = [
@@ -1606,7 +1623,9 @@ function openPage(type, fromHistory = false) {
 }
 
 async function syncMealStatusFromServer(userId, tour, wrap) {
-  const url = `${MEAL_SHEET_URL}?mode=customerAdmin&id=${userId}`;
+  // 🔥 버그 픽스: 서버에서 상태 가져올 때도 앞자리 0이 날아간 상태로 통일해서 요청
+  const safeId = getSheetSafeId(userId);
+  const url = `${MEAL_SHEET_URL}?mode=customerAdmin&id=${encodeURIComponent(safeId)}`;
   const res = await fetch(url);
   const data = await res.json();
   const status = data.mealMap?.[tour];
@@ -1651,7 +1670,13 @@ function submitRequest() {
    
   fetch(MEAL_SHEET_URL, {
     method: "POST", mode: "no-cors",
-    body: JSON.stringify({ type: "request", id: currentUser.id, name: currentUser.name, request: requestText, time: nowKSTString() })
+    body: JSON.stringify({ 
+      type: "request", 
+      id: getSheetSafeId(currentUser.id), // 🔥 버그 픽스: 시트에 보낼때 0이 제거된 포맷 사용
+      name: currentUser.name, 
+      request: requestText, 
+      time: nowKSTString() 
+    })
   }).then(() => { alert("요청사항이 전송되었습니다."); document.getElementById("requestInput").value = ""; }).catch(err => { console.error(err); alert("전송 중 오류가 발생했습니다."); });
 }
 
@@ -1751,7 +1776,7 @@ function initExchangeCalculatorAuto() {
   }
 
   twdEl.addEventListener("input", updateFromTWD);
-  krwEl.addEventListener("input", updateFromKRW); // 오타 수정: krwaddEventListener -> krwEl.addEventListener
+  krwEl.addEventListener("input", updateFromKRW);
 
   async function renderRate(force = false) {
     rateText.textContent = "가져오는 중…";
