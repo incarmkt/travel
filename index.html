@@ -1279,6 +1279,19 @@ function copyConvText(btn, text) {
   document.body.removeChild(textArea);
 }
 
+/* 🔥 [추가] 회화 텍스트 음성 재생 함수 (대만 번체) */
+function speakText(text) {
+  if ('speechSynthesis' in window) {
+    window.speechSynthesis.cancel(); // 진행 중인 음성이 있으면 취소
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = 'zh-TW'; // 대만 번체 언어 코드
+    utterance.rate = 0.85;    // 따라하기 쉽도록 살짝 천천히 읽기
+    window.speechSynthesis.speak(utterance);
+  } else {
+    alert("현재 브라우저에서는 음성 듣기 기능을 지원하지 않습니다.");
+  }
+}
+
 function openPage(type, fromHistory = false) {
   document.body.classList.remove('menu-open'); 
 
@@ -1681,10 +1694,16 @@ function openPage(type, fromHistory = false) {
                     <span class="conv-pr">${item.pr}</span>
                   </div>
                 </div>
-                <button class="conv-copy-btn" onclick="copyConvText(this, '${item.cn}')">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
-                  복사
-                </button>
+                <div style="display: flex; flex-direction: column; gap: 6px;">
+                  <button class="conv-copy-btn" style="background: #e0f2fe; border-color: #bae6fd; color: #0284c7;" onclick="speakText('${item.cn}')">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>
+                    듣기
+                  </button>
+                  <button class="conv-copy-btn" onclick="copyConvText(this, '${item.cn}')">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                    복사
+                  </button>
+                </div>
               </div>
             `).join('')}
           </div>
@@ -1723,7 +1742,7 @@ function openPage(type, fromHistory = false) {
           <!-- 모두투어 -->
           <div style="background: var(--card-bg); border-radius: 16px; padding: 20px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 4px 12px rgba(0,0,0,0.03); border: 1px solid var(--border-light);">
             <div style="display: flex; align-items: center; gap: 16px;">
-              <div style="width: 48px; height: 48px; border-radius: 14px; background: #dcfce7; color: #16a34a; display: flex; align-items: center; justify-content: center; font-size: 24px;">👨‍💼</div>
+              <div style="width: 48px; height: 48px; border-radius: 14px; background: #dcfce7; color: #16a34a; display: flex; align-items: center; justify-content: center; font-size: 24px;">👩‍💼</div>
               <div>
                 <div style="font-size: 12px; color: var(--text-sub); font-weight: 700; margin-bottom: 4px;">모두투어 매니저</div>
                 <div style="font-size: 16px; font-weight: 800; color: var(--text-main);">성주현 매니저</div>
