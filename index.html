@@ -1318,23 +1318,46 @@ function openPage(type, fromHistory = false) {
 
     c.innerHTML = `
       <div class="detail-content-wrap">
-        <div class="day-card">
-          <h3>${day.day} <span>${day.date}</span></h3>
-          <p class="day-title">${day.title}</p>
-          <div class="timeline">
-            ${items.map(i => `
-              <div class="schedule-item">
-                <div class="timeline-dot"></div>
-                <div class="schedule-card">
-                  <div class="schedule-time">${pickTimeByAirline(i.time, userAirline)}</div>
-                  <div class="schedule-body">
-                    <div class="schedule-title">${i.icon} ${i.title}</div>
-                    ${i.desc ? `<div class="schedule-desc">${pickFlightDescByAirline(i.desc, userAirline)}</div>` : ""}
-                  </div>
+        <!-- 데이 요약 헤더 카드 -->
+        <div style="background: linear-gradient(135deg, var(--primary-color) 0%, #2d3748 100%); border-radius: 20px; padding: 24px; color: #fff; margin-bottom: 28px; box-shadow: 0 10px 20px rgba(26,35,58,0.15); position: relative; overflow: hidden;">
+          <div style="position: relative; z-index: 2;">
+            <span style="display: inline-block; background: rgba(255,255,255,0.2); padding: 5px 12px; border-radius: 10px; font-size: 13px; font-weight: 800; letter-spacing: 0.5px; margin-bottom: 12px; backdrop-filter: blur(4px);">${day.day}</span>
+            <h2 style="margin: 0 0 8px; font-size: 24px; font-weight: 800; line-height: 1.35; letter-spacing: -0.5px;">${day.title}</h2>
+            <div style="font-size: 14px; color: rgba(255,255,255,0.8); font-weight: 500;">📅 ${day.date}</div>
+          </div>
+          <!-- 장식 아이콘 -->
+          <div style="position: absolute; right: -15px; bottom: -20px; font-size: 110px; opacity: 0.06; transform: rotate(-10deg); pointer-events: none;">🗓</div>
+        </div>
+
+        <!-- 모던 타임라인 영역 -->
+        <div style="position: relative; padding-left: 44px; margin-top: 10px;">
+          ${items.map((i, index) => {
+            const isLast = index === items.length - 1;
+            return `
+            <div style="position: relative; margin-bottom: ${isLast ? '0' : '28px'};">
+              <!-- 연결 선 (마지막 요소 제외) -->
+              ${!isLast ? `<div style="position: absolute; left: -25px; top: 40px; bottom: -30px; width: 2px; background: #e2e8f0; z-index: 1;"></div>` : ''}
+              
+              <!-- 동그란 아이콘 배지 -->
+              <div style="position: absolute; left: -44px; top: 0; width: 40px; height: 40px; border-radius: 50%; background: #fff; border: 3px solid #f1f5f9; display: flex; align-items: center; justify-content: center; font-size: 18px; box-shadow: 0 4px 8px rgba(0,0,0,0.04); z-index: 2;">
+                ${i.icon}
+              </div>
+
+              <!-- 우측 컨텐츠 -->
+              <div style="display: flex; flex-direction: column; gap: 8px;">
+                <!-- 시간 -->
+                <div style="font-size: 14px; font-weight: 800; color: var(--accent-color); letter-spacing: -0.3px; padding-left: 4px; padding-top: 8px;">
+                  ${pickTimeByAirline(i.time, userAirline)}
+                </div>
+                
+                <!-- 상세 카드 -->
+                <div style="background: #fff; border-radius: 16px; padding: 20px; box-shadow: 0 6px 16px rgba(0,0,0,0.04); border: 1px solid #f1f5f9;">
+                  <h4 style="margin: 0; font-size: 16px; font-weight: 800; color: var(--text-main); letter-spacing: -0.5px; line-height: 1.3;">${i.title}</h4>
+                  ${i.desc ? `<p style="margin: 8px 0 0; font-size: 13.5px; color: var(--text-sub); line-height: 1.5; word-break: keep-all;">${pickFlightDescByAirline(i.desc, userAirline)}</p>` : ""}
                 </div>
               </div>
-            `).join("")}
-          </div>
+            </div>
+          `}).join("")}
         </div>
       </div>
     `;
@@ -1742,7 +1765,7 @@ function openPage(type, fromHistory = false) {
           <!-- 모두투어 -->
           <div style="background: var(--card-bg); border-radius: 16px; padding: 20px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 4px 12px rgba(0,0,0,0.03); border: 1px solid var(--border-light);">
             <div style="display: flex; align-items: center; gap: 16px;">
-              <div style="width: 48px; height: 48px; border-radius: 14px; background: #dcfce7; color: #16a34a; display: flex; align-items: center; justify-content: center; font-size: 24px;">👩‍💼</div>
+              <div style="width: 48px; height: 48px; border-radius: 14px; background: #dcfce7; color: #16a34a; display: flex; align-items: center; justify-content: center; font-size: 24px;">👨‍💼</div>
               <div>
                 <div style="font-size: 12px; color: var(--text-sub); font-weight: 700; margin-bottom: 4px;">모두투어 매니저</div>
                 <div style="font-size: 16px; font-weight: 800; color: var(--text-main);">성주현 매니저</div>
