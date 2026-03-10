@@ -408,16 +408,19 @@
     .day-card { background: var(--card-bg); border-radius: 16px; padding: 20px; margin-bottom: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); }
     .day-card h3 { margin: 0 0 10px; font-size: 18px; color: var(--primary-color); display: flex; align-items: baseline; gap: 8px; font-weight: 800; }
     .day-card h3 span { font-size: 13px; color: var(--text-sub); font-weight: 500; }
-    .day-title { margin: 0 0 20px; font-weight: 600; color: var(--accent-color); font-size: 15px; }
+    .day-title { margin: 0 0 16px; font-weight: 600; color: var(--accent-color); font-size: 15px; } /* 🔥 하단 마진 20->16px 축소 */
 
     .timeline { border-left: 2px solid var(--border-light); margin-left: 10px; padding-left: 20px; }
-    .schedule-item { position: relative; margin-bottom: 24px; }
+    /* 🔥 일정 간의 넓은 공백 대폭 축소 (24px -> 14px) */
+    .schedule-item { position: relative; margin-bottom: 14px; }
     .schedule-item:last-child { margin-bottom: 0; }
     .timeline-dot { position: absolute; left: -26px; top: 0; width: 10px; height: 10px; border-radius: 50%; background: var(--accent-color); border: 2px solid #fff; }
-    .schedule-card { display: flex; flex-direction: column; gap: 4px; }
+    /* 🔥 시간과 제목 내용 간격 축소 (4px -> 2px) */
+    .schedule-card { display: flex; flex-direction: column; gap: 2px; }
     .schedule-time { font-size: 13px; font-weight: 700; color: var(--text-sub); }
     .schedule-title { font-size: 15px; font-weight: 600; color: var(--text-main); }
-    .schedule-desc { font-size: 13px; color: var(--text-sub); margin-top: 4px; line-height: 1.4; }
+    /* 🔥 내용 설명 위쪽 마진 축소 (4px -> 2px) */
+    .schedule-desc { font-size: 13px; color: var(--text-sub); margin-top: 2px; line-height: 1.4; }
 
     /* 환율, 대만의 모든 것, 날씨 */
     .country-compare-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
@@ -1318,46 +1321,23 @@ function openPage(type, fromHistory = false) {
 
     c.innerHTML = `
       <div class="detail-content-wrap">
-        <!-- 데이 요약 헤더 카드 -->
-        <div style="background: linear-gradient(135deg, var(--primary-color) 0%, #2d3748 100%); border-radius: 20px; padding: 24px; color: #fff; margin-bottom: 24px; box-shadow: 0 10px 20px rgba(26,35,58,0.15); position: relative; overflow: hidden;">
-          <div style="position: relative; z-index: 2;">
-            <span style="display: inline-block; background: rgba(255,255,255,0.2); padding: 5px 12px; border-radius: 10px; font-size: 13px; font-weight: 800; letter-spacing: 0.5px; margin-bottom: 12px; backdrop-filter: blur(4px);">${day.day}</span>
-            <h2 style="margin: 0 0 8px; font-size: 24px; font-weight: 800; line-height: 1.35; letter-spacing: -0.5px;">${day.title}</h2>
-            <div style="font-size: 14px; color: rgba(255,255,255,0.8); font-weight: 500;">📅 ${day.date}</div>
+        <div class="day-card">
+          <h3>${day.day} <span>${day.date}</span></h3>
+          <p class="day-title">${day.title}</p>
+          <div class="timeline">
+            ${items.map(i => `
+              <div class="schedule-item">
+                <div class="timeline-dot"></div>
+                <div class="schedule-card">
+                  <div class="schedule-time">${pickTimeByAirline(i.time, userAirline)}</div>
+                  <div class="schedule-body">
+                    <div class="schedule-title">${i.icon} ${i.title}</div>
+                    ${i.desc ? `<div class="schedule-desc">${pickFlightDescByAirline(i.desc, userAirline)}</div>` : ""}
+                  </div>
+                </div>
+              </div>
+            `).join("")}
           </div>
-          <!-- 장식 아이콘 -->
-          <div style="position: absolute; right: -15px; bottom: -20px; font-size: 110px; opacity: 0.06; transform: rotate(-10deg); pointer-events: none;">🗓</div>
-        </div>
-
-        <!-- 모던 타임라인 영역 -->
-        <div style="position: relative; padding-left: 44px; margin-top: 10px;">
-          ${items.map((i, index) => {
-            const isLast = index === items.length - 1;
-            return `
-            <div style="position: relative; margin-bottom: ${isLast ? '0' : '16px'};">
-              <!-- 연결 선 (마지막 요소 제외) -->
-              ${!isLast ? `<div style="position: absolute; left: -25px; top: 40px; bottom: -18px; width: 2px; background: #e2e8f0; z-index: 1;"></div>` : ''}
-              
-              <!-- 동그란 아이콘 배지 -->
-              <div style="position: absolute; left: -44px; top: 0; width: 40px; height: 40px; border-radius: 50%; background: #fff; border: 3px solid #f1f5f9; display: flex; align-items: center; justify-content: center; font-size: 18px; box-shadow: 0 4px 8px rgba(0,0,0,0.04); z-index: 2;">
-                ${i.icon}
-              </div>
-
-              <!-- 우측 컨텐츠 -->
-              <div style="display: flex; flex-direction: column; gap: 4px;">
-                <!-- 시간 -->
-                <div style="font-size: 14px; font-weight: 800; color: var(--accent-color); letter-spacing: -0.3px; padding-left: 4px; padding-top: 6px;">
-                  ${pickTimeByAirline(i.time, userAirline)}
-                </div>
-                
-                <!-- 상세 카드 -->
-                <div style="background: #fff; border-radius: 16px; padding: 14px 16px; box-shadow: 0 6px 16px rgba(0,0,0,0.04); border: 1px solid #f1f5f9;">
-                  <h4 style="margin: 0; font-size: 15px; font-weight: 800; color: var(--text-main); letter-spacing: -0.5px; line-height: 1.3;">${i.title}</h4>
-                  ${i.desc ? `<p style="margin: 4px 0 0; font-size: 13px; color: var(--text-sub); line-height: 1.4; word-break: keep-all;">${pickFlightDescByAirline(i.desc, userAirline)}</p>` : ""}
-                </div>
-              </div>
-            </div>
-          `}).join("")}
         </div>
       </div>
     `;
@@ -1658,7 +1638,7 @@ function openPage(type, fromHistory = false) {
           { ko: "얼마인가요?", cn: "多少錢", pr: "뚜어사오 첸" },
           { ko: "비싸요, 깎아주세요", cn: "太貴了, 便宜一點", pr: "타이 꾸이 러, 피엔이 이디엔" },
           { ko: "입어봐도 되나요?", cn: "可以試穿嗎", pr: "커이 스 촨 마" },
-          { ko: "다른 색상 있나요?", cn: "有別的顏色嗎", pr: "여우 비에 더 옌써 마" },
+          { ko: "다른 색상 있나요?", cn: "有別的顏色吗", pr: "여우 비에 더 옌써 마" },
           { ko: "카드 결제 되나요?", cn: "可以刷卡嗎", pr: "커이 슈아 시 마" },
           { ko: "봉투 주세요", cn: "請給我袋子", pr: "칭 게이 워 따이즈" }
         ]
